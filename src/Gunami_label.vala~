@@ -1,0 +1,23 @@
+using Gtk;
+
+class Gunami_label : Gtk.Frame {
+
+	private Gtk.EventBox e; //this allows the label to be highlighted
+	private Gtk.Label l;
+
+	public Gunami_label(string label_text, bool is_column)
+	{
+		set_shadow_type(Gtk.ShadowType.ETCHED_IN);
+		e=new EventBox();
+		l=new Gtk.Label(label_text);
+		l.set_alignment((float)0.5, (float)0.5);
+		l.set_padding(2,0);
+		if (is_column) l.set_angle(270);
+		e.add(l);
+		add(e);
+	}
+
+	public void set_markup(string m) {l.set_markup(m);}
+
+	public string get_text() {return l.get_text();}
+}
