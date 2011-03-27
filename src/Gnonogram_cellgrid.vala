@@ -36,13 +36,11 @@ public class Gnonogram_CellGrid : DrawingArea
 	private double _ah;
 	private double _wd;
 	private double _ht;
-//	private Gdk.GC _mygc;
-//	private Cairo.Context _cr;
 	private 	Gdk.Color cr_color;
 	private double _cell_offset;
 	private double _cell_body_width;
 	private double _cell_body_height;
-	private double[] minor_grid_dash = {1.0, 2.0};
+	
 //======================================================================
 	public Gnonogram_CellGrid(int r, int c)
 	{
@@ -64,6 +62,7 @@ public class Gnonogram_CellGrid : DrawingArea
 //=========================================================================
 	public void prepare_to_redraw_cells(bool show_grid)
 	{ //stdout.printf("In prepare to redraw\n");
+		if (this.window==null) return;
 		_aw=(double)allocation.width;
 		_ah=(double)allocation.height;
 		_wd=(_aw-2)/(double)_cols;
@@ -72,60 +71,51 @@ public class Gnonogram_CellGrid : DrawingArea
 	
 		if (show_grid)
 		{
-			_cell_offset=3.0;
+			_cell_offset=Resource.CELLOFFSET_WITHGRID;
 			draw_grid();
 		}
-		else _cell_offset=1.0;
+		else _cell_offset=Resource.CELLOFFSET_NOGRID; 
 
 		//dimensions of filled part
-		_cell_body_width=_wd-_cell_offset*2.0;
-		_cell_body_height=_ht-_cell_offset*2.0;
+		_cell_body_width=_wd-_cell_offset;
+		_cell_body_height=_ht-_cell_offset;
 	}
 //=====================================================================
 	
-	public void draw_cell(Cell cell, GameState gs, bool isvalid=true)
+	public void draw_cell(Cell cell, GameState gs, bool highlight=false)
 	{
-		//coords of top left corner of filled part (excluding grid if present and highlight line)
-		double x=cell.col*_wd +_cell_offset+1.0;
-		double y= cell.row*_ht +_cell_offset+1.0;
+		if (cell.row<0||cell.row>=_rows||cell.col<0||cell.col>=_cols)
+		{
+			stdout.printf(@"Outside grid row= $(cell.row) col =$(cell.col)\n"); return;
+		}
 		
+/* coords of top left corner of filled part
+/* (excluding grid if present but including highlight line)
+ */
+		double x=cell.col*_wd +_cell_offset;
+		double y= cell.row*_ht +_cell_offset;
+	
 		int cs =(int) cell.state;
 		var _cr=Gdk.cairo_create(this.window);
-		if (cs==CellState.UNKNOWN)
-		{
-			cr_color=style.bg[Gtk.StateType.NORMAL];
-		}
-		else
-		{
-			cr_color=Resource.colors[gs,cs];
-		}
-		Gdk.cairo_set_source_color(_cr, cr_color);
-		draw_cell_body(_cr, x,y);
-	}
-//=========================================================================
-	private void draw_cell_body(Cairo.Context _cr, double x, double y)
-	{
-//		Gdk.draw_rectangle(window,gc,true,x,y,_cell_body_width,_cell_body_height);
-		_cr.rectangle(x, y, _cell_body_width, _cell_body_height);
-		_cr.fill();
-	}
-//=========================================================================
-	public void highlight_cell(Cell cell, bool highlight)
-	{	//coords of top left corner of highlight square)
-		double x= cell.col*_wd+_cell_offset;
-		double y= cell.row*_ht+_cell_offset;
-		var _cr=Gdk.cairo_create(this.window);
-		if (highlight) cr_color=style.bg[ Gtk.StateType.SELECTED];
-		else cr_color=style.bg[Gtk.StateType.NORMAL];
+		
+		if (cs==CellState.UNKNOWN)	cr_color=style.bg[Gtk.StateType.NORMAL];
+		else cr_color=Resource.colors[gs,cs];
 		
 		Gdk.cairo_set_source_color(_cr, cr_color);
-		draw_cell_highlight(_cr, x,y);
+		draw_cell_body(_cr, x,y, highlight);
 	}
 //=========================================================================
-	private void draw_cell_highlight(Cairo.Context _cr, double x, double y)
+	private void draw_cell_body(Cairo.Context _cr, double x, double y, bool highlight=false)
 	{
-		_cr.rectangle(x,y,_cell_body_width+2.0,_cell_body_height+2.0);
-		_cr.stroke();
+		_cr.rectangle(x, y, _cell_body_width, _cell_body_height);
+		_cr.fill();
+		
+		if (highlight)
+		{
+			Gdk.cairo_set_source_color(_cr, style.bg[ Gtk.StateType.SELECTED]);
+			_cr.rectangle(x+1, y+1, _cell_body_width-2, _cell_body_height-2);
+			_cr.stroke();
+		}
 	}
 //======================================================================
 	private void draw_grid()
@@ -133,7 +123,7 @@ public class Gnonogram_CellGrid : DrawingArea
 		double x1, x2, y1, y2;
 		
 		var _cr=Gdk.cairo_create(this.window);
-		_cr.set_dash(minor_grid_dash,0.0);
+		_cr.set_dash(Resource.MINORGRIDDASH,0.0);
 		_cr.set_line_width(1.0);
 
 		//Draw minor grid (dashed lines)
@@ -183,16 +173,6 @@ public class Gnonogram_CellGrid : DrawingArea
 		cursor_moved(r,c); //signal connected to controller
 		return false;
 	}
-//=========================================================================
-/*  	private Gdk.Point[] rect_points(int x, int y, int sx, int sy)
-	{
-		Gdk.Point p0,p1,p2,p3;
-		p0={x,y};
-		p1={x+sx,y};
-		p2={x+sx,y+sy};
-		p3={x,y+sy};
-		return {p0,p1,p2,p3,p0};
-	}*/
 //=========================================================================
 
 }	

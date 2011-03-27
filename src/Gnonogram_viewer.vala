@@ -39,25 +39,28 @@ public class Gnonogram_view : Gtk.Window
 	public signal void restartgame();
 	public signal void randomgame();
 	public signal void setcolors();
+	public signal void setfont();
 	public signal void setdifficulty(double grade);
 	public signal void resizegame();
 	public signal void togglegrid(bool active);
 	public signal void changefont(bool increase);
+	public signal void rotate_screen();
 	
 	private Gnonogram_controller _controller;
 	private Gtk.SpinButton _grade_spin;
-	private Gtk.VBox _image_vbox;
-	private Gtk.Statusbar _statusbar;
-	private uint _setting_context;
 	private Gtk.ToggleToolButton _hide_tool;
 	private Gtk.ToolButton _peek_tool;
 	private Gtk.Toolbar _toolbar;
 	private Gtk.CheckMenuItem _gridmenuitem;
+	private Gtk.MenuItem _rotatemenuitem;
 	private Gtk.MenuItem _peeksolutionmenuitem;
 	private Gtk.MenuItem _showsolutionmenuitem;
 	private Gtk.MenuItem _showworkingmenuitem;
 	private Gtk.MenuItem grademenuitem;
-	private string _name="New File";
+	private Label _name_label;
+	private Label _author_label;
+	private Label _date_label;
+	private Label _size_label;
 	
 	private Gtk.Image _logo;
 	
@@ -66,30 +69,43 @@ public class Gnonogram_view : Gtk.Window
 		
 		this.title = _("Gnonograms");
 		this.position = WindowPosition.CENTER;
+		this.resizable=false;
+		
 		delete_event.connect (()=>{quitgamesignal();return true;});		
 				
-		_image_vbox = new VBox(false,4);
+		var info_frame=new Frame(null);
+		var info_box = new VBox(false,0);
+		_name_label= new Label("");
+		set_name("New Game");
+		_name_label.set_alignment((float)0.0,(float)0.5);
+		_author_label = new Label("");
+		set_author("Unknown");
+		_author_label.set_alignment((float)0.0,(float)0.5);
+		_date_label=new Label("");
+		set_date(Utils.get_todays_date_string());
+		_date_label.set_alignment((float)0.0,(float)0.5);
+		_size_label=new Label("        ");
+		_size_label.set_alignment((float)0.0,(float)0.5);
+		info_box.add(_name_label);
+		info_box.add(_author_label);
+		info_box.add(_date_label);
+		info_box.add(_size_label);
+		info_frame.add(info_box);
+		
 		var table = new Table(2,2,false);
-		_logo = new Gtk.Image.from_file(Resource.icon_dir+"/gnonograms.png");
-		_image_vbox.add(_logo);
 		
 		var ao = AttachOptions.FILL|AttachOptions.EXPAND;
-		table.attach(_image_vbox,0,1,0,1,AttachOptions.SHRINK,AttachOptions.SHRINK,0,0);
+		table.attach(info_frame,0,1,0,1,AttachOptions.SHRINK,AttachOptions.SHRINK,0,0);
 		table.attach(rb,0,1,1,2,ao,ao,0,0);
 		table.attach(cb,1,2,0,1,ao,ao,0,0);
 		table.attach(dg,1,2,1,2,ao,ao,0,0);
 		
-		_statusbar = new Statusbar();
-		_statusbar.set_has_resize_grip(false);
-		_setting_context=_statusbar.get_context_id("Setting");
-
 		create_viewer_toolbar();
 		
 		var vbox = new VBox(false,0);
 		vbox.pack_start(create_viewer_menubar(),false,false,0);
 		vbox.pack_start(_toolbar,false,false,0);
 		vbox.pack_start(table,true,true,0);
-		vbox.pack_start(_statusbar,false,false,0);
 		
 		add(vbox);
 	}
@@ -160,15 +176,23 @@ public class Gnonogram_view : Gtk.Window
 		settingsmenuitem.set_submenu(settingssubmenu);
 			var colormenuitem=new MenuItem.with_mnemonic(_("_Colors"));
 			settingssubmenu.add(colormenuitem);	
+			var fontmenuitem=new MenuItem.with_mnemonic(_("_Font"));
+			settingssubmenu.add(fontmenuitem);	
 			var resizemenuitem=new MenuItem.with_mnemonic(_("_Resize"));
 			settingssubmenu.add(resizemenuitem);
 			grademenuitem=new MenuItem.with_mnemonic(_("_Difficulty"));
-			settingssubmenu.add(grademenuitem);				
+			settingssubmenu.add(grademenuitem);
+			var infomenuitem=new MenuItem.with_mnemonic(_("_Edit game description"));
+			settingssubmenu.add(infomenuitem);
+						
 		var viewsubmenu=new Menu();
 		viewmenuitem.set_submenu(viewsubmenu);
 			var fullscreenmenuitem=new CheckMenuItem.with_mnemonic(_("_Fullscreen"));
 			viewsubmenu.add(fullscreenmenuitem);
 			fullscreenmenuitem.set_active(false);
+			_rotatemenuitem=new MenuItem.with_mnemonic(_("_Rotate"));
+			viewsubmenu.add(_rotatemenuitem);
+			_rotatemenuitem.sensitive=false; //Until implemented
 			var toolbarmenuitem=new CheckMenuItem.with_mnemonic(_("_Toolbar"));
 			viewsubmenu.add(toolbarmenuitem);
 			toolbarmenuitem.set_active(true);
@@ -196,10 +220,13 @@ public class Gnonogram_view : Gtk.Window
 		computergeneratemenuitem.activate.connect(()=>{randomgame();});
 		
 		colormenuitem.activate.connect(()=>{setcolors();});
+		fontmenuitem.activate.connect(()=>{setfont();});
 		resizemenuitem.activate.connect(()=>{resizegame();});
 		grademenuitem.activate.connect(getdifficulty);
+		infomenuitem.activate.connect(editdescription);
 		
 		fullscreenmenuitem.activate.connect(toggle_fullscreen);
+		_rotatemenuitem.activate.connect(()=>{rotate_screen();});
 		toolbarmenuitem.activate.connect(toggle_toolbar);
 		_gridmenuitem.activate.connect(()=>{togglegrid(_gridmenuitem.active);});
 
@@ -235,7 +262,7 @@ public class Gnonogram_view : Gtk.Window
 		
 		var peek_icon=new Gtk.Image.from_file(Resource.icon_dir+"/eyeballs.png");
 		_peek_tool=new ToolButton(peek_icon,_("Peek"));
-		_peek_tool.set_tooltip_text(_("Show solution"));
+		_peek_tool.set_tooltip_text(_("Quick peek at solution"));
 		_toolbar.add(_peek_tool);
 		
 		var restart_tool=new ToolButton.from_stock(Stock.REFRESH);
@@ -309,14 +336,8 @@ public class Gnonogram_view : Gtk.Window
 //======================================================================
 	private void toggle_fullscreen(Gtk.MenuItem cmi)
 	{	
-		if (((Gtk.CheckMenuItem)cmi).active)
-		{
-			this.window.fullscreen();
-		}
-		else
-		{
-			this.window.unfullscreen();
-		}
+		if (((Gtk.CheckMenuItem)cmi).active) this.window.fullscreen();
+		else this.window.unfullscreen();
 	}
 //======================================================================
 	private void toggle_toolbar(Gtk.MenuItem cmi)
@@ -358,16 +379,73 @@ public class Gnonogram_view : Gtk.Window
                        null);
 	}
 //======================================================================
-	public void set_name(string name)
+	private void editdescription()
 	{
-		_statusbar.pop(_setting_context);
-		_statusbar.push(_setting_context,name);
-		_name=name;
-	}
+		var dialog = new Gtk.Dialog.with_buttons (
+		null,
+		null,
+		Gtk.DialogFlags.MODAL|Gtk.DialogFlags.DESTROY_WITH_PARENT,
+		_("Ok"), Gtk.ResponseType.OK,
+		_("Cancel"), Gtk.ResponseType.CANCEL
+		);
+		
+		var name_label=new Gtk.Label(_("Name of puzzle"));
+		var author_label=new Gtk.Label(_("Designed by"));
+		var date_label=new Gtk.Label(_("Date designed"));
 
-	public string get_name()
+		var label_box=new VBox(false,5);
+		label_box.add(name_label);
+		label_box.add(author_label);
+		label_box.add(date_label);
+
+		var name_entry = new Gtk.Entry();
+		name_entry.set_max_length(32);
+		name_entry.set_text(get_name());
+		var author_entry = new Gtk.Entry();
+		author_entry.set_max_length(32);
+		author_entry.set_text(get_author());
+		var date_entry = new Gtk.Entry();
+		date_entry.set_max_length(16);
+		date_entry.set_text(get_date());
+		
+		var entry_box=new VBox(false,5);
+		entry_box.add(name_entry);
+		entry_box.add(author_entry);
+		entry_box.add(date_entry);
+
+		var hbox=new HBox(false,5);
+		hbox.add(label_box);
+		hbox.add(entry_box);
+
+		dialog.vbox.add(hbox);
+		dialog.show_all();
+		if (dialog.run()==ResponseType.OK)
+		{
+			set_name(name_entry.get_text());
+			set_author(author_entry.get_text());
+			set_date(date_entry.get_text());
+		}
+		dialog.destroy();
+	}
+//======================================================================
+	public void set_name(string name){_name_label.set_text("Name: "+name+"  ");}
+	public string get_name(){return get_info_item(_name_label);	}
+//======================================================================
+	public void set_author(string author){_author_label.set_text("By:   "+author+"  ");}
+	public string get_author(){return get_info_item(_author_label);}
+//======================================================================
+	public void set_date(string date){_date_label.set_text("Date: "+date+"  ");}
+	public string get_date(){return get_info_item(_date_label);	}
+//======================================================================
+	private string get_info_item(Label l)
+	{	var s= l.get_text().slice(6,-1);
+		if (s.strip()=="") s="Unknown";
+		return s;
+	}
+//======================================================================
+	public void set_size(int r, int c)
 	{
-		return _name;
+		_size_label.set_text("Size: "+r.to_string()+"X"+c.to_string()+"  ");
 	}
 //======================================================================
 	public void set_grade_spin_value(double d)
@@ -380,19 +458,13 @@ public class Gnonogram_view : Gtk.Window
 		return _grade_spin.get_value();
 	}
 //======================================================================
-	public void resize_image_box(int width, int height){
-		_image_vbox.height_request=height;
-		_image_vbox.width_request=width;
-		_image_vbox.show();
-	}
-//======================================================================
 	public void state_has_changed(GameState gs)
-	{
+	{ //stdout.printf("Viewer state changed\n");
 		_peek_tool.sensitive=(gs==GameState.SOLVING);
 		_peeksolutionmenuitem.sensitive=_peek_tool.sensitive;
 		_showsolutionmenuitem.sensitive=_peek_tool.sensitive;
 		_showworkingmenuitem.sensitive=!_peek_tool.sensitive;
-		
+
 		if (gs==GameState.SETTING)
 		{
 			_hide_tool.set_tooltip_text(_("Hide the solution and start solving"));

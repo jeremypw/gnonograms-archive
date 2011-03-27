@@ -32,7 +32,6 @@
 #include <gio/gio.h>
 #include <gtk/gtk.h>
 #include <glib/gi18n-lib.h>
-#include <stdio.h>
 #include <gobject/gvaluecollector.h>
 
 
@@ -69,6 +68,8 @@ struct _Gnonogram_filereader {
 	gint col_clues_length1;
 	gchar* state;
 	gchar* name;
+	gchar* author;
+	gchar* date;
 	gboolean in_error;
 	gboolean has_dimensions;
 	gboolean has_row_clues;
@@ -76,7 +77,6 @@ struct _Gnonogram_filereader {
 	gboolean has_solution;
 	gboolean has_working;
 	gboolean has_state;
-	gboolean has_name;
 	gchar** solution;
 	gint solution_length1;
 	gchar** working;
@@ -154,14 +154,13 @@ static gboolean gnonogram_filereader_parse_gnonogram_headings_and_bodies (Gnonog
 static void _vala_array_add3 (gchar*** array, int* length, int* size, gchar* value);
 static void _vala_array_add4 (gchar*** array, int* length, int* size, gchar* value);
 static void _vala_array_add5 (gchar*** array, int* length, int* size, gchar* value);
-static gboolean gnonogram_filereader_get_picto_name (Gnonogram_filereader* self, const gchar* body);
+static gboolean gnonogram_filereader_get_game_description (Gnonogram_filereader* self, const gchar* body);
 static gboolean gnonogram_filereader_get_picto_dimensions (Gnonogram_filereader* self, const gchar* body, gboolean is_column);
 static gboolean gnonogram_filereader_parse_picto_grid_data (Gnonogram_filereader* self);
 static gboolean gnonogram_filereader_get_gnonogram_dimensions (Gnonogram_filereader* self, const gchar* body);
 static gboolean gnonogram_filereader_get_gnonogram_clues (Gnonogram_filereader* self, const gchar* body, gboolean is_column);
 static gboolean gnonogram_filereader_get_gnonogram_cellstate_array (Gnonogram_filereader* self, const gchar* body, gboolean is_solution);
 static gboolean gnonogram_filereader_get_gnonogram_state (Gnonogram_filereader* self, const gchar* body);
-static gboolean gnonogram_filereader_get_gnonogram_name (Gnonogram_filereader* self, const gchar* body);
 gchar** utils_remove_blank_lines (gchar** sa, int sa_length1, int* result_length1);
 static gchar* gnonogram_filereader_parse_gnonogram_clue (Gnonogram_filereader* self, const gchar* line);
 static void _vala_array_add6 (gchar*** array, int* length, int* size, gchar* value);
@@ -172,7 +171,8 @@ CellState* utils_cellstate_array_from_string (const gchar* s, int* result_length
 static gchar** _vala_array_dup3 (gchar** self, int length);
 static gchar** _vala_array_dup4 (gchar** self, int length);
 gchar* utils_gnonogram_string_from_hex_string (const gchar* s, gint pad_to_length);
-static gboolean gnonogram_filereader_set_name (Gnonogram_filereader* self, const gchar* s);
+gchar* utils_convert_html (const gchar* html);
+#define RESOURCE_BLOCKSEPARATOR ","
 static void gnonogram_filereader_finalize (Gnonogram_filereader* obj);
 static void _vala_array_destroy (gpointer array, gint array_length, GDestroyNotify destroy_func);
 static void _vala_array_free (gpointer array, gint array_length, GDestroyNotify destroy_func);
@@ -448,7 +448,12 @@ static gboolean gnonogram_filereader_parse_picto_game_file (Gnonogram_filereader
 	gboolean _tmp22_ = FALSE;
 	gboolean _tmp23_ = FALSE;
 	gboolean _tmp24_ = FALSE;
-	gboolean _tmp25_;
+	gchar* _tmp25_;
+	gchar* _tmp26_;
+	gchar* _tmp27_;
+	gchar* _tmp28_;
+	gboolean _tmp29_;
+	gboolean _tmp30_;
 	GError * _inner_error_ = NULL;
 	g_return_val_if_fail (IS_GNONOGRAM_FILEREADER (self), FALSE);
 	{
@@ -559,25 +564,29 @@ static gboolean gnonogram_filereader_parse_picto_game_file (Gnonogram_filereader
 		g_clear_error (&_inner_error_);
 		return FALSE;
 	}
-	_tmp25_ = gnonogram_filereader_get_picto_name (self, self->priv->bodies[0]);
-	if (_tmp25_) {
-		gboolean _tmp26_;
-		_tmp26_ = gnonogram_filereader_get_picto_dimensions (self, self->priv->bodies[3], TRUE);
-		_tmp24_ = _tmp26_;
+	_tmp25_ = g_strconcat (self->priv->bodies[0], "\n", NULL);
+	_tmp26_ = g_strconcat (_tmp25_, self->priv->bodies[1], NULL);
+	_tmp27_ = g_strconcat (_tmp26_, "\n", NULL);
+	_tmp28_ = g_strconcat (_tmp27_, self->priv->bodies[2], NULL);
+	_tmp29_ = gnonogram_filereader_get_game_description (self, _tmp28_);
+	if ((_tmp30_ = _tmp29_, _g_free0 (_tmp28_), _g_free0 (_tmp27_), _g_free0 (_tmp26_), _g_free0 (_tmp25_), _tmp30_)) {
+		gboolean _tmp31_;
+		_tmp31_ = gnonogram_filereader_get_picto_dimensions (self, self->priv->bodies[3], TRUE);
+		_tmp24_ = _tmp31_;
 	} else {
 		_tmp24_ = FALSE;
 	}
 	if (_tmp24_) {
-		gboolean _tmp27_;
-		_tmp27_ = gnonogram_filereader_get_picto_dimensions (self, self->priv->bodies[4], FALSE);
-		_tmp23_ = _tmp27_;
+		gboolean _tmp32_;
+		_tmp32_ = gnonogram_filereader_get_picto_dimensions (self, self->priv->bodies[4], FALSE);
+		_tmp23_ = _tmp32_;
 	} else {
 		_tmp23_ = FALSE;
 	}
 	if (_tmp23_) {
-		gboolean _tmp28_;
-		_tmp28_ = gnonogram_filereader_parse_picto_grid_data (self);
-		_tmp22_ = _tmp28_;
+		gboolean _tmp33_;
+		_tmp33_ = gnonogram_filereader_parse_picto_grid_data (self);
+		_tmp22_ = _tmp33_;
 	} else {
 		_tmp22_ = FALSE;
 	}
@@ -741,12 +750,12 @@ static gboolean gnonogram_filereader_parse_gnonogram_headings_and_bodies (Gnonog
 							break;
 						}
 					}
-				} else if (_tmp7_ == ((0 != _tmp7__label6) ? _tmp7__label6 : (_tmp7__label6 = g_quark_from_static_string ("NAM")))) {
+				} else if (_tmp7_ == ((0 != _tmp7__label6) ? _tmp7__label6 : (_tmp7__label6 = g_quark_from_static_string ("DES")))) {
 					switch (0) {
 						default:
 						{
 							gboolean _tmp14_;
-							_tmp14_ = gnonogram_filereader_get_gnonogram_name (self, self->priv->bodies[i]);
+							_tmp14_ = gnonogram_filereader_get_game_description (self, self->priv->bodies[i]);
 							self->in_error = !_tmp14_;
 							break;
 						}
@@ -837,7 +846,6 @@ static gboolean gnonogram_filereader_get_picto_dimensions (Gnonogram_filereader*
 	gint dim;
 	gboolean _tmp1_ = FALSE;
 	g_return_val_if_fail (IS_GNONOGRAM_FILEREADER (self), FALSE);
-	fprintf (stdout, "In get_dimensions\n");
 	if (body == NULL) {
 		result = FALSE;
 		return result;
@@ -1197,7 +1205,6 @@ static gboolean gnonogram_filereader_get_gnonogram_state (Gnonogram_filereader* 
 	gchar* _tmp7_;
 	gchar* _tmp8_;
 	g_return_val_if_fail (IS_GNONOGRAM_FILEREADER (self), FALSE);
-	fprintf (stdout, "In get_state\n");
 	if (body == NULL) {
 		result = FALSE;
 		return result;
@@ -1230,7 +1237,7 @@ static gboolean gnonogram_filereader_get_gnonogram_state (Gnonogram_filereader* 
 }
 
 
-static gboolean gnonogram_filereader_get_gnonogram_name (Gnonogram_filereader* self, const gchar* body) {
+static gboolean gnonogram_filereader_get_game_description (Gnonogram_filereader* self, const gchar* body) {
 	gboolean result = FALSE;
 	gchar** _tmp0_;
 	gchar** _tmp1_ = NULL;
@@ -1242,9 +1249,7 @@ static gboolean gnonogram_filereader_get_gnonogram_name (Gnonogram_filereader* s
 	gchar** s;
 	gint s_length1;
 	gint _s_size_;
-	gboolean _tmp6_;
 	g_return_val_if_fail (IS_GNONOGRAM_FILEREADER (self), FALSE);
-	fprintf (stdout, "In get_name\n");
 	if (body == NULL) {
 		result = FALSE;
 		return result;
@@ -1256,47 +1261,32 @@ static gboolean gnonogram_filereader_get_gnonogram_name (Gnonogram_filereader* s
 	s = (_tmp5_ = _tmp4_, _tmp2_ = (_vala_array_free (_tmp2_, _tmp2__length1, (GDestroyNotify) g_free), NULL), _tmp5_);
 	s_length1 = _tmp3_;
 	_s_size_ = _tmp3_;
-	_tmp6_ = gnonogram_filereader_set_name (self, s[0]);
-	result = _tmp6_;
-	s = (_vala_array_free (s, s_length1, (GDestroyNotify) g_free), NULL);
-	return result;
-}
-
-
-static gboolean gnonogram_filereader_get_picto_name (Gnonogram_filereader* self, const gchar* body) {
-	gboolean result = FALSE;
-	gboolean _tmp0_;
-	g_return_val_if_fail (IS_GNONOGRAM_FILEREADER (self), FALSE);
-	fprintf (stdout, "In get_name\n");
-	_tmp0_ = gnonogram_filereader_set_name (self, body);
-	result = _tmp0_;
-	return result;
-}
-
-
-static gboolean gnonogram_filereader_set_name (Gnonogram_filereader* self, const gchar* s) {
-	gboolean result = FALSE;
-	gboolean _tmp0_ = FALSE;
-	gchar* _tmp2_;
-	gchar* _tmp3_;
-	g_return_val_if_fail (IS_GNONOGRAM_FILEREADER (self), FALSE);
-	if (s == NULL) {
-		_tmp0_ = TRUE;
-	} else {
-		gint _tmp1_;
-		_tmp1_ = strlen (s);
-		_tmp0_ = _tmp1_ < 1;
+	if (s_length1 >= 1) {
+		gchar* _tmp6_ = NULL;
+		gchar* _tmp7_;
+		_tmp6_ = utils_convert_html (s[0]);
+		_tmp7_ = _tmp6_;
+		_g_free0 (self->name);
+		self->name = _tmp7_;
 	}
-	if (_tmp0_) {
-		result = FALSE;
-		return result;
+	if (s_length1 >= 2) {
+		gchar* _tmp8_ = NULL;
+		gchar* _tmp9_;
+		_tmp8_ = utils_convert_html (s[1]);
+		_tmp9_ = _tmp8_;
+		_g_free0 (self->author);
+		self->author = _tmp9_;
 	}
-	_tmp2_ = g_strdup (s);
-	_tmp3_ = _tmp2_;
-	_g_free0 (self->name);
-	self->name = _tmp3_;
-	self->has_name = TRUE;
+	if (s_length1 >= 3) {
+		gchar* _tmp10_;
+		gchar* _tmp11_;
+		_tmp10_ = g_strdup (s[2]);
+		_tmp11_ = _tmp10_;
+		_g_free0 (self->date);
+		self->date = _tmp11_;
+	}
 	result = TRUE;
+	s = (_vala_array_free (s, s_length1, (GDestroyNotify) g_free), NULL);
 	return result;
 }
 
@@ -1366,12 +1356,13 @@ static gchar* gnonogram_filereader_parse_gnonogram_clue (Gnonogram_filereader* s
 				} else {
 					zero_count++;
 				}
-				_tmp11_ = g_strconcat (s[i], " ", NULL);
+				_tmp11_ = g_strconcat (s[i], RESOURCE_BLOCKSEPARATOR, NULL);
 				g_string_append (sb, _tmp11_);
 				_g_free0 (_tmp11_);
 			}
 		}
 	}
+	g_string_truncate (sb, (gsize) (sb->len - 1));
 	_tmp12_ = g_strdup (sb->str);
 	result = _tmp12_;
 	_g_string_free0 (sb);
@@ -1498,9 +1489,18 @@ static void gnonogram_filereader_class_init (Gnonogram_filereaderClass * klass) 
 
 
 static void gnonogram_filereader_instance_init (Gnonogram_filereader * self) {
+	gchar* _tmp0_;
+	gchar* _tmp1_;
+	gchar* _tmp2_;
 	self->priv = GNONOGRAM_FILEREADER_GET_PRIVATE (self);
 	self->rows = 0;
 	self->cols = 0;
+	_tmp0_ = g_strdup ("");
+	self->name = _tmp0_;
+	_tmp1_ = g_strdup ("");
+	self->author = _tmp1_;
+	_tmp2_ = g_strdup ("");
+	self->date = _tmp2_;
 	self->in_error = FALSE;
 	self->has_dimensions = FALSE;
 	self->has_row_clues = FALSE;
@@ -1508,7 +1508,6 @@ static void gnonogram_filereader_instance_init (Gnonogram_filereader * self) {
 	self->has_solution = FALSE;
 	self->has_working = FALSE;
 	self->has_state = FALSE;
-	self->has_name = FALSE;
 	self->ref_count = 1;
 }
 
@@ -1521,6 +1520,8 @@ static void gnonogram_filereader_finalize (Gnonogram_filereader* obj) {
 	self->col_clues = (_vala_array_free (self->col_clues, self->col_clues_length1, (GDestroyNotify) g_free), NULL);
 	_g_free0 (self->state);
 	_g_free0 (self->name);
+	_g_free0 (self->author);
+	_g_free0 (self->date);
 	self->solution = (_vala_array_free (self->solution, self->solution_length1, (GDestroyNotify) g_free), NULL);
 	self->working = (_vala_array_free (self->working, self->working_length1, (GDestroyNotify) g_free), NULL);
 	_g_object_unref0 (self->priv->stream);

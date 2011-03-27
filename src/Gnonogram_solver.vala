@@ -105,7 +105,6 @@
 		if (solved())	return pass;
 		else return 0;
 	}
-	
 //======================================================================
 	public bool solved()
 	{

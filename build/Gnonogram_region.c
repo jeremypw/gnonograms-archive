@@ -181,8 +181,8 @@ static gint gnonogram_region_blocks_available (Gnonogram_region* self);
 static gint gnonogram_region_count_owners_and_empty (Gnonogram_region* self, gint cell);
 static gboolean gnonogram_region_invalid_data (Gnonogram_region* self, gint start, gint block, gint length);
 static gboolean gnonogram_region_cell_filled (Gnonogram_region* self, gint cell);
-void my2_dcell_array_get_region (My2DCellArray* self, gint idx, gboolean iscolumn, CellState** sa, int* sa_length1, gint start, gint end);
-void my2_dcell_array_set_region (My2DCellArray* self, gint idx, gboolean iscolumn, CellState* sa, int sa_length1, gint start, gint end);
+void my2_dcell_array_get_array (My2DCellArray* self, gint idx, gboolean iscolumn, CellState** sa, int* sa_length1, gint start);
+void my2_dcell_array_set_array (My2DCellArray* self, gint idx, gboolean iscolumn, CellState* sa, int sa_length1, gint start);
 static void gnonogram_region_finalize (Gnonogram_region* obj);
 
 
@@ -2318,7 +2318,7 @@ static gboolean gnonogram_region_totals_changed (Gnonogram_region* self) {
 
 static void gnonogram_region_get_status (Gnonogram_region* self) {
 	g_return_if_fail (IS_GNONOGRAM_REGION (self));
-	my2_dcell_array_get_region (self->priv->_grid, self->priv->_index, self->priv->_is_column, &self->priv->_temp_status, &self->priv->_temp_status_length1, 0, -1);
+	my2_dcell_array_get_array (self->priv->_grid, self->priv->_index, self->priv->_is_column, &self->priv->_temp_status, &self->priv->_temp_status_length1, 0);
 	{
 		gint i;
 		i = 0;
@@ -2393,7 +2393,7 @@ static void gnonogram_region_put_status (Gnonogram_region* self) {
 			}
 		}
 	}
-	my2_dcell_array_set_region (self->priv->_grid, self->priv->_index, self->priv->_is_column, self->priv->_temp_status, self->priv->_temp_status_length1, 0, -1);
+	my2_dcell_array_set_array (self->priv->_grid, self->priv->_index, self->priv->_is_column, self->priv->_temp_status, self->priv->_temp_status_length1, 0);
 }
 
 

@@ -87,11 +87,9 @@ Gnonogram_label* gnonogram_label_construct (GType object_type, const gchar* labe
 	self->priv->l = _tmp1_;
 	if (is_column) {
 		gtk_label_set_angle (self->priv->l, (gdouble) 270);
-		gtk_misc_set_alignment (GTK_MISC (self->priv->l), (gfloat) 0.0, (gfloat) 1.0);
-		gtk_misc_set_padding (GTK_MISC (self->priv->l), 0, 5);
+		gtk_misc_set_alignment (GTK_MISC (self->priv->l), (gfloat) 0.5, (gfloat) 1.0);
 	} else {
-		gtk_misc_set_alignment (GTK_MISC (self->priv->l), (gfloat) 1.0, (gfloat) 1.0);
-		gtk_misc_set_padding (GTK_MISC (self->priv->l), 5, 0);
+		gtk_misc_set_alignment (GTK_MISC (self->priv->l), (gfloat) 1.0, (gfloat) 0.5);
 	}
 	gtk_container_add (GTK_CONTAINER (self), GTK_WIDGET (self->priv->l));
 	return self;

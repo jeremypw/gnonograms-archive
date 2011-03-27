@@ -26,6 +26,7 @@
 using Gtk;
 using Gdk;
 
+// Defined by configure and make
 extern const string _PREFIX;
 extern const string _VERSION;
 extern const string GETTEXT_PACKAGE;
@@ -36,25 +37,31 @@ namespace Resource
 	public const string DEFAULTGAMENAME = "New game";
 	public const string GAMEFILEEXTENSION=".gno";
 	public const string POSITIONFILENAME="currentposition";
-	public const string BLOCKSEPARATOR="   ";
 
+//Performace/capability related parameters	
 	public static int MAXROWSIZE = 100; // max number rows
 	public static int MAXCOLSIZE = 100; //max number of cols
 	public static int MAXGRADE = 10; //max grade level
 	public static int MAXTRIES = 30; //max attempts to generate solvable game
+
+//Appearance related parameters	
 	public static int MINFONTSIZE=6;
 	public static int MAXFONTSIZE=16;
+	public static string font_desc;
+	public static double CELLOFFSET_NOGRID=0.0;
+	public static double CELLOFFSET_WITHGRID=2.0;
+	public static double[] MINORGRIDDASH;
+	public static Gdk.Color[,] colors;
+	public const string BLOCKSEPARATOR=",";
 	
+//File location related parameters		
 	public static string exec_dir;
 	public static string resource_dir;
 	public static string game_dir;
 	public static string game_name;
 	public static string icon_dir;
 	public static string prefix;
-	
 	public static bool installed;
-
-	public static Gdk.Color[,] colors;
 
 	public static void init(string arg0)
 	{
@@ -97,6 +104,9 @@ namespace Resource
 		Gdk.Color.parse(config_colors[1], out colors[setting,(int)CellState.FILLED]);
 		Gdk.Color.parse(config_colors[2], out colors[solving,(int)CellState.EMPTY]);
 		Gdk.Color.parse(config_colors[3], out colors[solving,(int)CellState.FILLED]);
+
+		font_desc="Ariel";
+		MINORGRIDDASH={0.5, 3.0};		
 	}
 	
 	private static bool is_installed (string exec_dir)
@@ -122,7 +132,7 @@ namespace Resource
 		var fset_label=new Gtk.Label(_("Color of filled cell when setting"));
 		var eset_label=new Gtk.Label(_("Color of empty cell when setting"));
 		var fsolve_label=new Gtk.Label(_("Color of filled cell when solving"));
-		var esolve_label=new Gtk.Label(_("Color of filled cell when solving"));
+		var esolve_label=new Gtk.Label(_("Color of empty cell when solving"));
 
 		var label_box=new VBox(false,5);
 		label_box.add(fset_label);
@@ -150,15 +160,22 @@ namespace Resource
 		hbox.add(button_box);
 		
 		dialog.vbox.add(hbox);
-		
 		dialog.show_all();
-		dialog.run();
-
-		filled_setting.get_color(out colors[(int) GameState.SETTING, (int) CellState.FILLED]);
-		empty_setting.get_color(out colors[(int) GameState.SETTING, (int) CellState.EMPTY]);
-		filled_solving.get_color(out colors[(int) GameState.SOLVING, (int) CellState.FILLED]);
-		empty_solving.get_color(out colors[(int) GameState.SOLVING, (int) CellState.EMPTY]);
-
+		if (dialog.run()==ResponseType.OK)
+		{
+			filled_setting.get_color(out colors[(int) GameState.SETTING, (int) CellState.FILLED]);
+			empty_setting.get_color(out colors[(int) GameState.SETTING, (int) CellState.EMPTY]);
+			filled_solving.get_color(out colors[(int) GameState.SOLVING, (int) CellState.FILLED]);
+			empty_solving.get_color(out colors[(int) GameState.SOLVING, (int) CellState.EMPTY]);
+		}
 		dialog.destroy();
 	}
+
+	public void set_font()
+	{
+		var dialog = new FontSelectionDialog("Select font used for the clues");
+		if (dialog.run()!=ResponseType.CANCEL)	font_desc=dialog.get_font_name();
+		dialog.destroy();
+	}
+
 }

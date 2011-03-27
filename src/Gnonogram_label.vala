@@ -24,30 +24,22 @@
  
  using Gtk;
 
-//class Gnonogram_label : Gtk.Frame {
 class Gnonogram_label : Gtk.EventBox {
-//	private Gtk.EventBox e; //this allows the label to be highlighted
 	private Gtk.Label l;
 
 	public Gnonogram_label(string label_text, bool is_column)
 	{
-//		set_shadow_type(Gtk.ShadowType.NONE);
-//		e=new EventBox();
 		l=new Gtk.Label(label_text);
 
 		if (is_column)
 		{
 			l.set_angle(270);
-			l.set_alignment((float)0.0, (float)1.0);
-			l.set_padding(0,5);
+			l.set_alignment((float)0.5,(float)1.0);
 		}
 		else
 		{
-			l.set_alignment((float)1.0, (float)1.0);
-			l.set_padding(5,0);
+			l.set_alignment((float)1.0, (float)0.5);
 		}
-//		e.add(l);
-//		add(e);
 		add(l);
 	}
 

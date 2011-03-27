@@ -28,10 +28,10 @@
 #include <glib.h>
 #include <glib-object.h>
 #include <gtk/gtk.h>
-#include <stdlib.h>
-#include <string.h>
 #include <glib/gi18n-lib.h>
 #include <gdk/gdk.h>
+#include <stdlib.h>
+#include <string.h>
 #include <float.h>
 #include <math.h>
 
@@ -58,7 +58,6 @@ typedef struct _Gnonogram_controller Gnonogram_controller;
 typedef struct _Gnonogram_controllerClass Gnonogram_controllerClass;
 #define _gnonogram_controller_unref0(var) ((var == NULL) ? NULL : (var = (gnonogram_controller_unref (var), NULL)))
 #define _g_object_unref0(var) ((var == NULL) ? NULL : (var = (g_object_unref (var), NULL)))
-#define _g_free0(var) (var = (g_free (var), NULL))
 
 #define TYPE_GNONOGRAM_LABELBOX (gnonogram_labelbox_get_type ())
 #define GNONOGRAM_LABELBOX(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), TYPE_GNONOGRAM_LABELBOX, Gnonogram_LabelBox))
@@ -79,6 +78,7 @@ typedef struct _Gnonogram_LabelBoxClass Gnonogram_LabelBoxClass;
 
 typedef struct _Gnonogram_CellGrid Gnonogram_CellGrid;
 typedef struct _Gnonogram_CellGridClass Gnonogram_CellGridClass;
+#define _g_free0(var) (var = (g_free (var), NULL))
 typedef struct _Block1Data Block1Data;
 typedef struct _Block2Data Block2Data;
 
@@ -96,18 +96,19 @@ struct _Gnonogram_viewClass {
 struct _Gnonogram_viewPrivate {
 	Gnonogram_controller* _controller;
 	GtkSpinButton* _grade_spin;
-	GtkVBox* _image_vbox;
-	GtkStatusbar* _statusbar;
-	guint _setting_context;
 	GtkToggleToolButton* _hide_tool;
 	GtkToolButton* _peek_tool;
 	GtkToolbar* _toolbar;
 	GtkCheckMenuItem* _gridmenuitem;
+	GtkMenuItem* _rotatemenuitem;
 	GtkMenuItem* _peeksolutionmenuitem;
 	GtkMenuItem* _showsolutionmenuitem;
 	GtkMenuItem* _showworkingmenuitem;
 	GtkMenuItem* grademenuitem;
-	gchar* _name;
+	GtkLabel* _name_label;
+	GtkLabel* _author_label;
+	GtkLabel* _date_label;
+	GtkLabel* _size_label;
 	GtkImage* _logo;
 };
 
@@ -152,6 +153,10 @@ Gnonogram_view* gnonogram_view_new (Gnonogram_LabelBox* rb, Gnonogram_LabelBox* 
 Gnonogram_view* gnonogram_view_construct (GType object_type, Gnonogram_LabelBox* rb, Gnonogram_LabelBox* cb, Gnonogram_CellGrid* dg, Gnonogram_controller* controller);
 static gboolean _lambda0_ (Gnonogram_view* self);
 static gboolean __lambda0__gtk_widget_delete_event (GtkWidget* _sender, GdkEvent* event, gpointer self);
+void gnonogram_view_set_name (Gnonogram_view* self, const gchar* name);
+void gnonogram_view_set_author (Gnonogram_view* self, const gchar* author);
+void gnonogram_view_set_date (Gnonogram_view* self, const gchar* date);
+gchar* utils_get_todays_date_string (void);
 static void gnonogram_view_create_viewer_toolbar (Gnonogram_view* self);
 static GtkMenuBar* gnonogram_view_create_viewer_menubar (Gnonogram_view* self);
 static void _lambda14_ (Gnonogram_view* self);
@@ -182,14 +187,20 @@ static void _lambda26_ (Gnonogram_view* self);
 static void __lambda26__gtk_menu_item_activate (GtkMenuItem* _sender, gpointer self);
 static void _lambda27_ (Gnonogram_view* self);
 static void __lambda27__gtk_menu_item_activate (GtkMenuItem* _sender, gpointer self);
-static void gnonogram_view_getdifficulty (Gnonogram_view* self);
-static void _gnonogram_view_getdifficulty_gtk_menu_item_activate (GtkMenuItem* _sender, gpointer self);
-static void gnonogram_view_toggle_fullscreen (Gnonogram_view* self, GtkMenuItem* cmi);
-static void _gnonogram_view_toggle_fullscreen_gtk_menu_item_activate (GtkMenuItem* _sender, gpointer self);
-static void gnonogram_view_toggle_toolbar (Gnonogram_view* self, GtkMenuItem* cmi);
-static void _gnonogram_view_toggle_toolbar_gtk_menu_item_activate (GtkMenuItem* _sender, gpointer self);
 static void _lambda28_ (Gnonogram_view* self);
 static void __lambda28__gtk_menu_item_activate (GtkMenuItem* _sender, gpointer self);
+static void gnonogram_view_getdifficulty (Gnonogram_view* self);
+static void _gnonogram_view_getdifficulty_gtk_menu_item_activate (GtkMenuItem* _sender, gpointer self);
+static void gnonogram_view_editdescription (Gnonogram_view* self);
+static void _gnonogram_view_editdescription_gtk_menu_item_activate (GtkMenuItem* _sender, gpointer self);
+static void gnonogram_view_toggle_fullscreen (Gnonogram_view* self, GtkMenuItem* cmi);
+static void _gnonogram_view_toggle_fullscreen_gtk_menu_item_activate (GtkMenuItem* _sender, gpointer self);
+static void _lambda29_ (Gnonogram_view* self);
+static void __lambda29__gtk_menu_item_activate (GtkMenuItem* _sender, gpointer self);
+static void gnonogram_view_toggle_toolbar (Gnonogram_view* self, GtkMenuItem* cmi);
+static void _gnonogram_view_toggle_toolbar_gtk_menu_item_activate (GtkMenuItem* _sender, gpointer self);
+static void _lambda30_ (Gnonogram_view* self);
+static void __lambda30__gtk_menu_item_activate (GtkMenuItem* _sender, gpointer self);
 static void gnonogram_view_show_about (Gnonogram_view* self);
 static void _gnonogram_view_show_about_gtk_menu_item_activate (GtkMenuItem* _sender, gpointer self);
 static Block1Data* block1_data_ref (Block1Data* _data1_);
@@ -225,10 +236,12 @@ static void block2_data_unref (Block2Data* _data2_);
 static gboolean _lambda10_ (Block2Data* _data2_);
 void gnonogram_view_set_grade_spin_value (Gnonogram_view* self, gdouble d);
 static gboolean __lambda10__gtk_widget_leave_notify_event (GtkWidget* _sender, GdkEventCrossing* event, gpointer self);
-void gnonogram_view_set_name (Gnonogram_view* self, const gchar* name);
 gchar* gnonogram_view_get_name (Gnonogram_view* self);
+gchar* gnonogram_view_get_author (Gnonogram_view* self);
+gchar* gnonogram_view_get_date (Gnonogram_view* self);
+static gchar* gnonogram_view_get_info_item (Gnonogram_view* self, GtkLabel* l);
+void gnonogram_view_set_size (Gnonogram_view* self, gint r, gint c);
 gdouble gnonogram_view_get_grade_spin_value (Gnonogram_view* self);
-void gnonogram_view_resize_image_box (Gnonogram_view* self, gint width, gint height);
 GType game_state_get_type (void) G_GNUC_CONST;
 void gnonogram_view_state_has_changed (Gnonogram_view* self, GameState gs);
 static void gnonogram_view_finalize (GObject* obj);
@@ -261,21 +274,27 @@ Gnonogram_view* gnonogram_view_construct (GType object_type, Gnonogram_LabelBox*
 	Gnonogram_controller* _tmp0_;
 	Gnonogram_controller* _tmp1_;
 	const gchar* _tmp2_ = NULL;
-	GtkVBox* _tmp3_ = NULL;
-	GtkVBox* _tmp4_;
-	GtkTable* _tmp5_ = NULL;
+	GtkFrame* _tmp3_ = NULL;
+	GtkFrame* info_frame;
+	GtkVBox* _tmp4_ = NULL;
+	GtkVBox* info_box;
+	GtkLabel* _tmp5_ = NULL;
+	GtkLabel* _tmp6_;
+	GtkLabel* _tmp7_ = NULL;
+	GtkLabel* _tmp8_;
+	GtkLabel* _tmp9_ = NULL;
+	GtkLabel* _tmp10_;
+	gchar* _tmp11_ = NULL;
+	gchar* _tmp12_;
+	GtkLabel* _tmp13_ = NULL;
+	GtkLabel* _tmp14_;
+	GtkTable* _tmp15_ = NULL;
 	GtkTable* table;
-	gchar* _tmp6_;
-	GtkImage* _tmp7_ = NULL;
-	GtkImage* _tmp8_;
 	GtkAttachOptions ao;
-	GtkStatusbar* _tmp9_ = NULL;
-	GtkStatusbar* _tmp10_;
-	guint _tmp11_;
-	GtkVBox* _tmp12_ = NULL;
+	GtkVBox* _tmp16_ = NULL;
 	GtkVBox* vbox;
-	GtkMenuBar* _tmp13_ = NULL;
-	GtkMenuBar* _tmp14_;
+	GtkMenuBar* _tmp17_ = NULL;
+	GtkMenuBar* _tmp18_;
 	g_return_val_if_fail (IS_GNONOGRAM_LABELBOX (rb), NULL);
 	g_return_val_if_fail (IS_GNONOGRAM_LABELBOX (cb), NULL);
 	g_return_val_if_fail (IS_GNONOGRAM_CELLGRID (dg), NULL);
@@ -288,45 +307,64 @@ Gnonogram_view* gnonogram_view_construct (GType object_type, Gnonogram_LabelBox*
 	_tmp2_ = _ ("Gnonograms");
 	gtk_window_set_title (GTK_WINDOW (self), _tmp2_);
 	GTK_WINDOW (self)->position = (guint) GTK_WIN_POS_CENTER;
+	gtk_window_set_resizable (GTK_WINDOW (self), FALSE);
 	g_signal_connect_object (GTK_WIDGET (self), "delete-event", (GCallback) __lambda0__gtk_widget_delete_event, self, 0);
-	_tmp3_ = (GtkVBox*) gtk_vbox_new (FALSE, 4);
-	_tmp4_ = g_object_ref_sink (_tmp3_);
-	_g_object_unref0 (self->priv->_image_vbox);
-	self->priv->_image_vbox = _tmp4_;
-	_tmp5_ = (GtkTable*) gtk_table_new ((guint) 2, (guint) 2, FALSE);
-	table = g_object_ref_sink (_tmp5_);
-	_tmp6_ = g_strconcat (resource_icon_dir, "/gnonograms.png", NULL);
-	_tmp7_ = (GtkImage*) gtk_image_new_from_file (_tmp6_);
+	_tmp3_ = (GtkFrame*) gtk_frame_new (NULL);
+	info_frame = g_object_ref_sink (_tmp3_);
+	_tmp4_ = (GtkVBox*) gtk_vbox_new (FALSE, 0);
+	info_box = g_object_ref_sink (_tmp4_);
+	_tmp5_ = (GtkLabel*) gtk_label_new ("");
+	_tmp6_ = g_object_ref_sink (_tmp5_);
+	_g_object_unref0 (self->priv->_name_label);
+	self->priv->_name_label = _tmp6_;
+	gnonogram_view_set_name (self, "New Game");
+	gtk_misc_set_alignment (GTK_MISC (self->priv->_name_label), (gfloat) 0.0, (gfloat) 0.5);
+	_tmp7_ = (GtkLabel*) gtk_label_new ("");
 	_tmp8_ = g_object_ref_sink (_tmp7_);
-	_g_object_unref0 (self->priv->_logo);
-	self->priv->_logo = _tmp8_;
-	_g_free0 (_tmp6_);
-	gtk_container_add (GTK_CONTAINER (self->priv->_image_vbox), GTK_WIDGET (self->priv->_logo));
+	_g_object_unref0 (self->priv->_author_label);
+	self->priv->_author_label = _tmp8_;
+	gnonogram_view_set_author (self, "Unknown");
+	gtk_misc_set_alignment (GTK_MISC (self->priv->_author_label), (gfloat) 0.0, (gfloat) 0.5);
+	_tmp9_ = (GtkLabel*) gtk_label_new ("");
+	_tmp10_ = g_object_ref_sink (_tmp9_);
+	_g_object_unref0 (self->priv->_date_label);
+	self->priv->_date_label = _tmp10_;
+	_tmp11_ = utils_get_todays_date_string ();
+	_tmp12_ = _tmp11_;
+	gnonogram_view_set_date (self, _tmp12_);
+	_g_free0 (_tmp12_);
+	gtk_misc_set_alignment (GTK_MISC (self->priv->_date_label), (gfloat) 0.0, (gfloat) 0.5);
+	_tmp13_ = (GtkLabel*) gtk_label_new ("        ");
+	_tmp14_ = g_object_ref_sink (_tmp13_);
+	_g_object_unref0 (self->priv->_size_label);
+	self->priv->_size_label = _tmp14_;
+	gtk_misc_set_alignment (GTK_MISC (self->priv->_size_label), (gfloat) 0.0, (gfloat) 0.5);
+	gtk_container_add (GTK_CONTAINER (info_box), GTK_WIDGET (self->priv->_name_label));
+	gtk_container_add (GTK_CONTAINER (info_box), GTK_WIDGET (self->priv->_author_label));
+	gtk_container_add (GTK_CONTAINER (info_box), GTK_WIDGET (self->priv->_date_label));
+	gtk_container_add (GTK_CONTAINER (info_box), GTK_WIDGET (self->priv->_size_label));
+	gtk_container_add (GTK_CONTAINER (info_frame), GTK_WIDGET (info_box));
+	_tmp15_ = (GtkTable*) gtk_table_new ((guint) 2, (guint) 2, FALSE);
+	table = g_object_ref_sink (_tmp15_);
 	ao = GTK_FILL | GTK_EXPAND;
-	gtk_table_attach (table, GTK_WIDGET (self->priv->_image_vbox), (guint) 0, (guint) 1, (guint) 0, (guint) 1, GTK_SHRINK, GTK_SHRINK, (guint) 0, (guint) 0);
+	gtk_table_attach (table, GTK_WIDGET (info_frame), (guint) 0, (guint) 1, (guint) 0, (guint) 1, GTK_SHRINK, GTK_SHRINK, (guint) 0, (guint) 0);
 	gtk_table_attach (table, GTK_WIDGET (rb), (guint) 0, (guint) 1, (guint) 1, (guint) 2, ao, ao, (guint) 0, (guint) 0);
 	gtk_table_attach (table, GTK_WIDGET (cb), (guint) 1, (guint) 2, (guint) 0, (guint) 1, ao, ao, (guint) 0, (guint) 0);
 	gtk_table_attach (table, GTK_WIDGET (dg), (guint) 1, (guint) 2, (guint) 1, (guint) 2, ao, ao, (guint) 0, (guint) 0);
-	_tmp9_ = (GtkStatusbar*) gtk_statusbar_new ();
-	_tmp10_ = g_object_ref_sink (_tmp9_);
-	_g_object_unref0 (self->priv->_statusbar);
-	self->priv->_statusbar = _tmp10_;
-	gtk_statusbar_set_has_resize_grip (self->priv->_statusbar, FALSE);
-	_tmp11_ = gtk_statusbar_get_context_id (self->priv->_statusbar, "Setting");
-	self->priv->_setting_context = _tmp11_;
 	gnonogram_view_create_viewer_toolbar (self);
-	_tmp12_ = (GtkVBox*) gtk_vbox_new (FALSE, 0);
-	vbox = g_object_ref_sink (_tmp12_);
-	_tmp13_ = gnonogram_view_create_viewer_menubar (self);
-	_tmp14_ = _tmp13_;
-	gtk_box_pack_start (GTK_BOX (vbox), GTK_WIDGET (_tmp14_), FALSE, FALSE, (guint) 0);
-	_g_object_unref0 (_tmp14_);
+	_tmp16_ = (GtkVBox*) gtk_vbox_new (FALSE, 0);
+	vbox = g_object_ref_sink (_tmp16_);
+	_tmp17_ = gnonogram_view_create_viewer_menubar (self);
+	_tmp18_ = _tmp17_;
+	gtk_box_pack_start (GTK_BOX (vbox), GTK_WIDGET (_tmp18_), FALSE, FALSE, (guint) 0);
+	_g_object_unref0 (_tmp18_);
 	gtk_box_pack_start (GTK_BOX (vbox), GTK_WIDGET (self->priv->_toolbar), FALSE, FALSE, (guint) 0);
 	gtk_box_pack_start (GTK_BOX (vbox), GTK_WIDGET (table), TRUE, TRUE, (guint) 0);
-	gtk_box_pack_start (GTK_BOX (vbox), GTK_WIDGET (self->priv->_statusbar), FALSE, FALSE, (guint) 0);
 	gtk_container_add (GTK_CONTAINER (self), GTK_WIDGET (vbox));
 	_g_object_unref0 (vbox);
 	_g_object_unref0 (table);
+	_g_object_unref0 (info_box);
+	_g_object_unref0 (info_frame);
 	return self;
 }
 
@@ -467,7 +505,7 @@ static void __lambda26__gtk_menu_item_activate (GtkMenuItem* _sender, gpointer s
 
 
 static void _lambda27_ (Gnonogram_view* self) {
-	g_signal_emit_by_name (self, "resizegame");
+	g_signal_emit_by_name (self, "setfont");
 }
 
 
@@ -476,8 +514,23 @@ static void __lambda27__gtk_menu_item_activate (GtkMenuItem* _sender, gpointer s
 }
 
 
+static void _lambda28_ (Gnonogram_view* self) {
+	g_signal_emit_by_name (self, "resizegame");
+}
+
+
+static void __lambda28__gtk_menu_item_activate (GtkMenuItem* _sender, gpointer self) {
+	_lambda28_ (self);
+}
+
+
 static void _gnonogram_view_getdifficulty_gtk_menu_item_activate (GtkMenuItem* _sender, gpointer self) {
 	gnonogram_view_getdifficulty (self);
+}
+
+
+static void _gnonogram_view_editdescription_gtk_menu_item_activate (GtkMenuItem* _sender, gpointer self) {
+	gnonogram_view_editdescription (self);
 }
 
 
@@ -486,20 +539,30 @@ static void _gnonogram_view_toggle_fullscreen_gtk_menu_item_activate (GtkMenuIte
 }
 
 
+static void _lambda29_ (Gnonogram_view* self) {
+	g_signal_emit_by_name (self, "rotate-screen");
+}
+
+
+static void __lambda29__gtk_menu_item_activate (GtkMenuItem* _sender, gpointer self) {
+	_lambda29_ (self);
+}
+
+
 static void _gnonogram_view_toggle_toolbar_gtk_menu_item_activate (GtkMenuItem* _sender, gpointer self) {
 	gnonogram_view_toggle_toolbar (self, _sender);
 }
 
 
-static void _lambda28_ (Gnonogram_view* self) {
+static void _lambda30_ (Gnonogram_view* self) {
 	gboolean _tmp0_;
 	_tmp0_ = gtk_check_menu_item_get_active (self->priv->_gridmenuitem);
 	g_signal_emit_by_name (self, "togglegrid", _tmp0_);
 }
 
 
-static void __lambda28__gtk_menu_item_activate (GtkMenuItem* _sender, gpointer self) {
-	_lambda28_ (self);
+static void __lambda30__gtk_menu_item_activate (GtkMenuItem* _sender, gpointer self) {
+	_lambda30_ (self);
 }
 
 
@@ -590,25 +653,34 @@ static GtkMenuBar* gnonogram_view_create_viewer_menubar (Gnonogram_view* self) {
 	GtkMenuItem* colormenuitem;
 	const gchar* _tmp52_ = NULL;
 	GtkMenuItem* _tmp53_ = NULL;
-	GtkMenuItem* resizemenuitem;
+	GtkMenuItem* fontmenuitem;
 	const gchar* _tmp54_ = NULL;
 	GtkMenuItem* _tmp55_ = NULL;
-	GtkMenuItem* _tmp56_;
-	GtkMenu* _tmp57_ = NULL;
+	GtkMenuItem* resizemenuitem;
+	const gchar* _tmp56_ = NULL;
+	GtkMenuItem* _tmp57_ = NULL;
+	GtkMenuItem* _tmp58_;
+	const gchar* _tmp59_ = NULL;
+	GtkMenuItem* _tmp60_ = NULL;
+	GtkMenuItem* infomenuitem;
+	GtkMenu* _tmp61_ = NULL;
 	GtkMenu* viewsubmenu;
-	const gchar* _tmp58_ = NULL;
-	GtkCheckMenuItem* _tmp59_ = NULL;
-	GtkCheckMenuItem* fullscreenmenuitem;
-	const gchar* _tmp60_ = NULL;
-	GtkCheckMenuItem* _tmp61_ = NULL;
-	GtkCheckMenuItem* toolbarmenuitem;
 	const gchar* _tmp62_ = NULL;
 	GtkCheckMenuItem* _tmp63_ = NULL;
-	GtkCheckMenuItem* _tmp64_;
-	GtkMenu* _tmp65_ = NULL;
+	GtkCheckMenuItem* fullscreenmenuitem;
+	const gchar* _tmp64_ = NULL;
+	GtkMenuItem* _tmp65_ = NULL;
+	GtkMenuItem* _tmp66_;
+	const gchar* _tmp67_ = NULL;
+	GtkCheckMenuItem* _tmp68_ = NULL;
+	GtkCheckMenuItem* toolbarmenuitem;
+	const gchar* _tmp69_ = NULL;
+	GtkCheckMenuItem* _tmp70_ = NULL;
+	GtkCheckMenuItem* _tmp71_;
+	GtkMenu* _tmp72_ = NULL;
 	GtkMenu* helpsubmenu;
-	const gchar* _tmp66_ = NULL;
-	GtkMenuItem* _tmp67_ = NULL;
+	const gchar* _tmp73_ = NULL;
+	GtkMenuItem* _tmp74_ = NULL;
 	GtkMenuItem* aboutmenuitem;
 	g_return_val_if_fail (IS_GNONOGRAM_VIEW (self), NULL);
 	_tmp0_ = (GtkMenuBar*) gtk_menu_bar_new ();
@@ -723,42 +795,57 @@ static GtkMenuBar* gnonogram_view_create_viewer_menubar (Gnonogram_view* self) {
 	_tmp51_ = (GtkMenuItem*) gtk_menu_item_new_with_mnemonic (_tmp50_);
 	colormenuitem = g_object_ref_sink (_tmp51_);
 	gtk_container_add (GTK_CONTAINER (settingssubmenu), GTK_WIDGET (colormenuitem));
-	_tmp52_ = _ ("_Resize");
+	_tmp52_ = _ ("_Font");
 	_tmp53_ = (GtkMenuItem*) gtk_menu_item_new_with_mnemonic (_tmp52_);
-	resizemenuitem = g_object_ref_sink (_tmp53_);
-	gtk_container_add (GTK_CONTAINER (settingssubmenu), GTK_WIDGET (resizemenuitem));
-	_tmp54_ = _ ("_Difficulty");
+	fontmenuitem = g_object_ref_sink (_tmp53_);
+	gtk_container_add (GTK_CONTAINER (settingssubmenu), GTK_WIDGET (fontmenuitem));
+	_tmp54_ = _ ("_Resize");
 	_tmp55_ = (GtkMenuItem*) gtk_menu_item_new_with_mnemonic (_tmp54_);
-	_tmp56_ = g_object_ref_sink (_tmp55_);
+	resizemenuitem = g_object_ref_sink (_tmp55_);
+	gtk_container_add (GTK_CONTAINER (settingssubmenu), GTK_WIDGET (resizemenuitem));
+	_tmp56_ = _ ("_Difficulty");
+	_tmp57_ = (GtkMenuItem*) gtk_menu_item_new_with_mnemonic (_tmp56_);
+	_tmp58_ = g_object_ref_sink (_tmp57_);
 	_g_object_unref0 (self->priv->grademenuitem);
-	self->priv->grademenuitem = _tmp56_;
+	self->priv->grademenuitem = _tmp58_;
 	gtk_container_add (GTK_CONTAINER (settingssubmenu), GTK_WIDGET (self->priv->grademenuitem));
-	_tmp57_ = (GtkMenu*) gtk_menu_new ();
-	viewsubmenu = g_object_ref_sink (_tmp57_);
+	_tmp59_ = _ ("_Edit game description");
+	_tmp60_ = (GtkMenuItem*) gtk_menu_item_new_with_mnemonic (_tmp59_);
+	infomenuitem = g_object_ref_sink (_tmp60_);
+	gtk_container_add (GTK_CONTAINER (settingssubmenu), GTK_WIDGET (infomenuitem));
+	_tmp61_ = (GtkMenu*) gtk_menu_new ();
+	viewsubmenu = g_object_ref_sink (_tmp61_);
 	gtk_menu_item_set_submenu (viewmenuitem, GTK_WIDGET (viewsubmenu));
-	_tmp58_ = _ ("_Fullscreen");
-	_tmp59_ = (GtkCheckMenuItem*) gtk_check_menu_item_new_with_mnemonic (_tmp58_);
-	fullscreenmenuitem = g_object_ref_sink (_tmp59_);
+	_tmp62_ = _ ("_Fullscreen");
+	_tmp63_ = (GtkCheckMenuItem*) gtk_check_menu_item_new_with_mnemonic (_tmp62_);
+	fullscreenmenuitem = g_object_ref_sink (_tmp63_);
 	gtk_container_add (GTK_CONTAINER (viewsubmenu), GTK_WIDGET (fullscreenmenuitem));
 	gtk_check_menu_item_set_active (fullscreenmenuitem, FALSE);
-	_tmp60_ = _ ("_Toolbar");
-	_tmp61_ = (GtkCheckMenuItem*) gtk_check_menu_item_new_with_mnemonic (_tmp60_);
-	toolbarmenuitem = g_object_ref_sink (_tmp61_);
+	_tmp64_ = _ ("_Rotate");
+	_tmp65_ = (GtkMenuItem*) gtk_menu_item_new_with_mnemonic (_tmp64_);
+	_tmp66_ = g_object_ref_sink (_tmp65_);
+	_g_object_unref0 (self->priv->_rotatemenuitem);
+	self->priv->_rotatemenuitem = _tmp66_;
+	gtk_container_add (GTK_CONTAINER (viewsubmenu), GTK_WIDGET (self->priv->_rotatemenuitem));
+	gtk_widget_set_sensitive (GTK_WIDGET (self->priv->_rotatemenuitem), FALSE);
+	_tmp67_ = _ ("_Toolbar");
+	_tmp68_ = (GtkCheckMenuItem*) gtk_check_menu_item_new_with_mnemonic (_tmp67_);
+	toolbarmenuitem = g_object_ref_sink (_tmp68_);
 	gtk_container_add (GTK_CONTAINER (viewsubmenu), GTK_WIDGET (toolbarmenuitem));
 	gtk_check_menu_item_set_active (toolbarmenuitem, TRUE);
-	_tmp62_ = _ ("_Grid");
-	_tmp63_ = (GtkCheckMenuItem*) gtk_check_menu_item_new_with_mnemonic (_tmp62_);
-	_tmp64_ = g_object_ref_sink (_tmp63_);
+	_tmp69_ = _ ("_Grid");
+	_tmp70_ = (GtkCheckMenuItem*) gtk_check_menu_item_new_with_mnemonic (_tmp69_);
+	_tmp71_ = g_object_ref_sink (_tmp70_);
 	_g_object_unref0 (self->priv->_gridmenuitem);
-	self->priv->_gridmenuitem = _tmp64_;
+	self->priv->_gridmenuitem = _tmp71_;
 	gtk_container_add (GTK_CONTAINER (viewsubmenu), GTK_WIDGET (self->priv->_gridmenuitem));
 	gtk_check_menu_item_set_active (self->priv->_gridmenuitem, FALSE);
-	_tmp65_ = (GtkMenu*) gtk_menu_new ();
-	helpsubmenu = g_object_ref_sink (_tmp65_);
+	_tmp72_ = (GtkMenu*) gtk_menu_new ();
+	helpsubmenu = g_object_ref_sink (_tmp72_);
 	gtk_menu_item_set_submenu (helpmenuitem, GTK_WIDGET (helpsubmenu));
-	_tmp66_ = _ ("About");
-	_tmp67_ = (GtkMenuItem*) gtk_menu_item_new_with_mnemonic (_tmp66_);
-	aboutmenuitem = g_object_ref_sink (_tmp67_);
+	_tmp73_ = _ ("About");
+	_tmp74_ = (GtkMenuItem*) gtk_menu_item_new_with_mnemonic (_tmp73_);
+	aboutmenuitem = g_object_ref_sink (_tmp74_);
 	gtk_container_add (GTK_CONTAINER (helpsubmenu), GTK_WIDGET (aboutmenuitem));
 	g_signal_connect_object (newmenuitem, "activate", (GCallback) __lambda14__gtk_menu_item_activate, self, 0);
 	g_signal_connect_object (loadpuzzlemenuitem, "activate", (GCallback) __lambda15__gtk_menu_item_activate, self, 0);
@@ -773,11 +860,14 @@ static GtkMenuBar* gnonogram_view_create_viewer_menubar (Gnonogram_view* self) {
 	g_signal_connect_object (computersolvemenuitem, "activate", (GCallback) __lambda24__gtk_menu_item_activate, self, 0);
 	g_signal_connect_object (computergeneratemenuitem, "activate", (GCallback) __lambda25__gtk_menu_item_activate, self, 0);
 	g_signal_connect_object (colormenuitem, "activate", (GCallback) __lambda26__gtk_menu_item_activate, self, 0);
-	g_signal_connect_object (resizemenuitem, "activate", (GCallback) __lambda27__gtk_menu_item_activate, self, 0);
+	g_signal_connect_object (fontmenuitem, "activate", (GCallback) __lambda27__gtk_menu_item_activate, self, 0);
+	g_signal_connect_object (resizemenuitem, "activate", (GCallback) __lambda28__gtk_menu_item_activate, self, 0);
 	g_signal_connect_object (self->priv->grademenuitem, "activate", (GCallback) _gnonogram_view_getdifficulty_gtk_menu_item_activate, self, 0);
+	g_signal_connect_object (infomenuitem, "activate", (GCallback) _gnonogram_view_editdescription_gtk_menu_item_activate, self, 0);
 	g_signal_connect_object (GTK_MENU_ITEM (fullscreenmenuitem), "activate", (GCallback) _gnonogram_view_toggle_fullscreen_gtk_menu_item_activate, self, 0);
+	g_signal_connect_object (self->priv->_rotatemenuitem, "activate", (GCallback) __lambda29__gtk_menu_item_activate, self, 0);
 	g_signal_connect_object (GTK_MENU_ITEM (toolbarmenuitem), "activate", (GCallback) _gnonogram_view_toggle_toolbar_gtk_menu_item_activate, self, 0);
-	g_signal_connect_object (GTK_MENU_ITEM (self->priv->_gridmenuitem), "activate", (GCallback) __lambda28__gtk_menu_item_activate, self, 0);
+	g_signal_connect_object (GTK_MENU_ITEM (self->priv->_gridmenuitem), "activate", (GCallback) __lambda30__gtk_menu_item_activate, self, 0);
 	g_signal_connect_object (aboutmenuitem, "activate", (GCallback) _gnonogram_view_show_about_gtk_menu_item_activate, self, 0);
 	result = menubar;
 	_g_object_unref0 (aboutmenuitem);
@@ -785,7 +875,9 @@ static GtkMenuBar* gnonogram_view_create_viewer_menubar (Gnonogram_view* self) {
 	_g_object_unref0 (toolbarmenuitem);
 	_g_object_unref0 (fullscreenmenuitem);
 	_g_object_unref0 (viewsubmenu);
+	_g_object_unref0 (infomenuitem);
 	_g_object_unref0 (resizemenuitem);
+	_g_object_unref0 (fontmenuitem);
 	_g_object_unref0 (colormenuitem);
 	_g_object_unref0 (settingssubmenu);
 	_g_object_unref0 (computergeneratemenuitem);
@@ -1083,7 +1175,7 @@ static void gnonogram_view_create_viewer_toolbar (Gnonogram_view* self) {
 	_tmp17_ = g_object_ref_sink (_tmp16_);
 	_g_object_unref0 (self->priv->_peek_tool);
 	self->priv->_peek_tool = _tmp17_;
-	_tmp18_ = _ ("Show solution");
+	_tmp18_ = _ ("Quick peek at solution");
 	gtk_tool_item_set_tooltip_text (GTK_TOOL_ITEM (self->priv->_peek_tool), _tmp18_);
 	gtk_container_add (GTK_CONTAINER (self->priv->_toolbar), GTK_WIDGET (self->priv->_peek_tool));
 	_tmp19_ = (GtkToolButton*) gtk_tool_button_new_from_stock (GTK_STOCK_REFRESH);
@@ -1313,27 +1405,286 @@ static void gnonogram_view_show_about (Gnonogram_view* self) {
 }
 
 
+static void gnonogram_view_editdescription (Gnonogram_view* self) {
+	const gchar* _tmp0_ = NULL;
+	const gchar* _tmp1_ = NULL;
+	GtkDialog* _tmp2_ = NULL;
+	GtkDialog* dialog;
+	const gchar* _tmp3_ = NULL;
+	GtkLabel* _tmp4_ = NULL;
+	GtkLabel* name_label;
+	const gchar* _tmp5_ = NULL;
+	GtkLabel* _tmp6_ = NULL;
+	GtkLabel* author_label;
+	const gchar* _tmp7_ = NULL;
+	GtkLabel* _tmp8_ = NULL;
+	GtkLabel* date_label;
+	GtkVBox* _tmp9_ = NULL;
+	GtkVBox* label_box;
+	GtkEntry* _tmp10_ = NULL;
+	GtkEntry* name_entry;
+	gchar* _tmp11_ = NULL;
+	gchar* _tmp12_;
+	GtkEntry* _tmp13_ = NULL;
+	GtkEntry* author_entry;
+	gchar* _tmp14_ = NULL;
+	gchar* _tmp15_;
+	GtkEntry* _tmp16_ = NULL;
+	GtkEntry* date_entry;
+	gchar* _tmp17_ = NULL;
+	gchar* _tmp18_;
+	GtkVBox* _tmp19_ = NULL;
+	GtkVBox* entry_box;
+	GtkHBox* _tmp20_ = NULL;
+	GtkHBox* hbox;
+	gint _tmp21_;
+	g_return_if_fail (IS_GNONOGRAM_VIEW (self));
+	_tmp0_ = _ ("Ok");
+	_tmp1_ = _ ("Cancel");
+	_tmp2_ = (GtkDialog*) gtk_dialog_new_with_buttons (NULL, NULL, GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT, _tmp0_, GTK_RESPONSE_OK, _tmp1_, GTK_RESPONSE_CANCEL, NULL);
+	dialog = g_object_ref_sink (_tmp2_);
+	_tmp3_ = _ ("Name of puzzle");
+	_tmp4_ = (GtkLabel*) gtk_label_new (_tmp3_);
+	name_label = g_object_ref_sink (_tmp4_);
+	_tmp5_ = _ ("Designed by");
+	_tmp6_ = (GtkLabel*) gtk_label_new (_tmp5_);
+	author_label = g_object_ref_sink (_tmp6_);
+	_tmp7_ = _ ("Date designed");
+	_tmp8_ = (GtkLabel*) gtk_label_new (_tmp7_);
+	date_label = g_object_ref_sink (_tmp8_);
+	_tmp9_ = (GtkVBox*) gtk_vbox_new (FALSE, 5);
+	label_box = g_object_ref_sink (_tmp9_);
+	gtk_container_add (GTK_CONTAINER (label_box), GTK_WIDGET (name_label));
+	gtk_container_add (GTK_CONTAINER (label_box), GTK_WIDGET (author_label));
+	gtk_container_add (GTK_CONTAINER (label_box), GTK_WIDGET (date_label));
+	_tmp10_ = (GtkEntry*) gtk_entry_new ();
+	name_entry = g_object_ref_sink (_tmp10_);
+	gtk_entry_set_max_length (name_entry, 32);
+	_tmp11_ = gnonogram_view_get_name (self);
+	_tmp12_ = _tmp11_;
+	gtk_entry_set_text (name_entry, _tmp12_);
+	_g_free0 (_tmp12_);
+	_tmp13_ = (GtkEntry*) gtk_entry_new ();
+	author_entry = g_object_ref_sink (_tmp13_);
+	gtk_entry_set_max_length (author_entry, 32);
+	_tmp14_ = gnonogram_view_get_author (self);
+	_tmp15_ = _tmp14_;
+	gtk_entry_set_text (author_entry, _tmp15_);
+	_g_free0 (_tmp15_);
+	_tmp16_ = (GtkEntry*) gtk_entry_new ();
+	date_entry = g_object_ref_sink (_tmp16_);
+	gtk_entry_set_max_length (date_entry, 16);
+	_tmp17_ = gnonogram_view_get_date (self);
+	_tmp18_ = _tmp17_;
+	gtk_entry_set_text (date_entry, _tmp18_);
+	_g_free0 (_tmp18_);
+	_tmp19_ = (GtkVBox*) gtk_vbox_new (FALSE, 5);
+	entry_box = g_object_ref_sink (_tmp19_);
+	gtk_container_add (GTK_CONTAINER (entry_box), GTK_WIDGET (name_entry));
+	gtk_container_add (GTK_CONTAINER (entry_box), GTK_WIDGET (author_entry));
+	gtk_container_add (GTK_CONTAINER (entry_box), GTK_WIDGET (date_entry));
+	_tmp20_ = (GtkHBox*) gtk_hbox_new (FALSE, 5);
+	hbox = g_object_ref_sink (_tmp20_);
+	gtk_container_add (GTK_CONTAINER (hbox), GTK_WIDGET (label_box));
+	gtk_container_add (GTK_CONTAINER (hbox), GTK_WIDGET (entry_box));
+	gtk_container_add (GTK_CONTAINER (dialog->vbox), GTK_WIDGET (hbox));
+	gtk_widget_show_all (GTK_WIDGET (dialog));
+	_tmp21_ = gtk_dialog_run (dialog);
+	if (_tmp21_ == GTK_RESPONSE_OK) {
+		const gchar* _tmp22_ = NULL;
+		const gchar* _tmp23_ = NULL;
+		const gchar* _tmp24_ = NULL;
+		_tmp22_ = gtk_entry_get_text (name_entry);
+		gnonogram_view_set_name (self, _tmp22_);
+		_tmp23_ = gtk_entry_get_text (author_entry);
+		gnonogram_view_set_author (self, _tmp23_);
+		_tmp24_ = gtk_entry_get_text (date_entry);
+		gnonogram_view_set_date (self, _tmp24_);
+	}
+	gtk_object_destroy (GTK_OBJECT (dialog));
+	_g_object_unref0 (hbox);
+	_g_object_unref0 (entry_box);
+	_g_object_unref0 (date_entry);
+	_g_object_unref0 (author_entry);
+	_g_object_unref0 (name_entry);
+	_g_object_unref0 (label_box);
+	_g_object_unref0 (date_label);
+	_g_object_unref0 (author_label);
+	_g_object_unref0 (name_label);
+	_g_object_unref0 (dialog);
+}
+
+
 void gnonogram_view_set_name (Gnonogram_view* self, const gchar* name) {
 	gchar* _tmp0_;
 	gchar* _tmp1_;
 	g_return_if_fail (IS_GNONOGRAM_VIEW (self));
 	g_return_if_fail (name != NULL);
-	gtk_statusbar_pop (self->priv->_statusbar, self->priv->_setting_context);
-	gtk_statusbar_push (self->priv->_statusbar, self->priv->_setting_context, name);
-	_tmp0_ = g_strdup (name);
-	_tmp1_ = _tmp0_;
-	_g_free0 (self->priv->_name);
-	self->priv->_name = _tmp1_;
+	_tmp0_ = g_strconcat ("Name: ", name, NULL);
+	_tmp1_ = g_strconcat (_tmp0_, "  ", NULL);
+	gtk_label_set_text (self->priv->_name_label, _tmp1_);
+	_g_free0 (_tmp1_);
+	_g_free0 (_tmp0_);
 }
 
 
 gchar* gnonogram_view_get_name (Gnonogram_view* self) {
 	gchar* result = NULL;
-	gchar* _tmp0_;
+	gchar* _tmp0_ = NULL;
 	g_return_val_if_fail (IS_GNONOGRAM_VIEW (self), NULL);
-	_tmp0_ = g_strdup (self->priv->_name);
+	_tmp0_ = gnonogram_view_get_info_item (self, self->priv->_name_label);
 	result = _tmp0_;
 	return result;
+}
+
+
+void gnonogram_view_set_author (Gnonogram_view* self, const gchar* author) {
+	gchar* _tmp0_;
+	gchar* _tmp1_;
+	g_return_if_fail (IS_GNONOGRAM_VIEW (self));
+	g_return_if_fail (author != NULL);
+	_tmp0_ = g_strconcat ("By:   ", author, NULL);
+	_tmp1_ = g_strconcat (_tmp0_, "  ", NULL);
+	gtk_label_set_text (self->priv->_author_label, _tmp1_);
+	_g_free0 (_tmp1_);
+	_g_free0 (_tmp0_);
+}
+
+
+gchar* gnonogram_view_get_author (Gnonogram_view* self) {
+	gchar* result = NULL;
+	gchar* _tmp0_ = NULL;
+	g_return_val_if_fail (IS_GNONOGRAM_VIEW (self), NULL);
+	_tmp0_ = gnonogram_view_get_info_item (self, self->priv->_author_label);
+	result = _tmp0_;
+	return result;
+}
+
+
+void gnonogram_view_set_date (Gnonogram_view* self, const gchar* date) {
+	gchar* _tmp0_;
+	gchar* _tmp1_;
+	g_return_if_fail (IS_GNONOGRAM_VIEW (self));
+	g_return_if_fail (date != NULL);
+	_tmp0_ = g_strconcat ("Date: ", date, NULL);
+	_tmp1_ = g_strconcat (_tmp0_, "  ", NULL);
+	gtk_label_set_text (self->priv->_date_label, _tmp1_);
+	_g_free0 (_tmp1_);
+	_g_free0 (_tmp0_);
+}
+
+
+gchar* gnonogram_view_get_date (Gnonogram_view* self) {
+	gchar* result = NULL;
+	gchar* _tmp0_ = NULL;
+	g_return_val_if_fail (IS_GNONOGRAM_VIEW (self), NULL);
+	_tmp0_ = gnonogram_view_get_info_item (self, self->priv->_date_label);
+	result = _tmp0_;
+	return result;
+}
+
+
+static gchar* string_slice (const gchar* self, glong start, glong end) {
+	gchar* result = NULL;
+	gint _tmp0_;
+	glong string_length;
+	gboolean _tmp1_ = FALSE;
+	gboolean _tmp2_ = FALSE;
+	gchar* _tmp3_ = NULL;
+	g_return_val_if_fail (self != NULL, NULL);
+	_tmp0_ = strlen (self);
+	string_length = (glong) _tmp0_;
+	if (start < 0) {
+		start = string_length + start;
+	}
+	if (end < 0) {
+		end = string_length + end;
+	}
+	if (start >= 0) {
+		_tmp1_ = start <= string_length;
+	} else {
+		_tmp1_ = FALSE;
+	}
+	g_return_val_if_fail (_tmp1_, NULL);
+	if (end >= 0) {
+		_tmp2_ = end <= string_length;
+	} else {
+		_tmp2_ = FALSE;
+	}
+	g_return_val_if_fail (_tmp2_, NULL);
+	g_return_val_if_fail (start <= end, NULL);
+	_tmp3_ = g_strndup (((gchar*) self) + start, (gsize) (end - start));
+	result = _tmp3_;
+	return result;
+}
+
+
+static gchar* string_strip (const gchar* self) {
+	gchar* result = NULL;
+	gchar* _tmp0_ = NULL;
+	gchar* _result_;
+	g_return_val_if_fail (self != NULL, NULL);
+	_tmp0_ = g_strdup (self);
+	_result_ = _tmp0_;
+	g_strstrip (_result_);
+	result = _result_;
+	return result;
+}
+
+
+static gchar* gnonogram_view_get_info_item (Gnonogram_view* self, GtkLabel* l) {
+	gchar* result = NULL;
+	const gchar* _tmp0_ = NULL;
+	gchar* _tmp1_ = NULL;
+	gchar* s;
+	gchar* _tmp2_ = NULL;
+	gchar* _tmp3_;
+	gboolean _tmp4_;
+	g_return_val_if_fail (IS_GNONOGRAM_VIEW (self), NULL);
+	g_return_val_if_fail (GTK_IS_LABEL (l), NULL);
+	_tmp0_ = gtk_label_get_text (l);
+	_tmp1_ = string_slice (_tmp0_, (glong) 6, (glong) (-1));
+	s = _tmp1_;
+	_tmp2_ = string_strip (s);
+	_tmp3_ = _tmp2_;
+	if ((_tmp4_ = g_strcmp0 (_tmp3_, "") == 0, _g_free0 (_tmp3_), _tmp4_)) {
+		gchar* _tmp5_;
+		gchar* _tmp6_;
+		_tmp5_ = g_strdup ("Unknown");
+		_tmp6_ = _tmp5_;
+		_g_free0 (s);
+		s = _tmp6_;
+	}
+	result = s;
+	return result;
+}
+
+
+void gnonogram_view_set_size (Gnonogram_view* self, gint r, gint c) {
+	gchar* _tmp0_ = NULL;
+	gchar* _tmp1_;
+	gchar* _tmp2_;
+	gchar* _tmp3_;
+	gchar* _tmp4_ = NULL;
+	gchar* _tmp5_;
+	gchar* _tmp6_;
+	gchar* _tmp7_;
+	g_return_if_fail (IS_GNONOGRAM_VIEW (self));
+	_tmp0_ = g_strdup_printf ("%i", r);
+	_tmp1_ = _tmp0_;
+	_tmp2_ = g_strconcat ("Size: ", _tmp1_, NULL);
+	_tmp3_ = g_strconcat (_tmp2_, "X", NULL);
+	_tmp4_ = g_strdup_printf ("%i", c);
+	_tmp5_ = _tmp4_;
+	_tmp6_ = g_strconcat (_tmp3_, _tmp5_, NULL);
+	_tmp7_ = g_strconcat (_tmp6_, "  ", NULL);
+	gtk_label_set_text (self->priv->_size_label, _tmp7_);
+	_g_free0 (_tmp7_);
+	_g_free0 (_tmp6_);
+	_g_free0 (_tmp5_);
+	_g_free0 (_tmp3_);
+	_g_free0 (_tmp2_);
+	_g_free0 (_tmp1_);
 }
 
 
@@ -1352,14 +1703,6 @@ gdouble gnonogram_view_get_grade_spin_value (Gnonogram_view* self) {
 	_tmp0_ = gtk_spin_button_get_value (self->priv->_grade_spin);
 	result = _tmp0_;
 	return result;
-}
-
-
-void gnonogram_view_resize_image_box (Gnonogram_view* self, gint width, gint height) {
-	g_return_if_fail (IS_GNONOGRAM_VIEW (self));
-	g_object_set (GTK_WIDGET (self->priv->_image_vbox), "height-request", height, NULL);
-	g_object_set (GTK_WIDGET (self->priv->_image_vbox), "width-request", width, NULL);
-	gtk_widget_show (GTK_WIDGET (self->priv->_image_vbox));
 }
 
 
@@ -1408,18 +1751,17 @@ static void gnonogram_view_class_init (Gnonogram_viewClass * klass) {
 	g_signal_new ("restartgame", TYPE_GNONOGRAM_VIEW, G_SIGNAL_RUN_LAST, 0, NULL, NULL, g_cclosure_marshal_VOID__VOID, G_TYPE_NONE, 0);
 	g_signal_new ("randomgame", TYPE_GNONOGRAM_VIEW, G_SIGNAL_RUN_LAST, 0, NULL, NULL, g_cclosure_marshal_VOID__VOID, G_TYPE_NONE, 0);
 	g_signal_new ("setcolors", TYPE_GNONOGRAM_VIEW, G_SIGNAL_RUN_LAST, 0, NULL, NULL, g_cclosure_marshal_VOID__VOID, G_TYPE_NONE, 0);
+	g_signal_new ("setfont", TYPE_GNONOGRAM_VIEW, G_SIGNAL_RUN_LAST, 0, NULL, NULL, g_cclosure_marshal_VOID__VOID, G_TYPE_NONE, 0);
 	g_signal_new ("setdifficulty", TYPE_GNONOGRAM_VIEW, G_SIGNAL_RUN_LAST, 0, NULL, NULL, g_cclosure_marshal_VOID__DOUBLE, G_TYPE_NONE, 1, G_TYPE_DOUBLE);
 	g_signal_new ("resizegame", TYPE_GNONOGRAM_VIEW, G_SIGNAL_RUN_LAST, 0, NULL, NULL, g_cclosure_marshal_VOID__VOID, G_TYPE_NONE, 0);
 	g_signal_new ("togglegrid", TYPE_GNONOGRAM_VIEW, G_SIGNAL_RUN_LAST, 0, NULL, NULL, g_cclosure_marshal_VOID__BOOLEAN, G_TYPE_NONE, 1, G_TYPE_BOOLEAN);
 	g_signal_new ("changefont", TYPE_GNONOGRAM_VIEW, G_SIGNAL_RUN_LAST, 0, NULL, NULL, g_cclosure_marshal_VOID__BOOLEAN, G_TYPE_NONE, 1, G_TYPE_BOOLEAN);
+	g_signal_new ("rotate_screen", TYPE_GNONOGRAM_VIEW, G_SIGNAL_RUN_LAST, 0, NULL, NULL, g_cclosure_marshal_VOID__VOID, G_TYPE_NONE, 0);
 }
 
 
 static void gnonogram_view_instance_init (Gnonogram_view * self) {
-	gchar* _tmp0_;
 	self->priv = GNONOGRAM_VIEW_GET_PRIVATE (self);
-	_tmp0_ = g_strdup ("New File");
-	self->priv->_name = _tmp0_;
 }
 
 
@@ -1428,17 +1770,19 @@ static void gnonogram_view_finalize (GObject* obj) {
 	self = GNONOGRAM_VIEW (obj);
 	_gnonogram_controller_unref0 (self->priv->_controller);
 	_g_object_unref0 (self->priv->_grade_spin);
-	_g_object_unref0 (self->priv->_image_vbox);
-	_g_object_unref0 (self->priv->_statusbar);
 	_g_object_unref0 (self->priv->_hide_tool);
 	_g_object_unref0 (self->priv->_peek_tool);
 	_g_object_unref0 (self->priv->_toolbar);
 	_g_object_unref0 (self->priv->_gridmenuitem);
+	_g_object_unref0 (self->priv->_rotatemenuitem);
 	_g_object_unref0 (self->priv->_peeksolutionmenuitem);
 	_g_object_unref0 (self->priv->_showsolutionmenuitem);
 	_g_object_unref0 (self->priv->_showworkingmenuitem);
 	_g_object_unref0 (self->priv->grademenuitem);
-	_g_free0 (self->priv->_name);
+	_g_object_unref0 (self->priv->_name_label);
+	_g_object_unref0 (self->priv->_author_label);
+	_g_object_unref0 (self->priv->_date_label);
+	_g_object_unref0 (self->priv->_size_label);
 	_g_object_unref0 (self->priv->_logo);
 	G_OBJECT_CLASS (gnonogram_view_parent_class)->finalize (obj);
 }

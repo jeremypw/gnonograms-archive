@@ -30,7 +30,9 @@ public class Gnonogram_filereader {
 	public string[] row_clues;
 	public string[] col_clues;
 	public string state;
-	public string name;
+	public string name="";
+	public string author="";
+	public string date="";
 	public bool in_error=false;
 	public bool has_dimensions=false;
 	public bool has_row_clues=false;
@@ -38,7 +40,6 @@ public class Gnonogram_filereader {
 	public bool has_solution=false;
 	public bool has_working=false;
 	public bool has_state=false;
-	public bool has_name=false;
 	public string[] solution;
 	public string[] working;
 
@@ -127,7 +128,7 @@ public class Gnonogram_filereader {
 		}
 		catch (Error e) {Utils.show_warning_dialog(e.message); return false;}
 		
-		return get_picto_name(bodies[0]) &&
+		return get_game_description(bodies[0]+"\n"+bodies[1]+"\n"+bodies[2]) &&
 				get_picto_dimensions(bodies[3],true) &&
 				get_picto_dimensions(bodies[4],false) &&
 				parse_picto_grid_data();
@@ -156,8 +157,8 @@ public class Gnonogram_filereader {
 					in_error=!get_gnonogram_cellstate_array(bodies[i],false); break;
 				case "STA" :
 					in_error=!get_gnonogram_state(bodies[i]); break;
-				case "NAM" :
-					in_error=!get_gnonogram_name(bodies[i]); break;
+				case "DES" :
+					in_error=!get_game_description(bodies[i]); break;
 				default :
 					Utils.show_warning_dialog(@"Unrecognised heading $heading ");
 					in_error=true;
@@ -184,7 +185,7 @@ public class Gnonogram_filereader {
 	}
 //=========================================================================
 	private bool get_picto_dimensions(string? body, bool is_column)
-	{	stdout.printf("In get_dimensions\n");
+	{	//stdout.printf("In get_dimensions\n");
 		if (body==null) return false;
 		int dim = int.parse(body);
 		//stdout.printf("Dimension is %d\n",dim);
@@ -248,7 +249,6 @@ public class Gnonogram_filereader {
 //=========================================================================	
 	private bool parse_picto_grid_data()
 	{//stdout.printf("In parse grid data\n");
-		//stdout.printf("Data null %s\n", (picto_grid_data==null).to_string());
 		if (picto_grid_data==null) return false;
 		picto_grid_data=Utils.remove_blank_lines(picto_grid_data);
 		//stdout.printf("Length of data is %d\n", picto_grid_data.length);
@@ -256,10 +256,7 @@ public class Gnonogram_filereader {
 		solution = new string[rows];
 		for (int i=0; i<rows;i++)
 		{
-			//stdout.printf(@"picto_grid_data[$i] $(picto_grid_data[i])\n");
 			string arr = Utils.gnonogram_string_from_hex_string(picto_grid_data[i], cols);
-			//stdout.printf("Length of arr is %d\n", arr.length);
-			//stdout.printf("arr is %s\n", arr);
 			solution[i]=arr;
 		}
 		has_solution=true;
@@ -268,7 +265,7 @@ public class Gnonogram_filereader {
 	}
 //=========================================================================	
 	private bool get_gnonogram_state(string? body)
-	{stdout.printf("In get_state\n");
+	{  //stdout.printf("In get_state\n");
 		if (body==null) return false;
 		string[] s = Utils.remove_blank_lines(body.split("\n"));
 		if (s==null||s.length<1) return false;
@@ -277,26 +274,16 @@ public class Gnonogram_filereader {
 		return true;
 	}
 //=========================================================================
-	private bool get_gnonogram_name(string? body)
-	{stdout.printf("In get_name\n");
+	private bool get_game_description(string? body)
+	{  //stdout.printf("In get_description\n");
 		if (body==null) return false;
 		string[] s = Utils.remove_blank_lines(body.split("\n"));
-		return set_name(s[0]);		
-	}
-//=========================================================================
-	private bool get_picto_name(string? body)
-	{stdout.printf("In get_name\n");
-		return set_name(body);
-	}
-//=========================================================================
-	private bool set_name(string? s)
-	{
-		if (s==null||s.length<1) return false;
-		name=s;
-		//stdout.printf(@"Name: $name\n");
-		has_name=true;
+		if (s.length>=1) name=Utils.convert_html(s[0]);
+		if (s.length>=2) author=Utils.convert_html(s[1]);
+		if (s.length>=3) date=s[2];
+		//stdout.printf(@"Name $name Author $author Date $date\n");
 		return true;
-	}	
+	}
 //=========================================================================
 	private string parse_gnonogram_clue(string line)
 	{
@@ -312,9 +299,9 @@ public class Gnonogram_filereader {
 			if (b==0 && zero_count>0) continue;
 			else zero_count++;
 			
-			sb.append(s[i]+" ");
+			sb.append(s[i]+Resource.BLOCKSEPARATOR);
 		}
+		sb.truncate(sb.len-1);
 		return sb.str;
-	}
-	
+	}	
 }

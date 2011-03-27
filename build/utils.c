@@ -42,6 +42,7 @@
 
 #define TYPE_CELL_STATE (cell_state_get_type ())
 #define _g_string_free0(var) ((var == NULL) ? NULL : (var = (g_string_free (var, TRUE), NULL)))
+#define _g_regex_unref0(var) ((var == NULL) ? NULL : (var = (g_regex_unref (var), NULL)))
 
 typedef enum  {
 	CELL_STATE_UNKNOWN,
@@ -70,11 +71,13 @@ GType cell_state_get_type (void) G_GNUC_CONST;
 CellState* utils_cellstate_array_from_string (const gchar* s, int* result_length1);
 static void _vala_array_add8 (CellState** array, int* length, int* size, CellState value);
 gchar* utils_gnonogram_string_from_hex_string (const gchar* s, gint pad_to_length);
+gchar* utils_convert_html (const gchar* html);
 gchar* utils_string_from_cellstate_array (CellState* cs, int cs_length1);
 gchar* utils_block_string_from_cellstate_array (CellState* cs, int cs_length1);
-#define RESOURCE_BLOCKSEPARATOR "   "
+#define RESOURCE_BLOCKSEPARATOR ","
 gint* utils_block_array_from_clue (const gchar* s, int* result_length1);
 static void _vala_array_add9 (gint** array, int* length, int* size, gint value);
+gchar* utils_get_todays_date_string (void);
 static void _vala_array_destroy (gpointer array, gint array_length, GDestroyNotify destroy_func);
 static void _vala_array_free (gpointer array, gint array_length, GDestroyNotify destroy_func);
 static gint _vala_array_length (gpointer array);
@@ -812,6 +815,130 @@ gchar* utils_gnonogram_string_from_hex_string (const gchar* s, gint pad_to_lengt
 }
 
 
+gchar* utils_convert_html (const gchar* html) {
+	gchar* result = NULL;
+	GRegex* _tmp1_ = NULL;
+	GRegex* regex;
+	gchar** _tmp2_;
+	gchar** _tmp3_ = NULL;
+	gchar** s;
+	gint s_length1;
+	gint _s_size_;
+	gchar* _tmp10_;
+	GError * _inner_error_ = NULL;
+	if (html == NULL) {
+		gchar* _tmp0_;
+		_tmp0_ = g_strdup ("");
+		result = _tmp0_;
+		return result;
+	}
+	_tmp1_ = g_regex_new ("&#([0-9]+);", 0, 0, &_inner_error_);
+	regex = _tmp1_;
+	if (_inner_error_ != NULL) {
+		if (_inner_error_->domain == G_REGEX_ERROR) {
+			goto __catch7_g_regex_error;
+		}
+		g_critical ("file %s: line %d: unexpected error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
+		g_clear_error (&_inner_error_);
+		return NULL;
+	}
+	_tmp3_ = _tmp2_ = g_regex_split (regex, html, 0);
+	s = _tmp3_;
+	s_length1 = _vala_array_length (_tmp2_);
+	_s_size_ = _vala_array_length (_tmp2_);
+	{
+		gint i;
+		i = 0;
+		{
+			gboolean _tmp4_;
+			_tmp4_ = TRUE;
+			while (TRUE) {
+				if (!_tmp4_) {
+					i++;
+				}
+				_tmp4_ = FALSE;
+				if (!(i < s_length1)) {
+					break;
+				}
+				fprintf (stdout, "%d, %s\n", i, s[i]);
+			}
+		}
+	}
+	if (s_length1 > 1) {
+		GString* _tmp5_ = NULL;
+		GString* sb;
+		gchar* _tmp9_;
+		_tmp5_ = g_string_new ("");
+		sb = _tmp5_;
+		{
+			gint i;
+			i = 0;
+			{
+				gboolean _tmp6_;
+				_tmp6_ = TRUE;
+				while (TRUE) {
+					gint _tmp7_;
+					gint u;
+					gboolean _tmp8_ = FALSE;
+					if (!_tmp6_) {
+						i++;
+					}
+					_tmp6_ = FALSE;
+					if (!(i < s_length1)) {
+						break;
+					}
+					_tmp7_ = atoi (s[i]);
+					u = _tmp7_;
+					fprintf (stdout, "u is %d\n", u);
+					if (u > 31) {
+						_tmp8_ = u < 65535;
+					} else {
+						_tmp8_ = FALSE;
+					}
+					if (_tmp8_) {
+						g_string_append_unichar (sb, (gunichar) u);
+					} else {
+						if (g_strcmp0 (s[i], "") != 0) {
+							g_string_append (sb, s[i]);
+						}
+					}
+				}
+			}
+		}
+		_tmp9_ = g_strdup (sb->str);
+		result = _tmp9_;
+		_g_string_free0 (sb);
+		s = (_vala_array_free (s, s_length1, (GDestroyNotify) g_free), NULL);
+		_g_regex_unref0 (regex);
+		return result;
+	}
+	_tmp10_ = g_strdup (html);
+	result = _tmp10_;
+	s = (_vala_array_free (s, s_length1, (GDestroyNotify) g_free), NULL);
+	_g_regex_unref0 (regex);
+	return result;
+	s = (_vala_array_free (s, s_length1, (GDestroyNotify) g_free), NULL);
+	_g_regex_unref0 (regex);
+	goto __finally7;
+	__catch7_g_regex_error:
+	{
+		GError * re;
+		gchar* _tmp11_;
+		re = _inner_error_;
+		_inner_error_ = NULL;
+		utils_show_warning_dialog (re->message);
+		_tmp11_ = g_strdup ("");
+		result = _tmp11_;
+		_g_error_free0 (re);
+		return result;
+	}
+	__finally7:
+	g_critical ("file %s: line %d: uncaught error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
+	g_clear_error (&_inner_error_);
+	return NULL;
+}
+
+
 gchar* utils_string_from_cellstate_array (CellState* cs, int cs_length1) {
 	gchar* result = NULL;
 	GString* _tmp1_ = NULL;
@@ -918,7 +1045,9 @@ gchar* utils_block_string_from_cellstate_array (CellState* cs, int cs_length1) {
 		blocks++;
 	}
 	if (blocks == 0) {
-		g_string_append (sb, "0" RESOURCE_BLOCKSEPARATOR);
+		g_string_append (sb, "0");
+	} else {
+		g_string_truncate (sb, (gsize) (sb->len - 1));
 	}
 	_tmp8_ = g_strdup (sb->str);
 	result = _tmp8_;
@@ -989,6 +1118,24 @@ gint* utils_block_array_from_clue (const gchar* s, int* result_length1) {
 	*result_length1 = blocks_length1;
 	result = _tmp9_;
 	clues = (_vala_array_free (clues, clues_length1, (GDestroyNotify) g_free), NULL);
+	return result;
+}
+
+
+gchar* utils_get_todays_date_string (void) {
+	gchar* result = NULL;
+	GTimeVal _tmp0_ = {0};
+	GTimeVal t;
+	gchar* _tmp1_ = NULL;
+	gchar* _tmp2_;
+	gchar* _tmp3_ = NULL;
+	gchar* _tmp4_;
+	t = (_tmp0_);
+	g_get_current_time (&t);
+	_tmp1_ = g_time_val_to_iso8601 (&t);
+	_tmp2_ = _tmp1_;
+	_tmp3_ = string_slice (_tmp2_, (glong) 0, (glong) 10);
+	result = (_tmp4_ = _tmp3_, _g_free0 (_tmp2_), _tmp4_);
 	return result;
 }
 

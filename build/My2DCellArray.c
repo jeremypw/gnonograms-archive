@@ -104,19 +104,19 @@ enum  {
 My2DCellArray* my2_dcell_array_new (gint rows, gint cols, CellState init);
 My2DCellArray* my2_dcell_array_construct (GType object_type, gint rows, gint cols, CellState init);
 void my2_dcell_array_set_all (My2DCellArray* self, CellState s);
-gint my2_dcell_array_rows (My2DCellArray* self);
-gint my2_dcell_array_cols (My2DCellArray* self);
 GType cell_get_type (void) G_GNUC_CONST;
 Cell* cell_dup (const Cell* self);
 void cell_free (Cell* self);
 void my2_dcell_array_set_data_from_cell (My2DCellArray* self, Cell* c);
 void my2_dcell_array_set_data_from_rc (My2DCellArray* self, gint r, gint c, CellState s);
+CellState my2_dcell_array_get_data_from_rc (My2DCellArray* self, gint r, gint c);
 void my2_dcell_array_get_cell (My2DCellArray* self, gint r, gint c, Cell* result);
-void my2_dcell_array_get_row (My2DCellArray* self, gint row, CellState** sa, int* sa_length1, gint start, gint end);
-void my2_dcell_array_set_row (My2DCellArray* self, gint row, CellState* sa, int sa_length1, gint start, gint end);
-void my2_dcell_array_get_col (My2DCellArray* self, gint col, CellState** sa, int* sa_length1, gint start, gint end);
-void my2_dcell_array_set_col (My2DCellArray* self, gint col, CellState* sa, int sa_length1, gint start, gint end);
-void my2_dcell_array_get_array (My2DCellArray* self, gint idx, gboolean iscolumn, CellState** sa, int* sa_length1);
+void my2_dcell_array_get_row (My2DCellArray* self, gint row, CellState** sa, int* sa_length1, gint start);
+void my2_dcell_array_set_row (My2DCellArray* self, gint row, CellState* sa, int sa_length1, gint start);
+void my2_dcell_array_get_col (My2DCellArray* self, gint col, CellState** sa, int* sa_length1, gint start);
+void my2_dcell_array_set_col (My2DCellArray* self, gint col, CellState* sa, int sa_length1, gint start);
+void my2_dcell_array_get_array (My2DCellArray* self, gint idx, gboolean iscolumn, CellState** sa, int* sa_length1, gint start);
+void my2_dcell_array_set_array (My2DCellArray* self, gint idx, gboolean iscolumn, CellState* sa, int sa_length1, gint start);
 void my2_dcell_array_get_region (My2DCellArray* self, gint idx, gboolean iscolumn, CellState** sa, int* sa_length1, gint start, gint end);
 void my2_dcell_array_set_region (My2DCellArray* self, gint idx, gboolean iscolumn, CellState* sa, int sa_length1, gint start, gint end);
 gchar* my2_dcell_array_id2text (My2DCellArray* self, gint idx, gboolean iscolumn);
@@ -147,22 +147,6 @@ My2DCellArray* my2_dcell_array_new (gint rows, gint cols, CellState init) {
 }
 
 
-gint my2_dcell_array_rows (My2DCellArray* self) {
-	gint result = 0;
-	g_return_val_if_fail (IS_MY2_DCELL_ARRAY (self), 0);
-	result = self->priv->_rows;
-	return result;
-}
-
-
-gint my2_dcell_array_cols (My2DCellArray* self) {
-	gint result = 0;
-	g_return_val_if_fail (IS_MY2_DCELL_ARRAY (self), 0);
-	result = self->priv->_cols;
-	return result;
-}
-
-
 void my2_dcell_array_set_data_from_cell (My2DCellArray* self, Cell* c) {
 	g_return_if_fail (IS_MY2_DCELL_ARRAY (self));
 	self->priv->_data[((*c).row * self->priv->_data_length2) + (*c).col] = (*c).state;
@@ -175,6 +159,14 @@ void my2_dcell_array_set_data_from_rc (My2DCellArray* self, gint r, gint c, Cell
 }
 
 
+CellState my2_dcell_array_get_data_from_rc (My2DCellArray* self, gint r, gint c) {
+	CellState result = 0;
+	g_return_val_if_fail (IS_MY2_DCELL_ARRAY (self), 0);
+	result = self->priv->_data[(r * self->priv->_data_length2) + c];
+	return result;
+}
+
+
 void my2_dcell_array_get_cell (My2DCellArray* self, gint r, gint c, Cell* result) {
 	Cell _tmp0_ = {0};
 	g_return_if_fail (IS_MY2_DCELL_ARRAY (self));
@@ -183,11 +175,8 @@ void my2_dcell_array_get_cell (My2DCellArray* self, gint r, gint c, Cell* result
 }
 
 
-void my2_dcell_array_get_row (My2DCellArray* self, gint row, CellState** sa, int* sa_length1, gint start, gint end) {
+void my2_dcell_array_get_row (My2DCellArray* self, gint row, CellState** sa, int* sa_length1, gint start) {
 	g_return_if_fail (IS_MY2_DCELL_ARRAY (self));
-	if (end < 0) {
-		end = self->priv->_cols - 1;
-	}
 	{
 		gint c;
 		c = start;
@@ -199,7 +188,7 @@ void my2_dcell_array_get_row (My2DCellArray* self, gint row, CellState** sa, int
 					c++;
 				}
 				_tmp0_ = FALSE;
-				if (!(c <= end)) {
+				if (!(c < (start + (*sa_length1)))) {
 					break;
 				}
 				(*sa)[c] = self->priv->_data[(row * self->priv->_data_length2) + c];
@@ -209,11 +198,8 @@ void my2_dcell_array_get_row (My2DCellArray* self, gint row, CellState** sa, int
 }
 
 
-void my2_dcell_array_set_row (My2DCellArray* self, gint row, CellState* sa, int sa_length1, gint start, gint end) {
+void my2_dcell_array_set_row (My2DCellArray* self, gint row, CellState* sa, int sa_length1, gint start) {
 	g_return_if_fail (IS_MY2_DCELL_ARRAY (self));
-	if (end < 0) {
-		end = self->priv->_cols - 1;
-	}
 	{
 		gint c;
 		c = start;
@@ -225,7 +211,7 @@ void my2_dcell_array_set_row (My2DCellArray* self, gint row, CellState* sa, int 
 					c++;
 				}
 				_tmp0_ = FALSE;
-				if (!(c <= end)) {
+				if (!(c < (start + sa_length1))) {
 					break;
 				}
 				self->priv->_data[(row * self->priv->_data_length2) + c] = sa[c];
@@ -235,11 +221,8 @@ void my2_dcell_array_set_row (My2DCellArray* self, gint row, CellState* sa, int 
 }
 
 
-void my2_dcell_array_get_col (My2DCellArray* self, gint col, CellState** sa, int* sa_length1, gint start, gint end) {
+void my2_dcell_array_get_col (My2DCellArray* self, gint col, CellState** sa, int* sa_length1, gint start) {
 	g_return_if_fail (IS_MY2_DCELL_ARRAY (self));
-	if (end < 0) {
-		end = self->priv->_rows - 1;
-	}
 	{
 		gint r;
 		r = start;
@@ -251,7 +234,7 @@ void my2_dcell_array_get_col (My2DCellArray* self, gint col, CellState** sa, int
 					r++;
 				}
 				_tmp0_ = FALSE;
-				if (!(r <= end)) {
+				if (!(r < (start + (*sa_length1)))) {
 					break;
 				}
 				(*sa)[r] = self->priv->_data[(r * self->priv->_data_length2) + col];
@@ -261,11 +244,8 @@ void my2_dcell_array_get_col (My2DCellArray* self, gint col, CellState** sa, int
 }
 
 
-void my2_dcell_array_set_col (My2DCellArray* self, gint col, CellState* sa, int sa_length1, gint start, gint end) {
+void my2_dcell_array_set_col (My2DCellArray* self, gint col, CellState* sa, int sa_length1, gint start) {
 	g_return_if_fail (IS_MY2_DCELL_ARRAY (self));
-	if (end < 0) {
-		end = self->priv->_rows - 1;
-	}
 	{
 		gint r;
 		r = start;
@@ -277,7 +257,7 @@ void my2_dcell_array_set_col (My2DCellArray* self, gint col, CellState* sa, int 
 					r++;
 				}
 				_tmp0_ = FALSE;
-				if (!(r <= end)) {
+				if (!(r < (start + sa_length1))) {
 					break;
 				}
 				self->priv->_data[(r * self->priv->_data_length2) + col] = sa[r];
@@ -287,12 +267,22 @@ void my2_dcell_array_set_col (My2DCellArray* self, gint col, CellState* sa, int 
 }
 
 
-void my2_dcell_array_get_array (My2DCellArray* self, gint idx, gboolean iscolumn, CellState** sa, int* sa_length1) {
+void my2_dcell_array_get_array (My2DCellArray* self, gint idx, gboolean iscolumn, CellState** sa, int* sa_length1, gint start) {
 	g_return_if_fail (IS_MY2_DCELL_ARRAY (self));
 	if (iscolumn) {
-		my2_dcell_array_get_col (self, idx, sa, sa_length1, 0, self->priv->_rows - 1);
+		my2_dcell_array_get_col (self, idx, sa, sa_length1, start);
 	} else {
-		my2_dcell_array_get_row (self, idx, sa, sa_length1, 0, self->priv->_cols - 1);
+		my2_dcell_array_get_row (self, idx, sa, sa_length1, start);
+	}
+}
+
+
+void my2_dcell_array_set_array (My2DCellArray* self, gint idx, gboolean iscolumn, CellState* sa, int sa_length1, gint start) {
+	g_return_if_fail (IS_MY2_DCELL_ARRAY (self));
+	if (iscolumn) {
+		my2_dcell_array_set_col (self, idx, sa, sa_length1, start);
+	} else {
+		my2_dcell_array_set_row (self, idx, sa, sa_length1, start);
 	}
 }
 
@@ -300,9 +290,9 @@ void my2_dcell_array_get_array (My2DCellArray* self, gint idx, gboolean iscolumn
 void my2_dcell_array_get_region (My2DCellArray* self, gint idx, gboolean iscolumn, CellState** sa, int* sa_length1, gint start, gint end) {
 	g_return_if_fail (IS_MY2_DCELL_ARRAY (self));
 	if (iscolumn) {
-		my2_dcell_array_get_col (self, idx, sa, sa_length1, start, end);
+		my2_dcell_array_get_col (self, idx, sa, sa_length1, start);
 	} else {
-		my2_dcell_array_get_row (self, idx, sa, sa_length1, start, end);
+		my2_dcell_array_get_row (self, idx, sa, sa_length1, start);
 	}
 }
 
@@ -310,9 +300,9 @@ void my2_dcell_array_get_region (My2DCellArray* self, gint idx, gboolean iscolum
 void my2_dcell_array_set_region (My2DCellArray* self, gint idx, gboolean iscolumn, CellState* sa, int sa_length1, gint start, gint end) {
 	g_return_if_fail (IS_MY2_DCELL_ARRAY (self));
 	if (iscolumn) {
-		my2_dcell_array_set_col (self, idx, sa, sa_length1, start, end);
+		my2_dcell_array_set_col (self, idx, sa, sa_length1, start);
 	} else {
-		my2_dcell_array_set_row (self, idx, sa, sa_length1, start, end);
+		my2_dcell_array_set_row (self, idx, sa, sa_length1, start);
 	}
 }
 
@@ -375,7 +365,7 @@ gchar* my2_dcell_array_id2text (My2DCellArray* self, gint idx, gboolean iscolumn
 	arr = _tmp1_;
 	arr_length1 = _tmp0_;
 	_arr_size_ = _tmp0_;
-	my2_dcell_array_get_array (self, idx, iscolumn, &arr, &arr_length1);
+	my2_dcell_array_get_array (self, idx, iscolumn, &arr, &arr_length1, 0);
 	_tmp2_ = utils_block_string_from_cellstate_array (arr, arr_length1);
 	result = _tmp2_;
 	arr = (g_free (arr), NULL);

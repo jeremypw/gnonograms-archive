@@ -55,28 +55,42 @@ public class Gnonogram_LabelBox : Frame {
 			Gnonogram_label l=new Gnonogram_label("", is_col);
 			_labels[i]=l;
 		}
-		set_all_blank();
 		_size=0;
 		resize(size, other_size);
 		add(_box);
 	}
 //======================================================================
 	public void resize(int new_size, int other_size)
-	{
+	{//stdout.printf("Resize label box %s\n", new_size.to_string());
 		unhighlight_all();
 		if (new_size!=_size)
 		{
 			int diff=(new_size-_size);
 			
-			if (diff>0)	for (int i=_size; i<_size+diff; i++)	_box.add(_labels[i]);
-			else	for (int i=0; i>diff; i--) remove_label();
-			
-			_size=new_size;
+			if (diff>0)	for (int i=0; i<diff; i++)
+			{
+				_box.add(_labels[_size]);
+				_size++;
+			}
+			else
+			{
+				for (int i=0; i>diff; i--)
+				{
+					remove_label();
+					_size--;
+				}
+			}
+			if (_size!=new_size) Utils.show_warning_dialog("Error adding or removing labels");
 		}
 		_other_size=other_size;
 		set_default_fontheight(_size, _other_size);
 		set_attribs(_fontheight);
-//		set_all_zero();
+	}
+//======================================================================
+	private void remove_label()
+	{
+		GLib.List<weak Gtk.Widget> l=_box.get_children();
+		_box.remove(l.nth_data((uint)l.length()-1));
 	}
 //======================================================================
 	public void change_font_height(bool increase)
@@ -88,13 +102,18 @@ public class Gnonogram_LabelBox : Frame {
 	}
 //======================================================================
 	public void highlight(int idx, bool is_highlight)
-	{
-		if (idx>=_size) return;
+	{//stdout.printf("highlight idx %d",idx);
+		if (idx>=_size||idx<0) {stdout.printf("idx %d out of range\n",idx);return;}
 		_labels[idx].highlight(is_highlight);
 	}
 //======================================================================
+	private void unhighlight_all()
+	{
+		for (int i=0;i<_size;i++) {highlight(i,false);}
+	}
+//======================================================================
 	public void update_label(int idx, string txt)
-	{	//stdout.printf("Label txt length %d\n",txt.length);
+	{	//stdout.printf("Idx %d Label txt %s\n",idx,txt);
 		_labels[idx].set_markup(_attribstart+txt+_attribend);
 	}
 //======================================================================
@@ -112,40 +131,22 @@ public class Gnonogram_LabelBox : Frame {
 			sb.append(get_label_text(i));
 			sb.append("\n");
 		}
-		//stdout.printf(@"$(sb.str)\n");
+
 		return sb.str;
 	}
 //======================================================================
 	private void set_attribs(double fontheight)
 	{
 		 int fontsize=1024*(int)(fontheight);
-		_attribstart=@"<span font_desc='Impact' weight='light' size='$fontsize'>";
+		_attribstart=@"<span font_desc='$(Resource.font_desc)' size='$fontsize'>";
 		_attribend="</span>";
 	}
 //======================================================================
 	private void set_default_fontheight(int size, int other_size)
 	{
-		_fontheight=32.0-(double)(int.max(size, other_size));
+		_fontheight=40.0-(double)(int.max(size, other_size));
 		_fontheight=_fontheight.clamp(Resource.MINFONTSIZE, Resource.MAXFONTSIZE);
 	}
 //======================================================================
-	private void remove_label()
-	{
-		GLib.List<weak Gtk.Widget> l=_box.get_children();
-		_box.remove(l.nth_data((uint)l.length()-1));
-	}
 
-//======================================================================
-	private void unhighlight_all()
-	{
-		for (int i=0;i<_size;i++) {highlight(i,false);}
-	}
-//======================================================================
-	private void set_all_blank()
-	{
-		for (var i=0;i<_size;i++)
-		{
-			_labels[i].set_markup(_attribstart+""+_attribend);
-		}
-	}
 }

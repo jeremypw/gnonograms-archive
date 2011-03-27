@@ -40,7 +40,6 @@
 	_display_data = _solution_data;
 	_rand_gen = new Rand();
 	}
-
 //======================================================================
 	public void check_solution()
 	{
@@ -49,7 +48,7 @@
 		{
 			for (int c=0;c<=_cols;c++)
 			{
-				cs=_working_data.get_cell(r,c).state;
+				cs=_working_data.get_data_from_rc(r,c);
 				if (cs!=CellState.UNKNOWN && cs!=_solution_data.get_cell(r,c).state)
 				{
 					_working_data.set_data_from_rc(r,c,CellState.ERROR);
@@ -93,13 +92,15 @@
 		return _solution_data.id2text(idx,is_column);
 	}
 //======================================================================
-	public Cell get_cell(int r, int c){	return _display_data.get_cell(r,c);}
+	public Cell get_cell(int r, int c){
+		return _display_data.get_cell(r,c);}
 //======================================================================
-	public void set_data_from_cell(Cell cell){_display_data.set_data_from_cell(cell);}
+	public void set_data_from_cell(Cell cell){
+		_display_data.set_data_from_cell(cell);}
 //======================================================================
-	public void set_data_from_rc(int r, int c, CellState s)
+	public CellState get_data_from_rc(int r, int c)
 	{
-		_display_data.set_data_from_rc(r,c,s);
+		return _display_data.get_data_from_rc(r,c);
 	}
 //======================================================================
 	public bool set_row_data_from_string(int r, string s)
@@ -107,6 +108,7 @@
 		CellState[] cs =Utils.cellstate_array_from_string(s);
 		return set_row_data_from_array(r, cs);
 	}
+//======================================================================
 	public bool set_row_data_from_array(int r, CellState[] cs)
 	{
 		if (cs.length!=_cols)
@@ -114,7 +116,7 @@
 			Utils.show_warning_dialog(_("Error - wrong number of columns"));
 			return false; 
 		}
-		_display_data.set_row(r,cs);
+		_display_data.set_row(r, cs);
 		return true;
 	}
 //=========================================================================
@@ -123,7 +125,7 @@
 		StringBuilder sb= new StringBuilder();
 		CellState[] arr=new CellState[_cols];
 		for (int r=0; r<_rows; r++)
-		{//stdout.printf(@"r=$r \n");
+		{
 			_display_data.get_row(r, ref arr);
 			sb.append(Utils.string_from_cellstate_array(arr));
 			sb.append("\n");
@@ -146,7 +148,7 @@
 		{
 			_solution_data.get_row(r, ref _arr);
 			fill_region(_cols, ref _arr, (r-midcol).abs(), maxb, _cols);
-			_solution_data.set_row(r,_arr);
+			_solution_data.set_row(r, _arr);
 		}
 		maxb=1+(int)(_rows*(1.0-_grade/15.0));
 		for (int c=0;c<_cols;c++)

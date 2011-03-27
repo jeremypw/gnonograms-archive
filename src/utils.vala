@@ -21,8 +21,6 @@
  *  Author:
  * 	Jeremy Wootten <jeremwootten@gmail.com>
  */
- 
- 
  using Gtk;
 
 //*****************************************************************************
@@ -55,7 +53,6 @@ namespace Utils
 		return fn;
 	}
 //**********************************************************************
-
 	public static string get_filename(FileChooserAction action, string dialogname, string[] filternames, string[] filters, string? start_path=null)
 	{
 		assert(filternames.length==filters.length);
@@ -87,11 +84,7 @@ namespace Utils
 			fc.add_pattern(filters[i]);
 			dialog.add_filter(fc);
 		}
-//		var all=new Gtk.FileFilter();
-//		all.set_name(_("All files"));
-//		all.add_pattern("*.*");
-//		dialog.add_filter(all);
-//		dialog.set_show_hidden(false);
+
 		string temp_working_dir=null;
 		
 		if (start_path!=null)
@@ -115,7 +108,6 @@ namespace Utils
 			temp_working_dir=Environment.get_current_dir();
 			Environment.set_current_dir(temp_working_dir);
 		}
-		
 		return fn;
 	}
 	//*****************************************************************************
@@ -187,7 +179,6 @@ namespace Utils
 		return show_dlg(msg,Gtk.MessageType.WARNING,Gtk.ButtonsType.YES_NO)==Gtk.ResponseType.YES;
 	}
 	//*****************************************************************************
-
 	public static string[] remove_blank_lines(string[] sa)
 	{
 		string[] result = {};
@@ -228,8 +219,7 @@ namespace Utils
 	}
 	//*****************************************************************************
 	public string gnonogram_string_from_hex_string(string s, int pad_to_length=0)
-	{
-		
+	{		
 		StringBuilder sb= new StringBuilder(""); int count=0;
 		for (int i=0; i<s.length; i++)
 		{
@@ -288,6 +278,39 @@ namespace Utils
 		return sb.str;
 	}
 	//*****************************************************************************
+	public string convert_html(string? html)
+	{
+		if (html==null) return "";
+		
+		try
+		{
+			var regex = new GLib.Regex("&#([0-9]+);");
+			string[] s = regex.split(html);
+			
+			for (int i=0; i<s.length;i++)
+			{
+				stdout.printf("%d, %s\n", i , s[i]);
+			}
+			if (s.length>1) //html entity found - convert to unicode
+			{
+				var sb=new StringBuilder("");
+				for (int i=0; i<s.length;i++)
+				{	int u=int.parse(s[i]);
+				stdout.printf("u is %d\n",u);
+					if (u>31 && u<65535)
+					{
+						sb.append_unichar((unichar)u);
+					}
+					else if (s[i]!="") sb.append(s[i]);				
+				}
+				return sb.str;
+			}
+			return html;
+		}
+		catch (RegexError re) {show_warning_dialog(re.message); return "";}
+		
+	}
+	//*****************************************************************************
 	public string string_from_cellstate_array(CellState[] cs)
 	{//stdout.printf("string from cell_state_array\n");
 		if (cs==null) return "";
@@ -305,7 +328,7 @@ namespace Utils
 		StringBuilder sb= new StringBuilder("");
 		int count=0, blocks=0;
 		bool counting=false;
-		
+
 		for (int i=0; i<cs.length; i++)
 		{
 			if (cs[i]==CellState.EMPTY)
@@ -329,8 +352,9 @@ namespace Utils
 			sb.append(count.to_string()+Resource.BLOCKSEPARATOR);
 			blocks++;
 		}
-		if (blocks==0) sb.append("0"+Resource.BLOCKSEPARATOR);
-		//stdout.printf("block string length %d\n", sb.str.length);
+		if (blocks==0) sb.append("0");
+		else sb.truncate(sb.len -1);
+
 		return sb.str;
 	}
 	//*****************************************************************************
@@ -343,5 +367,11 @@ namespace Utils
 			blocks+=int.parse(clues[i]);
 		}
 		return blocks;
+	}
+	//*****************************************************************************
+	public string get_todays_date_string(){
+		TimeVal t={};
+		t.get_current_time();
+		return (t.to_iso8601()).slice(0,10);
 	}
 }

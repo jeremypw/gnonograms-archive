@@ -1025,7 +1025,8 @@
 	private void get_status()
 	{
 //transfers cell statuses from grid to internal range status array
-		_grid.get_region(_index,_is_column, ref _temp_status);
+//		_grid.get_region(_index,_is_column, ref _temp_status);
+		_grid.get_array(_index,_is_column, ref _temp_status);
 		
 		for (int i=0;i<_ncells; i++)
 		{			
@@ -1060,7 +1061,7 @@
 		{
 			_temp_status[i]=(_status[i]==CellState.COMPLETED ? CellState.FILLED : _status[i]);
 		}
-		_grid.set_region(_index, _is_column, _temp_status);
+		_grid.set_array(_index, _is_column, _temp_status);
 	}
 //======================================================================
 	private void status_to_tags()

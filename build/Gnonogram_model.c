@@ -137,6 +137,7 @@ Gnonogram_model* gnonogram_model_construct (GType object_type, gint r, gint c);
 My2DCellArray* my2_dcell_array_new (gint rows, gint cols, CellState init);
 My2DCellArray* my2_dcell_array_construct (GType object_type, gint rows, gint cols, CellState init);
 void gnonogram_model_check_solution (Gnonogram_model* self);
+CellState my2_dcell_array_get_data_from_rc (My2DCellArray* self, gint r, gint c);
 GType cell_get_type (void) G_GNUC_CONST;
 Cell* cell_dup (const Cell* self);
 void cell_free (Cell* self);
@@ -156,19 +157,19 @@ gchar* my2_dcell_array_id2text (My2DCellArray* self, gint idx, gboolean iscolumn
 void gnonogram_model_get_cell (Gnonogram_model* self, gint r, gint c, Cell* result);
 void gnonogram_model_set_data_from_cell (Gnonogram_model* self, Cell* cell);
 void my2_dcell_array_set_data_from_cell (My2DCellArray* self, Cell* c);
-void gnonogram_model_set_data_from_rc (Gnonogram_model* self, gint r, gint c, CellState s);
+CellState gnonogram_model_get_data_from_rc (Gnonogram_model* self, gint r, gint c);
 gboolean gnonogram_model_set_row_data_from_string (Gnonogram_model* self, gint r, const gchar* s);
 CellState* utils_cellstate_array_from_string (const gchar* s, int* result_length1);
 gboolean gnonogram_model_set_row_data_from_array (Gnonogram_model* self, gint r, CellState* cs, int cs_length1);
 void utils_show_warning_dialog (const gchar* msg);
-void my2_dcell_array_set_row (My2DCellArray* self, gint row, CellState* sa, int sa_length1, gint start, gint end);
+void my2_dcell_array_set_row (My2DCellArray* self, gint row, CellState* sa, int sa_length1, gint start);
 gchar* gnonogram_model_to_string (Gnonogram_model* self);
-void my2_dcell_array_get_row (My2DCellArray* self, gint row, CellState** sa, int* sa_length1, gint start, gint end);
+void my2_dcell_array_get_row (My2DCellArray* self, gint row, CellState** sa, int* sa_length1, gint start);
 gchar* utils_string_from_cellstate_array (CellState* cs, int cs_length1);
 void gnonogram_model_fill_random (Gnonogram_model* self);
 static void gnonogram_model_fill_region (Gnonogram_model* self, gint size, CellState** _arr, int* _arr_length1, gint e, gint maxb, gint maxp);
-void my2_dcell_array_get_col (My2DCellArray* self, gint col, CellState** sa, int* sa_length1, gint start, gint end);
-void my2_dcell_array_set_col (My2DCellArray* self, gint col, CellState* sa, int sa_length1, gint start, gint end);
+void my2_dcell_array_get_col (My2DCellArray* self, gint col, CellState** sa, int* sa_length1, gint start);
+void my2_dcell_array_set_col (My2DCellArray* self, gint col, CellState* sa, int sa_length1, gint start);
 static void gnonogram_model_adjust_region (Gnonogram_model* self, gint s, CellState** arr, int* arr_length1, gint mindf);
 static void gnonogram_model_finalize (Gnonogram_model* obj);
 
@@ -247,9 +248,8 @@ void gnonogram_model_check_solution (Gnonogram_model* self) {
 						gboolean _tmp1_;
 						_tmp1_ = TRUE;
 						while (TRUE) {
-							Cell _tmp2_ = {0};
-							Cell _tmp3_ = {0};
-							gboolean _tmp4_ = FALSE;
+							CellState _tmp2_;
+							gboolean _tmp3_ = FALSE;
 							if (!_tmp1_) {
 								c++;
 							}
@@ -257,17 +257,17 @@ void gnonogram_model_check_solution (Gnonogram_model* self) {
 							if (!(c <= self->priv->_cols)) {
 								break;
 							}
-							_tmp3_ = (my2_dcell_array_get_cell (self->priv->_working_data, r, c, &_tmp2_), _tmp2_);
-							cs = _tmp3_.state;
+							_tmp2_ = my2_dcell_array_get_data_from_rc (self->priv->_working_data, r, c);
+							cs = _tmp2_;
 							if (cs != CELL_STATE_UNKNOWN) {
+								Cell _tmp4_ = {0};
 								Cell _tmp5_ = {0};
-								Cell _tmp6_ = {0};
-								_tmp6_ = (my2_dcell_array_get_cell (self->priv->_solution_data, r, c, &_tmp5_), _tmp5_);
-								_tmp4_ = cs != _tmp6_.state;
+								_tmp5_ = (my2_dcell_array_get_cell (self->priv->_solution_data, r, c, &_tmp4_), _tmp4_);
+								_tmp3_ = cs != _tmp5_.state;
 							} else {
-								_tmp4_ = FALSE;
+								_tmp3_ = FALSE;
 							}
-							if (_tmp4_) {
+							if (_tmp3_) {
 								my2_dcell_array_set_data_from_rc (self->priv->_working_data, r, c, CELL_STATE_ERROR);
 							}
 						}
@@ -370,9 +370,13 @@ void gnonogram_model_set_data_from_cell (Gnonogram_model* self, Cell* cell) {
 }
 
 
-void gnonogram_model_set_data_from_rc (Gnonogram_model* self, gint r, gint c, CellState s) {
-	g_return_if_fail (IS_GNONOGRAM_MODEL (self));
-	my2_dcell_array_set_data_from_rc (self->priv->_display_data, r, c, s);
+CellState gnonogram_model_get_data_from_rc (Gnonogram_model* self, gint r, gint c) {
+	CellState result = 0;
+	CellState _tmp0_;
+	g_return_val_if_fail (IS_GNONOGRAM_MODEL (self), 0);
+	_tmp0_ = my2_dcell_array_get_data_from_rc (self->priv->_display_data, r, c);
+	result = _tmp0_;
+	return result;
 }
 
 
@@ -407,7 +411,7 @@ gboolean gnonogram_model_set_row_data_from_array (Gnonogram_model* self, gint r,
 		result = FALSE;
 		return result;
 	}
-	my2_dcell_array_set_row (self->priv->_display_data, r, cs, cs_length1, 0, self->priv->_cols - 1);
+	my2_dcell_array_set_row (self->priv->_display_data, r, cs, cs_length1, 0);
 	result = TRUE;
 	return result;
 }
@@ -445,7 +449,7 @@ gchar* gnonogram_model_to_string (Gnonogram_model* self) {
 				if (!(r < self->priv->_rows)) {
 					break;
 				}
-				my2_dcell_array_get_row (self->priv->_display_data, r, &arr, &arr_length1, 0, self->priv->_cols - 1);
+				my2_dcell_array_get_row (self->priv->_display_data, r, &arr, &arr_length1, 0);
 				_tmp3_ = utils_string_from_cellstate_array (arr, arr_length1);
 				_tmp4_ = _tmp3_;
 				g_string_append (sb, _tmp4_);
@@ -508,10 +512,10 @@ void gnonogram_model_fill_random (Gnonogram_model* self) {
 				if (!(r < self->priv->_rows)) {
 					break;
 				}
-				my2_dcell_array_get_row (self->priv->_solution_data, r, &self->_arr, &self->_arr_length1, 0, self->priv->_cols - 1);
+				my2_dcell_array_get_row (self->priv->_solution_data, r, &self->_arr, &self->_arr_length1, 0);
 				_tmp2_ = abs (r - midcol);
 				gnonogram_model_fill_region (self, self->priv->_cols, &self->_arr, &self->_arr_length1, _tmp2_, maxb, self->priv->_cols);
-				my2_dcell_array_set_row (self->priv->_solution_data, r, self->_arr, self->_arr_length1, 0, self->priv->_cols - 1);
+				my2_dcell_array_set_row (self->priv->_solution_data, r, self->_arr, self->_arr_length1, 0);
 			}
 		}
 	}
@@ -531,10 +535,10 @@ void gnonogram_model_fill_random (Gnonogram_model* self) {
 				if (!(c < self->priv->_cols)) {
 					break;
 				}
-				my2_dcell_array_get_col (self->priv->_solution_data, c, &self->_arr, &self->_arr_length1, 0, self->priv->_rows - 1);
+				my2_dcell_array_get_col (self->priv->_solution_data, c, &self->_arr, &self->_arr_length1, 0);
 				_tmp4_ = abs (c - midrow);
 				gnonogram_model_fill_region (self, self->priv->_rows, &self->_arr, &self->_arr_length1, _tmp4_, maxb, self->priv->_rows);
-				my2_dcell_array_set_col (self->priv->_solution_data, c, self->_arr, self->_arr_length1, 0, self->priv->_rows - 1);
+				my2_dcell_array_set_col (self->priv->_solution_data, c, self->_arr, self->_arr_length1, 0);
 			}
 		}
 	}
@@ -555,9 +559,9 @@ void gnonogram_model_fill_random (Gnonogram_model* self) {
 				if (!(r < self->priv->_rows)) {
 					break;
 				}
-				my2_dcell_array_get_row (self->priv->_solution_data, r, &self->_arr, &self->_arr_length1, 0, self->priv->_cols - 1);
+				my2_dcell_array_get_row (self->priv->_solution_data, r, &self->_arr, &self->_arr_length1, 0);
 				gnonogram_model_adjust_region (self, self->priv->_cols, &self->_arr, &self->_arr_length1, minrdf);
-				my2_dcell_array_set_row (self->priv->_solution_data, r, self->_arr, self->_arr_length1, 0, self->priv->_cols - 1);
+				my2_dcell_array_set_row (self->priv->_solution_data, r, self->_arr, self->_arr_length1, 0);
 			}
 		}
 	}
@@ -575,9 +579,9 @@ void gnonogram_model_fill_random (Gnonogram_model* self) {
 				if (!(c < self->priv->_cols)) {
 					break;
 				}
-				my2_dcell_array_get_col (self->priv->_solution_data, c, &self->_arr, &self->_arr_length1, 0, self->priv->_rows - 1);
+				my2_dcell_array_get_col (self->priv->_solution_data, c, &self->_arr, &self->_arr_length1, 0);
 				gnonogram_model_adjust_region (self, self->priv->_rows, &self->_arr, &self->_arr_length1, mincdf);
-				my2_dcell_array_set_col (self->priv->_solution_data, c, self->_arr, self->_arr_length1, 0, self->priv->_rows - 1);
+				my2_dcell_array_set_col (self->priv->_solution_data, c, self->_arr, self->_arr_length1, 0);
 			}
 		}
 	}

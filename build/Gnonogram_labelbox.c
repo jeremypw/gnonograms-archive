@@ -32,6 +32,7 @@
 #include <string.h>
 #include <float.h>
 #include <math.h>
+#include <stdio.h>
 
 
 #define TYPE_GNONOGRAM_LABELBOX (gnonogram_labelbox_get_type ())
@@ -56,8 +57,8 @@ typedef struct _Gnonogram_label Gnonogram_label;
 typedef struct _Gnonogram_labelClass Gnonogram_labelClass;
 #define _g_object_unref0(var) ((var == NULL) ? NULL : (var = (g_object_unref (var), NULL)))
 #define _g_free0(var) (var = (g_free (var), NULL))
-#define _g_string_free0(var) ((var == NULL) ? NULL : (var = (g_string_free (var, TRUE), NULL)))
 #define _g_list_free0(var) ((var == NULL) ? NULL : (var = (g_list_free (var), NULL)))
+#define _g_string_free0(var) ((var == NULL) ? NULL : (var = (g_string_free (var, TRUE), NULL)))
 
 struct _Gnonogram_LabelBox {
 	GtkFrame parent_instance;
@@ -85,6 +86,7 @@ struct _Gnonogram_LabelBoxPrivate {
 static gpointer gnonogram_labelbox_parent_class = NULL;
 extern gint resource_MAXCOLSIZE;
 extern gint resource_MAXROWSIZE;
+extern gchar* resource_font_desc;
 extern gint resource_MINFONTSIZE;
 extern gint resource_MAXFONTSIZE;
 
@@ -98,10 +100,10 @@ Gnonogram_LabelBox* gnonogram_labelbox_new (gint size, gint other_size, gboolean
 Gnonogram_LabelBox* gnonogram_labelbox_construct (GType object_type, gint size, gint other_size, gboolean is_col);
 Gnonogram_label* gnonogram_label_new (const gchar* label_text, gboolean is_column);
 Gnonogram_label* gnonogram_label_construct (GType object_type, const gchar* label_text, gboolean is_column);
-static void gnonogram_labelbox_set_all_blank (Gnonogram_LabelBox* self);
 void gnonogram_labelbox_resize (Gnonogram_LabelBox* self, gint new_size, gint other_size);
 static void gnonogram_labelbox_unhighlight_all (Gnonogram_LabelBox* self);
 static void gnonogram_labelbox_remove_label (Gnonogram_LabelBox* self);
+void utils_show_warning_dialog (const gchar* msg);
 static void gnonogram_labelbox_set_default_fontheight (Gnonogram_LabelBox* self, gint size, gint other_size);
 static void gnonogram_labelbox_set_attribs (Gnonogram_LabelBox* self, gdouble fontheight);
 void gnonogram_labelbox_change_font_height (Gnonogram_LabelBox* self, gboolean increase);
@@ -188,7 +190,6 @@ Gnonogram_LabelBox* gnonogram_labelbox_construct (GType object_type, gint size, 
 			}
 		}
 	}
-	gnonogram_labelbox_set_all_blank (self);
 	self->priv->_size = 0;
 	gnonogram_labelbox_resize (self, size, other_size);
 	gtk_container_add (GTK_CONTAINER (self), GTK_WIDGET (self->priv->_box));
@@ -210,7 +211,7 @@ void gnonogram_labelbox_resize (Gnonogram_LabelBox* self, gint new_size, gint ot
 		if (diff > 0) {
 			{
 				gint i;
-				i = self->priv->_size;
+				i = 0;
 				{
 					gboolean _tmp0_;
 					_tmp0_ = TRUE;
@@ -219,10 +220,11 @@ void gnonogram_labelbox_resize (Gnonogram_LabelBox* self, gint new_size, gint ot
 							i++;
 						}
 						_tmp0_ = FALSE;
-						if (!(i < (self->priv->_size + diff))) {
+						if (!(i < diff)) {
 							break;
 						}
-						gtk_container_add (self->priv->_box, GTK_WIDGET (self->priv->_labels[i]));
+						gtk_container_add (self->priv->_box, GTK_WIDGET (self->priv->_labels[self->priv->_size]));
+						self->priv->_size++;
 					}
 				}
 			}
@@ -242,15 +244,33 @@ void gnonogram_labelbox_resize (Gnonogram_LabelBox* self, gint new_size, gint ot
 							break;
 						}
 						gnonogram_labelbox_remove_label (self);
+						self->priv->_size--;
 					}
 				}
 			}
 		}
-		self->priv->_size = new_size;
+		if (self->priv->_size != new_size) {
+			utils_show_warning_dialog ("Error adding or removing labels");
+		}
 	}
 	self->priv->_other_size = other_size;
 	gnonogram_labelbox_set_default_fontheight (self, self->priv->_size, self->priv->_other_size);
 	gnonogram_labelbox_set_attribs (self, self->priv->_fontheight);
+}
+
+
+static void gnonogram_labelbox_remove_label (Gnonogram_LabelBox* self) {
+	GList* _tmp0_ = NULL;
+	GList* l;
+	guint _tmp1_;
+	gconstpointer _tmp2_ = NULL;
+	g_return_if_fail (IS_GNONOGRAM_LABELBOX (self));
+	_tmp0_ = gtk_container_get_children (self->priv->_box);
+	l = _tmp0_;
+	_tmp1_ = g_list_length (l);
+	_tmp2_ = g_list_nth_data (l, ((guint) _tmp1_) - 1);
+	gtk_container_remove (self->priv->_box, (GtkWidget*) _tmp2_);
+	_g_list_free0 (l);
 }
 
 
@@ -289,11 +309,41 @@ void gnonogram_labelbox_change_font_height (Gnonogram_LabelBox* self, gboolean i
 
 
 void gnonogram_labelbox_highlight (Gnonogram_LabelBox* self, gint idx, gboolean is_highlight) {
+	gboolean _tmp0_ = FALSE;
 	g_return_if_fail (IS_GNONOGRAM_LABELBOX (self));
 	if (idx >= self->priv->_size) {
+		_tmp0_ = TRUE;
+	} else {
+		_tmp0_ = idx < 0;
+	}
+	if (_tmp0_) {
+		fprintf (stdout, "idx %d out of range\n", idx);
 		return;
 	}
 	gnonogram_label_highlight (self->priv->_labels[idx], is_highlight);
+}
+
+
+static void gnonogram_labelbox_unhighlight_all (Gnonogram_LabelBox* self) {
+	g_return_if_fail (IS_GNONOGRAM_LABELBOX (self));
+	{
+		gint i;
+		i = 0;
+		{
+			gboolean _tmp0_;
+			_tmp0_ = TRUE;
+			while (TRUE) {
+				if (!_tmp0_) {
+					i++;
+				}
+				_tmp0_ = FALSE;
+				if (!(i < self->priv->_size)) {
+					break;
+				}
+				gnonogram_labelbox_highlight (self, i, FALSE);
+			}
+		}
+	}
 }
 
 
@@ -359,27 +409,37 @@ gchar* gnonogram_labelbox_to_string (Gnonogram_LabelBox* self) {
 }
 
 
+static const gchar* string_to_string (const gchar* self) {
+	const gchar* result = NULL;
+	g_return_val_if_fail (self != NULL, NULL);
+	result = self;
+	return result;
+}
+
+
 static void gnonogram_labelbox_set_attribs (Gnonogram_LabelBox* self, gdouble fontheight) {
 	gint fontsize;
-	gchar* _tmp0_ = NULL;
-	gchar* _tmp1_;
-	gchar* _tmp2_ = NULL;
-	gchar* _tmp3_;
+	const gchar* _tmp0_ = NULL;
+	gchar* _tmp1_ = NULL;
+	gchar* _tmp2_;
+	gchar* _tmp3_ = NULL;
 	gchar* _tmp4_;
 	gchar* _tmp5_;
+	gchar* _tmp6_;
 	g_return_if_fail (IS_GNONOGRAM_LABELBOX (self));
 	fontsize = 1024 * ((gint) fontheight);
-	_tmp0_ = g_strdup_printf ("%i", fontsize);
-	_tmp1_ = _tmp0_;
-	_tmp2_ = g_strconcat ("<span font_desc='Impact' weight='light' size='", _tmp1_, "'>", NULL);
-	_tmp3_ = _tmp2_;
+	_tmp0_ = string_to_string (resource_font_desc);
+	_tmp1_ = g_strdup_printf ("%i", fontsize);
+	_tmp2_ = _tmp1_;
+	_tmp3_ = g_strconcat ("<span font_desc='", _tmp0_, "' size='", _tmp2_, "'>", NULL);
+	_tmp4_ = _tmp3_;
 	_g_free0 (self->priv->_attribstart);
-	self->priv->_attribstart = _tmp3_;
-	_g_free0 (_tmp1_);
-	_tmp4_ = g_strdup ("</span>");
-	_tmp5_ = _tmp4_;
+	self->priv->_attribstart = _tmp4_;
+	_g_free0 (_tmp2_);
+	_tmp5_ = g_strdup ("</span>");
+	_tmp6_ = _tmp5_;
 	_g_free0 (self->priv->_attribend);
-	self->priv->_attribend = _tmp5_;
+	self->priv->_attribend = _tmp6_;
 }
 
 
@@ -388,76 +448,9 @@ static void gnonogram_labelbox_set_default_fontheight (Gnonogram_LabelBox* self,
 	gdouble _tmp1_;
 	g_return_if_fail (IS_GNONOGRAM_LABELBOX (self));
 	_tmp0_ = MAX (size, other_size);
-	self->priv->_fontheight = 32.0 - ((gdouble) _tmp0_);
+	self->priv->_fontheight = 40.0 - ((gdouble) _tmp0_);
 	_tmp1_ = CLAMP (self->priv->_fontheight, (gdouble) resource_MINFONTSIZE, (gdouble) resource_MAXFONTSIZE);
 	self->priv->_fontheight = _tmp1_;
-}
-
-
-static void gnonogram_labelbox_remove_label (Gnonogram_LabelBox* self) {
-	GList* _tmp0_ = NULL;
-	GList* l;
-	guint _tmp1_;
-	gconstpointer _tmp2_ = NULL;
-	g_return_if_fail (IS_GNONOGRAM_LABELBOX (self));
-	_tmp0_ = gtk_container_get_children (self->priv->_box);
-	l = _tmp0_;
-	_tmp1_ = g_list_length (l);
-	_tmp2_ = g_list_nth_data (l, ((guint) _tmp1_) - 1);
-	gtk_container_remove (self->priv->_box, (GtkWidget*) _tmp2_);
-	_g_list_free0 (l);
-}
-
-
-static void gnonogram_labelbox_unhighlight_all (Gnonogram_LabelBox* self) {
-	g_return_if_fail (IS_GNONOGRAM_LABELBOX (self));
-	{
-		gint i;
-		i = 0;
-		{
-			gboolean _tmp0_;
-			_tmp0_ = TRUE;
-			while (TRUE) {
-				if (!_tmp0_) {
-					i++;
-				}
-				_tmp0_ = FALSE;
-				if (!(i < self->priv->_size)) {
-					break;
-				}
-				gnonogram_labelbox_highlight (self, i, FALSE);
-			}
-		}
-	}
-}
-
-
-static void gnonogram_labelbox_set_all_blank (Gnonogram_LabelBox* self) {
-	g_return_if_fail (IS_GNONOGRAM_LABELBOX (self));
-	{
-		gint i;
-		i = 0;
-		{
-			gboolean _tmp0_;
-			_tmp0_ = TRUE;
-			while (TRUE) {
-				gchar* _tmp1_;
-				gchar* _tmp2_;
-				if (!_tmp0_) {
-					i++;
-				}
-				_tmp0_ = FALSE;
-				if (!(i < self->priv->_size)) {
-					break;
-				}
-				_tmp1_ = g_strconcat (self->priv->_attribstart, "", NULL);
-				_tmp2_ = g_strconcat (_tmp1_, self->priv->_attribend, NULL);
-				gnonogram_label_set_markup (self->priv->_labels[i], _tmp2_);
-				_g_free0 (_tmp2_);
-				_g_free0 (_tmp1_);
-			}
-		}
-	}
 }
 
 

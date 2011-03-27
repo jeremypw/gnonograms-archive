@@ -31,6 +31,9 @@
 #include <float.h>
 #include <math.h>
 #include <gdk/gdk.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <cairo.h>
 
 
@@ -51,6 +54,7 @@ typedef struct _Gnonogram_CellGridPrivate Gnonogram_CellGridPrivate;
 typedef struct _Cell Cell;
 
 #define TYPE_GAME_STATE (game_state_get_type ())
+#define _g_free0(var) (var = (g_free (var), NULL))
 #define _cairo_destroy0(var) ((var == NULL) ? NULL : (var = (cairo_destroy (var), NULL)))
 
 struct _Gnonogram_CellGrid {
@@ -73,9 +77,6 @@ struct _Gnonogram_CellGridPrivate {
 	gdouble _cell_offset;
 	gdouble _cell_body_width;
 	gdouble _cell_body_height;
-	gdouble* minor_grid_dash;
-	gint minor_grid_dash_length1;
-	gint _minor_grid_dash_size_;
 };
 
 typedef enum  {
@@ -99,9 +100,13 @@ typedef enum  {
 
 
 static gpointer gnonogram_cellgrid_parent_class = NULL;
+extern gdouble resource_CELLOFFSET_WITHGRID;
+extern gdouble resource_CELLOFFSET_NOGRID;
 extern GdkColor* resource_colors;
 extern gint resource_colors_length1;
 extern gint resource_colors_length2;
+extern gdouble* resource_MINORGRIDDASH;
+extern gint resource_MINORGRIDDASH_length1;
 
 GType gnonogram_cellgrid_get_type (void) G_GNUC_CONST;
 #define GNONOGRAM_CELLGRID_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), TYPE_GNONOGRAM_CELLGRID, Gnonogram_CellGridPrivate))
@@ -120,10 +125,8 @@ GType cell_state_get_type (void) G_GNUC_CONST;
 Cell* cell_dup (const Cell* self);
 void cell_free (Cell* self);
 GType game_state_get_type (void) G_GNUC_CONST;
-void gnonogram_cellgrid_draw_cell (Gnonogram_CellGrid* self, Cell* cell, GameState gs, gboolean isvalid);
-static void gnonogram_cellgrid_draw_cell_body (Gnonogram_CellGrid* self, cairo_t* _cr, gdouble x, gdouble y);
-void gnonogram_cellgrid_highlight_cell (Gnonogram_CellGrid* self, Cell* cell, gboolean highlight);
-static void gnonogram_cellgrid_draw_cell_highlight (Gnonogram_CellGrid* self, cairo_t* _cr, gdouble x, gdouble y);
+void gnonogram_cellgrid_draw_cell (Gnonogram_CellGrid* self, Cell* cell, GameState gs, gboolean highlight);
+static void gnonogram_cellgrid_draw_cell_body (Gnonogram_CellGrid* self, cairo_t* _cr, gdouble x, gdouble y, gboolean highlight);
 static void g_cclosure_user_marshal_VOID__INT_INT (GClosure * closure, GValue * return_value, guint n_param_values, const GValue * param_values, gpointer invocation_hint, gpointer marshal_data);
 static void gnonogram_cellgrid_finalize (GObject* obj);
 
@@ -160,85 +163,100 @@ void gnonogram_cellgrid_resize (Gnonogram_CellGrid* self, gint r, gint c) {
 
 void gnonogram_cellgrid_prepare_to_redraw_cells (Gnonogram_CellGrid* self, gboolean show_grid) {
 	g_return_if_fail (IS_GNONOGRAM_CELLGRID (self));
+	if (GTK_WIDGET (self)->window == NULL) {
+		return;
+	}
 	self->priv->_aw = (gdouble) GTK_WIDGET (self)->allocation.width;
 	self->priv->_ah = (gdouble) GTK_WIDGET (self)->allocation.height;
 	self->priv->_wd = (self->priv->_aw - 2) / ((gdouble) self->priv->_cols);
 	self->priv->_ht = (self->priv->_ah - 2) / ((gdouble) self->priv->_rows);
 	gdk_window_clear (GTK_WIDGET (self)->window);
 	if (show_grid) {
-		self->priv->_cell_offset = 3.0;
+		self->priv->_cell_offset = resource_CELLOFFSET_WITHGRID;
 		gnonogram_cellgrid_draw_grid (self);
 	} else {
-		self->priv->_cell_offset = 1.0;
+		self->priv->_cell_offset = resource_CELLOFFSET_NOGRID;
 	}
-	self->priv->_cell_body_width = self->priv->_wd - (self->priv->_cell_offset * 2.0);
-	self->priv->_cell_body_height = self->priv->_ht - (self->priv->_cell_offset * 2.0);
+	self->priv->_cell_body_width = self->priv->_wd - self->priv->_cell_offset;
+	self->priv->_cell_body_height = self->priv->_ht - self->priv->_cell_offset;
 }
 
 
-void gnonogram_cellgrid_draw_cell (Gnonogram_CellGrid* self, Cell* cell, GameState gs, gboolean isvalid) {
+void gnonogram_cellgrid_draw_cell (Gnonogram_CellGrid* self, Cell* cell, GameState gs, gboolean highlight) {
+	gboolean _tmp0_ = FALSE;
+	gboolean _tmp1_ = FALSE;
+	gboolean _tmp2_ = FALSE;
 	gdouble x;
 	gdouble y;
 	gint cs;
-	cairo_t* _tmp0_ = NULL;
+	cairo_t* _tmp9_ = NULL;
 	cairo_t* _cr;
 	g_return_if_fail (IS_GNONOGRAM_CELLGRID (self));
-	x = (((*cell).col * self->priv->_wd) + self->priv->_cell_offset) + 1.0;
-	y = (((*cell).row * self->priv->_ht) + self->priv->_cell_offset) + 1.0;
+	if ((*cell).row < 0) {
+		_tmp2_ = TRUE;
+	} else {
+		_tmp2_ = (*cell).row >= self->priv->_rows;
+	}
+	if (_tmp2_) {
+		_tmp1_ = TRUE;
+	} else {
+		_tmp1_ = (*cell).col < 0;
+	}
+	if (_tmp1_) {
+		_tmp0_ = TRUE;
+	} else {
+		_tmp0_ = (*cell).col >= self->priv->_cols;
+	}
+	if (_tmp0_) {
+		gchar* _tmp3_ = NULL;
+		gchar* _tmp4_;
+		gchar* _tmp5_ = NULL;
+		gchar* _tmp6_;
+		gchar* _tmp7_ = NULL;
+		gchar* _tmp8_;
+		_tmp3_ = g_strdup_printf ("%i", (*cell).row);
+		_tmp4_ = _tmp3_;
+		_tmp5_ = g_strdup_printf ("%i", (*cell).col);
+		_tmp6_ = _tmp5_;
+		_tmp7_ = g_strconcat ("Outside grid row= ", _tmp4_, " col =", _tmp6_, "\n", NULL);
+		_tmp8_ = _tmp7_;
+		fprintf (stdout, "%s", _tmp8_);
+		_g_free0 (_tmp8_);
+		_g_free0 (_tmp6_);
+		_g_free0 (_tmp4_);
+		return;
+	}
+	x = ((*cell).col * self->priv->_wd) + self->priv->_cell_offset;
+	y = ((*cell).row * self->priv->_ht) + self->priv->_cell_offset;
 	cs = (gint) (*cell).state;
-	_tmp0_ = gdk_cairo_create (GDK_DRAWABLE (GTK_WIDGET (self)->window));
-	_cr = _tmp0_;
+	_tmp9_ = gdk_cairo_create (GDK_DRAWABLE (GTK_WIDGET (self)->window));
+	_cr = _tmp9_;
 	if (cs == CELL_STATE_UNKNOWN) {
-		GtkStyle* _tmp1_ = NULL;
-		_tmp1_ = gtk_widget_get_style (GTK_WIDGET (self));
-		self->priv->cr_color = _tmp1_->bg[GTK_STATE_NORMAL];
+		GtkStyle* _tmp10_ = NULL;
+		_tmp10_ = gtk_widget_get_style (GTK_WIDGET (self));
+		self->priv->cr_color = _tmp10_->bg[GTK_STATE_NORMAL];
 	} else {
 		self->priv->cr_color = resource_colors[(gs * resource_colors_length2) + cs];
 	}
 	gdk_cairo_set_source_color (_cr, &self->priv->cr_color);
-	gnonogram_cellgrid_draw_cell_body (self, _cr, x, y);
+	gnonogram_cellgrid_draw_cell_body (self, _cr, x, y, highlight);
 	_cairo_destroy0 (_cr);
 }
 
 
-static void gnonogram_cellgrid_draw_cell_body (Gnonogram_CellGrid* self, cairo_t* _cr, gdouble x, gdouble y) {
+static void gnonogram_cellgrid_draw_cell_body (Gnonogram_CellGrid* self, cairo_t* _cr, gdouble x, gdouble y, gboolean highlight) {
 	g_return_if_fail (IS_GNONOGRAM_CELLGRID (self));
 	g_return_if_fail (_cr != NULL);
 	cairo_rectangle (_cr, x, y, self->priv->_cell_body_width, self->priv->_cell_body_height);
 	cairo_fill (_cr);
-}
-
-
-void gnonogram_cellgrid_highlight_cell (Gnonogram_CellGrid* self, Cell* cell, gboolean highlight) {
-	gdouble x;
-	gdouble y;
-	cairo_t* _tmp0_ = NULL;
-	cairo_t* _cr;
-	g_return_if_fail (IS_GNONOGRAM_CELLGRID (self));
-	x = ((*cell).col * self->priv->_wd) + self->priv->_cell_offset;
-	y = ((*cell).row * self->priv->_ht) + self->priv->_cell_offset;
-	_tmp0_ = gdk_cairo_create (GDK_DRAWABLE (GTK_WIDGET (self)->window));
-	_cr = _tmp0_;
 	if (highlight) {
-		GtkStyle* _tmp1_ = NULL;
-		_tmp1_ = gtk_widget_get_style (GTK_WIDGET (self));
-		self->priv->cr_color = _tmp1_->bg[GTK_STATE_SELECTED];
-	} else {
-		GtkStyle* _tmp2_ = NULL;
-		_tmp2_ = gtk_widget_get_style (GTK_WIDGET (self));
-		self->priv->cr_color = _tmp2_->bg[GTK_STATE_NORMAL];
+		GtkStyle* _tmp0_ = NULL;
+		GdkColor _tmp1_;
+		_tmp0_ = gtk_widget_get_style (GTK_WIDGET (self));
+		gdk_cairo_set_source_color (_cr, (_tmp1_ = _tmp0_->bg[GTK_STATE_SELECTED], &_tmp1_));
+		cairo_rectangle (_cr, x + 1, y + 1, self->priv->_cell_body_width - 2, self->priv->_cell_body_height - 2);
+		cairo_stroke (_cr);
 	}
-	gdk_cairo_set_source_color (_cr, &self->priv->cr_color);
-	gnonogram_cellgrid_draw_cell_highlight (self, _cr, x, y);
-	_cairo_destroy0 (_cr);
-}
-
-
-static void gnonogram_cellgrid_draw_cell_highlight (Gnonogram_CellGrid* self, cairo_t* _cr, gdouble x, gdouble y) {
-	g_return_if_fail (IS_GNONOGRAM_CELLGRID (self));
-	g_return_if_fail (_cr != NULL);
-	cairo_rectangle (_cr, x, y, self->priv->_cell_body_width + 2.0, self->priv->_cell_body_height + 2.0);
-	cairo_stroke (_cr);
 }
 
 
@@ -252,7 +270,7 @@ static void gnonogram_cellgrid_draw_grid (Gnonogram_CellGrid* self) {
 	g_return_if_fail (IS_GNONOGRAM_CELLGRID (self));
 	_tmp0_ = gdk_cairo_create (GDK_DRAWABLE (GTK_WIDGET (self)->window));
 	_cr = _tmp0_;
-	cairo_set_dash (_cr, self->priv->minor_grid_dash, self->priv->minor_grid_dash_length1, 0.0);
+	cairo_set_dash (_cr, resource_MINORGRIDDASH, resource_MINORGRIDDASH_length1, 0.0);
 	cairo_set_line_width (_cr, 1.0);
 	x1 = (gdouble) 0;
 	x2 = self->priv->_aw - 1;
@@ -398,21 +416,13 @@ static void gnonogram_cellgrid_class_init (Gnonogram_CellGridClass * klass) {
 
 
 static void gnonogram_cellgrid_instance_init (Gnonogram_CellGrid * self) {
-	gdouble* _tmp0_ = NULL;
 	self->priv = GNONOGRAM_CELLGRID_GET_PRIVATE (self);
-	_tmp0_ = g_new0 (gdouble, 2);
-	_tmp0_[0] = 1.0;
-	_tmp0_[1] = 2.0;
-	self->priv->minor_grid_dash = _tmp0_;
-	self->priv->minor_grid_dash_length1 = 2;
-	self->priv->_minor_grid_dash_size_ = self->priv->minor_grid_dash_length1;
 }
 
 
 static void gnonogram_cellgrid_finalize (GObject* obj) {
 	Gnonogram_CellGrid * self;
 	self = GNONOGRAM_CELLGRID (obj);
-	self->priv->minor_grid_dash = (g_free (self->priv->minor_grid_dash), NULL);
 	G_OBJECT_CLASS (gnonogram_cellgrid_parent_class)->finalize (obj);
 }
 

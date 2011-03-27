@@ -29,6 +29,8 @@
 #include <glib-object.h>
 #include <stdlib.h>
 #include <string.h>
+#include <float.h>
+#include <math.h>
 #include <gdk/gdk.h>
 #include <stdio.h>
 #include <gio/gio.h>
@@ -79,6 +81,22 @@ extern gint resource_MINFONTSIZE;
 gint resource_MINFONTSIZE = 6;
 extern gint resource_MAXFONTSIZE;
 gint resource_MAXFONTSIZE = 16;
+extern gchar* resource_font_desc;
+gchar* resource_font_desc = NULL;
+extern gdouble resource_CELLOFFSET_NOGRID;
+gdouble resource_CELLOFFSET_NOGRID = 0.0;
+extern gdouble resource_CELLOFFSET_WITHGRID;
+gdouble resource_CELLOFFSET_WITHGRID = 2.0;
+extern gdouble* resource_MINORGRIDDASH;
+extern gint resource_MINORGRIDDASH_length1;
+gdouble* resource_MINORGRIDDASH = NULL;
+gint resource_MINORGRIDDASH_length1 = 0;
+extern GdkColor* resource_colors;
+extern gint resource_colors_length1;
+extern gint resource_colors_length2;
+GdkColor* resource_colors = NULL;
+gint resource_colors_length1 = 0;
+gint resource_colors_length2 = 0;
 extern gchar* resource_exec_dir;
 gchar* resource_exec_dir = NULL;
 extern gchar* resource_resource_dir;
@@ -93,18 +111,12 @@ extern gchar* resource_prefix;
 gchar* resource_prefix = NULL;
 extern gboolean resource_installed;
 gboolean resource_installed = FALSE;
-extern GdkColor* resource_colors;
-extern gint resource_colors_length1;
-extern gint resource_colors_length2;
-GdkColor* resource_colors = NULL;
-gint resource_colors_length1 = 0;
-gint resource_colors_length2 = 0;
 
 #define RESOURCE_APP_GETTEXT_PACKAGE GETTEXT_PACKAGE
 #define RESOURCE_DEFAULTGAMENAME "New game"
 #define RESOURCE_GAMEFILEEXTENSION ".gno"
 #define RESOURCE_POSITIONFILENAME "currentposition"
-#define RESOURCE_BLOCKSEPARATOR "   "
+#define RESOURCE_BLOCKSEPARATOR ","
 void resource_init (const gchar* arg0);
 gboolean resource_is_installed (const gchar* exec_dir);
 gpointer config_ref (gpointer instance);
@@ -122,6 +134,7 @@ GType cell_state_get_type (void) G_GNUC_CONST;
 gchar** config_get_colors (Config* self, int* result_length1);
 gchar* resource_get_langpack_dir (void);
 void resource_set_colors (void);
+void resource_set_font (void);
 static void _vala_array_destroy (gpointer array, gint array_length, GDestroyNotify destroy_func);
 static void _vala_array_free (gpointer array, gint array_length, GDestroyNotify destroy_func);
 
@@ -194,6 +207,10 @@ void resource_init (const gchar* arg0) {
 	GdkColor _tmp51_ = {0};
 	GdkColor _tmp52_ = {0};
 	GdkColor _tmp53_ = {0};
+	gchar* _tmp54_;
+	gchar* _tmp55_;
+	gdouble* _tmp56_ = NULL;
+	gdouble* _tmp57_;
 	g_return_if_fail (arg0 != NULL);
 	_tmp0_ = g_strdup (_PREFIX);
 	_tmp1_ = _tmp0_;
@@ -309,6 +326,17 @@ void resource_init (const gchar* arg0) {
 	resource_colors[(solving * resource_colors_length2) + ((gint) CELL_STATE_EMPTY)] = _tmp52_;
 	gdk_color_parse (config_colors[3], &_tmp53_);
 	resource_colors[(solving * resource_colors_length2) + ((gint) CELL_STATE_FILLED)] = _tmp53_;
+	_tmp54_ = g_strdup ("Ariel");
+	_tmp55_ = _tmp54_;
+	_g_free0 (resource_font_desc);
+	resource_font_desc = _tmp55_;
+	_tmp56_ = g_new0 (gdouble, 2);
+	_tmp56_[0] = 0.5;
+	_tmp56_[1] = 3.0;
+	_tmp57_ = _tmp56_;
+	resource_MINORGRIDDASH = (g_free (resource_MINORGRIDDASH), NULL);
+	resource_MINORGRIDDASH_length1 = 2;
+	resource_MINORGRIDDASH = _tmp57_;
 	config_colors = (_vala_array_free (config_colors, config_colors_length1, (GDestroyNotify) g_free), NULL);
 	_g_free0 (_tmp13_);
 	_g_object_unref0 (exec_file);
@@ -377,10 +405,7 @@ void resource_set_colors (void) {
 	GtkVBox* button_box;
 	GtkHBox* _tmp25_ = NULL;
 	GtkHBox* hbox;
-	GdkColor _tmp26_ = {0};
-	GdkColor _tmp27_ = {0};
-	GdkColor _tmp28_ = {0};
-	GdkColor _tmp29_ = {0};
+	gint _tmp26_;
 	_tmp0_ = _ ("Ok");
 	_tmp1_ = _ ("Cancel");
 	_tmp2_ = (GtkDialog*) gtk_dialog_new_with_buttons (NULL, NULL, GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT, _tmp0_, GTK_RESPONSE_OK, _tmp1_, GTK_RESPONSE_CANCEL, NULL);
@@ -394,7 +419,7 @@ void resource_set_colors (void) {
 	_tmp7_ = _ ("Color of filled cell when solving");
 	_tmp8_ = (GtkLabel*) gtk_label_new (_tmp7_);
 	fsolve_label = g_object_ref_sink (_tmp8_);
-	_tmp9_ = _ ("Color of filled cell when solving");
+	_tmp9_ = _ ("Color of empty cell when solving");
 	_tmp10_ = (GtkLabel*) gtk_label_new (_tmp9_);
 	esolve_label = g_object_ref_sink (_tmp10_);
 	_tmp11_ = (GtkVBox*) gtk_vbox_new (FALSE, 5);
@@ -431,15 +456,21 @@ void resource_set_colors (void) {
 	gtk_container_add (GTK_CONTAINER (hbox), GTK_WIDGET (button_box));
 	gtk_container_add (GTK_CONTAINER (dialog->vbox), GTK_WIDGET (hbox));
 	gtk_widget_show_all (GTK_WIDGET (dialog));
-	gtk_dialog_run (dialog);
-	gtk_color_button_get_color (filled_setting, &_tmp26_);
-	resource_colors[(((gint) GAME_STATE_SETTING) * resource_colors_length2) + ((gint) CELL_STATE_FILLED)] = _tmp26_;
-	gtk_color_button_get_color (empty_setting, &_tmp27_);
-	resource_colors[(((gint) GAME_STATE_SETTING) * resource_colors_length2) + ((gint) CELL_STATE_EMPTY)] = _tmp27_;
-	gtk_color_button_get_color (filled_solving, &_tmp28_);
-	resource_colors[(((gint) GAME_STATE_SOLVING) * resource_colors_length2) + ((gint) CELL_STATE_FILLED)] = _tmp28_;
-	gtk_color_button_get_color (empty_solving, &_tmp29_);
-	resource_colors[(((gint) GAME_STATE_SOLVING) * resource_colors_length2) + ((gint) CELL_STATE_EMPTY)] = _tmp29_;
+	_tmp26_ = gtk_dialog_run (dialog);
+	if (_tmp26_ == GTK_RESPONSE_OK) {
+		GdkColor _tmp27_ = {0};
+		GdkColor _tmp28_ = {0};
+		GdkColor _tmp29_ = {0};
+		GdkColor _tmp30_ = {0};
+		gtk_color_button_get_color (filled_setting, &_tmp27_);
+		resource_colors[(((gint) GAME_STATE_SETTING) * resource_colors_length2) + ((gint) CELL_STATE_FILLED)] = _tmp27_;
+		gtk_color_button_get_color (empty_setting, &_tmp28_);
+		resource_colors[(((gint) GAME_STATE_SETTING) * resource_colors_length2) + ((gint) CELL_STATE_EMPTY)] = _tmp28_;
+		gtk_color_button_get_color (filled_solving, &_tmp29_);
+		resource_colors[(((gint) GAME_STATE_SOLVING) * resource_colors_length2) + ((gint) CELL_STATE_FILLED)] = _tmp29_;
+		gtk_color_button_get_color (empty_solving, &_tmp30_);
+		resource_colors[(((gint) GAME_STATE_SOLVING) * resource_colors_length2) + ((gint) CELL_STATE_EMPTY)] = _tmp30_;
+	}
 	gtk_object_destroy (GTK_OBJECT (dialog));
 	_g_object_unref0 (hbox);
 	_g_object_unref0 (button_box);
@@ -452,6 +483,28 @@ void resource_set_colors (void) {
 	_g_object_unref0 (fsolve_label);
 	_g_object_unref0 (eset_label);
 	_g_object_unref0 (fset_label);
+	_g_object_unref0 (dialog);
+}
+
+
+void resource_set_font (void) {
+	GtkFontSelectionDialog* _tmp0_ = NULL;
+	GtkFontSelectionDialog* dialog;
+	gint _tmp1_;
+	_tmp0_ = (GtkFontSelectionDialog*) gtk_font_selection_dialog_new ("Select font used for the clues");
+	dialog = g_object_ref_sink (_tmp0_);
+	_tmp1_ = gtk_dialog_run (GTK_DIALOG (dialog));
+	if (_tmp1_ != GTK_RESPONSE_CANCEL) {
+		const gchar* _tmp2_ = NULL;
+		gchar* _tmp3_;
+		gchar* _tmp4_;
+		_tmp2_ = gtk_font_selection_dialog_get_font_name (dialog);
+		_tmp3_ = g_strdup (_tmp2_);
+		_tmp4_ = _tmp3_;
+		_g_free0 (resource_font_desc);
+		resource_font_desc = _tmp4_;
+	}
+	gtk_object_destroy (GTK_OBJECT (dialog));
 	_g_object_unref0 (dialog);
 }
 
