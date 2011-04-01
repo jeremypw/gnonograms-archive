@@ -119,7 +119,7 @@ void my2_dcell_array_get_array (My2DCellArray* self, gint idx, gboolean iscolumn
 void my2_dcell_array_set_array (My2DCellArray* self, gint idx, gboolean iscolumn, CellState* sa, int sa_length1, gint start);
 void my2_dcell_array_get_region (My2DCellArray* self, gint idx, gboolean iscolumn, CellState** sa, int* sa_length1, gint start, gint end);
 void my2_dcell_array_set_region (My2DCellArray* self, gint idx, gboolean iscolumn, CellState* sa, int sa_length1, gint start, gint end);
-gchar* my2_dcell_array_id2text (My2DCellArray* self, gint idx, gboolean iscolumn);
+gchar* my2_dcell_array_data2text (My2DCellArray* self, gint idx, gint length, gboolean iscolumn);
 gchar* utils_block_string_from_cellstate_array (CellState* cs, int cs_length1);
 static void my2_dcell_array_finalize (My2DCellArray* obj);
 
@@ -347,27 +347,21 @@ void my2_dcell_array_set_all (My2DCellArray* self, CellState s) {
 }
 
 
-gchar* my2_dcell_array_id2text (My2DCellArray* self, gint idx, gboolean iscolumn) {
+gchar* my2_dcell_array_data2text (My2DCellArray* self, gint idx, gint length, gboolean iscolumn) {
 	gchar* result = NULL;
-	gint _tmp0_ = 0;
-	CellState* _tmp1_ = NULL;
+	CellState* _tmp0_ = NULL;
 	CellState* arr;
 	gint arr_length1;
 	gint _arr_size_;
-	gchar* _tmp2_ = NULL;
+	gchar* _tmp1_ = NULL;
 	g_return_val_if_fail (IS_MY2_DCELL_ARRAY (self), NULL);
-	if (iscolumn) {
-		_tmp0_ = self->priv->_rows;
-	} else {
-		_tmp0_ = self->priv->_cols;
-	}
-	_tmp1_ = g_new0 (CellState, _tmp0_);
-	arr = _tmp1_;
-	arr_length1 = _tmp0_;
-	_arr_size_ = _tmp0_;
+	_tmp0_ = g_new0 (CellState, length);
+	arr = _tmp0_;
+	arr_length1 = length;
+	_arr_size_ = length;
 	my2_dcell_array_get_array (self, idx, iscolumn, &arr, &arr_length1, 0);
-	_tmp2_ = utils_block_string_from_cellstate_array (arr, arr_length1);
-	result = _tmp2_;
+	_tmp1_ = utils_block_string_from_cellstate_array (arr, arr_length1);
+	result = _tmp1_;
 	arr = (g_free (arr), NULL);
 	return result;
 }

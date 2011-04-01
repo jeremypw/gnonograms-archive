@@ -89,7 +89,8 @@
 //======================================================================
 	public string get_label_text(int idx, bool is_column)
 	{
-		return _solution_data.id2text(idx,is_column);
+		int length = is_column ? _rows : _cols;
+		return _solution_data.data2text(idx,length, is_column);
 	}
 //======================================================================
 	public Cell get_cell(int r, int c){

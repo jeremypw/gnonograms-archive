@@ -94,9 +94,9 @@
 		{for (int c=0;c<_cols;c++)	_data[r,c]=s;}
 	}
 	
-	public string id2text(int idx, bool iscolumn)
-	{//stdout.printf("id2text\n");
-		CellState[] arr = new CellState[iscolumn ? _rows : _cols];
+	public string data2text(int idx, int length, bool iscolumn)
+	{//stdout.printf("data2text\n");
+		CellState[] arr = new CellState[length];
 		this.get_array(idx, iscolumn, ref arr);
 		return Utils.block_string_from_cellstate_array(arr); 
 	}

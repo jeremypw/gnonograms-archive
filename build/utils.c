@@ -1026,8 +1026,14 @@ gchar* utils_block_string_from_cellstate_array (CellState* cs, int cs_length1) {
 						blocks++;
 					}
 				} else {
-					counting = TRUE;
-					count++;
+					if (cs[i] == CELL_STATE_FILLED) {
+						counting = TRUE;
+						count++;
+					} else {
+						fprintf (stdout, "Error in block string from cellstate array - Cellstate UNKNOWN OR IN E" \
+"RROR\n");
+						break;
+					}
 				}
 			}
 		}

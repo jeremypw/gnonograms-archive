@@ -153,7 +153,7 @@ void gnonogram_model_use_solution (Gnonogram_model* self);
 void gnonogram_model_set_difficulty (Gnonogram_model* self, gdouble d);
 void gnonogram_model_reduce_difficulty (Gnonogram_model* self);
 gchar* gnonogram_model_get_label_text (Gnonogram_model* self, gint idx, gboolean is_column);
-gchar* my2_dcell_array_id2text (My2DCellArray* self, gint idx, gboolean iscolumn);
+gchar* my2_dcell_array_data2text (My2DCellArray* self, gint idx, gint length, gboolean iscolumn);
 void gnonogram_model_get_cell (Gnonogram_model* self, gint r, gint c, Cell* result);
 void gnonogram_model_set_data_from_cell (Gnonogram_model* self, Cell* cell);
 void my2_dcell_array_set_data_from_cell (My2DCellArray* self, Cell* c);
@@ -346,10 +346,18 @@ void gnonogram_model_reduce_difficulty (Gnonogram_model* self) {
 
 gchar* gnonogram_model_get_label_text (Gnonogram_model* self, gint idx, gboolean is_column) {
 	gchar* result = NULL;
-	gchar* _tmp0_ = NULL;
+	gint _tmp0_ = 0;
+	gint length;
+	gchar* _tmp1_ = NULL;
 	g_return_val_if_fail (IS_GNONOGRAM_MODEL (self), NULL);
-	_tmp0_ = my2_dcell_array_id2text (self->priv->_solution_data, idx, is_column);
-	result = _tmp0_;
+	if (is_column) {
+		_tmp0_ = self->priv->_rows;
+	} else {
+		_tmp0_ = self->priv->_cols;
+	}
+	length = _tmp0_;
+	_tmp1_ = my2_dcell_array_data2text (self->priv->_solution_data, idx, length, is_column);
+	result = _tmp1_;
 	return result;
 }
 

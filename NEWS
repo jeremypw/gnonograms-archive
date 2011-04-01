@@ -1,4 +1,9 @@
+01/04/2011	Fixed bug related to invalid game files and game files not containing the solution
+				Minor changes to 2D array class
+				Additional error checking
+
 22/03/2011  Project name decided to be Gnonograms.
 				Project created on Google Code
 				Temporary icon designed
 				Files uploaded
+

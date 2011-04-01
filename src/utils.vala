@@ -324,7 +324,7 @@ namespace Utils
 	}
 	//*****************************************************************************
 	public string block_string_from_cellstate_array(CellState[] cs)
-	{//stdout.printf("block string from cell_state_array\n");
+	{//stdout.printf("block string from cell_state_array length %d\n", cs.length);
 		StringBuilder sb= new StringBuilder("");
 		int count=0, blocks=0;
 		bool counting=false;
@@ -341,10 +341,15 @@ namespace Utils
 					blocks++;
 				}
 			}
-			else
+			else if(cs[i]==CellState.FILLED)
 			{
 				counting=true;
 				count++;
+			}
+			else
+			{
+				stdout.printf("Error in block string from cellstate array - Cellstate UNKNOWN OR IN ERROR\n");
+				break;
 			}
 		}
 		if (counting)
@@ -354,7 +359,7 @@ namespace Utils
 		}
 		if (blocks==0) sb.append("0");
 		else sb.truncate(sb.len -1);
-
+		//stdout.printf("Array %s  Blocks %s\n",Utils.string_from_cellstate_array(cs), sb.str);
 		return sb.str;
 	}
 	//*****************************************************************************

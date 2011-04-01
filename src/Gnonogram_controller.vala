@@ -41,6 +41,7 @@ public class Gnonogram_controller
 	private Cell _current_cell;
 	private Cell _previous_cell;
 	private bool _is_button_down;
+	private bool _have_solution;
 	private GameState _state {get; private set;}
 	private bool _gridlinesvisible;
 	
@@ -58,6 +59,7 @@ public class Gnonogram_controller
 		}
 		_model=new Gnonogram_model(_rows,_cols);
 		_solver=new Gnonogram_solver(_rows, _cols);
+		_have_solution=false;
 		//_current_cell={};
 		//_previous_cell={};
 
@@ -111,7 +113,7 @@ public class Gnonogram_controller
 	private void initialize_view()
 	{ //stdout.printf("Initialise view\n");
 		initialize_cursor();
-		update_labels_from_model();
+		if (_have_solution) update_labels_from_model(); //causes problem if solution not complete
 		_gnonogram_view.set_size(_rows,_cols);
 	}
 
@@ -211,9 +213,12 @@ public class Gnonogram_controller
 	private bool key_pressed(Gdk.EventKey e)
 	{
 		string name=(Gdk.keyval_name(e.keyval)).up();
+		stdout.printf("Key pressed %s\n",name);
 		int currentrow=_current_cell.row;
 		int currentcol=_current_cell.col;
-		
+		stdout.printf("Current row %d, current col %d\n",currentrow, currentcol);
+		if (currentrow<0||currentcol<0||currentrow>_rows-1||currentcol>_cols-1) return false;
+				
 		switch (name)
 		{
 			case "UP":
@@ -274,6 +279,8 @@ public class Gnonogram_controller
 //======================================================================	
 	public void grid_cursor_moved(int r, int c)
 	{
+		if (r<0||r>=_rows||c<0||c>=_cols) return;
+		
 		//stdout.printf(@"r=$r c=$c\n");
 		_previous_cell.copy(_current_cell);
 		if (!_current_cell.changed(r,c)) return;
@@ -303,7 +310,7 @@ public class Gnonogram_controller
 	}
 //======================================================================
 	public void update_cell(Cell c, bool highlight=true)
-	{//stdout.printf("update_cell\n");
+	{stdout.printf("update_cell\n");
 		_model.set_data_from_cell(c);
 		_cellgrid.draw_cell(c,_state, highlight);
 		
@@ -506,20 +513,25 @@ public class Gnonogram_controller
 			_model.use_solution();
 			for (int i=0; i<_rows; i++)  _model.set_row_data_from_string(i,reader.solution[i]);
 			update_labels_from_model();
+			_have_solution=true;
 		}
 		else if (reader.has_row_clues && reader.has_col_clues)
-		{stdout.printf("loading clues\n");
+		{	stdout.printf("loading clues\n");
 			for (int i=0; i<_rows; i++) _rowbox.update_label(i,reader.row_clues[i]);
 			for (int i=0; i<_cols; i++) _colbox.update_label(i,reader.col_clues[i]);
-			if (solve_game()>0) 
+//			omit until solver stable
+			int passes=solve_game();
+			if (passes>0)
 			{
-				set_solution_from_solver();
+			stdout.printf("Solved in %d passes\n",passes);
+			_have_solution=true;
+			set_solution_from_solver();
 			}
 			else
 			{
 				Utils.show_info_dialog("Game not solved by computer");
 			}
-		}
+		}  
 		else
 		{
 			Utils.show_warning_dialog("Clues and solution both missing");
@@ -551,10 +563,17 @@ public class Gnonogram_controller
 //======================================================================
 	public void peek_game()
 	{stdout.printf("Peek game\n");
+		if (_have_solution)
+		{
 		change_state(GameState.SETTING);
 		var timer = new TimeoutSource.seconds(1);
 		timer.set_callback(()=>{unpeek_game(); return false;});
 		timer.attach(null);
+		}
+		else
+		{
+			Utils.show_info_dialog("No solution available");
+		}
 	}
 //======================================================================
 	private void viewer_solve_game()
@@ -564,12 +583,16 @@ public class Gnonogram_controller
 		{
 			case -1:
 				Utils.show_warning_dialog("Invalid - no solution");
+				_have_solution=false;
 				break;
 			case 0:
 				Utils.show_info_dialog("Failed to solve or no unique solution");
+				_have_solution=false;
 				break;
 			default:
 				Utils.show_info_dialog(_("Solved in %d passes").printf(passes));
+				set_solution_from_solver();
+				_have_solution=true;
 				break;
 		}
 		
@@ -598,8 +621,11 @@ public class Gnonogram_controller
 //======================================================================
 	private void set_solution_from_solver()
 	{
+		if (_have_solution)
+		{
 		_model.use_solution();
 		set_model_from_solver();
+		}
 	}
 	private void set_working_from_solver()
 	{
@@ -650,7 +676,7 @@ public class Gnonogram_controller
 			_gnonogram_view.set_name("Random %d passes".printf(passes));
 			_gnonogram_view.set_author("Computer");
 			_gnonogram_view.set_date(Utils.get_todays_date_string());
-
+			_have_solution=true;
 			_model.use_working();
 			start_solving();
 		}
@@ -678,7 +704,7 @@ public class Gnonogram_controller
 	}
 //======================================================================
 	private void update_labels_from_model()
-	{	//stdout.printf("Update labels\n");
+	{	stdout.printf("Update labels\n");
 		for (int r=0; r<_rows; r++)
 		{
 			_rowbox.update_label(r,_model.get_label_text(r,false));
