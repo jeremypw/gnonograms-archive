@@ -52,10 +52,12 @@ public class Gnonogram_CellGrid : DrawingArea
 		EventMask.BUTTON_RELEASE_MASK|
 		EventMask.POINTER_MOTION_MASK|
 		EventMask.KEY_PRESS_MASK|
-		EventMask.KEY_RELEASE_MASK
+		EventMask.KEY_RELEASE_MASK|
+		EventMask.LEAVE_NOTIFY_MASK
 		);
 			
 		motion_notify_event.connect(pointer_moved);
+		leave_notify_event.connect(leave_grid);
 	}
 //=========================================================================
 	public void resize(int r, int c) {_rows=r;_cols=c;}
@@ -86,7 +88,8 @@ public class Gnonogram_CellGrid : DrawingArea
 	{
 		if (cell.row<0||cell.row>=_rows||cell.col<0||cell.col>=_cols)
 		{
-			stdout.printf(@"Outside grid row= $(cell.row) col =$(cell.col)\n"); return;
+			//stdout.printf(@"Outside grid row= $(cell.row) col =$(cell.col)\n");
+			return;
 		}
 		
 /* coords of top left corner of filled part
@@ -171,6 +174,13 @@ public class Gnonogram_CellGrid : DrawingArea
 		int r= ((int) (e.y/_ah*_rows)).clamp(0,_rows-1);
 		int c= ((int) (e.x/_aw*_cols)).clamp(0,_cols-1);
 		cursor_moved(r,c); //signal connected to controller
+		return false;
+	}
+
+	private bool leave_grid(Gdk.EventCrossing e)
+	{
+		//stdout.printf("leave event\n");
+		cursor_moved(-1,-1);
 		return false;
 	}
 //=========================================================================

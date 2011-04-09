@@ -35,8 +35,8 @@
 		set_all(init);		
 	}
 	
-//	public int rows() {return _rows;}	
-//	public int cols() {return _cols;}
+	public int rows() {return _rows;}	
+	public int cols() {return _cols;}
 	
 	public void set_data_from_cell(Cell c) {_data[c.row,c.col]=c.state;}
 	public void set_data_from_rc(int r, int c, CellState s) {_data[r,c]=s;}
@@ -99,5 +99,18 @@
 		CellState[] arr = new CellState[length];
 		this.get_array(idx, iscolumn, ref arr);
 		return Utils.block_string_from_cellstate_array(arr); 
+	}
+
+	public void copy(My2DCellArray ca)
+	{
+		int rows = int.min(ca.rows(), this.rows());
+		int cols	= int.min(ca.cols(), this.cols());
+		
+		for (int r=0; r<rows; r++)
+		{	for (int c=0; c<cols; c++)
+			{
+				_data[r,c]=ca.get_data_from_rc(r,c);
+			}
+		}
 	}
 }

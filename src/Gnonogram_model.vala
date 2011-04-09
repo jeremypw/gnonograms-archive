@@ -30,7 +30,7 @@
 	private My2DCellArray _working_data; //display when solving
 	public CellState[] _arr;
 	private Rand _rand_gen;
-	public double _grade;
+//	public double _grade;
 	
 	public Gnonogram_model(int r, int c) {
 	_rows = r; _cols = c;
@@ -84,8 +84,8 @@
 //======================================================================
 	public void use_solution() {_display_data=_solution_data;}
 //======================================================================
-	public void set_difficulty(double d) {_grade=d.clamp(1.0,10.0);}
-	public void reduce_difficulty() {_grade=double.max(_grade-1.0,1.0);}
+//	public void set_difficulty(double d) {_grade=d.clamp(1.0,10.0);}
+//	public void reduce_difficulty() {_grade=double.max(_grade-1.0,1.0);}
 //======================================================================
 	public string get_label_text(int idx, bool is_column)
 	{
@@ -134,32 +134,32 @@
 		return sb.str;
 	}
 //======================================================================
-	public void fill_random()
+	public void fill_random(int grade)
 	{
 		clear();
 		int midcol = _rows/2; 
 		int midrow =_cols/2;
-		int mincdf = 2+(int)((_rows*_grade)/(Resource.MAXGRADE*3));
-		int minrdf = 2+(int)((_cols*_grade)/(Resource.MAXGRADE*3));
+		int mincdf = 2+(int)((_rows*grade)/(Resource.MAXGRADE*3));
+		int minrdf = 2+(int)((_cols*grade)/(Resource.MAXGRADE*3));
 		
 		for (int e=0; e<_arr.length; e++) _arr[e]=CellState.EMPTY;
 
-		int maxb=1+(int)(_cols*(1.0-_grade/15.0));
+		int maxb=1+(int)(_cols*(1.0-grade/15.0));
 		for (int r=0;r<_rows;r++)
 		{
 			_solution_data.get_row(r, ref _arr);
-			fill_region(_cols, ref _arr, (r-midcol).abs(), maxb, _cols);
+			fill_region(_cols, ref _arr, grade, (r-midcol).abs(), maxb, _cols);
 			_solution_data.set_row(r, _arr);
 		}
-		maxb=1+(int)(_rows*(1.0-_grade/15.0));
+		maxb=1+(int)(_rows*(1.0-grade/15.0));
 		for (int c=0;c<_cols;c++)
 		{
 			_solution_data.get_col(c, ref _arr);
-			fill_region(_rows, ref _arr,(c-midrow).abs(), maxb, _rows);
+			fill_region(_rows, ref _arr, grade, (c-midrow).abs(), maxb, _rows);
 			_solution_data.set_col(c, _arr);
 		}
 
-		if (_grade<5) return;
+		if (grade<5) return;  //dont bother with adjustment for lower difficulty levels
 		
 		for (int r=0;r<_rows;r++)
 		{
@@ -176,7 +176,7 @@
 		}
 	}
 //=========================================================================
-	private void fill_region (int size, ref CellState[] _arr, int e, int maxb, int maxp)
+	private void fill_region (int size, ref CellState[] _arr, int grade, int e, int maxb, int maxp)
 	{
 		//e is larger for rows/cols further from edge
 		//do not want too many edge cells filled
@@ -188,7 +188,7 @@
 		int p=0; //pointer
 		int mid=size/2;
 		int bsize; // blocksize
-		int baseline = e+(int)_grade-10; // relates to the probability of a filled block before adjusting for distance from edge of region.
+		int baseline = e+grade-10; // relates to the probability of a filled block before adjusting for distance from edge of region.
 		bool fill;
 		
 		while (p<size)

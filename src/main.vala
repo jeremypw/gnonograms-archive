@@ -58,6 +58,12 @@ public struct Cell {
 			this.col=b.col;
 			this.state=b.state;
 		}
+
+		public Cell invert() {
+			if (state==CellState.EMPTY) state=CellState.FILLED;
+			else state=CellState.EMPTY;
+			return this;
+		}
 	}
 
 public enum ButtonPress {

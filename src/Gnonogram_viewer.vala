@@ -44,6 +44,7 @@ public class Gnonogram_view : Gtk.Window
 	public signal void resizegame();
 	public signal void togglegrid(bool active);
 	public signal void changefont(bool increase);
+	public signal void debugmode(bool debug);
 	public signal void rotate_screen();
 	
 	private Gnonogram_controller _controller;
@@ -184,6 +185,9 @@ public class Gnonogram_view : Gtk.Window
 			settingssubmenu.add(grademenuitem);
 			var infomenuitem=new MenuItem.with_mnemonic(_("_Edit game description"));
 			settingssubmenu.add(infomenuitem);
+			var debugmenuitem=new CheckMenuItem.with_mnemonic("D_ebug");
+			debugmenuitem.set_active(false);
+			settingssubmenu.add(debugmenuitem);
 						
 		var viewsubmenu=new Menu();
 		viewmenuitem.set_submenu(viewsubmenu);
@@ -224,6 +228,7 @@ public class Gnonogram_view : Gtk.Window
 		resizemenuitem.activate.connect(()=>{resizegame();});
 		grademenuitem.activate.connect(getdifficulty);
 		infomenuitem.activate.connect(editdescription);
+		debugmenuitem.activate.connect(()=>{debugmode(debugmenuitem.active);});
 		
 		fullscreenmenuitem.activate.connect(toggle_fullscreen);
 		_rotatemenuitem.activate.connect(()=>{rotate_screen();});

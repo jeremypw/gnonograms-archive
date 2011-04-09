@@ -103,7 +103,11 @@ public class Gnonogram_LabelBox : Frame {
 //======================================================================
 	public void highlight(int idx, bool is_highlight)
 	{//stdout.printf("highlight idx %d",idx);
-		if (idx>=_size||idx<0) {stdout.printf("idx %d out of range\n",idx);return;}
+		if (idx>=_size||idx<0)
+		{
+			//stdout.printf("idx %d out of range\n",idx);
+			return;
+		}
 		_labels[idx].highlight(is_highlight);
 	}
 //======================================================================
