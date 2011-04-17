@@ -1,0 +1,197 @@
+public static int __max_size = 25;
+public static int __start_rows = 10;
+public static int __start_cols = 10;
+public Tsunami__controller __controller;
+private Cell __current_cell;
+private Cell __previous_cell;
+private bool __is_button_down;
+private string __working_dir;
+private GameState __state=GameState.SETTING;
+//=========================================================================	
+//=========================================================================	
+public class Tsunami__controller {
+	private Tsunami_view _tsunami_view;
+	private MyLabelBox _colbox;
+	private MyLabelBox _rowbox;
+	private MyCellGrid _display_grid;
+	private Tsunami_model _model;
+	private int _rows; 	private int _cols;
+	private bool _testing; 	private bool _debug; 	private bool _test_column;
+	private int _test_idx;
+//=========================================================================	
+	public Tsunami__controller(int r, int c, bool testing, bool debug, bool test_column, int test_idx) {
+		_rows = imax(1, imin(__max_size,r)); 	_cols = imax(1, imin(__max_size,c));
+		_testing=testing; _debug=debug; _test_column=test_column; _test_idx=test_idx;
+		_rowbox = new MyLabelBox(_rows,_cols,false); _colbox = new MyLabelBox(_rows,_cols,true);
+		_model = new Tsunami_model(_rows,_cols);
+		_display_grid = new MyCellGrid(_rows,_cols);
+		_tsunami_view = new Tsunami_view(_rowbox, _colbox, _display_grid);
+		__is_button_down=false; }
+//=========================================================================	
+	private void initialize_view() {
+		_tsunami_view.show_all();
+		_tsunami_view.resize(250+_cols*5, 250+_rows*5);
+		_tsunami_view.set_name(__working_dir);
+		__current_cell.row=0; __current_cell.col=0;
+		__previous_cell.row=0; __previous_cell.col=0;}
+//=========================================================================	
+	public void button_pressed(ButtonPress b) {
+		switch (b) {
+				case ButtonPress.LEFT_SINGLE: __current_cell.state=CellState.FILLED; break;
+				case ButtonPress.RIGHT_SINGLE: 	__current_cell.state=CellState.EMPTY; break;
+				default: __current_cell.state=CellState.UNKNOWN; break; }	
+		__is_button_down=true;	update_cell(ref __current_cell);}
+//=========================================================================	
+	public void button_released() {__is_button_down=false;}
+//=========================================================================	
+	public void pointer_moved(int r, int c) {
+		if (__current_cell.changed(r,c)) {  //state not changed
+			if (__is_button_down) {update_cell(ref __current_cell);}
+			else {_model._display_data.get_cell(r,c, ref __current_cell);}
+			highlight_labels(ref __previous_cell, false);
+			highlight_labels(ref __current_cell, true);	
+			__previous_cell.copy(__current_cell);	}}
+//=========================================================================	
+	private void highlight_labels(ref Cell c, bool is_highlight) {
+		_rowbox.highlight(c.row, is_highlight);
+		_colbox.highlight(c.col, is_highlight);	}
+//=========================================================================	
+	public void update_cell(ref Cell c) {
+		_model._display_data.set_data_from_cell(ref c);
+		bool valid = true;
+		_display_grid.draw_cell(ref c,valid);
+		if (__state==GameState.SETTING) {
+		_rowbox.update_label(c.row, _model._display_data.id2text(c.row,false));
+		_colbox.update_label(c.col, _model._display_data.id2text(c.col,true));
+		}}
+//=========================================================================	
+	public void get_display_data(ref My2DArray data) {
+		data = _model._display_data; }
+//=========================================================================	
+	public void new_game() {
+		__state=GameState.SETTING; _model.clear();_model.working();show_model(); }
+//=========================================================================	
+	public void save_game() {
+		string filename;
+		filename=gui_get_filename("SAVE");
+		if (filename!="") {
+			if (write_game_file(filename)) {
+				_tsunami_view.set_name(Path.get_basename(filename));}}}
+//=========================================================================	
+	private bool write_game_file(string fn) {
+		string filename=fn;
+		if (filename.length<5) {return false;}
+		if (filename[-4:filename.length]!=".tsg") {filename = filename+".tsg";}
+		var f=FileStream.open(filename,"w");
+		f.printf("%d\n",_rows); f.printf("%d\n",_cols);
+		for (int r=0; r<_rows; r++) {for (int c=0; c<_cols; c++) {
+				_model._display_data.get_cell(r,c,ref __current_cell);
+				f.printf("%d\n",(int) __current_cell.state); }}
+		f.flush(); return true; }
+//=========================================================================	
+	public void load_game() {
+		string filename;  string basename;
+		_model.clear(); 
+		filename=gui_get_filename("OPEN");
+		basename=Path.get_basename(filename);
+		if (basename.length>5 && load_game_file(filename)) {
+				_tsunami_view.set_name(basename);
+				initialize_view(); update_labels(); start_solving();}
+		else {new_game();	_tsunami_view.set_name("Load failed");}	}
+//=========================================================================	
+	private bool load_game_file(string filename) {
+		int rows; int cols;
+		var f=FileStream.open(filename,"r");
+		rows=f.read_line().to_int(); cols=f.read_line().to_int();
+		if (rows!=_rows || cols!=_cols) {resize(rows,cols);}
+		for (int r=0; r<_rows; r++){for (int c=0; c<_cols; c++){
+				_model._display_data.set_data_from_rc(r,c,(CellState)f.read_line().to_int());}}
+		return true;}
+//=========================================================================	
+	public void start_solving() {
+		__state=GameState.SOLVING;	_model.blank_working(); show_model();	}
+//=========================================================================	
+	public void reveal_game() {
+		__state=GameState.SETTING;	_model.solution();show_model();}
+//=========================================================================	
+	public void unreveal_game() {
+		__state=GameState.SOLVING;	_model.working();show_model();}
+//=========================================================================	
+	public void peek_game() {
+		if (__state==GameState.SETTING) {unreveal_game();}
+		else {reveal_game();} }		
+//=========================================================================	
+	public bool solve_game(ref int passes, bool display_after=true) {
+		bool solved=false;
+		var rows= new string[_rows]; var cols= new string[_cols];
+		for (int i =0; i<_rows; i++) {rows[i]=_rowbox.get_label_text(i);}
+		for (int i =0; i<_cols; i++) {cols[i]=_colbox.get_label_text(i);}
+		_model.working();
+		var solver=new Tsunami_solver(rows, cols, ref _model._display_data, _testing, _debug, _test_column, _test_idx);
+		if (solver.valid()) {
+			passes=solver.solve();
+			if (solver.solved()){solved=true;}
+			else {passes=0;}}
+		else {passes=-1;}
+		if (display_after) {show_model();}
+		return solved;}
+//=========================================================================		
+	public void set_difficulty(int d) {	_model.set_difficulty(d);}
+//=========================================================================	
+	public bool random_game(int max_tries=30) {
+		int tries=0; int passes=-1; bool success=false;
+		while (tries<max_tries){
+			_model.fill_random(); _model.solution(); update_labels();
+			if (solve_game(ref passes, false)) {break;}
+			tries++;}
+		if (tries==max_tries) {__state=GameState.SETTING;_tsunami_view.set_name("Failed");}
+		else {_tsunami_view.set_name(@"Random - grade $passes");
+			__state=GameState.SOLVING;_model.blank_working();show_model();
+			success=true;}
+		return success;}
+//=========================================================================	
+ private void show_model() {
+		_display_grid.change_game__state(__state); 	_display_grid.redraw_area();
+		if (__state==GameState.SETTING) {update_labels();} }	
+//=========================================================================	
+	private void update_labels() {
+		for (int r=0; r<_rows; r++) {
+			_rowbox.update_label(r,_model._display_data.id2text(r,false));}
+		for (int c=0; c<_cols; c++) {
+			_colbox.update_label(c,_model._display_data.id2text(c,true));} }
+//=========================================================================	
+	public void resize(int r, int c) {
+		_rows=r;_cols=c;
+		_model=new Tsunami_model(_rows,_cols);
+		_rowbox.resize(r,c);_colbox.resize(r,c);
+		_display_grid.resize(r,c);
+		_tsunami_view.show_all();
+		__state=GameState.SETTING;
+		show_model(); }
+//=========================================================================	
+	public static int main(string[] args)  {
+		bool testing=false; bool debug=false; bool test_column=false; int test_idx=-1;
+		int _start_rows=__start_rows; int _start_cols=__start_cols;
+		__working_dir=Path.get_dirname(Environment.get_variable("_"));
+		stdout.printf("working directory is %s\n",__working_dir);
+		gui_initialise(args);
+		for (int i=1;i<args.length;i++) {
+			stdout.printf("Arg %d : %s\n",i,args[i]);
+			if (args[i]=="--test") {testing=true; debug=true; continue;}
+			if (args[i]=="--rows") {_start_rows=args[i+1].to_int();i++;continue;}
+			if (args[i]=="--cols") {_start_cols=args[i+1].to_int();i++;continue;}
+			if (args[i]=="--debug") {
+				if (args.length-i>=2) {
+				debug=false; test_column=(args[i+1]=="column"); test_idx=args[i+2].to_int();
+				stdout.printf(@"debug $debug, test_column $test_column, test_idx $test_idx"+"\n");}
+				else {debug=true;}
+				continue; }	}
+		__controller= new Tsunami__controller(_start_rows,_start_cols, testing, debug, test_column, test_idx);
+		__controller.initialize_view();
+		gui_mainloop();
+		return 0; }
+}
+//=========================================================================	
+//=========================================================================	
+
+

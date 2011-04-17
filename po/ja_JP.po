@@ -1,0 +1,303 @@
+# po/gnonograms.pot
+# Translation template for Gnonograms game.
+# Copyright (C) 2010 J P Wootten
+# This file is distributed under the same license as the Gnonograms package.
+# JEREMY WOOTTEN <jeremywootten@gmail.com>, 2010.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Gnonograms-0.1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-03-22 11:27+0000\n"
+"PO-Revision-Date: 2011-03-22 11:41+0000\n"
+"Last-Translator: HIROKO WOOTTEN <hirokowootten@gmail.com>\n"
+"Language-Team: JAPANESE <jp@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../src/Gnonogram_controller.vala:304
+msgid "Name and save this game"
+msgstr "名前を付けて、このゲームを保存する"
+
+#: ../src/Gnonogram_controller.vala:305 ../src/Gnonogram_filereader.vala:73
+msgid "Gnonogram games"
+msgstr "Gnonogramゲーム"
+
+#: ../src/Gnonogram_controller.vala:343
+msgid "An error occured saving the position file"
+msgstr "ゲームの状態を保存中にエラーが発生しました"
+
+#: ../src/Gnonogram_controller.vala:522
+msgid "Invalid; no solution"
+msgstr "無効。解決策がない"
+
+#: ../src/Gnonogram_controller.vala:525
+msgid "No unique solution"
+msgstr "複数の解決策"
+
+#: ../src/Gnonogram_controller.vala:528
+#, c-format
+msgid "Solved in %d passes"
+msgstr "%dパスの後に解決"
+
+#: ../src/Gnonogram_controller.vala:607
+msgid "Failed to generate puzzle - try reducing difficulty"
+msgstr "パズルを生成するために失敗しました。"
+
+#: ../src/Gnonogram_model.vala:114
+msgid "Error - wrong number of columns"
+msgstr "ファイルエラー-列が少なすぎます"
+
+#. seems to be necessary to get signals to work.  Not sure why.
+#: ../src/Gnonogram_viewer.vala:67
+msgid "Gnonogram"
+msgstr "Gnonograms"
+
+#: ../src/Gnonogram_viewer.vala:100
+msgid "_File"
+msgstr "ファイル"
+
+#: ../src/Gnonogram_viewer.vala:101
+msgid "_Game"
+msgstr "ゲーム"
+
+#: ../src/Gnonogram_viewer.vala:102
+msgid "_Settings"
+msgstr "設定"
+
+#: ../src/Gnonogram_viewer.vala:103
+msgid "_View"
+msgstr "表示"
+
+#: ../src/Gnonogram_viewer.vala:104
+msgid "_Help"
+msgstr "ヘルプ"
+
+#: ../src/Gnonogram_viewer.vala:114
+msgid "_New"
+msgstr "新規"
+
+#: ../src/Gnonogram_viewer.vala:118
+msgid "_Load"
+msgstr "ロードする"
+
+#: ../src/Gnonogram_viewer.vala:120
+msgid "_Save"
+msgstr "保存"
+
+#: ../src/Gnonogram_viewer.vala:124
+msgid "_Quit"
+msgstr "終了"
+
+#: ../src/Gnonogram_viewer.vala:129 ../src/Gnonogram_viewer.vala:136
+msgid "_Puzzle"
+msgstr "パズル"
+
+#: ../src/Gnonogram_viewer.vala:131 ../src/Gnonogram_viewer.vala:138
+msgid "_Unfinished"
+msgstr "未完成"
+
+#: ../src/Gnonogram_viewer.vala:143
+msgid "_Show solution"
+msgstr "回答表示"
+
+#: ../src/Gnonogram_viewer.vala:145
+msgid "Show _Working"
+msgstr "作業表示"
+
+#: ../src/Gnonogram_viewer.vala:147
+msgid "_Quick peek at solution"
+msgstr "回答を覗き見"
+
+#: ../src/Gnonogram_viewer.vala:149
+msgid "_Restart"
+msgstr "再出発"
+
+#: ../src/Gnonogram_viewer.vala:153
+msgid "_Let computer solve it"
+msgstr "コンピュータが解決"
+
+#: ../src/Gnonogram_viewer.vala:155
+msgid "_Computer generated puzzle"
+msgstr "コンピュータがパズルを作成"
+
+#: ../src/Gnonogram_viewer.vala:161
+msgid "_Colors"
+msgstr "色"
+
+#: ../src/Gnonogram_viewer.vala:163
+msgid "_Resize"
+msgstr "サイズ変更"
+
+#: ../src/Gnonogram_viewer.vala:165 ../src/Gnonogram_viewer.vala:292
+msgid "_Difficulty"
+msgstr "難易度"
+
+#: ../src/Gnonogram_viewer.vala:169
+msgid "_Fullscreen"
+msgstr "フルスクリーン"
+
+#: ../src/Gnonogram_viewer.vala:172
+msgid "_Toolbar"
+msgstr "ツールバー"
+
+#: ../src/Gnonogram_viewer.vala:175
+msgid "_Grid"
+msgstr "グリッド"
+
+#: ../src/Gnonogram_viewer.vala:181
+msgid "About"
+msgstr "情報"
+
+#: ../src/Gnonogram_viewer.vala:217
+msgid "New game"
+msgstr "新しいゲーム"
+
+#: ../src/Gnonogram_viewer.vala:221
+msgid "Load game"
+msgstr "ロードゲーム"
+
+#: ../src/Gnonogram_viewer.vala:225
+msgid "Save game"
+msgstr "ゲームを保存"
+
+#: ../src/Gnonogram_viewer.vala:232 ../src/Gnonogram_viewer.vala:398
+msgid "Hide the solution and start solving"
+msgstr "答えを隠しパズルを解く"
+
+#: ../src/Gnonogram_viewer.vala:237
+msgid "Peek"
+msgstr "のぞき見"
+
+#: ../src/Gnonogram_viewer.vala:238
+msgid "Show solution"
+msgstr "正しい解決策を表示する"
+
+#: ../src/Gnonogram_viewer.vala:242
+msgid "Start this puzzle again"
+msgstr "このパズル再開"
+
+#: ../src/Gnonogram_viewer.vala:249
+msgid "Solve"
+msgstr "解決する"
+
+#: ../src/Gnonogram_viewer.vala:250
+msgid "Solve by computer"
+msgstr "コンピュータによって解決する"
+
+#: ../src/Gnonogram_viewer.vala:254
+msgid "Random"
+msgstr "ランダムゲーム"
+
+#: ../src/Gnonogram_viewer.vala:255
+msgid "Generate a random game"
+msgstr "乱数を生成するゲーム"
+
+#: ../src/Gnonogram_viewer.vala:263 ../src/Gnonogram_viewer.vala:332
+msgid "Set the difficulty of generated games"
+msgstr "難易度の設定"
+
+#: ../src/Gnonogram_viewer.vala:269
+msgid "Resize"
+msgstr "サイズ変更"
+
+#: ../src/Gnonogram_viewer.vala:270
+msgid "Change dimensions of the game grid"
+msgstr "ゲームの変更寸法"
+
+#: ../src/Gnonogram_viewer.vala:274
+msgid "Increase font size"
+msgstr "字体拡大"
+
+#: ../src/Gnonogram_viewer.vala:278
+msgid "Decrease font size"
+msgstr "字体縮小"
+
+#: ../src/Gnonogram_viewer.vala:356
+msgid "About Gnonogram Game"
+msgstr "Gnonogramsゲームについて"
+
+#: ../src/Gnonogram_viewer.vala:403
+msgid "Reveal the solution"
+msgstr "解決策を明らかに"
+
+#: ../src/Gnonogram_filereader.vala:72
+msgid "Choose a game"
+msgstr "ゲームを選択"
+
+#: ../src/Gnonogram_filereader.vala:73
+msgid "Picto games"
+msgstr "Pictoゲーム"
+
+#: ../src/utils.vala:45 ../src/Resource.vala:118
+msgid "Ok"
+msgstr "良し"
+
+#: ../src/utils.vala:46 ../src/Resource.vala:119
+msgid "Cancel"
+msgstr "キャンセル"
+
+#: ../src/utils.vala:124
+msgid "Adjust Size"
+msgstr "サイズを調整"
+
+#: ../src/utils.vala:134
+msgid "Rows"
+msgstr "行"
+
+#: ../src/utils.vala:138
+msgid "Columns"
+msgstr "列"
+
+#: ../src/Resource.vala:122 ../src/Resource.vala:134
+msgid "Color of filled cell when setting"
+msgstr "充填セルの色設定するとき"
+
+#: ../src/Resource.vala:123 ../src/Resource.vala:136
+msgid "Color of empty cell when setting"
+msgstr "空のセルの色を設定するとき"
+
+#: ../src/Resource.vala:124 ../src/Resource.vala:125 ../src/Resource.vala:138
+msgid "Color of filled cell when solving"
+msgstr "充填セルの色解決する際に"
+
+#: ../src/Resource.vala:140
+msgid "Color of empty cell when solving"
+msgstr "空のセルの色を解決する際に"
+
+#~ msgid "Position file not found"
+#~ msgstr "ファイルが見つかりませんでした"
+
+#~ msgid "Position file error"
+#~ msgstr "ファイルエラー"
+
+#~ msgid "Position file error - too few rows in working grid"
+#~ msgstr "ファイルエラー-少なすぎる行"
+
+#~ msgid "Invalid game file"
+#~ msgstr "不正なファイル"
+
+#~ msgid "Failed to load puzzle"
+#~ msgstr "ゲームのロードに失敗しました。"
+
+#~ msgid "All files"
+#~ msgstr "すべてのファイル"
+
+#~ msgid "_Language"
+#~ msgstr "言語"
+
+#~ msgid "_English"
+#~ msgstr "イギリス英語"
+
+#~ msgid "_Japanese"
+#~ msgstr "日本"
+
+#, fuzzy
+#~ msgid "British English"
+#~ msgstr "イギリス英語"
+
+#, fuzzy
+#~ msgid "Japanese"
+#~ msgstr "日本"
