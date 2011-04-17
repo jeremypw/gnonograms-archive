@@ -59,11 +59,20 @@ public struct Cell {
 			this.state=b.state;
 		}
 
+//		public Cell invert() {
+//			if (state==CellState.EMPTY) state=CellState.FILLED;
+//			else state=CellState.EMPTY;
+//			return this;
+//		}
+
 		public Cell invert() {
-			if (state==CellState.EMPTY) state=CellState.FILLED;
-			else state=CellState.EMPTY;
-			return this;
+			Cell c={this.row, this.col, CellState.UNKNOWN};
+			if (this.state==CellState.EMPTY) c.state=CellState.FILLED;
+			else c.state=CellState.EMPTY;
+			return c;
 		}
+
+
 	}
 
 public enum ButtonPress {

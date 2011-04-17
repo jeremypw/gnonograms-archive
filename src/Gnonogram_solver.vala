@@ -22,6 +22,7 @@
  * 	Jeremy Wootten <jeremwootten@gmail.com>
  */
  
+ //experimental - optimise
  public class Gnonogram_solver {
 
 	private int _rows;
@@ -30,6 +31,13 @@
 	public My2DCellArray _grid;
 	private Gnonogram_region[] _regions;
 	private int _current_region;
+	private Cell _trial_cell;
+	private int _rdir;
+	private int _cdir;
+	private int _rlim;
+	private int _clim;
+	private int _turn;
+	private int _max_turns;
 
 	public signal void showsolvergrid();
 
@@ -77,11 +85,18 @@
 			
 		return true;
 	}
+
+	public string get_error()
+	{
+		for (int i=0; i<_region_count; i++)
+				{	if (_regions[i]._in_error) return _regions[i].message;}
+		return "No error";
+	}
 	
 //=========================================================================	
 	public int solve_it(bool debug, bool use_advanced=false)
 	{
-		int simple_result=simple_solver(debug);
+		int simple_result=simple_solver(debug,true); //log errors
 		if (simple_result==0 && use_advanced)
 		{
 			int advanced_result=advanced_solver(debug);
@@ -95,8 +110,8 @@
 		return 0;
 	}
 //======================================================================
-	private int simple_solver(bool debug)
-	{
+	private int simple_solver(bool debug, bool log_error=false)
+	{//stdout.printf("Simple solver\n");
 		bool changed=true;
 		int pass=1;
 //		if (!debug)
@@ -107,12 +122,12 @@
 				for (int i=0; i<_region_count; i++)
 				{	
 					if (_regions[i]._completed) continue;
-					if (_regions[i].solve()) changed=true;
-					if (_regions[i]._in_error)
+					if (_regions[i].solve(debug)) changed=true;
+					if (debug ||(log_error && _regions[i]._in_error))
 					{
-						stdout.printf(_regions[i].message);
-						return -1;
+						stdout.printf("Error - %d: %s\n",i,_regions[i].message);
 					}
+					if (_regions[i]._in_error) return -1;
 				}
 				
 				pass++;
@@ -121,23 +136,10 @@
 					showsolvergrid();
 					if (!Utils.show_confirm_dialog(@"Simple solver pass $pass ... continue?")) return 0;
 				}
-//				stdout.printf(@"CHanged $changed  Passes $pass\n");
 			}
 			if (solved()) return pass;
-			else return 0;
-/*		}
-		else //step-wise mode for debugging
-		{
-			var r=_current_region; r++;
-//			if (r==_region_count) r=0;
-			while (r<_region_count && _regions[r]._completed) r++;
-			if (r==_region_count) r=0;
-			_regions[r].solve(true);
-			stdout.printf(_regions[r].message);
-			_current_region=r;
-			return -2;
-		}
-*/
+			if (pass>30) stdout.printf("Simple solver - too many passes\n");
+			return 0;
 	}
 
 //======================================================================	
@@ -156,20 +158,26 @@
 //======================================================================
 	private int advanced_solver(bool debug)
 	//single cell guesses, depth 1 (no recursion)
-	// make a guess in each unknown cell in turn
+	// make a guess in each unknown cell in _turn
 	// if leads to contradiction mark opposite to guess, continue simple solve, if still no solution start again.
 	// if does not lead to solution leave unknown and choose another cell
 	// if leads to solution - success!
 	
-	{	int simple_result=0;
+	{	//stdout.printf("Advanced solver\n");
+		//if (!Utils.show_confirm_dialog("Use advanced solver (experimental)?")) return 0;
+	
+		int simple_result=0;
 		int limit=_rows*_cols; //maximum possible alternative guesses = all cells
-		Cell trial_cell= {0,-1,CellState.UNKNOWN};
+		int guesses=0, wraps=0;
+		bool changed=false;
+		int initial_maxturns=3; //stay near edges until no more changes
+
+		_rdir=0; _cdir=1; _rlim=_rows; _clim=_cols; _turn=0; _max_turns=initial_maxturns;
+				
+		_trial_cell= {0,-1,CellState.FILLED};
 		CellState[] grid_store= new CellState[limit];
 
-		int guesses=0;
-//		stdout.printf("limit on guesses is %d\n",limit);
-		bool changed=false;
-		while (guesses<limit) //no infinite loops please
+		while (true) 
 		{
 			guesses++;	
 			this.save_position(grid_store);
@@ -180,21 +188,37 @@
 				if (!Utils.show_confirm_dialog(@"Guess $guesses ... continue?")) return 0;
 			}
 		
-			trial_cell=this.make_guess(trial_cell); 
+			make_guess(); 
 			
-			if (trial_cell.col==-1)
+			if (_trial_cell.col==-1) //run out of guesses
 			{
 				if (changed)
-				{
-					trial_cell=this.make_guess(trial_cell); //wrap back to start
-					stdout.printf("Wrapping ... \n");
-					changed=false;
-					guesses=0;
+				{//wrap back to start
+					//use opposite guess this time?
+					//_trial_cell=this.make_guess(_trial_cell.invert());
+					//_trial_cell=_trial_cell.invert(); //- no advantage?
 				}
-				else break;
-			}	
+				else if (_max_turns==initial_maxturns)
+				{
+					_max_turns=(int.min(_rows,_cols))/2+2; //ensure full coverage
+				}
+				else break; //cant make progress
 
-			_grid.set_data_from_cell(trial_cell);
+				_rdir=0; _cdir=1; _rlim=_rows; _clim=_cols; _turn=0;
+				
+				//make_guess();
+								
+				changed=false;
+				wraps++;
+				stdout.printf("Wrapping ... max _turns %d\n", _max_turns);
+				if (debug)
+				{
+					showsolvergrid();
+					Utils.show_confirm_dialog(@"Trial $(_trial_cell.row), $(_trial_cell.col), $(_trial_cell.state)\n _rdir $_rdir, _cdir $_cdir\n_turn $_turn, _max_turns $_max_turns, _rlim $_rlim, _clim $_clim\nresult $simple_result\n ... continue?");
+				}
+				continue;
+			}	
+			_grid.set_data_from_cell(_trial_cell);
 
 			if (debug)
 			{
@@ -202,61 +226,49 @@
 				if (!Utils.show_confirm_dialog("Made guess ... continue?"))
 				{
 					this.load_position(grid_store);
-					return -1;
+					return 0;
 				}
 			}
-		
-			//simple_result=simple_solver(debug);
-			simple_result=simple_solver(false); //only debug advanced part
-			stdout.printf("Simple result %d\n",simple_result);
+
+			simple_result=simple_solver(false,false); //only debug advanced part, ignore errors
 
 			if (debug)
 			{			
 				showsolvergrid();
-				if (!Utils.show_confirm_dialog(@"Result $simple_result ... continue?"))
-				{
-					this.load_position(grid_store);
-					return -1;
-				}
+				Utils.show_confirm_dialog(@"Trial $(_trial_cell.row), $(_trial_cell.col), $(_trial_cell.state)\n _rdir $_rdir, _cdir $_cdir\n_turn $_turn, _rlim $_rlim, _clim $_clim\nresult $simple_result\n ... continue?");
 			}
 
-			if (simple_result<0) //contradiction - backtrack	
-			{
-				this.load_position(grid_store); //restore starting position				
-				_grid.set_data_from_cell(trial_cell.invert()); //mark opposite to guess
-				stdout.printf("Setting cell %d,%d empty\n",trial_cell.row,trial_cell.col);
+			if (simple_result>0) break; //solution found
+			
+			load_position(grid_store); //back track
+			if (simple_result<0) //contradiction -  try opposite guess
+			{			
+				_grid.set_data_from_cell(_trial_cell.invert()); //mark opposite to guess
 				changed=true; //worth trying another cycle of guesses
+				//stdout.printf("Changed %d, %d\n",_trial_cell.row,_trial_cell.col);
+ 
+				simple_result=simple_solver(false,false);//can we solve now?
 
-				
-				//simple_result=simple_solver(debug); //can we solve now?
-				simple_result=simple_solver(false);
-				
-				if (simple_result>0) break; 
-				else if (simple_result<0)
+				if (simple_result==0)
+				{//go back to start
+					continue;
+				}
+				else 	if (simple_result>0) break; // solution found
+				else 
 				{
 					Utils.show_warning_dialog("ERROR in advanced solver - both alternatives lead to contradiction");
 					return -1;
 				}
-				else
-				{	//try another guess
-					continue;
-					//stdout.printf("Try another guess ...\n");
-					// could recurse to another level here - but wont
-					//trial_cell= {0,-1,CellState.UNKNOWN};
-					//guesses=0;
-				}
 			}
-			else if (simple_result>0) break;
-			else //does not lead to solution or contradiction
+			else
 			{
-				this.load_position(grid_store);
-				// leave this guess as unknown
-				//stdout.printf("Trying another guess - %d\n",guesses+1);
+				continue; //guess again
 			}
 		}
 		//return vague measure of difficulty
-		if (simple_result>0) return simple_result+ 2*guesses;
-//		stdout.printf("Returning from advanced solver\n");
+		stdout.printf(@"simple result $simple_result guesses $guesses wraps $wraps\n");
+		if (simple_result>0) return simple_result+ 2*guesses;// + _region_count*wraps;
+//		stdout.printf("returning from advanced solver\n");
 		return 0;
 	}				
 //======================================================================
@@ -283,30 +295,58 @@
 		for (int i=0; i<_region_count; i++) _regions[i].restore_state();
 	}
 //======================================================================
-	private Cell make_guess(Cell last_guess) {
-		stdout.printf("make guess \n");
-		Cell guess = {0,-1,CellState.UNKNOWN};
+//	private Cell make_guess(Cell last_guess) {
+	private void xmake_guess() {
+		//stdout.printf("make guess \n");
+		// raster scan (not optimised)
 		
-		int start_row=last_guess.row;
-		int start_col=last_guess.col+1;
-		if (start_col==_cols)
-		{
-			start_col=0; start_row++;
-		}
+//		int start_row=last_guess.row;
+//		int start_col=last_guess.col+1;
+		int start_row=_trial_cell.row;
+		int start_col=_trial_cell.col+1;
+		
+		if (start_col==_cols) {start_col=0; start_row++;}
+		
 		for (int r=start_row; r<_rows; r++)
 		{	for (int c=start_col; c<_cols; c++)
 			{
 				start_col=0; //next loop starts at zero
 				if (_grid.get_data_from_rc(r,c)==CellState.UNKNOWN)
 				{
-					//_grid.set_data_from_rc(r,c,CellState.FILLED);
-					stdout.printf("Trying %d,%d\n",r,c);
-					guess={r,c,CellState.FILLED};
-					return guess;
+					//stdout.printf("Trying %d,%d\n",r,c);
+					_trial_cell.row=r; _trial_cell.col=c;
+					//return last_guess;
+					return;
 				}
 			}
 		}
-		return guess;
+//		last_guess.row=0; last_guess.col=-1;
+//		return last_guess;
+		return;
+	}
+//======================================================================	
+	private void make_guess()
+	{	//stdout.printf("make guess2\n");
+		//scan in spiral pattern from edges.  Critical cells most likely in this region
+		int r=_trial_cell.row;
+		int c=_trial_cell.col;
+		
+		while (true)
+		{
+			r+=_rdir; c+=_cdir; //only one changes at any one time
+			if (_cdir==1 && c>=_clim) {c--;_cdir=0;_rdir=1;r++;} //across top - rh edge reached
+			else if (_rdir==1 && r>=_rlim) {r--;_rdir=0;_cdir=-1;c--;} //down rh side - bottom reached
+			else if (_cdir==-1 && c<_turn) {c++; _cdir=0;_rdir=-1;r--;} //back across bottom lh edge reached
+			else if (_rdir==-1 && r<=_turn) {r++;_turn++;_rlim--;_clim--;_rdir=0;_cdir=1;} //up lh side - top edge reached
+			if (_turn>_max_turns) {_trial_cell.row=0;_trial_cell.col=-1;break;} //stay near edge until no more changes
+			if (_grid.get_data_from_rc(r,c)==CellState.UNKNOWN)
+			{
+				_trial_cell.row=r; _trial_cell.col=c;
+				//stdout.printf(@"row $r, col $c\n");
+				return;
+			}
+		}	
+		return;
 	}
 //======================================================================
 	public Cell get_cell(int r, int c)

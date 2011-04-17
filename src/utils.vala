@@ -287,16 +287,16 @@ namespace Utils
 			var regex = new GLib.Regex("&#([0-9]+);");
 			string[] s = regex.split(html);
 			
-			for (int i=0; i<s.length;i++)
-			{
-				stdout.printf("%d, %s\n", i , s[i]);
-			}
+//			for (int i=0; i<s.length;i++)
+//			{
+//				stdout.printf("%d, %s\n", i , s[i]);
+//			}
 			if (s.length>1) //html entity found - convert to unicode
 			{
 				var sb=new StringBuilder("");
 				for (int i=0; i<s.length;i++)
 				{	int u=int.parse(s[i]);
-				stdout.printf("u is %d\n",u);
+				//stdout.printf("u is %d\n",u);
 					if (u>31 && u<65535)
 					{
 						sb.append_unichar((unichar)u);

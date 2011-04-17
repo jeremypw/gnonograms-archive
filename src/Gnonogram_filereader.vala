@@ -33,6 +33,7 @@ public class Gnonogram_filereader {
 	public string name="";
 	public string author="";
 	public string date="";
+	public string score="";
 	public bool in_error=false;
 	public bool has_dimensions=false;
 	public bool has_row_clues=false;
@@ -111,15 +112,18 @@ public class Gnonogram_filereader {
 		string line; size_t length;
 		try
 		{
-			for (int i=0; i<5; i++)
+			for (int i=0; i<5; i++) //description lines
 			{
 				line=stream.read_line(out length);
 				string[] s = line.split(":");
 				headings += s[0].strip();
-				bodies += s[1].strip();
+				if (s[1].strip()=="") bodies+="Unknown";
+				else 	bodies += s[1].strip();
 			}
-			line=stream.read_line(out length);
-			while (line!=null)
+			
+			line=stream.read_line(out length);//blank separator line
+			
+			while (line!=null) //pattern lines
 			{
 				line=line.chomp().strip();
 				if (line!=null) picto_grid_data+=line;
@@ -278,9 +282,12 @@ public class Gnonogram_filereader {
 	{  //stdout.printf("In get_description\n");
 		if (body==null) return false;
 		string[] s = Utils.remove_blank_lines(body.split("\n"));
+
 		if (s.length>=1) name=Utils.convert_html(s[0]);
 		if (s.length>=2) author=Utils.convert_html(s[1]);
 		if (s.length>=3) date=s[2];
+		if (s.length>=4) score=s[3];
+		
 		//stdout.printf(@"Name $name Author $author Date $date\n");
 		return true;
 	}
