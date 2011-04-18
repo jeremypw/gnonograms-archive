@@ -44,6 +44,8 @@ public class Gnonogram_view : Gtk.Window
 	public signal void resizegame();
 	public signal void togglegrid(bool active);
 	public signal void changefont(bool increase);
+	public signal void debugmode(bool debug);
+	public signal void advancedmode(bool advanced);
 	public signal void rotate_screen();
 	
 	private Gnonogram_controller _controller;
@@ -61,6 +63,7 @@ public class Gnonogram_view : Gtk.Window
 	private Label _author_label;
 	private Label _date_label;
 	private Label _size_label;
+	private Label _score_label;
 	
 	private Gtk.Image _logo;
 	
@@ -86,10 +89,13 @@ public class Gnonogram_view : Gtk.Window
 		_date_label.set_alignment((float)0.0,(float)0.5);
 		_size_label=new Label("        ");
 		_size_label.set_alignment((float)0.0,(float)0.5);
+		_score_label=new Label("       ");
+		_score_label.set_alignment((float)0.0,(float)0.5);
 		info_box.add(_name_label);
 		info_box.add(_author_label);
 		info_box.add(_date_label);
 		info_box.add(_size_label);
+		info_box.add(_score_label);
 		info_frame.add(info_box);
 		
 		var table = new Table(2,2,false);
@@ -184,6 +190,12 @@ public class Gnonogram_view : Gtk.Window
 			settingssubmenu.add(grademenuitem);
 			var infomenuitem=new MenuItem.with_mnemonic(_("_Edit game description"));
 			settingssubmenu.add(infomenuitem);
+			var debugmenuitem=new CheckMenuItem.with_mnemonic("D_ebug");
+			debugmenuitem.set_active(false);
+			settingssubmenu.add(debugmenuitem);
+			var advancedmenuitem=new CheckMenuItem.with_mnemonic("_Advanced solver");
+			advancedmenuitem.set_active(true);
+			settingssubmenu.add(advancedmenuitem);
 						
 		var viewsubmenu=new Menu();
 		viewmenuitem.set_submenu(viewsubmenu);
@@ -224,6 +236,8 @@ public class Gnonogram_view : Gtk.Window
 		resizemenuitem.activate.connect(()=>{resizegame();});
 		grademenuitem.activate.connect(getdifficulty);
 		infomenuitem.activate.connect(editdescription);
+		debugmenuitem.activate.connect(()=>{debugmode(debugmenuitem.active);});
+		advancedmenuitem.activate.connect(()=>{advancedmode(advancedmenuitem.active);});
 		
 		fullscreenmenuitem.activate.connect(toggle_fullscreen);
 		_rotatemenuitem.activate.connect(()=>{rotate_screen();});
@@ -428,17 +442,23 @@ public class Gnonogram_view : Gtk.Window
 		dialog.destroy();
 	}
 //======================================================================
-	public void set_name(string name){_name_label.set_text("Name: "+name+"  ");}
+	public void set_name(string name){_name_label.set_text("Name:  "+name+"  ");}
 	public string get_name(){return get_info_item(_name_label);	}
 //======================================================================
-	public void set_author(string author){_author_label.set_text("By:   "+author+"  ");}
+	public void set_author(string author){_author_label.set_text("By:    "+author+"  ");}
 	public string get_author(){return get_info_item(_author_label);}
 //======================================================================
-	public void set_date(string date){_date_label.set_text("Date: "+date+"  ");}
+	public void set_date(string date){_date_label.set_text("Date:  "+date+"  ");}
 	public string get_date(){return get_info_item(_date_label);	}
 //======================================================================
+	public void set_score_label(string score)
+	{
+		_score_label.set_text("Score: "+score+"  ");
+	}
+	public string get_score(){return get_info_item(_score_label);	}
+//======================================================================
 	private string get_info_item(Label l)
-	{	var s= l.get_text().slice(6,-1);
+	{	var s= l.get_text().slice(7,-1);
 		if (s.strip()=="") s="Unknown";
 		return s;
 	}

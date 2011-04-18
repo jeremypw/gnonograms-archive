@@ -621,9 +621,7 @@
 // increments/decrements idx until cell of required state
 // or end of range found.
 //returns true if cell with status cs was found
-		bool dir=(direction>0);
-		bool found=false;
-		
+		bool dir=(direction>0);		
 		for (int i=idx; (dir ? i<limit : i>limit); (dir ? i++ : i--))
 		{	
 			if (_status[i]==cs)
