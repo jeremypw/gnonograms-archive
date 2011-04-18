@@ -65,9 +65,6 @@ public class Gnonogram_filereader {
 			filename=Resource.game_dir + "/"+Resource.POSITIONFILENAME;
 			is_game=false;
 		}
-
-		headings={};
-		bodies={};
 	}
 //=========================================================================	
 	public void ask_filename()
@@ -96,18 +93,13 @@ public class Gnonogram_filereader {
 	private bool parse_gnonogram_game_file()
 	{
 		size_t headerlength, bodylength;
-		int count=-1;
 		try
 		{
 			stream.read_until("[", out headerlength);
 			while (true)
 			{
 				headings += stream.read_until("]", out headerlength);
-				stdout.printf(@"Headerlength $headerlength\n");
 				bodies += stream.read_until("[", out bodylength);
-				stdout.printf(@"bodylength $bodylength\n");
-				count++;
-				stdout.printf(@"body $(bodies[count])\n");
 				if (headerlength==0 || bodylength==0) break;
 			}
 		}
@@ -149,13 +141,11 @@ public class Gnonogram_filereader {
 	private bool parse_gnonogram_headings_and_bodies()
 	{
 		int n=headings.length;
-		stdout.printf(@"Number of headings is $n\n");
 
 		for (int i=0;i<n;i++)
 		{
 			string heading=headings[i];
 			if (heading==null) continue;
-			stdout.printf(@"Heading $i is $heading\n");
 			if (heading.length>3) heading=heading.slice(0,3);
 			switch (heading.up())
 			{
@@ -210,7 +200,7 @@ public class Gnonogram_filereader {
 	}
 //=========================================================================	
 	private bool get_gnonogram_clues(string? body, bool is_column)
-	{stdout.printf("In get_clues\n");
+	{//stdout.printf("In get_clues\n");
 		string[] arr={};
 		if (body==null) return false;
 		string[] s = Utils.remove_blank_lines(body.split("\n"));
@@ -236,14 +226,14 @@ public class Gnonogram_filereader {
 	}
 //=========================================================================
 	private bool get_gnonogram_cellstate_array(string? body, bool is_solution)
-	{stdout.printf("In get_cellstate array  is solution %s\n", is_solution.to_string());
+	{//stdout.printf("In get_cellstate array\n");
 		if (body==null) return false;
 		string[] s = Utils.remove_blank_lines(body.split("\n"));
 		if (s==null||s.length!=rows) return false;
 	
 		for (int i=0; i<s.length;i++)
 		{
-			stdout.printf(@"s[$i] $(s[i])\n");
+			//stdout.printf(@"s[$i] $(s[i])\n");
 			CellState[] arr = Utils.cellstate_array_from_string(s[i]);
 			if (arr.length!=cols) return false;
 		}
@@ -257,7 +247,7 @@ public class Gnonogram_filereader {
 			working=s;
 			has_working=true;
 		}
-		stdout.printf("Leaving get_cellstate array\n");
+		//stdout.printf("Leaving get_cellstate array\n");
 		return true;
 	}
 //=========================================================================	

@@ -32,7 +32,6 @@
 #include <gio/gio.h>
 #include <gtk/gtk.h>
 #include <glib/gi18n-lib.h>
-#include <stdio.h>
 #include <gobject/gvaluecollector.h>
 
 
@@ -71,6 +70,7 @@ struct _Gnonogram_filereader {
 	gchar* name;
 	gchar* author;
 	gchar* date;
+	gchar* score;
 	gboolean in_error;
 	gboolean has_dimensions;
 	gboolean has_row_clues;
@@ -155,6 +155,7 @@ static gboolean gnonogram_filereader_parse_gnonogram_headings_and_bodies (Gnonog
 static void _vala_array_add3 (gchar*** array, int* length, int* size, gchar* value);
 static void _vala_array_add4 (gchar*** array, int* length, int* size, gchar* value);
 static void _vala_array_add5 (gchar*** array, int* length, int* size, gchar* value);
+static void _vala_array_add6 (gchar*** array, int* length, int* size, gchar* value);
 static gboolean gnonogram_filereader_get_game_description (Gnonogram_filereader* self, const gchar* body);
 static gboolean gnonogram_filereader_get_picto_dimensions (Gnonogram_filereader* self, const gchar* body, gboolean is_column);
 static gboolean gnonogram_filereader_parse_picto_grid_data (Gnonogram_filereader* self);
@@ -164,7 +165,7 @@ static gboolean gnonogram_filereader_get_gnonogram_cellstate_array (Gnonogram_fi
 static gboolean gnonogram_filereader_get_gnonogram_state (Gnonogram_filereader* self, const gchar* body);
 gchar** utils_remove_blank_lines (gchar** sa, int sa_length1, int* result_length1);
 static gchar* gnonogram_filereader_parse_gnonogram_clue (Gnonogram_filereader* self, const gchar* line);
-static void _vala_array_add6 (gchar*** array, int* length, int* size, gchar* value);
+static void _vala_array_add7 (gchar*** array, int* length, int* size, gchar* value);
 static gchar** _vala_array_dup1 (gchar** self, int length);
 static gchar** _vala_array_dup2 (gchar** self, int length);
 GType cell_state_get_type (void) G_GNUC_CONST;
@@ -182,10 +183,6 @@ static gint _vala_array_length (gpointer array);
 
 Gnonogram_filereader* gnonogram_filereader_construct (GType object_type, Gnonogram_FileType type) {
 	Gnonogram_filereader* self = NULL;
-	gchar** _tmp3_ = NULL;
-	gchar** _tmp4_;
-	gchar** _tmp5_ = NULL;
-	gchar** _tmp6_;
 	self = (Gnonogram_filereader*) g_type_create_instance (object_type);
 	if (type == GNONOGRAM_FILETYPE_GAME) {
 		gboolean _tmp0_;
@@ -207,18 +204,6 @@ Gnonogram_filereader* gnonogram_filereader_construct (GType object_type, Gnonogr
 		_g_free0 (_tmp1_);
 		self->priv->is_game = FALSE;
 	}
-	_tmp3_ = g_new0 (gchar*, 0 + 1);
-	_tmp4_ = _tmp3_;
-	self->priv->headings = (_vala_array_free (self->priv->headings, self->priv->headings_length1, (GDestroyNotify) g_free), NULL);
-	self->priv->headings_length1 = 0;
-	self->priv->_headings_size_ = self->priv->headings_length1;
-	self->priv->headings = _tmp4_;
-	_tmp5_ = g_new0 (gchar*, 0 + 1);
-	_tmp6_ = _tmp5_;
-	self->priv->bodies = (_vala_array_free (self->priv->bodies, self->priv->bodies_length1, (GDestroyNotify) g_free), NULL);
-	self->priv->bodies_length1 = 0;
-	self->priv->_bodies_size_ = self->priv->bodies_length1;
-	self->priv->bodies = _tmp6_;
 	return self;
 }
 
@@ -327,26 +312,16 @@ static void _vala_array_add2 (gchar*** array, int* length, int* size, gchar* val
 }
 
 
-static const gchar* string_to_string (const gchar* self) {
-	const gchar* result = NULL;
-	g_return_val_if_fail (self != NULL, NULL);
-	result = self;
-	return result;
-}
-
-
 static gboolean gnonogram_filereader_parse_gnonogram_game_file (Gnonogram_filereader* self) {
 	gboolean result = FALSE;
 	gsize headerlength = 0UL;
 	gsize bodylength = 0UL;
-	gint count;
 	gsize _tmp0_;
 	gchar* _tmp1_ = NULL;
 	gchar* _tmp2_;
-	gboolean _tmp21_;
+	gboolean _tmp10_;
 	GError * _inner_error_ = NULL;
 	g_return_val_if_fail (IS_GNONOGRAM_FILEREADER (self), FALSE);
-	count = -1;
 	_tmp1_ = g_data_input_stream_read_until (self->priv->stream, "[", &_tmp0_, NULL, &_inner_error_);
 	headerlength = _tmp0_;
 	_tmp2_ = _tmp1_;
@@ -358,21 +333,10 @@ static gboolean gnonogram_filereader_parse_gnonogram_game_file (Gnonogram_filere
 		gsize _tmp3_;
 		gchar* _tmp4_ = NULL;
 		gchar* _tmp5_;
-		gchar* _tmp6_ = NULL;
-		gchar* _tmp7_;
-		gchar* _tmp8_ = NULL;
-		gchar* _tmp9_;
-		gsize _tmp10_;
-		gchar* _tmp11_ = NULL;
-		gchar* _tmp12_;
-		gchar* _tmp13_ = NULL;
-		gchar* _tmp14_;
-		gchar* _tmp15_ = NULL;
-		gchar* _tmp16_;
-		const gchar* _tmp17_ = NULL;
-		gchar* _tmp18_ = NULL;
-		gchar* _tmp19_;
-		gboolean _tmp20_ = FALSE;
+		gsize _tmp6_;
+		gchar* _tmp7_ = NULL;
+		gchar* _tmp8_;
+		gboolean _tmp9_ = FALSE;
 		_tmp4_ = g_data_input_stream_read_until (self->priv->stream, "]", &_tmp3_, NULL, &_inner_error_);
 		headerlength = _tmp3_;
 		_tmp5_ = _tmp4_;
@@ -380,39 +344,19 @@ static gboolean gnonogram_filereader_parse_gnonogram_game_file (Gnonogram_filere
 			goto __catch4_g_error;
 		}
 		_vala_array_add1 (&self->priv->headings, &self->priv->headings_length1, &self->priv->_headings_size_, _tmp5_);
-		_tmp6_ = g_strdup_printf ("%" G_GSIZE_FORMAT, headerlength);
-		_tmp7_ = _tmp6_;
-		_tmp8_ = g_strconcat ("Headerlength ", _tmp7_, "\n", NULL);
-		_tmp9_ = _tmp8_;
-		fprintf (stdout, "%s", _tmp9_);
-		_g_free0 (_tmp9_);
-		_g_free0 (_tmp7_);
-		_tmp11_ = g_data_input_stream_read_until (self->priv->stream, "[", &_tmp10_, NULL, &_inner_error_);
-		bodylength = _tmp10_;
-		_tmp12_ = _tmp11_;
+		_tmp7_ = g_data_input_stream_read_until (self->priv->stream, "[", &_tmp6_, NULL, &_inner_error_);
+		bodylength = _tmp6_;
+		_tmp8_ = _tmp7_;
 		if (_inner_error_ != NULL) {
 			goto __catch4_g_error;
 		}
-		_vala_array_add2 (&self->priv->bodies, &self->priv->bodies_length1, &self->priv->_bodies_size_, _tmp12_);
-		_tmp13_ = g_strdup_printf ("%" G_GSIZE_FORMAT, bodylength);
-		_tmp14_ = _tmp13_;
-		_tmp15_ = g_strconcat ("bodylength ", _tmp14_, "\n", NULL);
-		_tmp16_ = _tmp15_;
-		fprintf (stdout, "%s", _tmp16_);
-		_g_free0 (_tmp16_);
-		_g_free0 (_tmp14_);
-		count++;
-		_tmp17_ = string_to_string (self->priv->bodies[count]);
-		_tmp18_ = g_strconcat ("body ", _tmp17_, "\n", NULL);
-		_tmp19_ = _tmp18_;
-		fprintf (stdout, "%s", _tmp19_);
-		_g_free0 (_tmp19_);
+		_vala_array_add2 (&self->priv->bodies, &self->priv->bodies_length1, &self->priv->_bodies_size_, _tmp8_);
 		if (headerlength == 0) {
-			_tmp20_ = TRUE;
+			_tmp9_ = TRUE;
 		} else {
-			_tmp20_ = bodylength == 0;
+			_tmp9_ = bodylength == 0;
 		}
-		if (_tmp20_) {
+		if (_tmp9_) {
 			break;
 		}
 	}
@@ -433,8 +377,8 @@ static gboolean gnonogram_filereader_parse_gnonogram_game_file (Gnonogram_filere
 		g_clear_error (&_inner_error_);
 		return FALSE;
 	}
-	_tmp21_ = gnonogram_filereader_parse_gnonogram_headings_and_bodies (self);
-	result = _tmp21_;
+	_tmp10_ = gnonogram_filereader_parse_gnonogram_headings_and_bodies (self);
+	result = _tmp10_;
 	return result;
 }
 
@@ -472,6 +416,16 @@ static void _vala_array_add4 (gchar*** array, int* length, int* size, gchar* val
 }
 
 
+static void _vala_array_add5 (gchar*** array, int* length, int* size, gchar* value) {
+	if ((*length) == (*size)) {
+		*size = (*size) ? (2 * (*size)) : 4;
+		*array = g_renew (gchar*, *array, (*size) + 1);
+	}
+	(*array)[(*length)++] = value;
+	(*array)[*length] = NULL;
+}
+
+
 static gchar* string_chomp (const gchar* self) {
 	gchar* result = NULL;
 	gchar* _tmp0_ = NULL;
@@ -485,7 +439,7 @@ static gchar* string_chomp (const gchar* self) {
 }
 
 
-static void _vala_array_add5 (gchar*** array, int* length, int* size, gchar* value) {
+static void _vala_array_add6 (gchar*** array, int* length, int* size, gchar* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (gchar*, *array, (*size) + 1);
@@ -499,19 +453,19 @@ static gboolean gnonogram_filereader_parse_picto_game_file (Gnonogram_filereader
 	gboolean result = FALSE;
 	gchar* line = NULL;
 	gsize length = 0UL;
-	gsize _tmp9_;
-	gchar* _tmp10_ = NULL;
-	gchar* _tmp11_;
-	gchar* _tmp12_;
-	gboolean _tmp22_ = FALSE;
-	gboolean _tmp23_ = FALSE;
-	gboolean _tmp24_ = FALSE;
-	gchar* _tmp25_;
-	gchar* _tmp26_;
-	gchar* _tmp27_;
-	gchar* _tmp28_;
-	gboolean _tmp29_;
-	gboolean _tmp30_;
+	gsize _tmp13_;
+	gchar* _tmp14_ = NULL;
+	gchar* _tmp15_;
+	gchar* _tmp16_;
+	gboolean _tmp26_ = FALSE;
+	gboolean _tmp27_ = FALSE;
+	gboolean _tmp28_ = FALSE;
+	gchar* _tmp29_;
+	gchar* _tmp30_;
+	gchar* _tmp31_;
+	gchar* _tmp32_;
+	gboolean _tmp33_;
+	gboolean _tmp34_;
 	GError * _inner_error_ = NULL;
 	g_return_val_if_fail (IS_GNONOGRAM_FILEREADER (self), FALSE);
 	{
@@ -532,6 +486,8 @@ static gboolean gnonogram_filereader_parse_picto_game_file (Gnonogram_filereader
 				gint _s_size_;
 				gchar* _tmp7_ = NULL;
 				gchar* _tmp8_ = NULL;
+				gchar* _tmp9_;
+				gboolean _tmp10_;
 				if (!_tmp0_) {
 					i++;
 				}
@@ -555,53 +511,62 @@ static gboolean gnonogram_filereader_parse_picto_game_file (Gnonogram_filereader
 				_tmp7_ = string_strip (s[0]);
 				_vala_array_add3 (&self->priv->headings, &self->priv->headings_length1, &self->priv->_headings_size_, _tmp7_);
 				_tmp8_ = string_strip (s[1]);
-				_vala_array_add4 (&self->priv->bodies, &self->priv->bodies_length1, &self->priv->_bodies_size_, _tmp8_);
+				_tmp9_ = _tmp8_;
+				if ((_tmp10_ = g_strcmp0 (_tmp9_, "") == 0, _g_free0 (_tmp9_), _tmp10_)) {
+					gchar* _tmp11_;
+					_tmp11_ = g_strdup ("Unknown");
+					_vala_array_add4 (&self->priv->bodies, &self->priv->bodies_length1, &self->priv->_bodies_size_, _tmp11_);
+				} else {
+					gchar* _tmp12_ = NULL;
+					_tmp12_ = string_strip (s[1]);
+					_vala_array_add5 (&self->priv->bodies, &self->priv->bodies_length1, &self->priv->_bodies_size_, _tmp12_);
+				}
 				s = (_vala_array_free (s, s_length1, (GDestroyNotify) g_free), NULL);
 			}
 		}
 	}
-	_tmp10_ = g_data_input_stream_read_line (self->priv->stream, &_tmp9_, NULL, &_inner_error_);
-	length = _tmp9_;
-	_tmp11_ = _tmp10_;
+	_tmp14_ = g_data_input_stream_read_line (self->priv->stream, &_tmp13_, NULL, &_inner_error_);
+	length = _tmp13_;
+	_tmp15_ = _tmp14_;
 	if (_inner_error_ != NULL) {
 		goto __catch5_g_error;
 	}
-	_tmp12_ = _tmp11_;
+	_tmp16_ = _tmp15_;
 	_g_free0 (line);
-	line = _tmp12_;
+	line = _tmp16_;
 	while (TRUE) {
-		gchar* _tmp13_ = NULL;
-		gchar* _tmp14_;
-		gchar* _tmp15_ = NULL;
-		gchar* _tmp16_;
-		gsize _tmp18_;
+		gchar* _tmp17_ = NULL;
+		gchar* _tmp18_;
 		gchar* _tmp19_ = NULL;
 		gchar* _tmp20_;
-		gchar* _tmp21_;
+		gsize _tmp22_;
+		gchar* _tmp23_ = NULL;
+		gchar* _tmp24_;
+		gchar* _tmp25_;
 		if (!(line != NULL)) {
 			break;
 		}
-		_tmp13_ = string_chomp (line);
-		_tmp14_ = _tmp13_;
-		_tmp15_ = string_strip (_tmp14_);
-		_tmp16_ = _tmp15_;
-		_g_free0 (line);
-		line = _tmp16_;
-		_g_free0 (_tmp14_);
-		if (line != NULL) {
-			gchar* _tmp17_;
-			_tmp17_ = g_strdup (line);
-			_vala_array_add5 (&self->priv->picto_grid_data, &self->priv->picto_grid_data_length1, &self->priv->_picto_grid_data_size_, _tmp17_);
-		}
-		_tmp19_ = g_data_input_stream_read_line (self->priv->stream, &_tmp18_, NULL, &_inner_error_);
-		length = _tmp18_;
+		_tmp17_ = string_chomp (line);
+		_tmp18_ = _tmp17_;
+		_tmp19_ = string_strip (_tmp18_);
 		_tmp20_ = _tmp19_;
+		_g_free0 (line);
+		line = _tmp20_;
+		_g_free0 (_tmp18_);
+		if (line != NULL) {
+			gchar* _tmp21_;
+			_tmp21_ = g_strdup (line);
+			_vala_array_add6 (&self->priv->picto_grid_data, &self->priv->picto_grid_data_length1, &self->priv->_picto_grid_data_size_, _tmp21_);
+		}
+		_tmp23_ = g_data_input_stream_read_line (self->priv->stream, &_tmp22_, NULL, &_inner_error_);
+		length = _tmp22_;
+		_tmp24_ = _tmp23_;
 		if (_inner_error_ != NULL) {
 			goto __catch5_g_error;
 		}
-		_tmp21_ = _tmp20_;
+		_tmp25_ = _tmp24_;
 		_g_free0 (line);
-		line = _tmp21_;
+		line = _tmp25_;
 	}
 	goto __finally5;
 	__catch5_g_error:
@@ -622,33 +587,33 @@ static gboolean gnonogram_filereader_parse_picto_game_file (Gnonogram_filereader
 		g_clear_error (&_inner_error_);
 		return FALSE;
 	}
-	_tmp25_ = g_strconcat (self->priv->bodies[0], "\n", NULL);
-	_tmp26_ = g_strconcat (_tmp25_, self->priv->bodies[1], NULL);
-	_tmp27_ = g_strconcat (_tmp26_, "\n", NULL);
-	_tmp28_ = g_strconcat (_tmp27_, self->priv->bodies[2], NULL);
-	_tmp29_ = gnonogram_filereader_get_game_description (self, _tmp28_);
-	if ((_tmp30_ = _tmp29_, _g_free0 (_tmp28_), _g_free0 (_tmp27_), _g_free0 (_tmp26_), _g_free0 (_tmp25_), _tmp30_)) {
-		gboolean _tmp31_;
-		_tmp31_ = gnonogram_filereader_get_picto_dimensions (self, self->priv->bodies[3], TRUE);
-		_tmp24_ = _tmp31_;
+	_tmp29_ = g_strconcat (self->priv->bodies[0], "\n", NULL);
+	_tmp30_ = g_strconcat (_tmp29_, self->priv->bodies[1], NULL);
+	_tmp31_ = g_strconcat (_tmp30_, "\n", NULL);
+	_tmp32_ = g_strconcat (_tmp31_, self->priv->bodies[2], NULL);
+	_tmp33_ = gnonogram_filereader_get_game_description (self, _tmp32_);
+	if ((_tmp34_ = _tmp33_, _g_free0 (_tmp32_), _g_free0 (_tmp31_), _g_free0 (_tmp30_), _g_free0 (_tmp29_), _tmp34_)) {
+		gboolean _tmp35_;
+		_tmp35_ = gnonogram_filereader_get_picto_dimensions (self, self->priv->bodies[3], TRUE);
+		_tmp28_ = _tmp35_;
 	} else {
-		_tmp24_ = FALSE;
+		_tmp28_ = FALSE;
 	}
-	if (_tmp24_) {
-		gboolean _tmp32_;
-		_tmp32_ = gnonogram_filereader_get_picto_dimensions (self, self->priv->bodies[4], FALSE);
-		_tmp23_ = _tmp32_;
+	if (_tmp28_) {
+		gboolean _tmp36_;
+		_tmp36_ = gnonogram_filereader_get_picto_dimensions (self, self->priv->bodies[4], FALSE);
+		_tmp27_ = _tmp36_;
 	} else {
-		_tmp23_ = FALSE;
+		_tmp27_ = FALSE;
 	}
-	if (_tmp23_) {
-		gboolean _tmp33_;
-		_tmp33_ = gnonogram_filereader_parse_picto_grid_data (self);
-		_tmp22_ = _tmp33_;
+	if (_tmp27_) {
+		gboolean _tmp37_;
+		_tmp37_ = gnonogram_filereader_parse_picto_grid_data (self);
+		_tmp26_ = _tmp37_;
 	} else {
-		_tmp22_ = FALSE;
+		_tmp26_ = FALSE;
 	}
-	result = _tmp22_;
+	result = _tmp26_;
 	_g_free0 (line);
 	return result;
 }
@@ -689,148 +654,132 @@ static gchar* string_slice (const gchar* self, glong start, glong end) {
 }
 
 
+static const gchar* string_to_string (const gchar* self) {
+	const gchar* result = NULL;
+	g_return_val_if_fail (self != NULL, NULL);
+	result = self;
+	return result;
+}
+
+
 static gboolean gnonogram_filereader_parse_gnonogram_headings_and_bodies (Gnonogram_filereader* self) {
 	gboolean result = FALSE;
 	gint n;
-	gchar* _tmp0_ = NULL;
-	gchar* _tmp1_;
-	gchar* _tmp2_ = NULL;
-	gchar* _tmp3_;
 	g_return_val_if_fail (IS_GNONOGRAM_FILEREADER (self), FALSE);
 	n = self->priv->headings_length1;
-	_tmp0_ = g_strdup_printf ("%i", n);
-	_tmp1_ = _tmp0_;
-	_tmp2_ = g_strconcat ("Number of headings is ", _tmp1_, "\n", NULL);
-	_tmp3_ = _tmp2_;
-	fprintf (stdout, "%s", _tmp3_);
-	_g_free0 (_tmp3_);
-	_g_free0 (_tmp1_);
 	{
 		gint i;
 		i = 0;
 		{
-			gboolean _tmp4_;
-			_tmp4_ = TRUE;
+			gboolean _tmp0_;
+			_tmp0_ = TRUE;
 			while (TRUE) {
-				gchar* _tmp5_;
+				gchar* _tmp1_;
 				gchar* heading;
-				gchar* _tmp6_ = NULL;
-				gchar* _tmp7_;
-				const gchar* _tmp8_ = NULL;
-				gchar* _tmp9_ = NULL;
-				gchar* _tmp10_;
-				gint _tmp11_;
-				gchar* _tmp14_ = NULL;
-				gchar* _tmp15_;
-				GQuark _tmp16_;
-				static GQuark _tmp16__label0 = 0;
-				static GQuark _tmp16__label1 = 0;
-				static GQuark _tmp16__label2 = 0;
-				static GQuark _tmp16__label3 = 0;
-				static GQuark _tmp16__label4 = 0;
-				static GQuark _tmp16__label5 = 0;
-				static GQuark _tmp16__label6 = 0;
-				if (!_tmp4_) {
+				gint _tmp2_;
+				gchar* _tmp5_ = NULL;
+				gchar* _tmp6_;
+				GQuark _tmp7_;
+				static GQuark _tmp7__label0 = 0;
+				static GQuark _tmp7__label1 = 0;
+				static GQuark _tmp7__label2 = 0;
+				static GQuark _tmp7__label3 = 0;
+				static GQuark _tmp7__label4 = 0;
+				static GQuark _tmp7__label5 = 0;
+				static GQuark _tmp7__label6 = 0;
+				if (!_tmp0_) {
 					i++;
 				}
-				_tmp4_ = FALSE;
+				_tmp0_ = FALSE;
 				if (!(i < n)) {
 					break;
 				}
-				_tmp5_ = g_strdup (self->priv->headings[i]);
-				heading = _tmp5_;
+				_tmp1_ = g_strdup (self->priv->headings[i]);
+				heading = _tmp1_;
 				if (heading == NULL) {
 					_g_free0 (heading);
 					continue;
 				}
-				_tmp6_ = g_strdup_printf ("%i", i);
-				_tmp7_ = _tmp6_;
-				_tmp8_ = string_to_string (heading);
-				_tmp9_ = g_strconcat ("Heading ", _tmp7_, " is ", _tmp8_, "\n", NULL);
-				_tmp10_ = _tmp9_;
-				fprintf (stdout, "%s", _tmp10_);
-				_g_free0 (_tmp10_);
-				_g_free0 (_tmp7_);
-				_tmp11_ = strlen (heading);
-				if (_tmp11_ > 3) {
-					gchar* _tmp12_ = NULL;
-					gchar* _tmp13_;
-					_tmp12_ = string_slice (heading, (glong) 0, (glong) 3);
-					_tmp13_ = _tmp12_;
+				_tmp2_ = strlen (heading);
+				if (_tmp2_ > 3) {
+					gchar* _tmp3_ = NULL;
+					gchar* _tmp4_;
+					_tmp3_ = string_slice (heading, (glong) 0, (glong) 3);
+					_tmp4_ = _tmp3_;
 					_g_free0 (heading);
-					heading = _tmp13_;
+					heading = _tmp4_;
 				}
-				_tmp14_ = g_utf8_strup (heading, (gssize) (-1));
-				_tmp15_ = _tmp14_;
-				_tmp16_ = (NULL == _tmp15_) ? 0 : g_quark_from_string (_tmp15_);
-				g_free (_tmp15_);
-				if (_tmp16_ == ((0 != _tmp16__label0) ? _tmp16__label0 : (_tmp16__label0 = g_quark_from_static_string ("DIM")))) {
+				_tmp5_ = g_utf8_strup (heading, (gssize) (-1));
+				_tmp6_ = _tmp5_;
+				_tmp7_ = (NULL == _tmp6_) ? 0 : g_quark_from_string (_tmp6_);
+				g_free (_tmp6_);
+				if (_tmp7_ == ((0 != _tmp7__label0) ? _tmp7__label0 : (_tmp7__label0 = g_quark_from_static_string ("DIM")))) {
 					switch (0) {
 						default:
 						{
-							gboolean _tmp17_;
-							_tmp17_ = gnonogram_filereader_get_gnonogram_dimensions (self, self->priv->bodies[i]);
-							self->in_error = !_tmp17_;
+							gboolean _tmp8_;
+							_tmp8_ = gnonogram_filereader_get_gnonogram_dimensions (self, self->priv->bodies[i]);
+							self->in_error = !_tmp8_;
 							break;
 						}
 					}
-				} else if (_tmp16_ == ((0 != _tmp16__label1) ? _tmp16__label1 : (_tmp16__label1 = g_quark_from_static_string ("ROW")))) {
+				} else if (_tmp7_ == ((0 != _tmp7__label1) ? _tmp7__label1 : (_tmp7__label1 = g_quark_from_static_string ("ROW")))) {
 					switch (0) {
 						default:
 						{
-							gboolean _tmp18_;
-							_tmp18_ = gnonogram_filereader_get_gnonogram_clues (self, self->priv->bodies[i], FALSE);
-							self->in_error = !_tmp18_;
+							gboolean _tmp9_;
+							_tmp9_ = gnonogram_filereader_get_gnonogram_clues (self, self->priv->bodies[i], FALSE);
+							self->in_error = !_tmp9_;
 							break;
 						}
 					}
-				} else if (_tmp16_ == ((0 != _tmp16__label2) ? _tmp16__label2 : (_tmp16__label2 = g_quark_from_static_string ("COL")))) {
+				} else if (_tmp7_ == ((0 != _tmp7__label2) ? _tmp7__label2 : (_tmp7__label2 = g_quark_from_static_string ("COL")))) {
 					switch (0) {
 						default:
 						{
-							gboolean _tmp19_;
-							_tmp19_ = gnonogram_filereader_get_gnonogram_clues (self, self->priv->bodies[i], TRUE);
-							self->in_error = !_tmp19_;
+							gboolean _tmp10_;
+							_tmp10_ = gnonogram_filereader_get_gnonogram_clues (self, self->priv->bodies[i], TRUE);
+							self->in_error = !_tmp10_;
 							break;
 						}
 					}
-				} else if (_tmp16_ == ((0 != _tmp16__label3) ? _tmp16__label3 : (_tmp16__label3 = g_quark_from_static_string ("SOL")))) {
+				} else if (_tmp7_ == ((0 != _tmp7__label3) ? _tmp7__label3 : (_tmp7__label3 = g_quark_from_static_string ("SOL")))) {
 					switch (0) {
 						default:
 						{
-							gboolean _tmp20_;
-							_tmp20_ = gnonogram_filereader_get_gnonogram_cellstate_array (self, self->priv->bodies[i], TRUE);
-							self->in_error = !_tmp20_;
+							gboolean _tmp11_;
+							_tmp11_ = gnonogram_filereader_get_gnonogram_cellstate_array (self, self->priv->bodies[i], TRUE);
+							self->in_error = !_tmp11_;
 							break;
 						}
 					}
-				} else if (_tmp16_ == ((0 != _tmp16__label4) ? _tmp16__label4 : (_tmp16__label4 = g_quark_from_static_string ("WOR")))) {
+				} else if (_tmp7_ == ((0 != _tmp7__label4) ? _tmp7__label4 : (_tmp7__label4 = g_quark_from_static_string ("WOR")))) {
 					switch (0) {
 						default:
 						{
-							gboolean _tmp21_;
-							_tmp21_ = gnonogram_filereader_get_gnonogram_cellstate_array (self, self->priv->bodies[i], FALSE);
-							self->in_error = !_tmp21_;
+							gboolean _tmp12_;
+							_tmp12_ = gnonogram_filereader_get_gnonogram_cellstate_array (self, self->priv->bodies[i], FALSE);
+							self->in_error = !_tmp12_;
 							break;
 						}
 					}
-				} else if (_tmp16_ == ((0 != _tmp16__label5) ? _tmp16__label5 : (_tmp16__label5 = g_quark_from_static_string ("STA")))) {
+				} else if (_tmp7_ == ((0 != _tmp7__label5) ? _tmp7__label5 : (_tmp7__label5 = g_quark_from_static_string ("STA")))) {
 					switch (0) {
 						default:
 						{
-							gboolean _tmp22_;
-							_tmp22_ = gnonogram_filereader_get_gnonogram_state (self, self->priv->bodies[i]);
-							self->in_error = !_tmp22_;
+							gboolean _tmp13_;
+							_tmp13_ = gnonogram_filereader_get_gnonogram_state (self, self->priv->bodies[i]);
+							self->in_error = !_tmp13_;
 							break;
 						}
 					}
-				} else if (_tmp16_ == ((0 != _tmp16__label6) ? _tmp16__label6 : (_tmp16__label6 = g_quark_from_static_string ("DES")))) {
+				} else if (_tmp7_ == ((0 != _tmp7__label6) ? _tmp7__label6 : (_tmp7__label6 = g_quark_from_static_string ("DES")))) {
 					switch (0) {
 						default:
 						{
-							gboolean _tmp23_;
-							_tmp23_ = gnonogram_filereader_get_game_description (self, self->priv->bodies[i]);
-							self->in_error = !_tmp23_;
+							gboolean _tmp14_;
+							_tmp14_ = gnonogram_filereader_get_game_description (self, self->priv->bodies[i]);
+							self->in_error = !_tmp14_;
 							break;
 						}
 					}
@@ -838,14 +787,14 @@ static gboolean gnonogram_filereader_parse_gnonogram_headings_and_bodies (Gnonog
 					switch (0) {
 						default:
 						{
-							const gchar* _tmp24_ = NULL;
-							gchar* _tmp25_ = NULL;
-							gchar* _tmp26_;
-							_tmp24_ = string_to_string (heading);
-							_tmp25_ = g_strconcat ("Unrecognised heading ", _tmp24_, " ", NULL);
-							_tmp26_ = _tmp25_;
-							utils_show_warning_dialog (_tmp26_);
-							_g_free0 (_tmp26_);
+							const gchar* _tmp15_ = NULL;
+							gchar* _tmp16_ = NULL;
+							gchar* _tmp17_;
+							_tmp15_ = string_to_string (heading);
+							_tmp16_ = g_strconcat ("Unrecognised heading ", _tmp15_, " ", NULL);
+							_tmp17_ = _tmp16_;
+							utils_show_warning_dialog (_tmp17_);
+							_g_free0 (_tmp17_);
 							self->in_error = TRUE;
 							break;
 						}
@@ -942,7 +891,7 @@ static gboolean gnonogram_filereader_get_picto_dimensions (Gnonogram_filereader*
 }
 
 
-static void _vala_array_add6 (gchar*** array, int* length, int* size, gchar* value) {
+static void _vala_array_add7 (gchar*** array, int* length, int* size, gchar* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (gchar*, *array, (*size) + 1);
@@ -992,7 +941,6 @@ static gboolean gnonogram_filereader_get_gnonogram_clues (Gnonogram_filereader* 
 	gint _s_size_;
 	gboolean _tmp7_ = FALSE;
 	g_return_val_if_fail (IS_GNONOGRAM_FILEREADER (self), FALSE);
-	fprintf (stdout, "In get_clues\n");
 	_tmp0_ = g_new0 (gchar*, 0 + 1);
 	arr = _tmp0_;
 	arr_length1 = 0;
@@ -1036,7 +984,7 @@ static gboolean gnonogram_filereader_get_gnonogram_clues (Gnonogram_filereader* 
 					break;
 				}
 				_tmp9_ = gnonogram_filereader_parse_gnonogram_clue (self, s[i]);
-				_vala_array_add6 (&arr, &arr_length1, &_arr_size_, _tmp9_);
+				_vala_array_add7 (&arr, &arr_length1, &_arr_size_, _tmp9_);
 			}
 		}
 	}
@@ -1080,22 +1028,6 @@ static gboolean gnonogram_filereader_get_gnonogram_clues (Gnonogram_filereader* 
 }
 
 
-static gchar* bool_to_string (gboolean self) {
-	gchar* result = NULL;
-	if (self) {
-		gchar* _tmp0_;
-		_tmp0_ = g_strdup ("true");
-		result = _tmp0_;
-		return result;
-	} else {
-		gchar* _tmp1_;
-		_tmp1_ = g_strdup ("false");
-		result = _tmp1_;
-		return result;
-	}
-}
-
-
 static gchar** _vala_array_dup3 (gchar** self, int length) {
 	gchar** result;
 	int i;
@@ -1120,41 +1052,35 @@ static gchar** _vala_array_dup4 (gchar** self, int length) {
 
 static gboolean gnonogram_filereader_get_gnonogram_cellstate_array (Gnonogram_filereader* self, const gchar* body, gboolean is_solution) {
 	gboolean result = FALSE;
-	gchar* _tmp0_ = NULL;
-	gchar* _tmp1_;
+	gchar** _tmp0_;
+	gchar** _tmp1_ = NULL;
 	gchar** _tmp2_;
-	gchar** _tmp3_ = NULL;
-	gchar** _tmp4_;
-	gint _tmp4__length1;
-	gint _tmp5_;
-	gchar** _tmp6_ = NULL;
-	gchar** _tmp7_;
+	gint _tmp2__length1;
+	gint _tmp3_;
+	gchar** _tmp4_ = NULL;
+	gchar** _tmp5_;
 	gchar** s;
 	gint s_length1;
 	gint _s_size_;
-	gboolean _tmp8_ = FALSE;
+	gboolean _tmp6_ = FALSE;
 	g_return_val_if_fail (IS_GNONOGRAM_FILEREADER (self), FALSE);
-	_tmp0_ = bool_to_string (is_solution);
-	_tmp1_ = _tmp0_;
-	fprintf (stdout, "In get_cellstate array  is solution %s\n", _tmp1_);
-	_g_free0 (_tmp1_);
 	if (body == NULL) {
 		result = FALSE;
 		return result;
 	}
-	_tmp3_ = _tmp2_ = g_strsplit (body, "\n", 0);
-	_tmp4_ = _tmp3_;
-	_tmp4__length1 = _vala_array_length (_tmp2_);
-	_tmp6_ = utils_remove_blank_lines (_tmp4_, _vala_array_length (_tmp2_), &_tmp5_);
-	s = (_tmp7_ = _tmp6_, _tmp4_ = (_vala_array_free (_tmp4_, _tmp4__length1, (GDestroyNotify) g_free), NULL), _tmp7_);
-	s_length1 = _tmp5_;
-	_s_size_ = _tmp5_;
+	_tmp1_ = _tmp0_ = g_strsplit (body, "\n", 0);
+	_tmp2_ = _tmp1_;
+	_tmp2__length1 = _vala_array_length (_tmp0_);
+	_tmp4_ = utils_remove_blank_lines (_tmp2_, _vala_array_length (_tmp0_), &_tmp3_);
+	s = (_tmp5_ = _tmp4_, _tmp2_ = (_vala_array_free (_tmp2_, _tmp2__length1, (GDestroyNotify) g_free), NULL), _tmp5_);
+	s_length1 = _tmp3_;
+	_s_size_ = _tmp3_;
 	if (s == NULL) {
-		_tmp8_ = TRUE;
+		_tmp6_ = TRUE;
 	} else {
-		_tmp8_ = s_length1 != self->rows;
+		_tmp6_ = s_length1 != self->rows;
 	}
-	if (_tmp8_) {
+	if (_tmp6_) {
 		result = FALSE;
 		s = (_vala_array_free (s, s_length1, (GDestroyNotify) g_free), NULL);
 		return result;
@@ -1163,38 +1089,25 @@ static gboolean gnonogram_filereader_get_gnonogram_cellstate_array (Gnonogram_fi
 		gint i;
 		i = 0;
 		{
-			gboolean _tmp9_;
-			_tmp9_ = TRUE;
+			gboolean _tmp7_;
+			_tmp7_ = TRUE;
 			while (TRUE) {
-				gchar* _tmp10_ = NULL;
-				gchar* _tmp11_;
-				const gchar* _tmp12_ = NULL;
-				gchar* _tmp13_ = NULL;
-				gchar* _tmp14_;
-				gint _tmp15_;
-				CellState* _tmp16_ = NULL;
+				gint _tmp8_;
+				CellState* _tmp9_ = NULL;
 				CellState* arr;
 				gint arr_length1;
 				gint _arr_size_;
-				if (!_tmp9_) {
+				if (!_tmp7_) {
 					i++;
 				}
-				_tmp9_ = FALSE;
+				_tmp7_ = FALSE;
 				if (!(i < s_length1)) {
 					break;
 				}
-				_tmp10_ = g_strdup_printf ("%i", i);
-				_tmp11_ = _tmp10_;
-				_tmp12_ = string_to_string (s[i]);
-				_tmp13_ = g_strconcat ("s[", _tmp11_, "] ", _tmp12_, "\n", NULL);
-				_tmp14_ = _tmp13_;
-				fprintf (stdout, "%s", _tmp14_);
-				_g_free0 (_tmp14_);
-				_g_free0 (_tmp11_);
-				_tmp16_ = utils_cellstate_array_from_string (s[i], &_tmp15_);
-				arr = _tmp16_;
-				arr_length1 = _tmp15_;
-				_arr_size_ = _tmp15_;
+				_tmp9_ = utils_cellstate_array_from_string (s[i], &_tmp8_);
+				arr = _tmp9_;
+				arr_length1 = _tmp8_;
+				_arr_size_ = _tmp8_;
 				if (arr_length1 != self->cols) {
 					result = FALSE;
 					arr = (g_free (arr), NULL);
@@ -1206,27 +1119,26 @@ static gboolean gnonogram_filereader_get_gnonogram_cellstate_array (Gnonogram_fi
 		}
 	}
 	if (is_solution) {
-		gchar** _tmp17_;
-		gchar** _tmp18_;
-		gchar** _tmp19_;
-		_tmp17_ = (_tmp18_ = s, (_tmp18_ == NULL) ? ((gpointer) _tmp18_) : _vala_array_dup3 (_tmp18_, s_length1));
-		_tmp19_ = _tmp17_;
+		gchar** _tmp10_;
+		gchar** _tmp11_;
+		gchar** _tmp12_;
+		_tmp10_ = (_tmp11_ = s, (_tmp11_ == NULL) ? ((gpointer) _tmp11_) : _vala_array_dup3 (_tmp11_, s_length1));
+		_tmp12_ = _tmp10_;
 		self->solution = (_vala_array_free (self->solution, self->solution_length1, (GDestroyNotify) g_free), NULL);
 		self->solution_length1 = s_length1;
-		self->solution = _tmp19_;
+		self->solution = _tmp12_;
 		self->has_solution = TRUE;
 	} else {
-		gchar** _tmp20_;
-		gchar** _tmp21_;
-		gchar** _tmp22_;
-		_tmp20_ = (_tmp21_ = s, (_tmp21_ == NULL) ? ((gpointer) _tmp21_) : _vala_array_dup4 (_tmp21_, s_length1));
-		_tmp22_ = _tmp20_;
+		gchar** _tmp13_;
+		gchar** _tmp14_;
+		gchar** _tmp15_;
+		_tmp13_ = (_tmp14_ = s, (_tmp14_ == NULL) ? ((gpointer) _tmp14_) : _vala_array_dup4 (_tmp14_, s_length1));
+		_tmp15_ = _tmp13_;
 		self->working = (_vala_array_free (self->working, self->working_length1, (GDestroyNotify) g_free), NULL);
 		self->working_length1 = s_length1;
-		self->working = _tmp22_;
+		self->working = _tmp15_;
 		self->has_working = TRUE;
 	}
-	fprintf (stdout, "Leaving get_cellstate array\n");
 	result = TRUE;
 	s = (_vala_array_free (s, s_length1, (GDestroyNotify) g_free), NULL);
 	return result;
@@ -1395,6 +1307,14 @@ static gboolean gnonogram_filereader_get_game_description (Gnonogram_filereader*
 		_tmp11_ = _tmp10_;
 		_g_free0 (self->date);
 		self->date = _tmp11_;
+	}
+	if (s_length1 >= 4) {
+		gchar* _tmp12_;
+		gchar* _tmp13_;
+		_tmp12_ = g_strdup (s[3]);
+		_tmp13_ = _tmp12_;
+		_g_free0 (self->score);
+		self->score = _tmp13_;
 	}
 	result = TRUE;
 	s = (_vala_array_free (s, s_length1, (GDestroyNotify) g_free), NULL);
@@ -1603,6 +1523,7 @@ static void gnonogram_filereader_instance_init (Gnonogram_filereader * self) {
 	gchar* _tmp0_;
 	gchar* _tmp1_;
 	gchar* _tmp2_;
+	gchar* _tmp3_;
 	self->priv = GNONOGRAM_FILEREADER_GET_PRIVATE (self);
 	self->rows = 0;
 	self->cols = 0;
@@ -1612,6 +1533,8 @@ static void gnonogram_filereader_instance_init (Gnonogram_filereader * self) {
 	self->author = _tmp1_;
 	_tmp2_ = g_strdup ("");
 	self->date = _tmp2_;
+	_tmp3_ = g_strdup ("");
+	self->score = _tmp3_;
 	self->in_error = FALSE;
 	self->has_dimensions = FALSE;
 	self->has_row_clues = FALSE;
@@ -1633,6 +1556,7 @@ static void gnonogram_filereader_finalize (Gnonogram_filereader* obj) {
 	_g_free0 (self->name);
 	_g_free0 (self->author);
 	_g_free0 (self->date);
+	_g_free0 (self->score);
 	self->solution = (_vala_array_free (self->solution, self->solution_length1, (GDestroyNotify) g_free), NULL);
 	self->working = (_vala_array_free (self->working, self->working_length1, (GDestroyNotify) g_free), NULL);
 	_g_object_unref0 (self->priv->stream);
