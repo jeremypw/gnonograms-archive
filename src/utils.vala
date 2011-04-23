@@ -370,6 +370,15 @@ namespace Utils
 		for (int i=0;i<clues.length;i++) blocks[i]=int.parse(clues[i]);
 		return blocks;
 	}
+
+	public int blockextent_from_clue(string s)
+	{
+		int[] blocks = block_array_from_clue(s);
+		int extent=0;
+		foreach(int block in blocks) extent+=(block+1);
+		extent--;
+		return extent;
+	}
 	//*****************************************************************************
 	public string get_todays_date_string(){
 		TimeVal t={};

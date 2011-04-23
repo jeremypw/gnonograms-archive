@@ -65,8 +65,7 @@ public class Gnonogram_LabelBox : Frame {
 		unhighlight_all();
 		if (new_size!=_size)
 		{
-			int diff=(new_size-_size);
-			
+			int diff=(new_size-_size);		
 			if (diff>0)	for (int i=0; i<diff; i++)
 			{
 				_box.add(_labels[_size]);
@@ -103,11 +102,7 @@ public class Gnonogram_LabelBox : Frame {
 //======================================================================
 	public void highlight(int idx, bool is_highlight)
 	{//stdout.printf("highlight idx %d",idx);
-		if (idx>=_size||idx<0)
-		{
-			//stdout.printf("idx %d out of range\n",idx);
-			return;
-		}
+		if (idx>=_size||idx<0) return;
 		_labels[idx].highlight(is_highlight);
 	}
 //======================================================================
@@ -118,7 +113,8 @@ public class Gnonogram_LabelBox : Frame {
 //======================================================================
 	public void update_label(int idx, string txt)
 	{	//stdout.printf("Idx %d Label txt %s\n",idx,txt);
-		_labels[idx].set_markup(_attribstart+txt+_attribend);
+		_labels[idx].set_markup(_attribstart,txt,_attribend);
+		_labels[idx].set_size(_other_size);
 	}
 //======================================================================
 	public string get_label_text(int idx)
