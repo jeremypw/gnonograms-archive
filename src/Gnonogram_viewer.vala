@@ -46,6 +46,7 @@ public class Gnonogram_view : Gtk.Window
 	public signal void changefont(bool increase);
 	public signal void debugmode(bool debug);
 	public signal void advancedmode(bool advanced);
+	public signal void difficultmode(bool difficult);
 	public signal void rotate_screen();
 	
 	private Gnonogram_controller _controller;
@@ -196,6 +197,9 @@ public class Gnonogram_view : Gtk.Window
 			var advancedmenuitem=new CheckMenuItem.with_mnemonic("_Advanced solver");
 			advancedmenuitem.set_active(true);
 			settingssubmenu.add(advancedmenuitem);
+			var difficultmenuitem=new CheckMenuItem.with_mnemonic("_Generate difficult games");
+			difficultmenuitem.set_active(false);
+			settingssubmenu.add(difficultmenuitem);
 						
 		var viewsubmenu=new Menu();
 		viewmenuitem.set_submenu(viewsubmenu);
@@ -238,6 +242,7 @@ public class Gnonogram_view : Gtk.Window
 		infomenuitem.activate.connect(editdescription);
 		debugmenuitem.activate.connect(()=>{debugmode(debugmenuitem.active);});
 		advancedmenuitem.activate.connect(()=>{advancedmode(advancedmenuitem.active);});
+		difficultmenuitem.activate.connect(()=>{difficultmode(difficultmenuitem.active);});
 		
 		fullscreenmenuitem.activate.connect(toggle_fullscreen);
 		_rotatemenuitem.activate.connect(()=>{rotate_screen();});

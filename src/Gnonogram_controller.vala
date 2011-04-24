@@ -47,6 +47,7 @@ public class Gnonogram_controller
 	private bool _gridlinesvisible;
 	private bool _debug=false;
 	private bool _advanced=true;
+	private bool _difficult=false;
 	private int _grade;
 	
 //======================================================================
@@ -65,11 +66,8 @@ public class Gnonogram_controller
 		_solver=new Gnonogram_solver(_rows, _cols);
 		_solver.showsolvergrid.connect(show_solver_grid);
 		_have_solution=false;
-		//_current_cell={};
-		//_previous_cell={};
 
 		_grade=(int)(Config.get_instance().get_difficulty());
-//		_model.set_difficulty(grade);
 		
 		create_view();
 		initialize_view();
@@ -108,6 +106,7 @@ public class Gnonogram_controller
 		_gnonogram_view.rotate_screen.connect(this.rotate_screen);
 		_gnonogram_view.debugmode.connect((debug)=>{_debug=debug;});
 		_gnonogram_view.advancedmode.connect((advanced)=>{_advanced=advanced;});
+		_gnonogram_view.difficultmode.connect((difficult)=>{_difficult=difficult;});
 
 		_cellgrid.cursor_moved.connect(this.grid_cursor_moved);
 		_cellgrid.button_press_event.connect(this.button_pressed);
@@ -159,7 +158,6 @@ public class Gnonogram_controller
 		if (r>Resource.MAXROWSIZE||c>Resource.MAXCOLSIZE) return;
 		if (r==_rows && c==_cols) return;
 		resize_view(r,c);
-//		_solver=new Gnonogram_solver(r,c);
 		_solver.set_dimensions(r,c);
 		_model.set_dimensions(r,c);
 		_rows=r; _cols=c;
@@ -413,10 +411,6 @@ public class Gnonogram_controller
 			Utils.show_warning_dialog(_("An error occured creating the position file"));
 			return;
 		}
-		//else
-		//{
-		//	Utils.show_info_dialog("Saved position as "+ Resource.POSITIONFILENAME);
-		//}
 	}
 //=========================================================================
 	private bool write_position_file(FileStream f)
@@ -435,7 +429,6 @@ public class Gnonogram_controller
 //=========================================================================
 	public void load_game()
 	{
-
 		var reader = new Gnonogram_filereader(Gnonogram_FileType.GAME);
 		if (reader.filename=="") return;
 		new_game();
@@ -444,7 +437,6 @@ public class Gnonogram_controller
 			initialize_view();
 			start_solving();
 		}
-//		else new_game();
 	}
 //=========================================================================
 	public void load_position()
@@ -533,7 +525,6 @@ public class Gnonogram_controller
 		{	stdout.printf("loading clues\n");
 			for (int i=0; i<_rows; i++) _rowbox.update_label(i,reader.row_clues[i]);
 			for (int i=0; i<_cols; i++) _colbox.update_label(i,reader.col_clues[i]);
-//			omit until solver stable?
 			int passes=solve_game(false,true); //no start grid, use advanced if necessary
 			stdout.printf("Solver returned %d\n",passes);
 			if (passes>0)
@@ -598,7 +589,6 @@ public class Gnonogram_controller
 //======================================================================
 	private void viewer_solve_game()
 	{
-		//true, true = use startgrid and use advanced solver
 		int passes = solve_game(true, _advanced); 
 		switch (passes) 
 		{
@@ -720,27 +710,38 @@ public class Gnonogram_controller
 		_gnonogram_view.set_name("Thinking ....");
 		_gnonogram_view.show_all();
 		
-		int passes=0, count=0;
-		int grade = _grade; //grade may be reduced but _grade always matches spin setting
-		while (count<10)
+		int passes=0; 
+		if (_difficult)
 		{
-			passes=generate_solvable_game(grade); //tries max tries times
-			stdout.printf(" Grade %d Passes - %d\n",grade, passes);
-			if (passes<0) break; //an error occurred abort and display position for debugging
-			if (passes==0) //no solvable game generated with this setting
+			generate_difficult_game(_grade);
+			passes=solve_game(false,true); //solve using advanced solver if possible
+		}
+		else
+		{
+			int count=0;
+			int grade = _grade; //grade may be reduced but _grade always matches spin setting
+			while (count<10)
 			{
-//				_model.reduce_difficulty();
-				grade--;
-				stdout.printf("Difficulty reducd to %d\n",grade);
-				if (_grade<1) break;
+				passes=generate_simple_game(grade); //tries max tries times
+				stdout.printf(" Grade %d Passes - %d\n",grade, passes);
+				if (passes>_grade||passes<0) break; 
+				if (passes==0)
+				//no simple game generated with this setting -
+				//reduce complexity setting (relationship between complexity setting
+				//and ease of solution not simple - depends also on grid size) 
+				{
+					grade--;
+					stdout.printf("Difficulty reduced to %d\n",grade);
+					if (_grade<1) break;
+				}
+				count++;
 			}
-			else 	if (passes>_grade) break;
-			count++;
 		}
 		_have_solution=true;
-		if (passes>0)
+		if (passes>=0)
 		{
-			_gnonogram_view.set_name("Random");
+			string name= (passes>15) ? "Difficult random" : "Simple random";
+			_gnonogram_view.set_name(name);
 			_gnonogram_view.set_author("Computer");
 			_gnonogram_view.set_date(Utils.get_todays_date_string());
 			_gnonogram_view.set_score_label(passes.to_string());
@@ -748,39 +749,49 @@ public class Gnonogram_controller
 			_model.use_working();
 			start_solving();
 		}
-		else if (passes<0)
+		else
 		{
 			Utils.show_warning_dialog(_("Error occurred in solver\n"));
 			stdout.printf(_solver.get_error()+"\n");
 			_gnonogram_view.set_name("Error in solver");
 			_gnonogram_view.set_author("");
 			_gnonogram_view.set_date("");
-			//_have_solution=false;
 			_model.use_solution();
 			reveal_solution();
 		}
-		else
-		{ 
-			Utils.show_warning_dialog(_("Failed to generate puzzle - try reducing difficulty"));
-			new_game();
-		}
 	}
 //======================================================================
-	private int generate_solvable_game(int grade)
+	private int generate_simple_game(int grade)
 	{
 /* returns 0 - failed to generate solvable game 
  * returns value>1 - generated game took value passes to solve
  * returns -1 - an error occurred in the solver
  */
-		int tries=0, passes=0;
+		int tries=0, passes=0;		
 		while (passes==0 && tries<=Resource.MAXTRIES)
 		{
 			tries++;
-			_model.fill_random(grade); //fills solution grid
-			update_labels_from_model(); 
-			passes=solve_game(false,false); // no start grid, no advanced (takes too long)
+			passes=generate_game(grade);	
 		}
 		return passes;
+	}
+//======================================================================
+	private int generate_difficult_game(int grade)
+	{
+		int tries=0, passes=1;	
+		while (passes>0 && tries<=Resource.MAXTRIES)
+		{
+			tries++;
+			passes=generate_game(grade);		
+		}
+		return passes;
+	}
+//======================================================================
+	private int generate_game(int grade)
+	{
+		_model.fill_random(grade); //fills solution grid
+		update_labels_from_model(); 
+		return solve_game(false,false); // no start grid, no advanced
 	}
 //======================================================================
 	private void update_labels_from_model()

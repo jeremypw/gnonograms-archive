@@ -269,7 +269,7 @@
 		stdout.printf(@"simple result $simple_result guesses $guesses wraps $wraps\n");
 		if (simple_result>0) return simple_result+ 2*guesses;// + _region_count*wraps;
 //		stdout.printf("returning from advanced solver\n");
-		return 0;
+		return 9999999;
 	}				
 //======================================================================
 	private void save_position(CellState[] gs)
