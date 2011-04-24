@@ -1,0 +1,240 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-02-27 08:11+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../src/Gunami_controller.vala:294
+msgid "Name and save this game"
+msgstr ""
+
+#: ../src/Gunami_controller.vala:295 ../src/Gunami_controller.vala:402
+msgid "Gunami games"
+msgstr ""
+
+#: ../src/Gunami_controller.vala:329
+msgid "An error occured saving the position file"
+msgstr ""
+
+#: ../src/Gunami_controller.vala:341
+msgid "Position file not found"
+msgstr ""
+
+#: ../src/Gunami_controller.vala:345
+msgid "Position file error"
+msgstr ""
+
+#: ../src/Gunami_controller.vala:378
+msgid "Position file error - too few rows in working grid"
+msgstr ""
+
+#: ../src/Gunami_controller.vala:401
+msgid "Choose a game"
+msgstr ""
+
+#: ../src/Gunami_controller.vala:419
+msgid "Invalid game file"
+msgstr ""
+
+#: ../src/Gunami_controller.vala:420
+msgid "Failed to load puzzle"
+msgstr ""
+
+#: ../src/Gunami_controller.vala:502
+msgid "Invalid; no solution"
+msgstr ""
+
+#: ../src/Gunami_controller.vala:505
+msgid "No unique solution"
+msgstr ""
+
+#: ../src/Gunami_controller.vala:508
+#, c-format
+msgid "Solved in %d passes"
+msgstr ""
+
+#. unlikely to need this
+#: ../src/Gunami_controller.vala:588
+msgid "Failed to generate puzzle - try reducing difficulty"
+msgstr ""
+
+#: ../src/Gunami_model.vala:87
+msgid "Position file error - wrong number of columns"
+msgstr ""
+
+#. seems to be necessary to get signals to work.  Not sure why.
+#: ../src/Gunami_viewer.vala:39
+msgid "Gunami"
+msgstr ""
+
+#: ../src/Gunami_viewer.vala:72
+msgid "_File"
+msgstr ""
+
+#: ../src/Gunami_viewer.vala:73
+msgid "_Game"
+msgstr ""
+
+#: ../src/Gunami_viewer.vala:74
+msgid "_Settings"
+msgstr ""
+
+#: ../src/Gunami_viewer.vala:75
+msgid "_View"
+msgstr ""
+
+#: ../src/Gunami_viewer.vala:76
+msgid "_Help"
+msgstr ""
+
+#: ../src/Gunami_viewer.vala:86
+msgid "_New"
+msgstr ""
+
+#: ../src/Gunami_viewer.vala:90
+msgid "_Load"
+msgstr ""
+
+#: ../src/Gunami_viewer.vala:92
+msgid "_Save"
+msgstr ""
+
+#: ../src/Gunami_viewer.vala:96
+msgid "_Quit"
+msgstr ""
+
+#: ../src/Gunami_viewer.vala:101 ../src/Gunami_viewer.vala:108
+msgid "_Puzzle"
+msgstr ""
+
+#: ../src/Gunami_viewer.vala:103 ../src/Gunami_viewer.vala:110
+msgid "_Unfinished"
+msgstr ""
+
+#: ../src/Gunami_viewer.vala:115
+msgid "_Show solution"
+msgstr ""
+
+#: ../src/Gunami_viewer.vala:117
+msgid "Show _Working"
+msgstr ""
+
+#: ../src/Gunami_viewer.vala:119
+msgid "_Quick peek at solution"
+msgstr ""
+
+#: ../src/Gunami_viewer.vala:123
+msgid "_Let computer solve it"
+msgstr ""
+
+#: ../src/Gunami_viewer.vala:125
+msgid "_Computer generated puzzle"
+msgstr ""
+
+#: ../src/Gunami_viewer.vala:131
+msgid "_Language"
+msgstr ""
+
+#: ../src/Gunami_viewer.vala:135
+msgid "_English"
+msgstr ""
+
+#: ../src/Gunami_viewer.vala:137
+msgid "_Japanese"
+msgstr ""
+
+#: ../src/Gunami_viewer.vala:139
+msgid "_Colors"
+msgstr ""
+
+#: ../src/Gunami_viewer.vala:142
+msgid "_Resize"
+msgstr ""
+
+#: ../src/Gunami_viewer.vala:147
+msgid "_Fullscreen"
+msgstr ""
+
+#: ../src/Gunami_viewer.vala:150
+msgid "_Toolbar"
+msgstr ""
+
+#: ../src/Gunami_viewer.vala:153
+msgid "_Grid"
+msgstr ""
+
+#: ../src/Gunami_viewer.vala:159
+msgid "About"
+msgstr ""
+
+#: ../src/Gunami_viewer.vala:195
+msgid "New game"
+msgstr ""
+
+#: ../src/Gunami_viewer.vala:200
+msgid "Load game"
+msgstr ""
+
+#: ../src/Gunami_viewer.vala:204
+msgid "Save game"
+msgstr ""
+
+#: ../src/Gunami_viewer.vala:215
+msgid "Peek"
+msgstr ""
+
+#: ../src/Gunami_viewer.vala:216
+msgid "Show solution"
+msgstr ""
+
+#: ../src/Gunami_viewer.vala:220
+msgid "Solve"
+msgstr ""
+
+#: ../src/Gunami_viewer.vala:221
+msgid "Solve by computer"
+msgstr ""
+
+#: ../src/Gunami_viewer.vala:225
+msgid "Random"
+msgstr ""
+
+#: ../src/Gunami_viewer.vala:226
+msgid "Generate a random game"
+msgstr ""
+
+#: ../src/Gunami_viewer.vala:234
+msgid "Set the difficulty of generated games"
+msgstr ""
+
+#: ../src/Gunami_viewer.vala:240
+msgid "Resize"
+msgstr ""
+
+#: ../src/Gunami_viewer.vala:241
+msgid "Change dimensions of the game grid"
+msgstr ""
+
+#: ../src/Gunami_viewer.vala:289
+msgid "About Gunami Game"
+msgstr ""
+
+#: ../src/Gunami_viewer.vala:325
+msgid "Hide the solution and start solving"
+msgstr ""
+
+#: ../src/Gunami_viewer.vala:330
+msgid "Reveal the solution"
+msgstr ""

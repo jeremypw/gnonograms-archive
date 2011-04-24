@@ -1,0 +1,165 @@
+using Gtk;
+
+//*****************************************************************************
+namespace Utils
+{
+	public static string get_stripped_basename(string path, string? ext)
+	{
+			string bn=Path.get_basename(path);
+			if ((ext!=null) && bn.has_suffix(ext))
+				bn=bn[0:-ext.length];
+			return bn;
+	}
+//**********************************************************************
+	public static string get_string_response(string prompt)
+	{
+		var dialog = new Gtk.Dialog.with_buttons (
+			null,
+			null,
+			Gtk.DialogFlags.MODAL|Gtk.DialogFlags.DESTROY_WITH_PARENT,
+			_("Ok"), Gtk.ResponseType.OK,
+			_("Cancel"), Gtk.ResponseType.CANCEL);
+		var label=new Gtk.Label(prompt);
+		var entry=new Gtk.Entry();
+		dialog.vbox.add(label);
+		dialog.vbox.add(entry);
+		dialog.show_all();
+		dialog.run();
+		string fn=entry.text;
+		dialog.destroy();
+		return fn;
+	}
+//**********************************************************************
+
+	public static string get_filename(FileChooserAction action, string dialogname, string filtername, string[] filters, string? start_path=null)
+	{
+		string button="Error";
+		switch (action)
+		{
+			case FileChooserAction.OPEN:
+				button=Stock.OPEN;
+				break;
+
+			case FileChooserAction.SAVE:
+				button=Stock.SAVE;
+				break;
+			default :
+				break;
+		}
+		var dialog=new Gtk.FileChooserDialog(
+			dialogname,
+			null,
+			action,
+			Gtk.Stock.CANCEL, Gtk.ResponseType.CANCEL,
+			button, Gtk.ResponseType.ACCEPT,
+			null);
+			
+		var fc=new Gtk.FileFilter();
+		fc.set_name(filtername);
+		
+		if (filters!=null)
+		{
+			for (int i=0; i<filters.length; i++) fc.add_pattern(filters[i]);
+		}
+			
+		dialog.add_filter(fc);
+		var all=new Gtk.FileFilter();
+		all.set_name(_("All files"));
+		all.add_pattern("*.*");
+		dialog.add_filter(all);
+		dialog.set_show_hidden(false);
+		string temp_working_dir=null;
+		
+		if (start_path!=null)
+		{
+			var start=File.new_for_path(start_path);
+			if (start.query_file_type(FileQueryInfoFlags.NONE,null)==FileType.DIRECTORY)
+			{
+				temp_working_dir=Environment.get_current_dir();
+				Environment.set_current_dir(start_path);
+			}
+		}
+		
+		var response = dialog.run();
+		string fn="";
+		if (response!=ResponseType.CANCEL){
+			fn=dialog.get_filename();
+		}
+		dialog.destroy();
+		
+		if (temp_working_dir!=null) {
+			temp_working_dir=Environment.get_current_dir();
+			Environment.set_current_dir(temp_working_dir);
+		}
+		
+		return fn;
+	}
+	//*****************************************************************************
+	public bool get_dimensions(out int r, out int c, int currentr=5, int currentc=5)
+	{
+		var dialog=new Gtk.Dialog.with_buttons(_("Adjust Size"),
+			null,
+			Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
+			Stock.OK,
+			Gtk.ResponseType.OK,
+			Stock.CANCEL,
+			Gtk.ResponseType.CANCEL
+			);
+		var hbox=new Gtk.HBox(true,6);
+		
+		var row_label=new Gtk.Label(_("Rows"));
+		var row_spin=new Gtk.SpinButton.with_range(5,25,5);
+		row_spin.set_value((double)currentr);
+		
+		var col_label=new Gtk.Label(_("Columns"));
+		var col_spin=new Gtk.SpinButton.with_range(5,25,5);
+		col_spin.set_value((double)currentc);
+		
+		hbox.add(row_label); hbox.add(row_spin);	
+		hbox.add(col_label); hbox.add(col_spin);
+		
+		dialog.vbox.add(hbox);
+		dialog.set_default_response(Gtk.ResponseType.OK);
+		dialog.show_all();
+
+		bool success=false;
+		var response=dialog.run();
+		
+		if (response==Gtk.ResponseType.OK) {
+			r=int.max(5,row_spin.get_value_as_int());
+			c=int.max(5,col_spin.get_value_as_int());
+			success=true;
+		}
+		dialog.destroy();
+		return success;
+	}
+	//*****************************************************************************
+	public static  int show_dlg(string msg, Gtk.MessageType type, Gtk.ButtonsType buttons)
+	{
+		var dialog=new Gtk.MessageDialog(
+			null,
+			Gtk.DialogFlags.MODAL,
+			type,
+			buttons,
+			"%s",msg);
+
+		int response=dialog.run();
+		dialog.destroy();
+		return response;
+	}
+	//*****************************************************************************
+	public static void show_info_dialog(string msg)
+	{
+		show_dlg(msg,Gtk.MessageType.INFO,Gtk.ButtonsType.CLOSE);
+	}
+	//*****************************************************************************
+	public static void show_warning_dialog(string msg)
+	{	
+		show_dlg(msg,Gtk.MessageType.WARNING,Gtk.ButtonsType.CLOSE);
+	}
+	//*****************************************************************************
+	public static bool show_confirm_dialog(string msg)
+	{
+		return show_dlg(msg,Gtk.MessageType.WARNING,Gtk.ButtonsType.YES_NO)==Gtk.ResponseType.YES;
+	}
+}

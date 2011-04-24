@@ -1,0 +1,34 @@
+# Title: Bomb
+# Author: Martin Pet&#345;&#237;&#269;ek
+# Date: 2010/06/28
+# X size: 22
+# Y size: 28
+
+b000
+a200
+800
+1fd800
+3fc000
+303400
+381400
+1a0000
+f1f00
+1fffe0
+1ffff0
+ffff8
+7ff1c
+fff9e
+fff8e
+fffce
+1fffef
+1fffef
+1fffff
+1fffff
+ffffe
+ffffe
+ffffe
+7fffc
+3fff8
+1fff0
+ffe0
+1f00

@@ -1,0 +1,96 @@
+/*  Copyright (C) 2010-2011  Jeremy Wootten
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
+ *
+ * As a special exception, if you use inline functions from this file, this
+ * file does not by itself cause the resulting executable to be covered by
+ * the GNU Lesser General Public License.
+ * 
+ *  Author:
+ * 	Jeremy Wootten <jeremwootten@gmail.com>
+ */
+ 
+using Gio;
+
+public class Gunami_filereader {
+	private string filename;
+	private DataInputStream stream;
+	private bool is_game;
+	
+	public Gunami_filereader(Gunami_FileType type)
+	{
+		if (type==Gunami_FileType.GAME)
+		{
+			ask_filename();
+			is_game=true;
+		}
+		else
+		{
+			filename=Resource.game_dir + Resource.POSITIONFILENAME;
+			is_game=false;
+		}
+	}
+	
+	public void ask_filename()
+	{
+			filename=Utils.get_game_filename(
+			Gtk.FileChooserAction.OPEN,
+			_("Choose a game"),
+			_("Gunami games"),
+			{Resource.GAMEFILEEXTENSION,"*.*"},
+			Resource.game_dir
+			);
+	}
+	
+	public bool open_datainputstream()
+	{
+	    var file = File.new_for_path (filename);
+
+	    if (!file.query_exists ()) {
+		   stderr.printf ("File '%s' doesn't exist.\n", file.get_path ());
+		   return false;
+	    }
+
+		stream= new DataInputStream(file.read());
+		return true;
+	}
+	
+	public void parse_file()
+	{
+		string? heading=find_next_heading();
+		while (heading!=null)
+		{
+			switch (heading.up())
+			{
+				case "DIMENSIONS":
+					get_dimensions(); break;
+				case "ROW CLUES": 
+					get_row_clues(); break;
+				case "COL_CLUES":
+					get_col_clues(); break;
+				case ""
+			}
+		}
+	}
+	
+	private string? find_next_heading()
+	{
+		size_t length;
+		stream.read_until("[", out length);
+		string? heading = stream.read_until("]", out length);
+		return heading;
+	}
+	
+}
