@@ -23,13 +23,21 @@
  */
  
  using Gtk;
+ using Gdk;
 
 class Gnonogram_label : Gtk.EventBox {
 	private Gtk.Label l;
+	//TODO extract attributes from label markup rather than store separately
+	private string attrib_start;
+	private string attrib_end;
+	private string clue;
+	private int blockextent;
+	private int size;
 
 	public Gnonogram_label(string label_text, bool is_column)
 	{
 		l=new Gtk.Label(label_text);
+		l.has_tooltip=true;
 
 		if (is_column)
 		{
@@ -48,8 +56,19 @@ class Gnonogram_label : Gtk.EventBox {
 		if (is_highlight) set_state(Gtk.StateType.SELECTED);
 		else set_state(Gtk.StateType.NORMAL);
 	}
-	
-	public void set_markup(string m) {l.set_markup(m);}
+
+	public void set_markup(string start, string text, string end)
+	{
+		attrib_start=start; attrib_end=end; clue=text;
+		l.set_markup(attrib_start+clue+attrib_end);
+		blockextent=Utils.blockextent_from_clue(clue);
+	}
+
+	public void set_size(int s)
+	{
+		size=s;
+		l.set_tooltip_markup(attrib_start+@"Extent=$blockextent, Freedom=$(size-blockextent)"+attrib_end);
+	}
 
 	public string get_text() {return l.get_text();}
 }

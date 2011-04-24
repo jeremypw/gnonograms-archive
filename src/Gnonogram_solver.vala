@@ -269,7 +269,7 @@
 		stdout.printf(@"simple result $simple_result guesses $guesses wraps $wraps\n");
 		if (simple_result>0) return simple_result+ 2*guesses;// + _region_count*wraps;
 //		stdout.printf("returning from advanced solver\n");
-		return 0;
+		return 9999999;
 	}				
 //======================================================================
 	private void save_position(CellState[] gs)
@@ -295,35 +295,7 @@
 		for (int i=0; i<_region_count; i++) _regions[i].restore_state();
 	}
 //======================================================================
-//	private Cell make_guess(Cell last_guess) {
-	private void xmake_guess() {
-		//stdout.printf("make guess \n");
-		// raster scan (not optimised)
-		
-//		int start_row=last_guess.row;
-//		int start_col=last_guess.col+1;
-		int start_row=_trial_cell.row;
-		int start_col=_trial_cell.col+1;
-		
-		if (start_col==_cols) {start_col=0; start_row++;}
-		
-		for (int r=start_row; r<_rows; r++)
-		{	for (int c=start_col; c<_cols; c++)
-			{
-				start_col=0; //next loop starts at zero
-				if (_grid.get_data_from_rc(r,c)==CellState.UNKNOWN)
-				{
-					//stdout.printf("Trying %d,%d\n",r,c);
-					_trial_cell.row=r; _trial_cell.col=c;
-					//return last_guess;
-					return;
-				}
-			}
-		}
-//		last_guess.row=0; last_guess.col=-1;
-//		return last_guess;
-		return;
-	}
+
 //======================================================================	
 	private void make_guess()
 	{	//stdout.printf("make guess2\n");
