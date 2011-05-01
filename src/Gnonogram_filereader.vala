@@ -117,7 +117,7 @@ public class Gnonogram_filereader {
 				line=stream.read_line(out length);
 				string[] s = line.split(":");
 				headings += s[0].strip();
-				if (s[1].strip()=="") bodies+="Unknown";
+				if (s[1].strip()=="") bodies+=_("Unknown");
 				else 	bodies += s[1].strip();
 			}
 			

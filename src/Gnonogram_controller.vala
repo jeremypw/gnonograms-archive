@@ -103,7 +103,7 @@ public class Gnonogram_controller
 		_gnonogram_view.setdifficulty.connect(this.set_difficulty);
 		_gnonogram_view.togglegrid.connect(this.gridlines_toggled);
 		_gnonogram_view.changefont.connect(this.change_font_size);
-		_gnonogram_view.rotate_screen.connect(this.rotate_screen);
+//		_gnonogram_view.rotate_screen.connect(this.rotate_screen);
 		_gnonogram_view.debugmode.connect((debug)=>{_debug=debug;});
 		_gnonogram_view.advancedmode.connect((advanced)=>{_advanced=advanced;});
 		_gnonogram_view.difficultmode.connect((difficult)=>{_difficult=difficult;});
@@ -135,10 +135,10 @@ public class Gnonogram_controller
 	}
 //======================================================================
 /*TO BE IMPLEMENTED.  Display puzzle rotated 90 to fit large puzzles on screen better
- */
+ *
   private void rotate_screen()
 	{stdout.printf("Rotated\n"); return;}
-
+*/
 //======================================================================
 	private void change_size()
 	{
@@ -344,7 +344,7 @@ public class Gnonogram_controller
 		_have_solution=false;
 		change_state(GameState.SETTING);
 		update_labels_from_model();
-		_gnonogram_view.set_name("New game");
+		_gnonogram_view.set_name(_("New game"));
 		_gnonogram_view.set_author(" ");
 		_gnonogram_view.set_date(" ");
 		_gnonogram_view.set_score_label("  ");
@@ -375,7 +375,7 @@ public class Gnonogram_controller
 		var f=FileStream.open(filename,"w");
 		if (write_game_file(f))
 		{
-			Utils.show_info_dialog("Saved as "+ Path.get_basename(filename));
+			Utils.show_info_dialog(_("Saved as ")+ Path.get_basename(filename));
 		}
 	}
 //======================================================================
@@ -414,10 +414,10 @@ public class Gnonogram_controller
 	}
 //=========================================================================
 	private bool write_position_file(FileStream f)
-	{stdout.printf("In write position file\n");
+	{//stdout.printf("In write position file\n");
 		write_game_file(f);
 
-		stdout.printf("about to write working file\n");
+//		stdout.printf("about to write working file\n");
 		_model.use_working();
 		f.printf("[Working grid]\n");
 		f.printf(_model.to_string());
@@ -444,7 +444,7 @@ public class Gnonogram_controller
 		new_game(); 
 		var reader = new Gnonogram_filereader(Gnonogram_FileType.POSITION);
 		if (load_common(reader) && load_position_extra(reader)){	}
-		else Utils.show_warning_dialog("Failed to load saved position");
+		else Utils.show_warning_dialog(_("Failed to load saved position"));
 	}
 //=========================================================================
 	private bool load_position_extra(Gnonogram_filereader reader)
@@ -573,7 +573,7 @@ public class Gnonogram_controller
 	}
 //======================================================================
 	public void peek_game()
-	{stdout.printf("Peek game\n");
+	{//stdout.printf("Peek game\n");
 		if (_have_solution)
 		{
 		change_state(GameState.SETTING);
@@ -583,7 +583,7 @@ public class Gnonogram_controller
 		}
 		else
 		{
-			Utils.show_info_dialog("No solution available");
+			Utils.show_info_dialog(_("No solution available"));
 		}
 	}
 //======================================================================
@@ -595,11 +595,11 @@ public class Gnonogram_controller
 			case -2:
 				break;  //debug mode
 			case -1:
-				Utils.show_warning_dialog("Invalid - no solution");
+				Utils.show_warning_dialog(_("Invalid - no solution"));
 
 				break;
 			case 0:
-				Utils.show_info_dialog("Failed to solve or no unique solution");
+				Utils.show_info_dialog(_("Failed to solve or no unique solution"));
 
 				break;
 			default:
@@ -707,7 +707,7 @@ public class Gnonogram_controller
 	public void random_game()
 	{
 		new_game();
-		_gnonogram_view.set_name("Thinking ....");
+		_gnonogram_view.set_name(_("Thinking ...."));
 		_gnonogram_view.show_all();
 		
 		int passes=0; 
@@ -723,7 +723,7 @@ public class Gnonogram_controller
 			while (count<10)
 			{
 				passes=generate_simple_game(grade); //tries max tries times
-				stdout.printf(" Grade %d Passes - %d\n",grade, passes);
+				//stdout.printf(" Grade %d Passes - %d\n",grade, passes);
 				if (passes>_grade||passes<0) break; 
 				if (passes==0)
 				//no simple game generated with this setting -
@@ -731,7 +731,7 @@ public class Gnonogram_controller
 				//and ease of solution not simple - depends also on grid size) 
 				{
 					grade--;
-					stdout.printf("Difficulty reduced to %d\n",grade);
+					//stdout.printf("Difficulty reduced to %d\n",grade);
 					if (_grade<1) break;
 				}
 				count++;
@@ -740,9 +740,9 @@ public class Gnonogram_controller
 		_have_solution=true;
 		if (passes>=0)
 		{
-			string name= (passes>15) ? "Difficult random" : "Simple random";
+			string name= (passes>15) ? _("Difficult random") : _("Simple random");
 			_gnonogram_view.set_name(name);
-			_gnonogram_view.set_author("Computer");
+			_gnonogram_view.set_author(_("Computer"));
 			_gnonogram_view.set_date(Utils.get_todays_date_string());
 			_gnonogram_view.set_score_label(passes.to_string());
 			_have_solution=true;
@@ -753,7 +753,7 @@ public class Gnonogram_controller
 		{
 			Utils.show_warning_dialog(_("Error occurred in solver\n"));
 			stdout.printf(_solver.get_error()+"\n");
-			_gnonogram_view.set_name("Error in solver");
+			_gnonogram_view.set_name(_("Error in solver"));
 			_gnonogram_view.set_author("");
 			_gnonogram_view.set_date("");
 			_model.use_solution();

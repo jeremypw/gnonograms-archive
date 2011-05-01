@@ -453,19 +453,19 @@ static gboolean gnonogram_filereader_parse_picto_game_file (Gnonogram_filereader
 	gboolean result = FALSE;
 	gchar* line = NULL;
 	gsize length = 0UL;
-	gsize _tmp13_;
-	gchar* _tmp14_ = NULL;
-	gchar* _tmp15_;
+	gsize _tmp14_;
+	gchar* _tmp15_ = NULL;
 	gchar* _tmp16_;
-	gboolean _tmp26_ = FALSE;
+	gchar* _tmp17_;
 	gboolean _tmp27_ = FALSE;
 	gboolean _tmp28_ = FALSE;
-	gchar* _tmp29_;
+	gboolean _tmp29_ = FALSE;
 	gchar* _tmp30_;
 	gchar* _tmp31_;
 	gchar* _tmp32_;
-	gboolean _tmp33_;
+	gchar* _tmp33_;
 	gboolean _tmp34_;
+	gboolean _tmp35_;
 	GError * _inner_error_ = NULL;
 	g_return_val_if_fail (IS_GNONOGRAM_FILEREADER (self), FALSE);
 	{
@@ -513,60 +513,62 @@ static gboolean gnonogram_filereader_parse_picto_game_file (Gnonogram_filereader
 				_tmp8_ = string_strip (s[1]);
 				_tmp9_ = _tmp8_;
 				if ((_tmp10_ = g_strcmp0 (_tmp9_, "") == 0, _g_free0 (_tmp9_), _tmp10_)) {
-					gchar* _tmp11_;
-					_tmp11_ = g_strdup ("Unknown");
-					_vala_array_add4 (&self->priv->bodies, &self->priv->bodies_length1, &self->priv->_bodies_size_, _tmp11_);
+					const gchar* _tmp11_ = NULL;
+					gchar* _tmp12_;
+					_tmp11_ = _ ("Unknown");
+					_tmp12_ = g_strdup (_tmp11_);
+					_vala_array_add4 (&self->priv->bodies, &self->priv->bodies_length1, &self->priv->_bodies_size_, _tmp12_);
 				} else {
-					gchar* _tmp12_ = NULL;
-					_tmp12_ = string_strip (s[1]);
-					_vala_array_add5 (&self->priv->bodies, &self->priv->bodies_length1, &self->priv->_bodies_size_, _tmp12_);
+					gchar* _tmp13_ = NULL;
+					_tmp13_ = string_strip (s[1]);
+					_vala_array_add5 (&self->priv->bodies, &self->priv->bodies_length1, &self->priv->_bodies_size_, _tmp13_);
 				}
 				s = (_vala_array_free (s, s_length1, (GDestroyNotify) g_free), NULL);
 			}
 		}
 	}
-	_tmp14_ = g_data_input_stream_read_line (self->priv->stream, &_tmp13_, NULL, &_inner_error_);
-	length = _tmp13_;
-	_tmp15_ = _tmp14_;
+	_tmp15_ = g_data_input_stream_read_line (self->priv->stream, &_tmp14_, NULL, &_inner_error_);
+	length = _tmp14_;
+	_tmp16_ = _tmp15_;
 	if (_inner_error_ != NULL) {
 		goto __catch5_g_error;
 	}
-	_tmp16_ = _tmp15_;
+	_tmp17_ = _tmp16_;
 	_g_free0 (line);
-	line = _tmp16_;
+	line = _tmp17_;
 	while (TRUE) {
-		gchar* _tmp17_ = NULL;
-		gchar* _tmp18_;
-		gchar* _tmp19_ = NULL;
-		gchar* _tmp20_;
-		gsize _tmp22_;
-		gchar* _tmp23_ = NULL;
-		gchar* _tmp24_;
+		gchar* _tmp18_ = NULL;
+		gchar* _tmp19_;
+		gchar* _tmp20_ = NULL;
+		gchar* _tmp21_;
+		gsize _tmp23_;
+		gchar* _tmp24_ = NULL;
 		gchar* _tmp25_;
+		gchar* _tmp26_;
 		if (!(line != NULL)) {
 			break;
 		}
-		_tmp17_ = string_chomp (line);
-		_tmp18_ = _tmp17_;
-		_tmp19_ = string_strip (_tmp18_);
-		_tmp20_ = _tmp19_;
+		_tmp18_ = string_chomp (line);
+		_tmp19_ = _tmp18_;
+		_tmp20_ = string_strip (_tmp19_);
+		_tmp21_ = _tmp20_;
 		_g_free0 (line);
-		line = _tmp20_;
-		_g_free0 (_tmp18_);
+		line = _tmp21_;
+		_g_free0 (_tmp19_);
 		if (line != NULL) {
-			gchar* _tmp21_;
-			_tmp21_ = g_strdup (line);
-			_vala_array_add6 (&self->priv->picto_grid_data, &self->priv->picto_grid_data_length1, &self->priv->_picto_grid_data_size_, _tmp21_);
+			gchar* _tmp22_;
+			_tmp22_ = g_strdup (line);
+			_vala_array_add6 (&self->priv->picto_grid_data, &self->priv->picto_grid_data_length1, &self->priv->_picto_grid_data_size_, _tmp22_);
 		}
-		_tmp23_ = g_data_input_stream_read_line (self->priv->stream, &_tmp22_, NULL, &_inner_error_);
-		length = _tmp22_;
-		_tmp24_ = _tmp23_;
+		_tmp24_ = g_data_input_stream_read_line (self->priv->stream, &_tmp23_, NULL, &_inner_error_);
+		length = _tmp23_;
+		_tmp25_ = _tmp24_;
 		if (_inner_error_ != NULL) {
 			goto __catch5_g_error;
 		}
-		_tmp25_ = _tmp24_;
+		_tmp26_ = _tmp25_;
 		_g_free0 (line);
-		line = _tmp25_;
+		line = _tmp26_;
 	}
 	goto __finally5;
 	__catch5_g_error:
@@ -587,33 +589,33 @@ static gboolean gnonogram_filereader_parse_picto_game_file (Gnonogram_filereader
 		g_clear_error (&_inner_error_);
 		return FALSE;
 	}
-	_tmp29_ = g_strconcat (self->priv->bodies[0], "\n", NULL);
-	_tmp30_ = g_strconcat (_tmp29_, self->priv->bodies[1], NULL);
-	_tmp31_ = g_strconcat (_tmp30_, "\n", NULL);
-	_tmp32_ = g_strconcat (_tmp31_, self->priv->bodies[2], NULL);
-	_tmp33_ = gnonogram_filereader_get_game_description (self, _tmp32_);
-	if ((_tmp34_ = _tmp33_, _g_free0 (_tmp32_), _g_free0 (_tmp31_), _g_free0 (_tmp30_), _g_free0 (_tmp29_), _tmp34_)) {
-		gboolean _tmp35_;
-		_tmp35_ = gnonogram_filereader_get_picto_dimensions (self, self->priv->bodies[3], TRUE);
-		_tmp28_ = _tmp35_;
+	_tmp30_ = g_strconcat (self->priv->bodies[0], "\n", NULL);
+	_tmp31_ = g_strconcat (_tmp30_, self->priv->bodies[1], NULL);
+	_tmp32_ = g_strconcat (_tmp31_, "\n", NULL);
+	_tmp33_ = g_strconcat (_tmp32_, self->priv->bodies[2], NULL);
+	_tmp34_ = gnonogram_filereader_get_game_description (self, _tmp33_);
+	if ((_tmp35_ = _tmp34_, _g_free0 (_tmp33_), _g_free0 (_tmp32_), _g_free0 (_tmp31_), _g_free0 (_tmp30_), _tmp35_)) {
+		gboolean _tmp36_;
+		_tmp36_ = gnonogram_filereader_get_picto_dimensions (self, self->priv->bodies[3], TRUE);
+		_tmp29_ = _tmp36_;
+	} else {
+		_tmp29_ = FALSE;
+	}
+	if (_tmp29_) {
+		gboolean _tmp37_;
+		_tmp37_ = gnonogram_filereader_get_picto_dimensions (self, self->priv->bodies[4], FALSE);
+		_tmp28_ = _tmp37_;
 	} else {
 		_tmp28_ = FALSE;
 	}
 	if (_tmp28_) {
-		gboolean _tmp36_;
-		_tmp36_ = gnonogram_filereader_get_picto_dimensions (self, self->priv->bodies[4], FALSE);
-		_tmp27_ = _tmp36_;
+		gboolean _tmp38_;
+		_tmp38_ = gnonogram_filereader_parse_picto_grid_data (self);
+		_tmp27_ = _tmp38_;
 	} else {
 		_tmp27_ = FALSE;
 	}
-	if (_tmp27_) {
-		gboolean _tmp37_;
-		_tmp37_ = gnonogram_filereader_parse_picto_grid_data (self);
-		_tmp26_ = _tmp37_;
-	} else {
-		_tmp26_ = FALSE;
-	}
-	result = _tmp26_;
+	result = _tmp27_;
 	_g_free0 (line);
 	return result;
 }

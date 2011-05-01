@@ -47,7 +47,7 @@ public class Gnonogram_view : Gtk.Window
 	public signal void debugmode(bool debug);
 	public signal void advancedmode(bool advanced);
 	public signal void difficultmode(bool difficult);
-	public signal void rotate_screen();
+//	public signal void rotate_screen();
 	
 	private Gnonogram_controller _controller;
 	private Gtk.SpinButton _grade_spin;
@@ -55,7 +55,7 @@ public class Gnonogram_view : Gtk.Window
 	private Gtk.ToolButton _peek_tool;
 	private Gtk.Toolbar _toolbar;
 	private Gtk.CheckMenuItem _gridmenuitem;
-	private Gtk.MenuItem _rotatemenuitem;
+//	private Gtk.MenuItem _rotatemenuitem;
 	private Gtk.MenuItem _peeksolutionmenuitem;
 	private Gtk.MenuItem _showsolutionmenuitem;
 	private Gtk.MenuItem _showworkingmenuitem;
@@ -66,7 +66,7 @@ public class Gnonogram_view : Gtk.Window
 	private Label _size_label;
 	private Label _score_label;
 	
-	private Gtk.Image _logo;
+//	private Gtk.Image _logo;
 	
 	public Gnonogram_view(Gnonogram_LabelBox rb, Gnonogram_LabelBox cb, Gnonogram_CellGrid dg, Gnonogram_controller controller)
 	{	_controller=controller; //seems to be necessary to get signals to work.  Not sure why.
@@ -80,10 +80,10 @@ public class Gnonogram_view : Gtk.Window
 		var info_frame=new Frame(null);
 		var info_box = new VBox(false,0);
 		_name_label= new Label("");
-		set_name("New Game");
+		set_name(_("New Game"));
 		_name_label.set_alignment((float)0.0,(float)0.5);
 		_author_label = new Label("");
-		set_author("Unknown");
+		set_author(_("Unknown"));
 		_author_label.set_alignment((float)0.0,(float)0.5);
 		_date_label=new Label("");
 		set_date(Utils.get_todays_date_string());
@@ -191,13 +191,13 @@ public class Gnonogram_view : Gtk.Window
 			settingssubmenu.add(grademenuitem);
 			var infomenuitem=new MenuItem.with_mnemonic(_("_Edit game description"));
 			settingssubmenu.add(infomenuitem);
-			var debugmenuitem=new CheckMenuItem.with_mnemonic("D_ebug");
-			debugmenuitem.set_active(false);
-			settingssubmenu.add(debugmenuitem);
-			var advancedmenuitem=new CheckMenuItem.with_mnemonic("_Advanced solver");
+//			var debugmenuitem=new CheckMenuItem.with_mnemonic("D_ebug");
+//			debugmenuitem.set_active(false);
+//			settingssubmenu.add(debugmenuitem);
+			var advancedmenuitem=new CheckMenuItem.with_mnemonic(_("_Advanced solver"));
 			advancedmenuitem.set_active(true);
 			settingssubmenu.add(advancedmenuitem);
-			var difficultmenuitem=new CheckMenuItem.with_mnemonic("_Generate difficult games");
+			var difficultmenuitem=new CheckMenuItem.with_mnemonic(_("_Generate difficult games"));
 			difficultmenuitem.set_active(false);
 			settingssubmenu.add(difficultmenuitem);
 						
@@ -206,9 +206,9 @@ public class Gnonogram_view : Gtk.Window
 			var fullscreenmenuitem=new CheckMenuItem.with_mnemonic(_("_Fullscreen"));
 			viewsubmenu.add(fullscreenmenuitem);
 			fullscreenmenuitem.set_active(false);
-			_rotatemenuitem=new MenuItem.with_mnemonic(_("_Rotate"));
-			viewsubmenu.add(_rotatemenuitem);
-			_rotatemenuitem.sensitive=false; //Until implemented
+//			_rotatemenuitem=new MenuItem.with_mnemonic(_("_Rotate"));
+//			viewsubmenu.add(_rotatemenuitem);
+//			_rotatemenuitem.sensitive=false; //Until implemented
 			var toolbarmenuitem=new CheckMenuItem.with_mnemonic(_("_Toolbar"));
 			viewsubmenu.add(toolbarmenuitem);
 			toolbarmenuitem.set_active(true);
@@ -240,12 +240,12 @@ public class Gnonogram_view : Gtk.Window
 		resizemenuitem.activate.connect(()=>{resizegame();});
 		grademenuitem.activate.connect(getdifficulty);
 		infomenuitem.activate.connect(editdescription);
-		debugmenuitem.activate.connect(()=>{debugmode(debugmenuitem.active);});
+//		debugmenuitem.activate.connect(()=>{debugmode(debugmenuitem.active);});
 		advancedmenuitem.activate.connect(()=>{advancedmode(advancedmenuitem.active);});
 		difficultmenuitem.activate.connect(()=>{difficultmode(difficultmenuitem.active);});
 		
 		fullscreenmenuitem.activate.connect(toggle_fullscreen);
-		_rotatemenuitem.activate.connect(()=>{rotate_screen();});
+//		_rotatemenuitem.activate.connect(()=>{rotate_screen();});
 		toolbarmenuitem.activate.connect(toggle_toolbar);
 		_gridmenuitem.activate.connect(()=>{togglegrid(_gridmenuitem.active);});
 
@@ -337,7 +337,7 @@ public class Gnonogram_view : Gtk.Window
 		grade_tool.create_menu_proxy.connect(()=>{
 			var grademenuitem2=new MenuItem.with_mnemonic(_("_Difficulty"));
 			grademenuitem2.activate.connect(getdifficulty);
-			grade_tool.set_proxy_menu_item("Difficulty", grademenuitem2);
+			grade_tool.set_proxy_menu_item(_("Difficulty"), grademenuitem2);
 			return true;
 			}
 		);
@@ -392,7 +392,7 @@ public class Gnonogram_view : Gtk.Window
                        "comments", "Set and solve gnonogram puzzles",
                        "license","Gnonograms is free software; you can redistribute it and/or modify it under the terms of the GNU General Public Licence as published by the Free Software Foundation; either version 2 of the Licence, or (at your option) any later version.\n\nGnonogram is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public Licence for more details.\n\nYou should have received a copy of the GNU General Public Licence along with Nautilus; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA",
                        "wrap_license",true,
-                       "logo", _logo.get_pixbuf(),
+                      // "logo", _logo.get_pixbuf(),
                        "title", _("About Gnonogram Game"),
                        "authors", authors,
                        null);
@@ -447,30 +447,39 @@ public class Gnonogram_view : Gtk.Window
 		dialog.destroy();
 	}
 //======================================================================
-	public void set_name(string name){_name_label.set_text("Name:  "+name+"  ");}
+	public void set_name(string name){_name_label.set_text(_("Name:")+" "+name+"  ");}
 	public string get_name(){return get_info_item(_name_label);	}
 //======================================================================
-	public void set_author(string author){_author_label.set_text("By:    "+author+"  ");}
+	public void set_author(string author){_author_label.set_text(_("By:")+" "+author+"  ");}
 	public string get_author(){return get_info_item(_author_label);}
 //======================================================================
-	public void set_date(string date){_date_label.set_text("Date:  "+date+"  ");}
+	public void set_date(string date){_date_label.set_text(_("Date:")+" "+date+"  ");}
 	public string get_date(){return get_info_item(_date_label);	}
 //======================================================================
 	public void set_score_label(string score)
 	{
-		_score_label.set_text("Score: "+score+"  ");
+		_score_label.set_text(_("Score:")+" "+score+"  ");
 	}
 	public string get_score(){return get_info_item(_score_label);	}
 //======================================================================
 	private string get_info_item(Label l)
-	{	var s= l.get_text().slice(7,-1);
-		if (s.strip()=="") s="Unknown";
-		return s;
+	{
+		//var s= l.get_text().slice(7,-1);
+		//if (s.strip()=="") s=_("Unknown");
+		string[] s=(l.get_text()).split(":",2);
+		string info;
+		if (s.length>1)
+		{
+			info=s[1].strip();
+			if (info=="") info=_("Unknown");
+		}
+		else info=_("Unknown");
+		return info;
 	}
 //======================================================================
 	public void set_size(int r, int c)
 	{
-		_size_label.set_text("Size: "+r.to_string()+"X"+c.to_string()+"  ");
+		_size_label.set_text(_("Size: ")+r.to_string()+"X"+c.to_string()+"  ");
 	}
 //======================================================================
 	public void set_grade_spin_value(double d)

@@ -84,6 +84,7 @@ public class Gnonogram_LabelBox : Frame {
 		_other_size=other_size;
 		set_default_fontheight(_size, _other_size);
 		set_attribs(_fontheight);
+		set_all_to_zero();
 	}
 //======================================================================
 	private void remove_label()
@@ -148,5 +149,8 @@ public class Gnonogram_LabelBox : Frame {
 		_fontheight=_fontheight.clamp(Resource.MINFONTSIZE, Resource.MAXFONTSIZE);
 	}
 //======================================================================
-
+	private void set_all_to_zero()
+	{
+		for(int l=0;l<_size;l++) update_label(l,"0");
+	}
 }
