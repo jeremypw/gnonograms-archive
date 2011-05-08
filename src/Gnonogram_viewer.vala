@@ -191,9 +191,9 @@ public class Gnonogram_view : Gtk.Window
 			settingssubmenu.add(grademenuitem);
 			var infomenuitem=new MenuItem.with_mnemonic(_("_Edit game description"));
 			settingssubmenu.add(infomenuitem);
-//			var debugmenuitem=new CheckMenuItem.with_mnemonic("D_ebug");
-//			debugmenuitem.set_active(false);
-//			settingssubmenu.add(debugmenuitem);
+			var debugmenuitem=new CheckMenuItem.with_mnemonic("D_ebug");
+			debugmenuitem.set_active(false);
+			settingssubmenu.add(debugmenuitem);
 			var advancedmenuitem=new CheckMenuItem.with_mnemonic(_("_Advanced solver"));
 			advancedmenuitem.set_active(true);
 			settingssubmenu.add(advancedmenuitem);
@@ -240,7 +240,7 @@ public class Gnonogram_view : Gtk.Window
 		resizemenuitem.activate.connect(()=>{resizegame();});
 		grademenuitem.activate.connect(getdifficulty);
 		infomenuitem.activate.connect(editdescription);
-//		debugmenuitem.activate.connect(()=>{debugmode(debugmenuitem.active);});
+		debugmenuitem.activate.connect(()=>{debugmode(debugmenuitem.active);});
 		advancedmenuitem.activate.connect(()=>{advancedmode(advancedmenuitem.active);});
 		difficultmenuitem.activate.connect(()=>{difficultmode(difficultmenuitem.active);});
 		

@@ -464,9 +464,10 @@ public class Gnonogram_controller
 		}
 		if (reader.has_state)
 		{
-			if (reader.state==GameState.SETTING.to_string())
+			if (reader.state==(GameState.SETTING).to_string())
 			{
 				change_state(GameState.SETTING);
+				redraw_all();
 			}
 			else
 			{
@@ -515,7 +516,7 @@ public class Gnonogram_controller
 		}
 
 		if (reader.has_solution)
-		{stdout.printf("loading solution\n");
+		{//stdout.printf("loading solution\n");
 			_model.use_solution();
 			for (int i=0; i<_rows; i++)  _model.set_row_data_from_string(i,reader.solution[i]);
 			update_labels_from_model();
@@ -827,13 +828,13 @@ public class Gnonogram_controller
 	private void change_state(GameState gs)
 	{
 		initialize_cursor();
-		if (_state!=gs) 
-		{	
+//		if (_state!=gs) 
+//		{	
 			_state=gs;
 			if (gs==GameState.SETTING)	_model.use_solution();
 			else	_model.use_working();
 			_gnonogram_view.state_has_changed(gs);
-		}
+//		}
 
 	}
 }

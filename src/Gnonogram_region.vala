@@ -164,10 +164,10 @@
 		//still_changing=totals_changed(); //always true when _cycles==0
 
 		//if (!still_changing) return false;
-
-		if(_cycles>0 && !totals_changed()) return false; //no change since last visit
-		bool still_changing=true;		
 		_completed=(count_cell_state(CellState.UNKNOWN)==0); //could have been completed externally
+		if(_completed || (_cycles>0 && !totals_changed())) return false; //no change since last visit
+		bool still_changing=true;		
+
 		int count=0;
 		while (!_completed && count<20) //count guards against infinite loops
 		{
@@ -189,10 +189,6 @@
 			{
 				if(_in_error) break;
 				else made_changes=true;
-				//_completed=(count_cell_state(CellState.UNKNOWN)==0);
-				//if(_completed && (count_cell_state(CellState.COMPLETED)+count_cell_state(CellState.FILLED))!=_block_total)
-				// {
-				//	record_error("Total filled check", "Wrong number of filled cells",false);
 			}
 			else break;
 		}
@@ -238,6 +234,11 @@
 		//if (_debug) return false;
 		status_to_tags();
 
+		//stdout.printf("Capped range audit\n");
+		if (capped_range_audit()||_in_error||tags_to_status()) {
+			//stdout.printf("Capped range audit\n");
+			return true;}
+			
 		//stdout.printf("Possibilities audit\n");
 		if (possibilities_audit()||_in_error||tags_to_status()) {
 			//stdout.printf("possibilities audit made change\n");
@@ -261,7 +262,7 @@
 			//stdout.printf("do edge backwards made change\n");
 			return true;}
 		//stdout.printf("Filled subregion\n");
-		if (filled_subregion_audit()||_in_error||tags_to_status()) {
+		if (filled_subregion_audit2()||_in_error||tags_to_status()) {
 			//stdout.printf("filled sub region made change\n");
 			return true;}
 		//stdout.printf("Fill_gaps\n");
@@ -270,16 +271,149 @@
 			return true;}
 				
 		//stdout.printf("Available range audit\n");
-		if (available_range_audit()||_in_error||tags_to_status()) {
+		//if (available_range_audit()||_in_error||tags_to_status()) {
 		//	//stdout.printf("available range audit made change\n");
+			//return true;}
+			
+		//stdout.printf("Fix blocks in ranges\n");
+		if (fix_blocks_in_ranges()||_in_error||tags_to_status()) {
+			//stdout.printf("Fix blocks in ranges\n");
 			return true;}
-						
+									
 		return false;
 	}
 //======================================================================
-
+//TEST
 //======================================================================
-	private bool filled_subregion_audit() {
+		private bool capped_range_audit()
+	{//only changes tags so returns false
+		//if(_debug) stdout.printf("fix blocks in ranges\n");
+		int start=0, length=0, idx=0;
+		int nranges=count_capped_ranges();
+		if (nranges==0) return false;
+		for (int rng=0; rng<nranges; rng++)
+		{
+			start=_ranges[rng,0];
+			length=_ranges[rng,1];
+			for (idx=start;idx<start+length;idx++)
+			{	int count=0;
+				for(int b=0;b<_nblocks;b++)
+				{
+					if(_tags[idx,b])
+					{count++;
+						if(_blocks[b]!=length)
+						{
+							_tags[idx,b]=false;
+							count--;
+						}
+					}
+				}
+				if (count==0)
+				{
+					record_error("capped range audit","filled cell with no owners",false);
+					return false;
+				}
+			}
+		}
+		return false;
+	}
+	private bool fix_blocks_in_ranges()
+	{
+		int[] blocks=blocks_available();
+		int bl=blocks.length;
+		int[,] block_start = new int[bl,2];
+		int[,] block_end = new int[bl,2];
+		int nranges=count_available_ranges();
+//		for (int r=0;r<nranges;r++)
+//		{
+//			stdout.printf(@"Range $r start $(_ranges[r,0]) length $(_ranges[r,1])\n");
+//		}
+//		for (int b=0; b<bl; b++)
+//		{
+//			stdout.printf(@"Block $b Length $(_blocks[blocks[b]])\n");
+//		}		
+		//find earliest start point of each block (assuming ranges all unknown)
+		int rng=0, offset=0, length=0;
+		for (int b=0; b<bl; b++)
+		{	length=_blocks[blocks[b]];
+			if (_ranges[rng,1]>=(length+offset))
+			{
+//				stdout.printf(@"Fits - b $b, rng $rng length $length offset $offset\n");
+				block_start[b,0]=rng;
+				block_start[b,1]= offset;
+			}
+			else
+			{
+				rng++;
+				while (rng<nranges && _ranges[rng,1]<length) rng++; 
+
+				if (rng>=nranges)
+					{record_error("Fix blocks in ranges", "Dont fit",false);
+					return false;}
+				offset=0;
+//				stdout.printf(@"No Fit - b $b, rng $rng length $length offset $offset\n");	
+				block_start[b,0]=rng;
+				block_start[b,1]= offset;				
+			}
+			offset+=(length+1);
+		}
+
+
+		for (int b=0; b<bl; b++)
+		{
+//			stdout.printf(@"Block $b Start range $(block_start[b,0]), offset $(block_start[b,1])\n");
+		}
+
+		rng=nranges-1; offset=0;
+		for (int b=bl-1; b>=0; b--)
+		{	length=_blocks[blocks[b]];
+			if (_ranges[rng,1]>=(length+offset))
+			{
+//				stdout.printf(@"Reverse Fits - b $b, rng $rng length $length offset $offset\n");
+				block_end[b,0]=rng;
+				block_end[b,1]= _ranges[rng,1]-offset; //one AFTER end of block
+			}
+			else
+			{
+				rng--;
+				while (rng>=0 && _ranges[rng,1]<length) rng--; 
+
+				if (rng<0)
+					{record_error("Reverse Fix blocks in ranges", "Dont fit",false);
+					return false;}
+				offset=0;
+//				stdout.printf(@"No Fit - b $b, rng $rng length $length offset $offset\n");	
+				block_end[b,0]=rng;
+				block_end[b,1]= _ranges[rng,1]-offset;				
+			}
+			offset+=(length+1);
+		}
+
+		for (int b=0; b<bl; b++)
+		{
+//			stdout.printf(@"Block $b Length $(_blocks[blocks[b]]), End range $(block_end[b,0]), offset $(block_end[b,1])\n");
+		}
+		for (int b=0; b<bl; b++)
+		{
+			if (block_start[b,0]==block_end[b,0])
+			{	rng=block_start[b,0]; offset=block_start[b,1];length=block_end[b,1]-block_start[b,1];
+				//stdout.printf(@"Fix block $blocks[b] start $_ranges[rng,0], length $length\n");
+				fix_block_in_range(blocks[b],_ranges[rng,0]+offset,length, false);
+			}
+			//remove block from outside possible range
+			for (int r=0; r<block_start[b,0];r++)
+			{
+				remove_block_from_range(blocks[b],_ranges[r,0],_ranges[r,1]);
+			}
+			for (int r=nranges-1; r>block_end[b,0];r--)
+			{
+				remove_block_from_range(blocks[b],_ranges[r,0],_ranges[r,1]);
+			}
+		}
+		return false;
+	} 
+//======================================================================
+/*	private bool filled_subregion_audit() {
 //find a range of filled cells not completed and see if can be associated
 // with a unique block.
 	if(_debug) stdout.printf("Filled subregions audit\n");
@@ -334,6 +468,89 @@
 		}
 		return changed;	
 	}
+*/	
+	private bool filled_subregion_audit2() {
+//find a range of filled cells not completed and see if can be associated
+// with a unique block.
+	if(_debug) stdout.printf("Filled subregions audit2\n");
+		bool changed=false, start_capped, end_capped;
+		int idx=0;
+		int length;
+		
+		while (idx<_ncells)
+		{//find a filled sub-region
+			start_capped=false; end_capped=false;
+			if (skip_while_not_status(CellState.FILLED,ref idx))
+			{
+				//idx points to first filled cell or returns false
+				if (_tags[idx,_is_finished_ptr]) {idx++;continue;}//ignore if completed already
+				if(idx==0 || _status[idx-1]==CellState.EMPTY) start_capped=true;
+				length=count_next_state(CellState.FILLED, idx);//idx not changed
+				int lastcell=idx+length-1;
+				if (lastcell==_ncells-1 || _status[lastcell+1]==CellState.EMPTY) end_capped=true;
+				if(_debug) stdout.printf(@"filled subregion start $idx length $length\n");
+				//is this region capped?
+				//if ((idx==0 || _status[idx-1]==CellState.EMPTY) && (idx==_ncells-1 || _status[idx+1]==CellState.EMPTY))
+				if (start_capped && end_capped)
+				{// assigned block must fit exactly
+					if(_debug) stdout.printf("Region is already capped\n");
+					assign_and_cap_range(idx,length);
+					changed=true;
+				}
+				else
+				{
+					int largest=find_largest_possible_in_cell(idx);
+					if(_debug) stdout.printf(@"filled subregion largest possible $largest \n");
+					if (largest==length)
+					{//there is **at least one** largest block that fits exactly
+					// this region must therefore be complete
+						assign_and_cap_range(idx,length);
+						changed=true;
+					}
+					else
+					{//remove blocks that are smaller than length from this region and one cell either side. 
+
+						int start = idx==0 ? idx : idx-1;
+						int end = (idx+length ==_ncells) ? idx+length-1 : idx+length;
+						for(int i=start;i<=end;i++)
+						{						
+							//if (i<0||i>_ncells-1) continue;
+							
+							for (int bl=0;bl<_nblocks;bl++)
+							{							
+								if (_tags[i,bl] && _blocks[bl]<length) _tags[i,bl]=false;
+							}
+						}
+
+						//stdout.printf(@"Test start  start_capped $start_capped end_capped $end_capped\n");
+						if (start_capped || end_capped)
+						{
+							int smallest=find_smallest_possible_in_cell(idx);
+							//stdout.printf(@"Smallest is $smallest length is $length\n");
+							if (smallest>length)
+							{//extend filled cells
+								int count=smallest-length;
+								//int start;
+								int direction;
+								if(end_capped) {start=idx-1;direction=-1;}
+								else {start=idx+length;direction=1;}
+								//stdout.printf(@"New ploy: start $start direction $direction count $count\n");
+								for(int i=0;i<count;i++)
+								{
+									_tags[start,_can_be_empty_ptr]=false;
+									start+=direction;
+								}
+								changed=true;						
+							}
+						}
+					}
+				}
+				idx+=length;//move past block
+			}
+			else break;
+		}
+		return changed;	
+	}
 //======================================================================
 	private bool fill_gaps()
 	{	// Find unknown gap between filled cells and complete accordingly.
@@ -369,7 +586,7 @@
 				int owner;
 				if (same_owner(cell1,idx, out owner))
 				{
-					changed=set_range_owner(owner,cell1,idx-cell1+1)||changed;
+					changed=set_range_owner(owner,cell1,idx-cell1+1,true,false)||changed;
 				}
 			}
 		}
@@ -468,7 +685,9 @@
 			//for each possible mark as possible owner of subregion (not exclusive)
 			for (int i=0;i<count;i++)
 			{
-				set_range_owner(max_blocks[i],start,length,false);
+//TEST
+				set_range_owner(max_blocks[i],start,length,false, false);
+//TEST
 			}
 			//remove as possible owner blocks between first and last that are wrong length
 			for (int i=first+1;i<last;i++)
@@ -669,46 +888,50 @@
 		//only counts incomplete ranges - assumes all blocks that can be assigned already have been - otherwise error occurs.
 		//stdout.printf(@"Available ranges $ranges\n");
 		//a range is contiguous unknown or filled cells between empty cells
-
 		int[] blocks=blocks_available();
 		nblocks=blocks.length;
-		//stdout.printf(@"Available blocks $nblocks\n");
-		
-		if (nblocks!=ranges || nblocks<2) return false;
-	// only deals with case where must be one block per range
-		
-		//can more than one block fit? if not fix in range
-		bool unique=true;
-		for (int r=0; r<ranges; r++)
-		{//can the rth range accomodate the rth available block and the one before or the one after?
-			if ((r<ranges-1) &&  (_ranges[r,1]>=_blocks[blocks[r]]+_blocks[blocks[r+1]]+1)
-				||
-				(r>0) && (_ranges[r,1]>=_blocks[blocks[r]]+_blocks[blocks[r-1]]+1)
-				)
-			{
-				//cannot uniquely assign blocks to ranges
-				unique=false; 	break;
-			}
+		if (ranges==1)
+		{//all remaining blocks must fit in this range
+			return fix_blocks_in_range(blocks[0],blocks[nblocks-1],_ranges[0,0],_ranges[0,1]);
 		}
-		
-		if (!unique) return false;
 		else
-		{	
+		{			
+			if (nblocks!=ranges || nblocks<2) return false;
+		// only deals with case where must be one block per range
+			
+			//can more than one block fit? if not fix in range
+			bool unique=true;
 			for (int r=0; r<ranges; r++)
-			{
-				if (_blocks[blocks[r]]>_ranges[r,1])
+			{//can the rth range accomodate the rth available block and the one before or the one after?
+				if ((r<ranges-1) &&  (_ranges[r,1]>=_blocks[blocks[r]]+_blocks[blocks[r+1]]+1)
+					||
+					(r>0) && (_ranges[r,1]>=_blocks[blocks[r]]+_blocks[blocks[r-1]]+1)
+					)
 				{
-					stdout.printf("BUG:  available range audit - block too large\n");
-					//this is a bug not necessarily a fatal error - needs fixing tho
-					//do not make changes in these circumstances
-					return false;
+					//cannot uniquely assign blocks to ranges
+					unique=false; 	break;
 				}
 			}
-			for (int r=0; r<ranges; r++)
-			{
-					fix_block_in_range(blocks[r],_ranges[r,0],_ranges[r,1]);				
+			
+			if (!unique) return false;
+			else
+			{	
+				for (int r=0; r<ranges; r++)
+				{
+					if (_blocks[blocks[r]]>_ranges[r,1])
+					{
+						stdout.printf("BUG:  available range audit - block too large\n");
+						//this is a bug not necessarily a fatal error - needs fixing tho
+						//do not make changes in these circumstances
+						return false;
+					}
+				}
+				for (int r=0; r<ranges; r++)
+				{
+						fix_block_in_range(blocks[r],_ranges[r,0],_ranges[r,1],true);				
+				}
+				return true;
 			}
-			return true;
 		}
 		//log_state();
 		//return false; 
@@ -785,7 +1008,39 @@
 		else {_in_error=true;message="count_next_owner idx negative\n";}
 		
 		return count;
-	}	
+	}
+//======================================================================
+	private int count_capped_ranges() {
+// determine location of capped ranges of filled cells (not marked complete) and store in _ranges[,]
+
+		int range=0, start=0, length=0, idx=0;	
+		while (_status[idx]!=CellState.FILLED && idx<_ncells) idx++; //skip to beginning of first range		
+		while (idx<_ncells)
+		{
+			//stdout.printf(@"Start at $idx\n");
+			
+			length=0;
+			start=idx;
+			_ranges[range,0]=start;
+			_ranges[range,2]=0; //not used
+			_ranges[range,3]=0; //not used
+			
+			while (_status[idx]==CellState.FILLED && idx<_ncells)
+			{								
+				idx++; length++;
+			}
+			
+			if ((start==0||_status[start-1]==CellState.EMPTY) && (idx==_ncells||_status[idx]==CellState.EMPTY)) //capped
+			{
+				_ranges[range,1]=length;
+				//stdout.printf(@"Capped range start $start length $length\n");
+				range++;
+			}
+			
+			while (_status[idx]!=CellState.FILLED && idx<_ncells) idx++; //skip to beginning of next range
+		}
+		return range;
+	}
 //======================================================================
 	private int count_owners_and_empty(int cell) {
 // how many possible owners?  Does include can be empty tag!
@@ -900,7 +1155,7 @@
 		return count==1;
 	}
 //=======================================================================
-	private bool fix_block_in_range(int block, int start, int length,bool exclusive=true) {
+	private bool fix_block_in_range(int block, int start, int length,bool exclusive) {
 // block must be limited to range
 //stdout.printf(@"fix block in range: block $block start $start length $length exclusive $exclusive\n");
 		bool changed=false;
@@ -914,7 +1169,7 @@
 			int freedom = length-block_length;
 
 			if (freedom<0) {record_error("Fix block in range", "block longer than range",false); return false;}
-			
+
 			if (freedom<block_length)
 			{
 				if (freedom==0)
@@ -922,7 +1177,7 @@
 					set_block_complete_and_cap(block,start);
 					changed=true;
 				}
-				else set_range_owner(block,start+freedom,block_length-freedom,true);
+				else set_range_owner(block,start+freedom,block_length-freedom,true,false);
 			}
 		}
 		return changed;
@@ -935,7 +1190,7 @@
 		bool changed=false;
 		if (first_block<0||first_block>_nblocks||last_block<0||last_block>_nblocks)
 		{
-			record_error("Fix_blocks_in_range","Invalid block number", false);
+			record_error("Fix_blocks_in_range",@"Invalid block number first_block $first_block last_block $last_block", false);
 			return false;
 		}
 		int range_start=start, range_end=start+length;
@@ -953,7 +1208,7 @@
 			for (int j=idx; j<idx+blength; j++) _tags[j,b]=(_status[j]!=CellState.EMPTY);
 			if (freedom<_blocks[b])
 			{
-				changed=set_range_owner(b,idx+freedom,_blocks[b]-freedom,true)||changed;
+				changed=set_range_owner(b,idx+freedom,_blocks[b]-freedom,true,false)||changed;
 			}
 			idx=idx+_blocks[b]+1; //leave a gap between blocks
 		}
@@ -967,12 +1222,30 @@
 		int max_size=-1;
 		for (int i=0;i<_nblocks;i++)
 		{	
-			if (_completed_blocks[i]) continue;// ignore complete block
+//			if (_completed_blocks[i]) continue;// ignore complete block
 			if (!_tags[cell,i]) continue; // not possible
 			if (_blocks[i]<=max_size) continue; // not largest
 			max_size=_blocks[i]; //update largest
 		}
 		return max_size;
+	}	
+	private int find_smallest_possible_in_cell(int cell)
+	{
+// find the largest incomplete block possible for given cell
+		int min_size=9999;
+		for (int i=0;i<_nblocks;i++)
+		{	
+			if (!_tags[cell,i]) continue; // not possible
+			if (_blocks[i]>=min_size) continue; // not largest
+			min_size=_blocks[i]; //update largest
+		}
+		if (min_size==9999)
+		{
+			_in_error=true;
+			message="No blocks possible in filled cell";
+			return 0;
+		}
+		return min_size;
 	}	
 //======================================================================
 	private void remove_block_from_cell_to_end(int block, int start,int direction=1)
@@ -1023,7 +1296,7 @@
 		}
 		
 		_completed_blocks[block]=true;
-		set_range_owner(block,start,length);
+		set_range_owner(block,start,length,true,false);
 		
 		if (start>0) set_cell_empty(start-1);
 		if (start+length<_ncells) set_cell_empty(start+length);
@@ -1053,7 +1326,7 @@
 		}
 	}
 //======================================================================
-	private bool set_range_owner(int owner, int start, int length, bool exclusive=true, bool can_be_empty=true)
+	private bool set_range_owner(int owner, int start, int length, bool exclusive, bool can_be_empty)
 	{
 		if (_debug) stdout.printf(@"set range owner start=$start length=$length exclusive $exclusive\n");
 		bool changed=false;
@@ -1073,7 +1346,9 @@
 			if (exclusive)
 			{
 				//remove block and out of sequence from regions out of reach if exclusive
-				if (block_length<length)
+//TEST
+				if (block_length<length && !can_be_empty)
+//TEST
 				{
 					_in_error=true; message="set_range_owner - contradiction - range too big for owner\n"; return false;
 				}
@@ -1124,13 +1399,18 @@
 			{
 				_status[cell]=CellState.FILLED; changed=true;
 				_tags[cell,_can_be_empty_ptr]=false;
-				if(!can_be_empty)
-				{
-					_tags[cell,_can_be_empty_ptr]=false;
-				}
+//				if(!can_be_empty)
+//				{
+//					_tags[cell,_can_be_empty_ptr]=false;
+//				}
 				for (int i=0; i<_nblocks; i++) _tags[cell,i]=false;
 			}
+			else if(!can_be_empty)
+			{
+				_tags[cell,_can_be_empty_ptr]=false;
+			}
 			_tags[cell,owner]=true;
+//			
 		}
 		return changed;
 	}
@@ -1191,6 +1471,7 @@
 		bool changed=false;
 		int unknown=count_cell_state(CellState.UNKNOWN);
 		int filled=count_cell_state(CellState.FILLED);
+		int completed=count_cell_state(CellState.COMPLETED);
 		
 		if (_unknown!=unknown || _filled!=filled)
 		{
@@ -1198,8 +1479,12 @@
 			_unknown=unknown;
 			_filled=filled;
 			
-			if (_filled>_block_total) record_error("totals changed","too many filled cells");
-			else if (unknown==0) _completed=true;
+			if (filled+completed>_block_total) record_error("totals changed","too many filled cells");
+			else if (unknown==0)
+			{
+				 _completed=true;
+				 if (filled+completed<_block_total) record_error("totals changed",@"too few filled cells - $_filled");
+			}
 		}
 		
 		return changed;
@@ -1298,7 +1583,14 @@
 		for (int i=0;i<_ncells; i++)
 		{	
 			// skip cells not unknown or with more than one possibility (including empty)
-			if (_status[i]!=CellState.UNKNOWN||count_owners_and_empty(i)>1) continue;
+			if (_status[i]!=CellState.UNKNOWN) continue;
+			if (!_tags[i,_can_be_empty_ptr])
+			{
+				_status[i]=CellState.FILLED;
+				changed=true;
+				continue;
+			}
+			if(count_owners_and_empty(i)>1) continue;
 			changed=true;
 			//Either the 'can be empty' flag is set and there are no owners (ie cell is empty) or there is one owner.
 			if (_tags[i,_can_be_empty_ptr]){
