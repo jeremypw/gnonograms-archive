@@ -50,7 +50,7 @@
 	
 	public void set_row(int row, CellState[] sa, int start=0)
 	{
-		for (int c=start;c<start+sa.length;c++) _data[row,c]=sa[c];
+		for (int c=0;c<sa.length;c++) _data[row,c+start]=sa[c];
 	}
 	
 	public void get_col(int col, ref CellState[] sa, int start=0)
@@ -60,7 +60,7 @@
 	
 	public void set_col(int col, CellState[] sa, int start=0)
 	{
-		for (int r=start;r<start+sa.length;r++) {_data[r,col]=sa[r];}
+		for (int r=0;r<sa.length;r++) {_data[r+start,col]=sa[r];}
 	}
 	
 	public void get_array(int idx, bool iscolumn, ref CellState[] sa, int start=0)
@@ -92,6 +92,15 @@
 	{
 		for (int r=0; r<_rows; r++)
 		{for (int c=0;c<_cols;c++)	_data[r,c]=s;}
+	}
+
+	public int count_all(CellState s)
+	{
+		int count=0;
+		for (int r=0; r<_rows; r++)
+		{for (int c=0;c<_cols;c++)
+			if(_data[r,c]==s)count++;}
+		return count;
 	}
 	
 	public string data2text(int idx, int length, bool iscolumn)

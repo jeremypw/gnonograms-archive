@@ -21,7 +21,6 @@
  *  Author:
  * 	Jeremy Wootten <jeremwootten@gmail.com>
  */
-// experimental
  
 using Gtk;
 using Gdk;
@@ -85,6 +84,7 @@ public class Gnonogram_controller
 		_gnonogram_view = new Gnonogram_view(_rowbox, _colbox, _cellgrid, this);
 		_gnonogram_view.solvegame.connect(this.viewer_solve_game);
 		_gnonogram_view.savegame.connect(this.save_game);
+		_gnonogram_view.savepictogame.connect(this.save_pictogame);
 		_gnonogram_view.loadgame.connect(this.load_game);
 		_gnonogram_view.saveposition.connect(this.save_position);
 		_gnonogram_view.loadposition.connect(()=>{this.load_position(); change_state(_state);});
@@ -103,17 +103,17 @@ public class Gnonogram_controller
 		_gnonogram_view.setdifficulty.connect(this.set_difficulty);
 		_gnonogram_view.togglegrid.connect(this.gridlines_toggled);
 		_gnonogram_view.changefont.connect(this.change_font_size);
-//		_gnonogram_view.rotate_screen.connect(this.rotate_screen);
 		_gnonogram_view.debugmode.connect((debug)=>{_debug=debug;});
 		_gnonogram_view.advancedmode.connect((advanced)=>{_advanced=advanced;});
 		_gnonogram_view.difficultmode.connect((difficult)=>{_difficult=difficult;});
-
+		_gnonogram_view.set_grade_spin_value((double)_grade);
+		
 		_cellgrid.cursor_moved.connect(this.grid_cursor_moved);
 		_cellgrid.button_press_event.connect(this.button_pressed);
 		_cellgrid.button_release_event.connect(()=>{this._is_button_down=false; return true;});
 		_cellgrid.expose_event.connect(()=>{redraw_all();return false;});
 
-		_gnonogram_view.set_grade_spin_value((double)_grade);
+		_solver.showprogress.connect((guesses)=>{_gnonogram_view.set_score_label(guesses.to_string());});
 	}
 //======================================================================
 	private void initialize_view()
@@ -133,12 +133,6 @@ public class Gnonogram_controller
 		_previous_cell.state=CellState.UNKNOWN;
 		_is_button_down=false;
 	}
-//======================================================================
-/*TO BE IMPLEMENTED.  Display puzzle rotated 90 to fit large puzzles on screen better
- *
-  private void rotate_screen()
-	{stdout.printf("Rotated\n"); return;}
-*/
 //======================================================================
 	private void change_size()
 	{
@@ -369,11 +363,31 @@ public class Gnonogram_controller
 			Resource.game_dir
 			);
 		
-		if (filename==null||filename.length<5) return; //message?
-		if (filename[-4:filename.length]!=Resource.GAMEFILEEXTENSION) filename = filename+Resource.GAMEFILEEXTENSION;
+		if (filename==null) return; //message?
+		if (filename.length<5||filename[-4:filename.length]!=Resource.GAMEFILEEXTENSION) filename = filename+Resource.GAMEFILEEXTENSION;
 		
 		var f=FileStream.open(filename,"w");
 		if (write_game_file(f))
+		{
+			Utils.show_info_dialog(_("Saved as ")+ Path.get_basename(filename));
+		}
+	}
+	public void save_pictogame()
+	{
+		string filename;
+		filename=Utils.get_filename(
+			Gtk.FileChooserAction.SAVE,
+			_("Name and save as  pictogame"),
+			{_("Picto games")},
+			{"*.pattern"},
+			Resource.game_dir
+			);
+		
+		if (filename==null) return; //message?
+		if (filename.length<9||filename[-8:filename.length]!=".pattern") filename = filename+".pattern";
+		
+		var f=FileStream.open(filename,"w");
+		if (write_pictogame_file(f))
 		{
 			Utils.show_info_dialog(_("Saved as ")+ Path.get_basename(filename));
 		}
@@ -397,6 +411,26 @@ public class Gnonogram_controller
 		_model.use_solution();
 		f.printf("[Solution]\n");
 		f.printf(_model.to_string());
+		if (_state==GameState.SOLVING) _model.use_working();
+		f.flush();
+		return true;
+	}
+	private bool write_pictogame_file(FileStream f)
+	{//stdout.printf("In write pictogame file\n");
+		f.printf("# Title: ");
+		f.printf("%s\n",_gnonogram_view.get_name());
+		f.printf("# Author: ");
+		f.printf("%s\n",_gnonogram_view.get_author());
+		f.printf("# Date: ");
+		f.printf("%s\n",_gnonogram_view.get_date());
+		f.printf("# X Size: ");
+		f.printf("%d\n",_cols);
+		f.printf("# Y Size: ");
+		f.printf("%d\n",_rows);
+		f.printf("\n");
+
+		_model.use_solution();
+		f.printf(_model.to_hexstring());
 		if (_state==GameState.SOLVING) _model.use_working();
 		f.flush();
 		return true;
@@ -526,7 +560,7 @@ public class Gnonogram_controller
 		{	stdout.printf("loading clues\n");
 			for (int i=0; i<_rows; i++) _rowbox.update_label(i,reader.row_clues[i]);
 			for (int i=0; i<_cols; i++) _colbox.update_label(i,reader.col_clues[i]);
-			int passes=solve_game(false,true); //no start grid, use advanced if necessary
+			int passes=solve_game(false,true,false); //no start grid, use advanced if necessary but not ultimate - too slow
 			stdout.printf("Solver returned %d\n",passes);
 			if (passes>0)
 			{
@@ -590,7 +624,7 @@ public class Gnonogram_controller
 //======================================================================
 	private void viewer_solve_game()
 	{
-		int passes = solve_game(true, _advanced); 
+		int passes = solve_game(true, _advanced,_advanced); 
 		switch (passes) 
 		{
 			case -2:
@@ -601,13 +635,9 @@ public class Gnonogram_controller
 				break;
 			case 0:
 				Utils.show_info_dialog(_("Failed to solve or no unique solution"));
-
 				break;
 			default:
-				//Utils.show_info_dialog(_("Difficulty score %d").printf(passes));
 				_gnonogram_view.set_score_label(passes.to_string());
-				//set_solution_from_solver();
-				//_have_solution=true;
 				break;
 		}
 		
@@ -622,42 +652,15 @@ public class Gnonogram_controller
 			redraw_all();
 	}
 //======================================================================
-	private int solve_clues(string[] row_clues, string[] col_clues, My2DCellArray? startgrid, bool use_advanced=false)
+	private int solve_clues(string[] row_clues, string[] col_clues, My2DCellArray? startgrid, bool use_advanced, bool use_ultimate)
 	{
 		int passes=0;
 		_solver.initialize(row_clues, col_clues,startgrid);
-		passes=_solver.solve_it(_debug, use_advanced);
+		passes=_solver.solve_it(_debug, use_advanced, use_ultimate);
 		return passes;
-//		if (!_debug)
-//		{
-//			passes=_solver.solve_it(false, use_advanced);
-//			return passes;
-//		}
-//		else // debugging
-//		{
-//			//change_state(GameState.SOLVING);
-//			bool current_iscolumn=false, previous_is_column=false;
-//			int current_index=0, previous_index=0;
-//			while (true)
-//			{
-//				_solver.solve_it(true, use_advanced); //step mode
-				
-//				if (previous_is_column) _colbox.highlight(previous_index,false);
-//				else _rowbox.highlight(previous_index,false);
-//				current_iscolumn=_solver.get_current_iscolumn();
-//				current_index=_solver.get_current_index();
-//				if (current_iscolumn) _colbox.highlight(current_index,true);
-//				else 	_rowbox.highlight(current_index,true);
-//				previous_is_column=current_iscolumn;
-//				previous_index=current_index;
-				
-//				show_solver_grid();
-//				if (!Utils.show_confirm_dialog("Continue?")) return -2;
-//			}
-//		}
 	}
 //======================================================================
-	private int solve_game(bool use_startgrid=false, bool use_advanced=false)
+	private int solve_game(bool use_startgrid=false, bool use_advanced, bool use_ultimate)
 	{
 		var row_clues= new string[_rows];
 		var col_clues= new string[_cols];
@@ -676,7 +679,7 @@ public class Gnonogram_controller
 		for (int i =0; i<_rows; i++) row_clues[i]=_rowbox.get_label_text(i);
 		for (int i =0; i<_cols; i++) col_clues[i]=_colbox.get_label_text(i);
 		
-		return solve_clues(row_clues,col_clues, startgrid, use_advanced);
+		return solve_clues(row_clues,col_clues, startgrid, use_advanced, use_ultimate);
 	}
 //======================================================================
 	private void set_solution_from_solver()
@@ -711,15 +714,15 @@ public class Gnonogram_controller
 		_gnonogram_view.set_name(_("Thinking ...."));
 		_gnonogram_view.show_all();
 		
-		int passes=0; 
+		int passes=0, count=0; 
 		if (_difficult)
 		{
 			generate_difficult_game(_grade);
-			passes=solve_game(false,true); //solve using advanced solver if possible
+			passes=solve_game(false,true,false); //exclude simple games//solve using advanced solver if possible
 		}
+		
 		else
 		{
-			int count=0;
 			int grade = _grade; //grade may be reduced but _grade always matches spin setting
 			while (count<10)
 			{
@@ -732,7 +735,6 @@ public class Gnonogram_controller
 				//and ease of solution not simple - depends also on grid size) 
 				{
 					grade--;
-					//stdout.printf("Difficulty reduced to %d\n",grade);
 					if (_grade<1) break;
 				}
 				count++;
@@ -792,7 +794,7 @@ public class Gnonogram_controller
 	{
 		_model.fill_random(grade); //fills solution grid
 		update_labels_from_model(); 
-		return solve_game(false,false); // no start grid, no advanced
+		return solve_game(false,false,false); // no start grid, no advanced
 	}
 //======================================================================
 	private void update_labels_from_model()
@@ -828,13 +830,9 @@ public class Gnonogram_controller
 	private void change_state(GameState gs)
 	{
 		initialize_cursor();
-//		if (_state!=gs) 
-//		{	
-			_state=gs;
-			if (gs==GameState.SETTING)	_model.use_solution();
-			else	_model.use_working();
-			_gnonogram_view.state_has_changed(gs);
-//		}
-
+		_state=gs;
+		if (gs==GameState.SETTING)	_model.use_solution();
+		else	_model.use_working();
+		_gnonogram_view.state_has_changed(gs);
 	}
 }

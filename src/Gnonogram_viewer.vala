@@ -23,11 +23,13 @@
  */
  
  using Gtk;
+ using Gdk;
 
 public class Gnonogram_view : Gtk.Window
 {
 	public signal void solvegame();
 	public signal void savegame();
+	public signal void savepictogame();
 	public signal void loadgame();
 	public signal void saveposition();
 	public signal void loadposition();
@@ -47,7 +49,6 @@ public class Gnonogram_view : Gtk.Window
 	public signal void debugmode(bool debug);
 	public signal void advancedmode(bool advanced);
 	public signal void difficultmode(bool difficult);
-//	public signal void rotate_screen();
 	
 	private Gnonogram_controller _controller;
 	private Gtk.SpinButton _grade_spin;
@@ -142,6 +143,8 @@ public class Gnonogram_view : Gtk.Window
 			filesubmenu.add(loadmenuitem);
 			var savemenuitem = new MenuItem.with_mnemonic(_("_Save"));
 			filesubmenu.add(savemenuitem);
+			var savepictomenuitem = new MenuItem.with_mnemonic(_("_Save as Pictogame"));
+			filesubmenu.add(savepictomenuitem);
 			var sep2 = new SeparatorMenuItem();
 			filesubmenu.add(sep2);
 			var quitmenuitem=new MenuItem.with_mnemonic(_("_Quit"));
@@ -193,6 +196,7 @@ public class Gnonogram_view : Gtk.Window
 			settingssubmenu.add(infomenuitem);
 			var debugmenuitem=new CheckMenuItem.with_mnemonic("D_ebug");
 			debugmenuitem.set_active(false);
+			debugmenuitem.set_sensitive(false); //for development only
 			settingssubmenu.add(debugmenuitem);
 			var advancedmenuitem=new CheckMenuItem.with_mnemonic(_("_Advanced solver"));
 			advancedmenuitem.set_active(true);
@@ -224,6 +228,7 @@ public class Gnonogram_view : Gtk.Window
 		newmenuitem.activate.connect(()=>{newgame();});
 		loadpuzzlemenuitem.activate.connect(()=>{loadgame();});
 		savepuzzlemenuitem.activate.connect(()=>{savegame();});
+		savepictomenuitem.activate.connect(()=>{savepictogame();});
 		loadpositionmenuitem.activate.connect(()=>{loadposition();});
 		savepositionmenuitem.activate.connect(()=>{saveposition();});
 		quitmenuitem.activate.connect(()=>{quitgamesignal();});
@@ -366,7 +371,7 @@ public class Gnonogram_view : Gtk.Window
 //======================================================================
 	private void getdifficulty()
 	{	
-		var win=new Window(WindowType.TOPLEVEL);
+		var win=new Gtk.Window(Gtk.WindowType.TOPLEVEL);
 		win.set_decorated(false);
 		var grade_spin2=new SpinButton.with_range(1,10,1);
 		grade_spin2.set_tooltip_text(_("Set the difficulty of generated games"));
@@ -457,15 +462,14 @@ public class Gnonogram_view : Gtk.Window
 	public string get_date(){return get_info_item(_date_label);	}
 //======================================================================
 	public void set_score_label(string score)
-	{
+	{//stdout.printf("set_score_label %s\n",score);
 		_score_label.set_text(_("Score:")+" "+score+"  ");
+		_score_label.show_now();
 	}
 	public string get_score(){return get_info_item(_score_label);	}
 //======================================================================
 	private string get_info_item(Label l)
 	{
-		//var s= l.get_text().slice(7,-1);
-		//if (s.strip()=="") s=_("Unknown");
 		string[] s=(l.get_text()).split(":",2);
 		string info;
 		if (s.length>1)

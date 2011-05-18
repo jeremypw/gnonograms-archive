@@ -255,7 +255,6 @@ public class Gnonogram_filereader {
 	{//stdout.printf("In parse grid data\n");
 		if (picto_grid_data==null) return false;
 		picto_grid_data=Utils.remove_blank_lines(picto_grid_data);
-		//stdout.printf("Length of data is %d\n", picto_grid_data.length);
 		if (picto_grid_data==null||picto_grid_data.length!=rows) return false;
 		solution = new string[rows];
 		for (int i=0; i<rows;i++)

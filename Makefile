@@ -32,6 +32,7 @@ SRC_FILES = \
 	Gnonogram_label.vala \
 	Gnonogram_labelbox.vala \
 	Gnonogram_model.vala \
+	Gnonogram_permutor.vala \
 	Gnonogram_region.vala \
 	Gnonogram_solver.vala \
 	Gnonogram_viewer.vala \

@@ -30,7 +30,6 @@
 	private My2DCellArray _working_data; //display when solving
 	public CellState[] _arr;
 	private Rand _rand_gen;
-//	public double _grade;
 	
 	public Gnonogram_model(int r, int c) {
 	_rows = r; _cols = c;
@@ -84,9 +83,6 @@
 //======================================================================
 	public void use_solution() {_display_data=_solution_data;}
 //======================================================================
-//	public void set_difficulty(double d) {_grade=d.clamp(1.0,10.0);}
-//	public void reduce_difficulty() {_grade=double.max(_grade-1.0,1.0);}
-//======================================================================
 	public string get_label_text(int idx, bool is_column)
 	{
 		int length = is_column ? _rows : _cols;
@@ -129,6 +125,18 @@
 		{
 			_display_data.get_row(r, ref arr);
 			sb.append(Utils.string_from_cellstate_array(arr));
+			sb.append("\n");
+		}
+		return sb.str;
+	}
+	public string to_hexstring()
+	{//stdout.printf("model to string\n");
+		StringBuilder sb= new StringBuilder();
+		CellState[] arr=new CellState[_cols];
+		for (int r=0; r<_rows; r++)
+		{
+			_display_data.get_row(r, ref arr);
+			sb.append(Utils.hex_string_from_cellstate_array(arr));
 			sb.append("\n");
 		}
 		return sb.str;

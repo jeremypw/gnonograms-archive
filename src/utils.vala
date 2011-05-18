@@ -218,7 +218,7 @@ namespace Utils
 		return cs;
 	}
 	//*****************************************************************************
-	public string gnonogram_string_from_hex_string(string s, int pad_to_length=0)
+	public string gnonogram_string_from_hex_string(string s, int pad_to_length)
 	{		
 		StringBuilder sb= new StringBuilder(""); int count=0;
 		for (int i=0; i<s.length; i++)
@@ -276,6 +276,33 @@ namespace Utils
 		}
 
 		return sb.str;
+	}
+	//*****************************************************************************
+	public string hex_string_from_cellstate_array(CellState[] sa)
+	{		
+		StringBuilder sb= new StringBuilder("");
+		int length=sa.length;
+		int e=0, m=1, count=0;
+		for(int i=length-1;i>=0;i--)
+		{
+			count++;
+			e+=((int)(sa[i])-1)*m;
+			m=m*2;
+			if(count==4||i==0)
+			{
+				sb.prepend(int2hex(e));
+				count=0;m=1;e=0;
+			}
+		}
+		return sb.str;
+	}
+	private string int2hex(int i)
+	{
+		if (i<=9) return i.to_string();
+		if (i>15) return "X";
+		i=i-10;
+		string[] l={"A","B","C","D","E","F"};
+		return l[i];
 	}
 	//*****************************************************************************
 	public string convert_html(string? html)
