@@ -121,6 +121,20 @@
 			_status[i]=CellState.UNKNOWN;
 			_temp_status[i]=CellState.UNKNOWN;
 		}
+
+		if (_blocks[0]==0)
+		{
+			_completed=true;
+			for (int i=0;i<_ncells;i++)
+			{
+				for (int j=0; j<_nblocks; j++) _tags[i,j]=false;
+				//Start with no possible owners and can be empty.
+				_tags[i,_can_be_empty_ptr]=false;
+				_tags[i,_is_finished_ptr]=true;
+				_status[i]=CellState.EMPTY;
+				_temp_status[i]=CellState.EMPTY;
+			}
+		}
 	}
 //=====================================================================	
 	public void initial_state()
@@ -183,6 +197,7 @@
 //======================================================================
 	public int value_as_permute_region()
 	{
+		if (_completed) return 0;
 		int navailable_ranges=count_available_ranges(false);
 		if (navailable_ranges!=1) return 0;  //useless as permute region
 		
@@ -227,13 +242,11 @@
 		if (_completed) return false; 
 		
 		bool made_changes=false;
-		//	bool still_changing=false;
 		get_status();
-		//still_changing=totals_changed(); //always true when _cycles==0
 
 		//if (!still_changing) return false;
 		_completed=(count_cell_state(CellState.UNKNOWN)==0); //could have been completed externally
-		if(_completed || (_cycles>0 && !totals_changed())) return false; //no change since last visit
+		if( (_cycles>0 && !totals_changed())||(_completed && !check_nblocks()) ) return false; //no change since last visit or external change produced error
 		bool still_changing=true;		
 
 		int count=0;
@@ -245,14 +258,10 @@
 			else
 			{
 				still_changing=full_fix();
-				//full_fix2();
 			}
 			if (_in_error) break;
 			
 			tags_to_status();		 //MAY NEED THIS???			
-			//still_changing=totals_changed(); //always true when _cycles==1
-			//stdout.printf("Region %d cycle %d still changing %s\n",_index,_cycles, still_changing.to_string());
-			//if (still_changing)
 			if (totals_changed())
 			{
 				if(_in_error) break;
@@ -922,14 +931,14 @@
 		int count=0;
 		if (forwards && idx>=0)
 		{
-			while ( _status[idx]==cs && idx<_ncells) {
+			while (idx<_ncells && _status[idx]==cs) {
 				count++;
 				idx++;
 			}
 		}
 		else if (!forwards && idx<_ncells)
 		{
-			while ( _status[idx]==cs && idx>=0) {
+			while (idx>=0 && _status[idx]==cs) {
 				count++;
 				idx--;
 			}
@@ -944,9 +953,8 @@
 		int count=0;
 		if (idx>=0)
 		{
-			while ( _tags[idx,owner] &&
-					!_tags[idx,_is_finished_ptr] &&
-					 idx<_ncells) {
+			while (idx<_ncells && _tags[idx,owner] &&
+					!_tags[idx,_is_finished_ptr]) {
 				count++;
 				idx++;
 			}
@@ -968,7 +976,7 @@
 			_ranges[range,2]=0;
 			_ranges[range,3]=0;
 			
-			while (_status[idx]!=CellState.EMPTY && idx<_ncells)
+			while (idx<_ncells && _status[idx]!=CellState.EMPTY)
 			{					
 				if (!_tags[idx,_can_be_empty_ptr])
 				{
@@ -985,9 +993,27 @@
 				else{_ranges[range,1]=length;range++;}
 			}
 			
-			while (_status[idx]==CellState.EMPTY && idx<_ncells) idx++; //skip to beginning of next range
+			while (idx<_ncells && _status[idx]==CellState.EMPTY) idx++; //skip to beginning of next range
 		}
 		return range;
+	}
+
+	private bool check_nblocks()
+	{//only called when region is completed. Checks whether number of blocks is correct
+		int count=0, idx=0;
+		while (idx<_ncells)
+		{
+			while (idx<_ncells && _status[idx]==CellState.EMPTY) idx++;
+			if (idx<_ncells) count++;
+			else break;
+			while (idx<_ncells && _status[idx]!=CellState.EMPTY) idx++;
+		}
+		if (count!=_nblocks)
+		{
+			record_error("Check n_blocks",@"Wrong number of blocks found $count should be $_nblocks");
+			return false;
+		}
+		else return true;
 	}
 //======================================================================
 	private int count_capped_ranges() {
@@ -1463,6 +1489,7 @@
 			{
 				 _completed=true;
 				 if (filled+completed<_block_total) record_error("totals changed",@"too few filled cells - $_filled");
+				 else check_nblocks();
 			}
 		}
 		

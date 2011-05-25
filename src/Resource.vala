@@ -60,6 +60,7 @@ namespace Resource
 	public static string game_dir;
 	public static string game_name;
 	public static string icon_dir;
+	public static string manual_dir;
 	public static string prefix;
 	public static bool installed;
 
@@ -80,7 +81,9 @@ namespace Resource
 		stdout.printf("Resource_dir is %s \n",resource_dir);
 		
 		icon_dir=resource_dir+"/icons";
-
+//		manual_dir=resource_dir+"/Manual";
+//		manual_dir="/home/jeremy/Mallard";
+		manual_dir="/media/shared/shared_data/Vala/Gnonograms/Manual";
 		game_dir=(Config.get_instance()).get_game_dir(resource_dir+"/games");
 		
 		game_name=(Config.get_instance()).get_game_name(DEFAULTGAMENAME);

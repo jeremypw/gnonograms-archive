@@ -137,16 +137,14 @@ public class Gnonogram_view : Gtk.Window
 		filemenuitem.set_submenu(filesubmenu);
 			var newmenuitem = new MenuItem.with_mnemonic(_("_New"));
 			filesubmenu.add(newmenuitem);
-			var sep1 = new SeparatorMenuItem();
-			filesubmenu.add(sep1);
+			filesubmenu.add(new SeparatorMenuItem());
 			var loadmenuitem = new MenuItem.with_mnemonic(_("_Load"));
 			filesubmenu.add(loadmenuitem);
 			var savemenuitem = new MenuItem.with_mnemonic(_("_Save"));
 			filesubmenu.add(savemenuitem);
 			var savepictomenuitem = new MenuItem.with_mnemonic(_("_Save as Pictogame"));
 			filesubmenu.add(savepictomenuitem);
-			var sep2 = new SeparatorMenuItem();
-			filesubmenu.add(sep2);
+			filesubmenu.add(new SeparatorMenuItem());
 			var quitmenuitem=new MenuItem.with_mnemonic(_("_Quit"));
 			filesubmenu.add(quitmenuitem);
 
@@ -174,31 +172,32 @@ public class Gnonogram_view : Gtk.Window
 			gamesubmenu.add(_peeksolutionmenuitem);
 			var restartmenuitem=new MenuItem.with_mnemonic(_("_Restart"));
 			gamesubmenu.add(restartmenuitem);
-			var sep3 = new SeparatorMenuItem();
-			gamesubmenu.add(sep3);
+			gamesubmenu.add(new SeparatorMenuItem());
 			var computersolvemenuitem=new MenuItem.with_mnemonic(_("_Let computer solve it"));
 			gamesubmenu.add(computersolvemenuitem);
 			var computergeneratemenuitem=new MenuItem.with_mnemonic(_("_Computer generated puzzle"));
 			gamesubmenu.add(computergeneratemenuitem);
+			gamesubmenu.add(new SeparatorMenuItem());
+			var infomenuitem=new MenuItem.with_mnemonic(_("_Edit game description"));
+			gamesubmenu.add(infomenuitem);
 
 							
 		var settingssubmenu=new Menu();
 		settingsmenuitem.set_submenu(settingssubmenu);
-			var colormenuitem=new MenuItem.with_mnemonic(_("_Colors"));
+			var colormenuitem=new MenuItem.with_mnemonic(_("_Colors ..."));
 			settingssubmenu.add(colormenuitem);	
-			var fontmenuitem=new MenuItem.with_mnemonic(_("_Font"));
+			var fontmenuitem=new MenuItem.with_mnemonic(_("_Font ..."));
 			settingssubmenu.add(fontmenuitem);	
-			var resizemenuitem=new MenuItem.with_mnemonic(_("_Resize"));
+			var resizemenuitem=new MenuItem.with_mnemonic(_("_Resize ..."));
 			settingssubmenu.add(resizemenuitem);
-			grademenuitem=new MenuItem.with_mnemonic(_("_Difficulty"));
+			grademenuitem=new MenuItem.with_mnemonic(_("_Difficulty ..."));
 			settingssubmenu.add(grademenuitem);
-			var infomenuitem=new MenuItem.with_mnemonic(_("_Edit game description"));
-			settingssubmenu.add(infomenuitem);
+			settingssubmenu.add(new SeparatorMenuItem());
 			var debugmenuitem=new CheckMenuItem.with_mnemonic("D_ebug");
 			debugmenuitem.set_active(false);
 			debugmenuitem.set_sensitive(false); //for development only
 			settingssubmenu.add(debugmenuitem);
-			var advancedmenuitem=new CheckMenuItem.with_mnemonic(_("_Advanced solver"));
+			var advancedmenuitem=new CheckMenuItem.with_mnemonic(_("_Use advanced solver"));
 			advancedmenuitem.set_active(true);
 			settingssubmenu.add(advancedmenuitem);
 			var difficultmenuitem=new CheckMenuItem.with_mnemonic(_("_Generate difficult games"));
@@ -207,12 +206,9 @@ public class Gnonogram_view : Gtk.Window
 						
 		var viewsubmenu=new Menu();
 		viewmenuitem.set_submenu(viewsubmenu);
-			var fullscreenmenuitem=new CheckMenuItem.with_mnemonic(_("_Fullscreen"));
-			viewsubmenu.add(fullscreenmenuitem);
-			fullscreenmenuitem.set_active(false);
-//			_rotatemenuitem=new MenuItem.with_mnemonic(_("_Rotate"));
-//			viewsubmenu.add(_rotatemenuitem);
-//			_rotatemenuitem.sensitive=false; //Until implemented
+//			var fullscreenmenuitem=new CheckMenuItem.with_mnemonic(_("_Fullscreen"));
+//			viewsubmenu.add(fullscreenmenuitem);
+//			fullscreenmenuitem.set_active(false);
 			var toolbarmenuitem=new CheckMenuItem.with_mnemonic(_("_Toolbar"));
 			viewsubmenu.add(toolbarmenuitem);
 			toolbarmenuitem.set_active(true);
@@ -224,6 +220,8 @@ public class Gnonogram_view : Gtk.Window
 		helpmenuitem.set_submenu(helpsubmenu);
 			var aboutmenuitem=new MenuItem.with_mnemonic(_("About"));
 			helpsubmenu.add(aboutmenuitem);
+			var manualmenuitem=new MenuItem.with_mnemonic(_("Manual"));
+			helpsubmenu.add(manualmenuitem);
 			
 		newmenuitem.activate.connect(()=>{newgame();});
 		loadpuzzlemenuitem.activate.connect(()=>{loadgame();});
@@ -249,12 +247,13 @@ public class Gnonogram_view : Gtk.Window
 		advancedmenuitem.activate.connect(()=>{advancedmode(advancedmenuitem.active);});
 		difficultmenuitem.activate.connect(()=>{difficultmode(difficultmenuitem.active);});
 		
-		fullscreenmenuitem.activate.connect(toggle_fullscreen);
+//		fullscreenmenuitem.activate.connect(toggle_fullscreen);
 //		_rotatemenuitem.activate.connect(()=>{rotate_screen();});
 		toolbarmenuitem.activate.connect(toggle_toolbar);
 		_gridmenuitem.activate.connect(()=>{togglegrid(_gridmenuitem.active);});
 
 		aboutmenuitem.activate.connect(show_about);
+		manualmenuitem.activate.connect(show_manual);
 		
 		return menubar;
 	}
@@ -358,11 +357,13 @@ public class Gnonogram_view : Gtk.Window
 		else revealgame();
 	}
 //======================================================================
-	private void toggle_fullscreen(Gtk.MenuItem cmi)
-	{	
-		if (((Gtk.CheckMenuItem)cmi).active) this.window.fullscreen();
-		else this.window.unfullscreen();
-	}
+// Discontinued when window made non-resizeable due to alignment problems.
+// Window size controlled by font size only.
+//	private void toggle_fullscreen(Gtk.MenuItem cmi)
+//	{
+//		if (((Gtk.CheckMenuItem)cmi).active) this.window.fullscreen();
+//		else this.window.unfullscreen();
+//	}
 //======================================================================
 	private void toggle_toolbar(Gtk.MenuItem cmi)
 	{	
@@ -401,6 +402,19 @@ public class Gnonogram_view : Gtk.Window
                        "title", _("About Gnonogram Game"),
                        "authors", authors,
                        null);
+	}
+
+	private void show_manual()
+	{
+		var manual_uri="ghelp:"+Resource.manual_dir;
+		try
+		{
+			show_uri(get_screen(),manual_uri,get_current_event_time());
+		}
+		catch (GLib.Error e)
+		{
+			Utils.show_warning_dialog(e.message);
+		}
 	}
 //======================================================================
 	private void editdescription()
