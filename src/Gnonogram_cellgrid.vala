@@ -85,12 +85,8 @@ public class Gnonogram_CellGrid : DrawingArea
 //=====================================================================
 	
 	public void draw_cell(Cell cell, GameState gs, bool highlight=false)
-	{
-		if (cell.row<0||cell.row>=_rows||cell.col<0||cell.col>=_cols)
-		{
-			//stdout.printf(@"Outside grid row= $(cell.row) col =$(cell.col)\n");
-			return;
-		}
+	{	//don't draw cell outside grid.
+		if (cell.row<0||cell.row>=_rows||cell.col<0||cell.col>=_cols)return;
 		
 /* coords of top left corner of filled part
 /* (excluding grid if present but including highlight line)
@@ -179,7 +175,6 @@ public class Gnonogram_CellGrid : DrawingArea
 
 	private bool leave_grid(Gdk.EventCrossing e)
 	{
-		//stdout.printf("leave event\n");
 		cursor_moved(-1,-1);
 		return false;
 	}

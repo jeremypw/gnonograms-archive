@@ -30,10 +30,10 @@
 #include <gtk/gtk.h>
 #include <float.h>
 #include <math.h>
-#include <gdk/gdk.h>
 #include <stdlib.h>
 #include <string.h>
 #include <glib/gi18n-lib.h>
+#include <gdk/gdk.h>
 #include <stdio.h>
 #include <gobject/gvaluecollector.h>
 
@@ -137,7 +137,6 @@ typedef struct _Gnonogram_filereader Gnonogram_filereader;
 typedef struct _Gnonogram_filereaderClass Gnonogram_filereaderClass;
 typedef struct _Gnonogram_filereaderPrivate Gnonogram_filereaderPrivate;
 #define _gnonogram_filereader_unref0(var) ((var == NULL) ? NULL : (var = (gnonogram_filereader_unref (var), NULL)))
-#define _g_source_unref0(var) ((var == NULL) ? NULL : (var = (g_source_unref (var), NULL)))
 
 #define TYPE_MY2_DCELL_ARRAY (my2_dcell_array_get_type ())
 #define MY2_DCELL_ARRAY(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), TYPE_MY2_DCELL_ARRAY, My2DCellArray))
@@ -308,13 +307,16 @@ Config* config_get_instance (void);
 void config_get_dimensions (Config* self, gint* r, gint* c);
 Gnonogram_model* gnonogram_model_new (gint r, gint c);
 Gnonogram_model* gnonogram_model_construct (GType object_type, gint r, gint c);
+gdouble config_get_difficulty (Config* self);
+static void gnonogram_controller_create_view (Gnonogram_controller* self);
+static void gnonogram_controller_initialize_view (Gnonogram_controller* self);
 Gnonogram_solver* gnonogram_solver_new (gint rows, gint cols, gboolean testing, gboolean debug, gboolean test_column, gint test_idx);
 Gnonogram_solver* gnonogram_solver_construct (GType object_type, gint rows, gint cols, gboolean testing, gboolean debug, gboolean test_column, gint test_idx);
 static void gnonogram_controller_show_solver_grid (Gnonogram_controller* self);
 static void _gnonogram_controller_show_solver_grid_gnonogram_solver_showsolvergrid (Gnonogram_solver* _sender, gpointer self);
-gdouble config_get_difficulty (Config* self);
-static void gnonogram_controller_create_view (Gnonogram_controller* self);
-static void gnonogram_controller_initialize_view (Gnonogram_controller* self);
+static void _lambda43_ (gint guesses, Gnonogram_controller* self);
+void gnonogram_view_set_score_label (Gnonogram_view* self, const gchar* score);
+static void __lambda43__gnonogram_solver_showprogress (Gnonogram_solver* _sender, gint guesses, gpointer self);
 static void gnonogram_controller_change_state (Gnonogram_controller* self, GameState gs);
 Gnonogram_LabelBox* gnonogram_labelbox_new (gint size, gint other_size, gboolean is_col);
 Gnonogram_LabelBox* gnonogram_labelbox_construct (GType object_type, gint size, gint other_size, gboolean is_col);
@@ -346,19 +348,19 @@ static void _gnonogram_controller_start_solving_gnonogram_view_hidegame (Gnonogr
 void gnonogram_controller_reveal_solution (Gnonogram_controller* self);
 static void _gnonogram_controller_reveal_solution_gnonogram_view_revealgame (Gnonogram_view* _sender, gpointer self);
 void gnonogram_controller_peek_game (Gnonogram_controller* self);
-static void _gnonogram_controller_peek_game_gnonogram_view_peekgame (Gnonogram_view* _sender, gpointer self);
+static void _gnonogram_controller_peek_game_gnonogram_view_checkerrors (Gnonogram_view* _sender, gpointer self);
 void gnonogram_controller_restart_game (Gnonogram_controller* self);
 static void _gnonogram_controller_restart_game_gnonogram_view_restartgame (Gnonogram_view* _sender, gpointer self);
 void gnonogram_controller_random_game (Gnonogram_controller* self);
 static void _gnonogram_controller_random_game_gnonogram_view_randomgame (Gnonogram_view* _sender, gpointer self);
-static void _lambda37_ (Gnonogram_controller* self);
+static void _lambda36_ (Gnonogram_controller* self);
 void resource_set_colors (void);
 static void gnonogram_controller_redraw_all (Gnonogram_controller* self);
-static void __lambda37__gnonogram_view_setcolors (Gnonogram_view* _sender, gpointer self);
-static void _lambda38_ (Gnonogram_controller* self);
+static void __lambda36__gnonogram_view_setcolors (Gnonogram_view* _sender, gpointer self);
+static void _lambda37_ (Gnonogram_controller* self);
 void resource_set_font (void);
 void gnonogram_labelbox_change_font_height (Gnonogram_LabelBox* self, gboolean increase);
-static void __lambda38__gnonogram_view_setfont (Gnonogram_view* _sender, gpointer self);
+static void __lambda37__gnonogram_view_setfont (Gnonogram_view* _sender, gpointer self);
 static void gnonogram_controller_change_size (Gnonogram_controller* self);
 static void _gnonogram_controller_change_size_gnonogram_view_resizegame (Gnonogram_view* _sender, gpointer self);
 static gboolean gnonogram_controller_key_pressed (Gnonogram_controller* self, GdkEventKey* e);
@@ -371,24 +373,21 @@ static void gnonogram_controller_gridlines_toggled (Gnonogram_controller* self, 
 static void _gnonogram_controller_gridlines_toggled_gnonogram_view_togglegrid (Gnonogram_view* _sender, gboolean active, gpointer self);
 static void gnonogram_controller_change_font_size (Gnonogram_controller* self, gboolean increase);
 static void _gnonogram_controller_change_font_size_gnonogram_view_changefont (Gnonogram_view* _sender, gboolean increase, gpointer self);
-static void _lambda39_ (gboolean debug, Gnonogram_controller* self);
-static void __lambda39__gnonogram_view_debugmode (Gnonogram_view* _sender, gboolean debug, gpointer self);
-static void _lambda40_ (gboolean advanced, Gnonogram_controller* self);
-static void __lambda40__gnonogram_view_advancedmode (Gnonogram_view* _sender, gboolean advanced, gpointer self);
-static void _lambda41_ (gboolean difficult, Gnonogram_controller* self);
-static void __lambda41__gnonogram_view_difficultmode (Gnonogram_view* _sender, gboolean difficult, gpointer self);
+static void _lambda38_ (gboolean debug, Gnonogram_controller* self);
+static void __lambda38__gnonogram_view_debugmode (Gnonogram_view* _sender, gboolean debug, gpointer self);
+static void _lambda39_ (gboolean advanced, Gnonogram_controller* self);
+static void __lambda39__gnonogram_view_advancedmode (Gnonogram_view* _sender, gboolean advanced, gpointer self);
+static void _lambda40_ (gboolean difficult, Gnonogram_controller* self);
+static void __lambda40__gnonogram_view_difficultmode (Gnonogram_view* _sender, gboolean difficult, gpointer self);
 void gnonogram_view_set_grade_spin_value (Gnonogram_view* self, gdouble d);
 void gnonogram_controller_grid_cursor_moved (Gnonogram_controller* self, gint r, gint c);
 static void _gnonogram_controller_grid_cursor_moved_gnonogram_cellgrid_cursor_moved (Gnonogram_CellGrid* _sender, gint r, gint c, gpointer self);
 static gboolean gnonogram_controller_button_pressed (Gnonogram_controller* self, GdkEventButton* e);
 static gboolean _gnonogram_controller_button_pressed_gtk_widget_button_press_event (GtkWidget* _sender, GdkEventButton* event, gpointer self);
+static gboolean _lambda41_ (Gnonogram_controller* self);
+static gboolean __lambda41__gtk_widget_button_release_event (GtkWidget* _sender, GdkEventButton* event, gpointer self);
 static gboolean _lambda42_ (Gnonogram_controller* self);
-static gboolean __lambda42__gtk_widget_button_release_event (GtkWidget* _sender, GdkEventButton* event, gpointer self);
-static gboolean _lambda43_ (Gnonogram_controller* self);
-static gboolean __lambda43__gtk_widget_expose_event (GtkWidget* _sender, GdkEventExpose* event, gpointer self);
-static void _lambda44_ (gint guesses, Gnonogram_controller* self);
-void gnonogram_view_set_score_label (Gnonogram_view* self, const gchar* score);
-static void __lambda44__gnonogram_solver_showprogress (Gnonogram_solver* _sender, gint guesses, gpointer self);
+static gboolean __lambda42__gtk_widget_expose_event (GtkWidget* _sender, GdkEventExpose* event, gpointer self);
 static void gnonogram_controller_initialize_cursor (Gnonogram_controller* self);
 static void gnonogram_controller_update_labels_from_model (Gnonogram_controller* self);
 void gnonogram_view_set_size (Gnonogram_view* self, gint r, gint c);
@@ -453,8 +452,6 @@ static gint gnonogram_controller_solve_game (Gnonogram_controller* self, gboolea
 static void gnonogram_controller_set_solution_from_solver (Gnonogram_controller* self);
 void gnonogram_controller_unpeek_game (Gnonogram_controller* self);
 void gnonogram_model_check_solution (Gnonogram_model* self);
-static gboolean _lambda36_ (Gnonogram_controller* self);
-static gboolean __lambda36__gsource_func (gpointer self);
 static void gnonogram_controller_set_working_from_solver (Gnonogram_controller* self);
 gpointer my2_dcell_array_ref (gpointer instance);
 void my2_dcell_array_unref (gpointer instance);
@@ -495,16 +492,32 @@ static void _gnonogram_controller_show_solver_grid_gnonogram_solver_showsolvergr
 }
 
 
+static void _lambda43_ (gint guesses, Gnonogram_controller* self) {
+	gchar* _tmp0_ = NULL;
+	gchar* _tmp1_;
+	_tmp0_ = g_strdup_printf ("%i", guesses);
+	_tmp1_ = _tmp0_;
+	gnonogram_view_set_score_label (self->_gnonogram_view, _tmp1_);
+	_g_free0 (_tmp1_);
+	gtk_widget_show_all (GTK_WIDGET (self->_gnonogram_view));
+}
+
+
+static void __lambda43__gnonogram_solver_showprogress (Gnonogram_solver* _sender, gint guesses, gpointer self) {
+	_lambda43_ (guesses, self);
+}
+
+
 Gnonogram_controller* gnonogram_controller_construct (GType object_type, gint r, gint c) {
 	Gnonogram_controller* self = NULL;
 	gboolean _tmp0_ = FALSE;
 	Gnonogram_model* _tmp5_ = NULL;
 	Gnonogram_model* _tmp6_;
-	Gnonogram_solver* _tmp7_ = NULL;
-	Gnonogram_solver* _tmp8_;
-	Config* _tmp9_ = NULL;
-	Config* _tmp10_;
-	gdouble _tmp11_;
+	Config* _tmp7_ = NULL;
+	Config* _tmp8_;
+	gdouble _tmp9_;
+	Gnonogram_solver* _tmp10_ = NULL;
+	Gnonogram_solver* _tmp11_;
 	self = (Gnonogram_controller*) g_type_create_instance (object_type);
 	if (r < 1) {
 		_tmp0_ = TRUE;
@@ -530,19 +543,20 @@ Gnonogram_controller* gnonogram_controller_construct (GType object_type, gint r,
 	_tmp6_ = _tmp5_;
 	_gnonogram_model_unref0 (self->_model);
 	self->_model = _tmp6_;
-	_tmp7_ = gnonogram_solver_new (self->priv->_rows, self->priv->_cols, FALSE, FALSE, FALSE, -1);
-	_tmp8_ = _tmp7_;
-	_gnonogram_solver_unref0 (self->_solver);
-	self->_solver = _tmp8_;
-	g_signal_connect (self->_solver, "showsolvergrid", (GCallback) _gnonogram_controller_show_solver_grid_gnonogram_solver_showsolvergrid, self);
 	self->priv->_have_solution = FALSE;
-	_tmp9_ = config_get_instance ();
-	_tmp10_ = _tmp9_;
-	_tmp11_ = config_get_difficulty (_tmp10_);
-	self->priv->_grade = (gint) _tmp11_;
-	_config_unref0 (_tmp10_);
+	_tmp7_ = config_get_instance ();
+	_tmp8_ = _tmp7_;
+	_tmp9_ = config_get_difficulty (_tmp8_);
+	self->priv->_grade = (gint) _tmp9_;
+	_config_unref0 (_tmp8_);
 	gnonogram_controller_create_view (self);
 	gnonogram_controller_initialize_view (self);
+	_tmp10_ = gnonogram_solver_new (self->priv->_rows, self->priv->_cols, FALSE, FALSE, FALSE, -1);
+	_tmp11_ = _tmp10_;
+	_gnonogram_solver_unref0 (self->_solver);
+	self->_solver = _tmp11_;
+	g_signal_connect (self->_solver, "showsolvergrid", (GCallback) _gnonogram_controller_show_solver_grid_gnonogram_solver_showsolvergrid, self);
+	g_signal_connect (self->_solver, "showprogress", (GCallback) __lambda43__gnonogram_solver_showprogress, self);
 	gtk_widget_show_all (GTK_WIDGET (self->_gnonogram_view));
 	gnonogram_controller_change_state (self, GAME_STATE_SETTING);
 	return self;
@@ -615,7 +629,7 @@ static void _gnonogram_controller_reveal_solution_gnonogram_view_revealgame (Gno
 }
 
 
-static void _gnonogram_controller_peek_game_gnonogram_view_peekgame (Gnonogram_view* _sender, gpointer self) {
+static void _gnonogram_controller_peek_game_gnonogram_view_checkerrors (Gnonogram_view* _sender, gpointer self) {
 	gnonogram_controller_peek_game (self);
 }
 
@@ -630,26 +644,26 @@ static void _gnonogram_controller_random_game_gnonogram_view_randomgame (Gnonogr
 }
 
 
-static void _lambda37_ (Gnonogram_controller* self) {
+static void _lambda36_ (Gnonogram_controller* self) {
 	resource_set_colors ();
 	gnonogram_controller_redraw_all (self);
 }
 
 
-static void __lambda37__gnonogram_view_setcolors (Gnonogram_view* _sender, gpointer self) {
-	_lambda37_ (self);
+static void __lambda36__gnonogram_view_setcolors (Gnonogram_view* _sender, gpointer self) {
+	_lambda36_ (self);
 }
 
 
-static void _lambda38_ (Gnonogram_controller* self) {
+static void _lambda37_ (Gnonogram_controller* self) {
 	resource_set_font ();
 	gnonogram_labelbox_change_font_height (self->_rowbox, FALSE);
 	gnonogram_labelbox_change_font_height (self->_colbox, FALSE);
 }
 
 
-static void __lambda38__gnonogram_view_setfont (Gnonogram_view* _sender, gpointer self) {
-	_lambda38_ (self);
+static void __lambda37__gnonogram_view_setfont (Gnonogram_view* _sender, gpointer self) {
+	_lambda37_ (self);
 }
 
 
@@ -687,33 +701,33 @@ static void _gnonogram_controller_change_font_size_gnonogram_view_changefont (Gn
 }
 
 
-static void _lambda39_ (gboolean debug, Gnonogram_controller* self) {
+static void _lambda38_ (gboolean debug, Gnonogram_controller* self) {
 	self->priv->_debug = debug;
 }
 
 
-static void __lambda39__gnonogram_view_debugmode (Gnonogram_view* _sender, gboolean debug, gpointer self) {
-	_lambda39_ (debug, self);
+static void __lambda38__gnonogram_view_debugmode (Gnonogram_view* _sender, gboolean debug, gpointer self) {
+	_lambda38_ (debug, self);
 }
 
 
-static void _lambda40_ (gboolean advanced, Gnonogram_controller* self) {
+static void _lambda39_ (gboolean advanced, Gnonogram_controller* self) {
 	self->priv->_advanced = advanced;
 }
 
 
-static void __lambda40__gnonogram_view_advancedmode (Gnonogram_view* _sender, gboolean advanced, gpointer self) {
-	_lambda40_ (advanced, self);
+static void __lambda39__gnonogram_view_advancedmode (Gnonogram_view* _sender, gboolean advanced, gpointer self) {
+	_lambda39_ (advanced, self);
 }
 
 
-static void _lambda41_ (gboolean difficult, Gnonogram_controller* self) {
+static void _lambda40_ (gboolean difficult, Gnonogram_controller* self) {
 	self->priv->_difficult = difficult;
 }
 
 
-static void __lambda41__gnonogram_view_difficultmode (Gnonogram_view* _sender, gboolean difficult, gpointer self) {
-	_lambda41_ (difficult, self);
+static void __lambda40__gnonogram_view_difficultmode (Gnonogram_view* _sender, gboolean difficult, gpointer self) {
+	_lambda40_ (difficult, self);
 }
 
 
@@ -729,7 +743,7 @@ static gboolean _gnonogram_controller_button_pressed_gtk_widget_button_press_eve
 }
 
 
-static gboolean _lambda42_ (Gnonogram_controller* self) {
+static gboolean _lambda41_ (Gnonogram_controller* self) {
 	gboolean result = FALSE;
 	self->priv->_is_button_down = FALSE;
 	result = TRUE;
@@ -737,14 +751,14 @@ static gboolean _lambda42_ (Gnonogram_controller* self) {
 }
 
 
-static gboolean __lambda42__gtk_widget_button_release_event (GtkWidget* _sender, GdkEventButton* event, gpointer self) {
+static gboolean __lambda41__gtk_widget_button_release_event (GtkWidget* _sender, GdkEventButton* event, gpointer self) {
 	gboolean result;
-	result = _lambda42_ (self);
+	result = _lambda41_ (self);
 	return result;
 }
 
 
-static gboolean _lambda43_ (Gnonogram_controller* self) {
+static gboolean _lambda42_ (Gnonogram_controller* self) {
 	gboolean result = FALSE;
 	gnonogram_controller_redraw_all (self);
 	result = FALSE;
@@ -752,25 +766,10 @@ static gboolean _lambda43_ (Gnonogram_controller* self) {
 }
 
 
-static gboolean __lambda43__gtk_widget_expose_event (GtkWidget* _sender, GdkEventExpose* event, gpointer self) {
+static gboolean __lambda42__gtk_widget_expose_event (GtkWidget* _sender, GdkEventExpose* event, gpointer self) {
 	gboolean result;
-	result = _lambda43_ (self);
+	result = _lambda42_ (self);
 	return result;
-}
-
-
-static void _lambda44_ (gint guesses, Gnonogram_controller* self) {
-	gchar* _tmp0_ = NULL;
-	gchar* _tmp1_;
-	_tmp0_ = g_strdup_printf ("%i", guesses);
-	_tmp1_ = _tmp0_;
-	gnonogram_view_set_score_label (self->_gnonogram_view, _tmp1_);
-	_g_free0 (_tmp1_);
-}
-
-
-static void __lambda44__gnonogram_solver_showprogress (Gnonogram_solver* _sender, gint guesses, gpointer self) {
-	_lambda44_ (guesses, self);
 }
 
 
@@ -783,6 +782,7 @@ static void gnonogram_controller_create_view (Gnonogram_controller* self) {
 	Gnonogram_CellGrid* _tmp5_;
 	Gnonogram_view* _tmp6_ = NULL;
 	Gnonogram_view* _tmp7_;
+	const gchar* _tmp8_ = NULL;
 	g_return_if_fail (IS_GNONOGRAM_CONTROLLER (self));
 	_tmp0_ = gnonogram_labelbox_new (self->priv->_rows, self->priv->_cols, FALSE);
 	_tmp1_ = g_object_ref_sink (_tmp0_);
@@ -801,6 +801,10 @@ static void gnonogram_controller_create_view (Gnonogram_controller* self) {
 	_tmp7_ = g_object_ref_sink (_tmp6_);
 	_g_object_unref0 (self->_gnonogram_view);
 	self->_gnonogram_view = _tmp7_;
+	_tmp8_ = _ ("Gnonograms");
+	gtk_window_set_title (GTK_WINDOW (self->_gnonogram_view), _tmp8_);
+	GTK_WINDOW (self->_gnonogram_view)->position = (guint) GTK_WIN_POS_CENTER;
+	gtk_window_set_resizable (GTK_WINDOW (self->_gnonogram_view), FALSE);
 	g_signal_connect (self->_gnonogram_view, "solvegame", (GCallback) _gnonogram_controller_viewer_solve_game_gnonogram_view_solvegame, self);
 	g_signal_connect (self->_gnonogram_view, "savegame", (GCallback) _gnonogram_controller_save_game_gnonogram_view_savegame, self);
 	g_signal_connect (self->_gnonogram_view, "savepictogame", (GCallback) _gnonogram_controller_save_pictogame_gnonogram_view_savepictogame, self);
@@ -811,26 +815,25 @@ static void gnonogram_controller_create_view (Gnonogram_controller* self) {
 	g_signal_connect (self->_gnonogram_view, "newgame", (GCallback) _gnonogram_controller_new_game_gnonogram_view_newgame, self);
 	g_signal_connect (self->_gnonogram_view, "hidegame", (GCallback) _gnonogram_controller_start_solving_gnonogram_view_hidegame, self);
 	g_signal_connect (self->_gnonogram_view, "revealgame", (GCallback) _gnonogram_controller_reveal_solution_gnonogram_view_revealgame, self);
-	g_signal_connect (self->_gnonogram_view, "peekgame", (GCallback) _gnonogram_controller_peek_game_gnonogram_view_peekgame, self);
+	g_signal_connect (self->_gnonogram_view, "checkerrors", (GCallback) _gnonogram_controller_peek_game_gnonogram_view_checkerrors, self);
 	g_signal_connect (self->_gnonogram_view, "restartgame", (GCallback) _gnonogram_controller_restart_game_gnonogram_view_restartgame, self);
 	g_signal_connect (self->_gnonogram_view, "randomgame", (GCallback) _gnonogram_controller_random_game_gnonogram_view_randomgame, self);
-	g_signal_connect (self->_gnonogram_view, "setcolors", (GCallback) __lambda37__gnonogram_view_setcolors, self);
-	g_signal_connect (self->_gnonogram_view, "setfont", (GCallback) __lambda38__gnonogram_view_setfont, self);
+	g_signal_connect (self->_gnonogram_view, "setcolors", (GCallback) __lambda36__gnonogram_view_setcolors, self);
+	g_signal_connect (self->_gnonogram_view, "setfont", (GCallback) __lambda37__gnonogram_view_setfont, self);
 	g_signal_connect (self->_gnonogram_view, "resizegame", (GCallback) _gnonogram_controller_change_size_gnonogram_view_resizegame, self);
 	g_signal_connect (GTK_WIDGET (self->_gnonogram_view), "key-press-event", (GCallback) _gnonogram_controller_key_pressed_gtk_widget_key_press_event, self);
 	g_signal_connect (GTK_WIDGET (self->_gnonogram_view), "key-release-event", (GCallback) _gnonogram_controller_key_released_gtk_widget_key_release_event, self);
 	g_signal_connect (self->_gnonogram_view, "setdifficulty", (GCallback) _gnonogram_controller_set_difficulty_gnonogram_view_setdifficulty, self);
 	g_signal_connect (self->_gnonogram_view, "togglegrid", (GCallback) _gnonogram_controller_gridlines_toggled_gnonogram_view_togglegrid, self);
 	g_signal_connect (self->_gnonogram_view, "changefont", (GCallback) _gnonogram_controller_change_font_size_gnonogram_view_changefont, self);
-	g_signal_connect (self->_gnonogram_view, "debugmode", (GCallback) __lambda39__gnonogram_view_debugmode, self);
-	g_signal_connect (self->_gnonogram_view, "advancedmode", (GCallback) __lambda40__gnonogram_view_advancedmode, self);
-	g_signal_connect (self->_gnonogram_view, "difficultmode", (GCallback) __lambda41__gnonogram_view_difficultmode, self);
+	g_signal_connect (self->_gnonogram_view, "debugmode", (GCallback) __lambda38__gnonogram_view_debugmode, self);
+	g_signal_connect (self->_gnonogram_view, "advancedmode", (GCallback) __lambda39__gnonogram_view_advancedmode, self);
+	g_signal_connect (self->_gnonogram_view, "difficultmode", (GCallback) __lambda40__gnonogram_view_difficultmode, self);
 	gnonogram_view_set_grade_spin_value (self->_gnonogram_view, (gdouble) self->priv->_grade);
 	g_signal_connect (self->_cellgrid, "cursor-moved", (GCallback) _gnonogram_controller_grid_cursor_moved_gnonogram_cellgrid_cursor_moved, self);
 	g_signal_connect (GTK_WIDGET (self->_cellgrid), "button-press-event", (GCallback) _gnonogram_controller_button_pressed_gtk_widget_button_press_event, self);
-	g_signal_connect (GTK_WIDGET (self->_cellgrid), "button-release-event", (GCallback) __lambda42__gtk_widget_button_release_event, self);
-	g_signal_connect (GTK_WIDGET (self->_cellgrid), "expose-event", (GCallback) __lambda43__gtk_widget_expose_event, self);
-	g_signal_connect (self->_solver, "showprogress", (GCallback) __lambda44__gnonogram_solver_showprogress, self);
+	g_signal_connect (GTK_WIDGET (self->_cellgrid), "button-release-event", (GCallback) __lambda41__gtk_widget_button_release_event, self);
+	g_signal_connect (GTK_WIDGET (self->_cellgrid), "expose-event", (GCallback) __lambda42__gtk_widget_expose_event, self);
 }
 
 
@@ -1290,7 +1293,6 @@ void gnonogram_controller_new_game (Gnonogram_controller* self) {
 	g_return_if_fail (IS_GNONOGRAM_CONTROLLER (self));
 	gnonogram_model_clear (self->_model);
 	self->priv->_have_solution = FALSE;
-	gnonogram_controller_change_state (self, GAME_STATE_SETTING);
 	gnonogram_controller_update_labels_from_model (self);
 	_tmp0_ = _ ("New game");
 	gnonogram_view_set_name (self->_gnonogram_view, _tmp0_);
@@ -1298,6 +1300,8 @@ void gnonogram_controller_new_game (Gnonogram_controller* self) {
 	gnonogram_view_set_date (self->_gnonogram_view, " ");
 	gnonogram_view_set_score_label (self->_gnonogram_view, "  ");
 	gnonogram_controller_initialize_view (self);
+	gnonogram_controller_change_state (self, GAME_STATE_SETTING);
+	gnonogram_controller_redraw_all (self);
 }
 
 
@@ -1936,41 +1940,18 @@ void gnonogram_controller_reveal_solution (Gnonogram_controller* self) {
 
 void gnonogram_controller_unpeek_game (Gnonogram_controller* self) {
 	g_return_if_fail (IS_GNONOGRAM_CONTROLLER (self));
-	gnonogram_model_check_solution (self->_model);
-	gnonogram_controller_change_state (self, GAME_STATE_SOLVING);
-}
-
-
-static gboolean _lambda36_ (Gnonogram_controller* self) {
-	gboolean result = FALSE;
-	gnonogram_controller_unpeek_game (self);
-	result = FALSE;
-	return result;
-}
-
-
-static gboolean __lambda36__gsource_func (gpointer self) {
-	gboolean result;
-	result = _lambda36_ (self);
-	return result;
 }
 
 
 void gnonogram_controller_peek_game (Gnonogram_controller* self) {
 	g_return_if_fail (IS_GNONOGRAM_CONTROLLER (self));
 	if (self->priv->_have_solution) {
-		GSource* _tmp0_ = NULL;
-		GSource* timer;
-		gnonogram_controller_change_state (self, GAME_STATE_SETTING);
-		_tmp0_ = g_timeout_source_new_seconds ((guint) 1);
-		timer = _tmp0_;
-		g_source_set_callback (timer, __lambda36__gsource_func, gnonogram_controller_ref (self), gnonogram_controller_unref);
-		g_source_attach (timer, NULL);
-		_g_source_unref0 (timer);
+		gnonogram_model_check_solution (self->_model);
+		gnonogram_controller_redraw_all (self);
 	} else {
-		const gchar* _tmp1_ = NULL;
-		_tmp1_ = _ ("No solution available");
-		utils_show_info_dialog (_tmp1_);
+		const gchar* _tmp0_ = NULL;
+		_tmp0_ = _ ("No solution available");
+		utils_show_info_dialog (_tmp0_);
 	}
 }
 

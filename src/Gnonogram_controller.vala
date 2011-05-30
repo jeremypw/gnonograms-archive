@@ -62,14 +62,18 @@ public class Gnonogram_controller
 			_cols=c;
 		}
 		_model=new Gnonogram_model(_rows,_cols);
-		_solver=new Gnonogram_solver(_rows, _cols);
-		_solver.showsolvergrid.connect(show_solver_grid);
 		_have_solution=false;
 
 		_grade=(int)(Config.get_instance().get_difficulty());
 		
 		create_view();
 		initialize_view();
+
+		_solver=new Gnonogram_solver(_rows, _cols);
+		_solver.showsolvergrid.connect(show_solver_grid);
+		_solver.showprogress.connect((guesses)=>{_gnonogram_view.set_score_label(guesses.to_string());_gnonogram_view.show_all();});
+
+		
 		_gnonogram_view.show_all();
 		change_state(GameState.SETTING);
 	}
@@ -79,10 +83,16 @@ public class Gnonogram_controller
 	{
 		_rowbox = new Gnonogram_LabelBox(_rows, _cols, false);
 		_colbox = new Gnonogram_LabelBox(_cols, _rows, true);
+		
 		_cellgrid = new Gnonogram_CellGrid(_rows,_cols);
 		_gridlinesvisible=false;
+		
 		_gnonogram_view = new Gnonogram_view(_rowbox, _colbox, _cellgrid, this);
-		_gnonogram_view.solvegame.connect(this.viewer_solve_game);
+		_gnonogram_view.title = _("Gnonograms");
+		_gnonogram_view.position = WindowPosition.CENTER;
+		_gnonogram_view.resizable=false;
+		
+		_gnonogram_view.solvegame.connect(this.viewer_solve_game);	
 		_gnonogram_view.savegame.connect(this.save_game);
 		_gnonogram_view.savepictogame.connect(this.save_pictogame);
 		_gnonogram_view.loadgame.connect(this.load_game);
@@ -92,7 +102,7 @@ public class Gnonogram_controller
 		_gnonogram_view.newgame.connect(this.new_game);
 		_gnonogram_view.hidegame.connect(this.start_solving);
 		_gnonogram_view.revealgame.connect(this.reveal_solution);
-		_gnonogram_view.peekgame.connect(this.peek_game);
+		_gnonogram_view.checkerrors.connect(this.peek_game);
 		_gnonogram_view.restartgame.connect(this.restart_game);
 		_gnonogram_view.randomgame.connect(this.random_game);
 		_gnonogram_view.setcolors.connect(()=>{Resource.set_colors(); redraw_all();});
@@ -112,8 +122,6 @@ public class Gnonogram_controller
 		_cellgrid.button_press_event.connect(this.button_pressed);
 		_cellgrid.button_release_event.connect(()=>{this._is_button_down=false; return true;});
 		_cellgrid.expose_event.connect(()=>{redraw_all();return false;});
-
-		_solver.showprogress.connect((guesses)=>{_gnonogram_view.set_score_label(guesses.to_string());});
 	}
 //======================================================================
 	private void initialize_view()
@@ -216,7 +224,6 @@ public class Gnonogram_controller
 //		stdout.printf("Key pressed %s\n",name);
 		int currentrow=_current_cell.row;
 		int currentcol=_current_cell.col;
-//		stdout.printf("Current row %d, current col %d\n",currentrow, currentcol);
 		if (currentrow<0||currentcol<0||currentrow>_rows-1||currentcol>_cols-1) return false;
 				
 		switch (name)
@@ -336,13 +343,14 @@ public class Gnonogram_controller
 	{
 		_model.clear();
 		_have_solution=false;
-		change_state(GameState.SETTING);
 		update_labels_from_model();
 		_gnonogram_view.set_name(_("New game"));
 		_gnonogram_view.set_author(" ");
 		_gnonogram_view.set_date(" ");
 		_gnonogram_view.set_score_label("  ");
 		initialize_view();
+		change_state(GameState.SETTING);
+		redraw_all();
 	}
 	
 	public void restart_game()
@@ -603,18 +611,20 @@ public class Gnonogram_controller
 //======================================================================
 	public void unpeek_game()
 	{//stdout.printf("Unpeek game\n");
-		_model.check_solution();
-		change_state(GameState.SOLVING);
+		//_model.check_solution();
+		//change_state(GameState.SOLVING);
 	}
 //======================================================================
 	public void peek_game()
 	{//stdout.printf("Peek game\n");
 		if (_have_solution)
 		{
-		change_state(GameState.SETTING);
-		var timer = new TimeoutSource.seconds(1);
-		timer.set_callback(()=>{unpeek_game(); return false;});
-		timer.attach(null);
+			_model.check_solution();
+			redraw_all();
+		//change_state(GameState.SETTING);
+		//var timer = new TimeoutSource.seconds(1);
+		//timer.set_callback(()=>{unpeek_game(); return false;});
+		//timer.attach(null);
 		}
 		else
 		{
@@ -660,7 +670,7 @@ public class Gnonogram_controller
 		return passes;
 	}
 //======================================================================
-	private int solve_game(bool use_startgrid=false, bool use_advanced, bool use_ultimate)
+	private int solve_game(bool use_startgrid, bool use_advanced, bool use_ultimate)
 	{
 		var row_clues= new string[_rows];
 		var col_clues= new string[_cols];

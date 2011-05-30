@@ -43,6 +43,7 @@
 	public void check_solution()
 	{
 		CellState cs;
+		int count=0;
 		for (int r=0;r<=_rows; r++)
 		{
 			for (int c=0;c<=_cols;c++)
@@ -51,8 +52,17 @@
 				if (cs!=CellState.UNKNOWN && cs!=_solution_data.get_cell(r,c).state)
 				{
 					_working_data.set_data_from_rc(r,c,CellState.ERROR);
+					count++;
 				}
 			}
+		}
+		if (count==0)
+		{
+			Utils.show_info_dialog(_("No errors"));
+		}
+		else
+		{
+			Utils.show_info_dialog(_("There are %d incorrect cells").printf(count));
 		}
 	}
 //======================================================================

@@ -42,6 +42,8 @@
 	public signal void showsolvergrid();
 	public signal void showprogress(int guesses);
 
+	private const int GUESSES_BEFORE_ASK=50000;
+
 //=========================================================================	
 	public Gnonogram_solver(int rows, int cols, bool testing=false, bool debug=false, bool test_column=false, int test_idx=-1) {
 
@@ -70,7 +72,7 @@
 		
 		if (start_grid==null) _grid.set_all(CellState.UNKNOWN);
 		else _grid.copy(start_grid);
-			
+				
 		for (int r=0; r<_rows; r++) _regions[r].initialize(r, false,_cols,row_clues[r]);
 		
 		for (int c=0; c<_cols; c++) _regions[c+_rows].initialize(c,true,_rows,col_clues[c]);
@@ -86,7 +88,7 @@
 			
 		return true;
 	}
-
+//======================================================================
 	public string get_error()
 	{
 		for (int i=0; i<_region_count; i++)
@@ -181,11 +183,12 @@
 		_rdir=0; _cdir=1; _rlim=_rows; _clim=_cols;
 		_turn=0; _max_turns=initial_maxturns;			
 		_trial_cell= {0,-1,CellState.FILLED};
-
+		
+		this.save_position(grid_store);	
 		while (true) 
 		{
 			increment_counter();
-			this.save_position(grid_store);	
+//			this.save_position(grid_store);	
 			make_guess(); 
 			
 			if (_trial_cell.col==-1) //run out of guesses
@@ -200,7 +203,7 @@
 				_rdir=0; _cdir=1; _rlim=_rows; _clim=_cols; _turn=0;	
 				changed=false;
 				wraps++;
-				//stdout.printf("Wrapping ... max _turns %d\n", _max_turns);
+				stdout.printf("Wrapping ... max _turns %d\n", _max_turns);
 				continue;
 			}	
 			_grid.set_data_from_cell(_trial_cell);
@@ -214,7 +217,11 @@
 				_grid.set_data_from_cell(_trial_cell.invert()); //mark opposite to guess
 				changed=true; //worth trying another cycle
 				simple_result=simple_solver(false,false);//can we solve now?
-				if (simple_result==0) continue; //go back to start
+				if (simple_result==0)
+				{
+					this.save_position(grid_store); //update grid store
+					continue; //go back to start
+				}
 				else 	if (simple_result>0) break; // solution found
 				else return -1; //starting point was invalid
 			}
@@ -275,17 +282,25 @@
 	{
 		return _grid.get_cell(r,c);
 	}
-
 //======================================================================
 	private int ultimate_solver(CellState[] grid_store, bool debug)
 	{stdout.printf("Ultimate solver\n");
 
 		int perm_reg=-1, max_value=9999999, advanced_result=-99, simple_result=-99;
-
+		int limit=GUESSES_BEFORE_ASK;
+		int possibles=0;
 		load_position(grid_store); //return to last valid state
 		for (int i=0; i<_region_count; i++) _regions[i].initial_state();
 		simple_solver(false,true); //make sure region state correct
-		
+
+		showsolvergrid();
+		if(!Utils.show_confirm_dialog("Start Ultimate solver?\n This can take a long time and may not work"))
+		{return 9999999;}
+				
+		CellState[] grid_store2 = new CellState[_rows*_cols];
+		CellState[] guess={};
+		CellState[] guess_store;
+					
 		while (true)
 		{
 			perm_reg=choose_permute_region(ref max_value);
@@ -298,31 +313,23 @@
 
 			bool is_column=_regions[perm_reg]._is_column;
 			int idx=_regions[perm_reg]._index;
-							
-			if(debug)
-			{
-				stdout.printf(@"Perm reg is $perm_reg,  is column $is_column  idx $idx  start $start\n");
-			}
 			
-			//try advanced solver with every possible position of block in this range.
-			CellState[] grid_store2 = new CellState[_rows*_cols];
-			CellState[] guess;
+			//try advanced solver with every possible pattern in this range.
 			
 			for (int i=0; i<_region_count; i++) _regions[i].initial_state();
 			save_position(grid_store2);
 
-			p.initialise();	
+			p.initialise();
+			possibles=0;	
 			while (p.next()) 
 			{
 				increment_counter();
-				if (_guesses>50000)
+				if (_guesses>limit)
 				{
-					Utils.show_warning_dialog("Too difficult - I give up!!!");
-					return 9999999;
+					if(Utils.show_confirm_dialog("This is taking a long time! /nKeep trying?")) limit+=GUESSES_BEFORE_ASK;
+					else	return 9999999;
 				}
 				guess=p.get();
-
-				//stdout.printf(@"Perm: $p\n");
 				
 				_grid.set_array(idx,is_column,guess,start);
 				simple_result=simple_solver(false,false);
@@ -331,18 +338,34 @@
 				{
 					advanced_result=advanced_solver(grid_store, debug); 
 					if (advanced_result>0 && advanced_result<9999999) return advanced_result; //solution found
+					possibles++;
+					if (possibles==1)
+					{
+						guess_store=new CellState[guess.length];
+						for(int i=0;i<guess.length;i++)
+						{
+							guess_store[i]=guess[i];
+						}
+					}
 				}
-				else if (simple_result>0) return simple_result+_guesses; //unlikely!		
+				else if (simple_result>0) return simple_result+_guesses; //unlikely!
+
 				load_position(grid_store2); //back track
 				for (int i=0; i<_region_count; i++) _regions[i].initial_state();
 			}
 			load_position(grid_store2); //back track
+			if (possibles==1)
+			{
+				stdout.printf("Only one perm possible\n");
+				_grid.set_array(idx,is_column,guess,start);
+				save_position(grid_store2);				
+			}
 			for (int i=0; i<_region_count; i++) _regions[i].initial_state();
 			simple_solver(false,false);
 		}
 		return 9999999;
 	}
-
+//======================================================================
 	private int choose_permute_region(ref int max_value)
 	{
 		int best_value=-1, current_value, perm_reg=-1,edg;
@@ -368,10 +391,15 @@
 	private void increment_counter()
 	{//provide visual feedback
 		_guesses++;	_counter++;
-		if(_counter==100)
+		if(_counter==10)
 		{
-			showprogress(_guesses);
-			Gtk.main_iteration_do(true);
+			showprogress(_guesses); //signal to controller
+
+			Gtk.main_iteration_do(true); //process signals
+// Try to make sure screen actually updates - not sure of how to do this.
+// This helps but does not force screen update.
+//			Gtk.main_iteration_do(false); //process signals
+//			stdout.printf(@"Guesses $_guesses\n");
 			_counter=0;
 
 		} 

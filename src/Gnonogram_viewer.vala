@@ -37,7 +37,7 @@ public class Gnonogram_view : Gtk.Window
 	public signal void newgame();
 	public signal void hidegame();
 	public signal void revealgame();
-	public signal void peekgame();
+	public signal void checkerrors();
 	public signal void restartgame();
 	public signal void randomgame();
 	public signal void setcolors();
@@ -53,11 +53,11 @@ public class Gnonogram_view : Gtk.Window
 	private Gnonogram_controller _controller;
 	private Gtk.SpinButton _grade_spin;
 	private Gtk.ToggleToolButton _hide_tool;
-	private Gtk.ToolButton _peek_tool;
-	private Gtk.Toolbar _toolbar;
+	private Gtk.ToolButton _check_tool;
+	public Gtk.Toolbar _toolbar;
 	private Gtk.CheckMenuItem _gridmenuitem;
 //	private Gtk.MenuItem _rotatemenuitem;
-	private Gtk.MenuItem _peeksolutionmenuitem;
+	private Gtk.MenuItem _checkerrorsmenuitem;
 	private Gtk.MenuItem _showsolutionmenuitem;
 	private Gtk.MenuItem _showworkingmenuitem;
 	private Gtk.MenuItem grademenuitem;
@@ -71,10 +71,6 @@ public class Gnonogram_view : Gtk.Window
 	
 	public Gnonogram_view(Gnonogram_LabelBox rb, Gnonogram_LabelBox cb, Gnonogram_CellGrid dg, Gnonogram_controller controller)
 	{	_controller=controller; //seems to be necessary to get signals to work.  Not sure why.
-		
-		this.title = _("Gnonograms");
-		this.position = WindowPosition.CENTER;
-		this.resizable=false;
 		
 		delete_event.connect (()=>{quitgamesignal();return true;});		
 				
@@ -168,8 +164,9 @@ public class Gnonogram_view : Gtk.Window
 			gamesubmenu.add(_showsolutionmenuitem);
 			_showworkingmenuitem=new MenuItem.with_mnemonic(_("Show _Working"));
 			gamesubmenu.add(_showworkingmenuitem);
-			_peeksolutionmenuitem=new MenuItem.with_mnemonic(_("_Quick peek at solution"));
-			gamesubmenu.add(_peeksolutionmenuitem);
+			_checkerrorsmenuitem=new MenuItem.with_mnemonic(_("Show _Incorrect cells"));
+			gamesubmenu.add(_checkerrorsmenuitem);
+			_checkerrorsmenuitem.set_sensitive(false);
 			var restartmenuitem=new MenuItem.with_mnemonic(_("_Restart"));
 			gamesubmenu.add(restartmenuitem);
 			gamesubmenu.add(new SeparatorMenuItem());
@@ -206,9 +203,6 @@ public class Gnonogram_view : Gtk.Window
 						
 		var viewsubmenu=new Menu();
 		viewmenuitem.set_submenu(viewsubmenu);
-//			var fullscreenmenuitem=new CheckMenuItem.with_mnemonic(_("_Fullscreen"));
-//			viewsubmenu.add(fullscreenmenuitem);
-//			fullscreenmenuitem.set_active(false);
 			var toolbarmenuitem=new CheckMenuItem.with_mnemonic(_("_Toolbar"));
 			viewsubmenu.add(toolbarmenuitem);
 			toolbarmenuitem.set_active(true);
@@ -233,7 +227,7 @@ public class Gnonogram_view : Gtk.Window
 		
 		_showsolutionmenuitem.activate.connect(()=>{revealgame();});
 		_showworkingmenuitem.activate.connect(()=>{hidegame();});
-		_peeksolutionmenuitem.activate.connect(()=>{peekgame();});
+		_checkerrorsmenuitem.activate.connect(()=>{checkerrors();});
 		restartmenuitem.activate.connect(()=>{restartgame();});
 		computersolvemenuitem.activate.connect(()=>{solvegame();});
 		computergeneratemenuitem.activate.connect(()=>{randomgame();});
@@ -247,8 +241,6 @@ public class Gnonogram_view : Gtk.Window
 		advancedmenuitem.activate.connect(()=>{advancedmode(advancedmenuitem.active);});
 		difficultmenuitem.activate.connect(()=>{difficultmode(difficultmenuitem.active);});
 		
-//		fullscreenmenuitem.activate.connect(toggle_fullscreen);
-//		_rotatemenuitem.activate.connect(()=>{rotate_screen();});
 		toolbarmenuitem.activate.connect(toggle_toolbar);
 		_gridmenuitem.activate.connect(()=>{togglegrid(_gridmenuitem.active);});
 
@@ -275,8 +267,7 @@ public class Gnonogram_view : Gtk.Window
 		save_as_tool.set_tooltip_text(_("Save game"));
 		_toolbar.add(save_as_tool);
 
-		var sep=new SeparatorToolItem();
-		_toolbar.add(sep);
+		_toolbar.add(new SeparatorToolItem());
 
 		_hide_tool=new ToggleToolButton.from_stock(Stock.EXECUTE);
 		_hide_tool.set_tooltip_text(_("Hide the solution and start solving"));
@@ -284,16 +275,15 @@ public class Gnonogram_view : Gtk.Window
 		_toolbar.add(_hide_tool);
 		
 		var peek_icon=new Gtk.Image.from_file(Resource.icon_dir+"/eyeballs.png");
-		_peek_tool=new ToolButton(peek_icon,_("Peek"));
-		_peek_tool.set_tooltip_text(_("Quick peek at solution"));
-		_toolbar.add(_peek_tool);
+		_check_tool=new ToolButton(peek_icon,_("Check"));
+		_check_tool.set_tooltip_text(_("Show any incorrect cells"));
+		_toolbar.add(_check_tool);
 		
 		var restart_tool=new ToolButton.from_stock(Stock.REFRESH);
 		restart_tool.set_tooltip_text(_("Start this puzzle again"));
 		_toolbar.add(restart_tool);
 		
-		var sep2=new SeparatorToolItem();
-		_toolbar.add(sep2);
+		_toolbar.add(new SeparatorToolItem());
 				
 		var solve_icon=new Gtk.Image.from_file(Resource.icon_dir+"/laptop.png");
 		var solve_tool=new ToolButton(solve_icon,_("Solve"));
@@ -304,9 +294,6 @@ public class Gnonogram_view : Gtk.Window
 		var random_tool=new ToolButton(random_icon,_("Random"));
 		random_tool.set_tooltip_text(_("Generate a random game"));
 		_toolbar.add(random_tool);
-
-		var sep3=new SeparatorToolItem();
-		_toolbar.add(sep3);
 		
 		var grade_tool=new ToolItem();
 		_grade_spin=new SpinButton.with_range(1,Resource.MAXGRADE,1);
@@ -314,7 +301,9 @@ public class Gnonogram_view : Gtk.Window
 		_grade_spin.set_can_focus(false);
 		grade_tool.add(_grade_spin);
 		_toolbar.add(grade_tool);
-		
+
+		_toolbar.add(new SeparatorToolItem());
+			
 		var resize_icon=new Gtk.Image.from_file(Resource.icon_dir+"/newsheet.png");
 		var resize_tool=new ToolButton(resize_icon,_("Resize"));
 		resize_tool.set_tooltip_text(_("Change dimensions of the game grid")); 
@@ -333,7 +322,7 @@ public class Gnonogram_view : Gtk.Window
 		save_as_tool.clicked.connect(()=>{savegame();});
 		load_tool.clicked.connect(()=>{loadgame();});
 		_hide_tool.toggled.connect(toggle_execute);
-		_peek_tool.clicked.connect(()=>{peekgame();});
+		_check_tool.clicked.connect(()=>{checkerrors();});
 		restart_tool.clicked.connect(()=>{restartgame();});
 		solve_tool.clicked.connect(()=>{solvegame();});
 		random_tool.clicked.connect(()=>{randomgame();});
@@ -478,7 +467,6 @@ public class Gnonogram_view : Gtk.Window
 	public void set_score_label(string score)
 	{//stdout.printf("set_score_label %s\n",score);
 		_score_label.set_text(_("Score:")+" "+score+"  ");
-		_score_label.show_now();
 	}
 	public string get_score(){return get_info_item(_score_label);	}
 //======================================================================
@@ -512,10 +500,10 @@ public class Gnonogram_view : Gtk.Window
 //======================================================================
 	public void state_has_changed(GameState gs)
 	{ //stdout.printf("Viewer state changed\n");
-		_peek_tool.sensitive=(gs==GameState.SOLVING);
-		_peeksolutionmenuitem.sensitive=_peek_tool.sensitive;
-		_showsolutionmenuitem.sensitive=_peek_tool.sensitive;
-		_showworkingmenuitem.sensitive=!_peek_tool.sensitive;
+		_check_tool.sensitive=(gs==GameState.SOLVING);
+		_checkerrorsmenuitem.sensitive=_check_tool.sensitive;
+		_showsolutionmenuitem.sensitive=_check_tool.sensitive;
+		_showworkingmenuitem.sensitive=!_check_tool.sensitive;
 
 		if (gs==GameState.SETTING)
 		{
