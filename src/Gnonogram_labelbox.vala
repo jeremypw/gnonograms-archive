@@ -145,7 +145,8 @@ public class Gnonogram_LabelBox : Frame {
 //======================================================================
 	private void set_default_fontheight(int size, int other_size)
 	{
-		_fontheight=40.0-(double)(int.max(size, other_size));
+		if(_is_column)_fontheight=30.0-(double)other_size/2.0;
+		else _fontheight=30.0-(double)size/2.0;
 		_fontheight=_fontheight.clamp(Resource.MINFONTSIZE, Resource.MAXFONTSIZE);
 	}
 //======================================================================

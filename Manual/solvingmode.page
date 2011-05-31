@@ -2,16 +2,17 @@
       type="topic"
       id="solvingmode">
 <info>
-  <link type="guide" xref="features"/> 
+  <link type="guide" xref="features"/>
 </info>
 <title>Solving mode</title>
-
+<media type="image" mime="image/png" width="350" height="400" src="./Manual/Screenshot-Gnonograms-solve.png"/>
+<p> When Gnonograms in "solving" mode and displays the "working grid". This grid starts with all grey (unknown) cells.</p>
 <p> When in "solving" mode, you can:</p>
 <list>
 	<item><p> Solve the puzzle manually by drawing on the grid</p></item>
 	<item><p> Check your progress for errors</p></item>
 	<item><p> Let the computer solve the puzzle (if it can!)</p></item>
 	<item><p> Save a partially finished puzzle</p></item>
-	<item><p> Reveal the solution by switching back to setting mode</p></item>
+	<item><p> Reveal the solution by switching back to design mode</p></item>
 </list>
 </page>

@@ -795,7 +795,6 @@
 		int range=0, start=0, length=0, idx=0;
 		//skip to start of first range;
 		while (idx<_ncells && _status[idx]==CellState.EMPTY) idx++;
-		
 		while (idx<_ncells)
 		{
 			length=0;
@@ -805,7 +804,7 @@
 			_ranges[range,3]=0;
 			
 			while (idx<_ncells && _status[idx]!=CellState.EMPTY)
-			{					
+			{			
 				if (!_tags[idx,_can_be_empty_ptr]) _ranges[range,2]++;
 				else _ranges[range,3]++;
 				

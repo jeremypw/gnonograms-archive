@@ -288,7 +288,7 @@
 
 		int perm_reg=-1, max_value=9999999, advanced_result=-99, simple_result=-99;
 		int limit=GUESSES_BEFORE_ASK;
-		int possibles=0;
+//		int possibles=0;
 		load_position(grid_store); //return to last valid state
 		for (int i=0; i<_region_count; i++) _regions[i].initial_state();
 		simple_solver(false,true); //make sure region state correct
@@ -299,7 +299,7 @@
 				
 		CellState[] grid_store2 = new CellState[_rows*_cols];
 		CellState[] guess={};
-		CellState[] guess_store;
+//		CellState[] guess_store;
 					
 		while (true)
 		{
@@ -320,7 +320,7 @@
 			save_position(grid_store2);
 
 			p.initialise();
-			possibles=0;	
+//			possibles=0;	
 			while (p.next()) 
 			{
 				increment_counter();
@@ -328,6 +328,7 @@
 				{
 					if(Utils.show_confirm_dialog("This is taking a long time! /nKeep trying?")) limit+=GUESSES_BEFORE_ASK;
 					else	return 9999999;
+					//need something to force screen update here - can take several seconds.
 				}
 				guess=p.get();
 				
@@ -338,15 +339,15 @@
 				{
 					advanced_result=advanced_solver(grid_store, debug); 
 					if (advanced_result>0 && advanced_result<9999999) return advanced_result; //solution found
-					possibles++;
-					if (possibles==1)
-					{
-						guess_store=new CellState[guess.length];
-						for(int i=0;i<guess.length;i++)
-						{
-							guess_store[i]=guess[i];
-						}
-					}
+//					possibles++;
+//					if (possibles==1)
+//					{
+//						guess_store=new CellState[guess.length];
+//						for(int i=0;i<guess.length;i++)
+//						{
+//							guess_store[i]=guess[i];
+//						}
+//					}
 				}
 				else if (simple_result>0) return simple_result+_guesses; //unlikely!
 
@@ -354,12 +355,12 @@
 				for (int i=0; i<_region_count; i++) _regions[i].initial_state();
 			}
 			load_position(grid_store2); //back track
-			if (possibles==1)
-			{
-				stdout.printf("Only one perm possible\n");
-				_grid.set_array(idx,is_column,guess,start);
-				save_position(grid_store2);				
-			}
+//			if (possibles==1)
+//			{
+//				stdout.printf("Only one perm possible\n");
+//				_grid.set_array(idx,is_column,guess,start);
+//				save_position(grid_store2);				
+//			}
 			for (int i=0; i<_region_count; i++) _regions[i].initial_state();
 			simple_solver(false,false);
 		}

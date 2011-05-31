@@ -1,8 +1,46 @@
 <page xmlns="http://projectmallard.org/1.0/"
       type="topic"
       id="gamemenu">
-<info>
-  <link type="guide" xref="menus"/> 
-</info>
-<title>The Game Menu</title>
+	<info>
+	  <link type="guide" xref="menus"/>
+	</info>
+	<title>Game Menu and Toolbar icons</title>
+	<list>
+		<item>
+			<p><gui style="menuitem"><em>Show solution. ==</em><media type="image" mime="image/png" width="24" height="24" src="./Manual/Design-Solve.png"/></gui></p>
+			<p>Show the puzzle solution and enter "design" mode. Inactive when in "design" mode</p>
+		</item>
+
+		<item>
+			<p><gui style="menuitem"><em>Show working. ==</em><media type="image" mime="image/png" width="24" height="24" src="./Manual/Design-Solve.png"/></gui></p>
+			<p>Hide the puzzle solution and enter "working" mode. Inactive when in "working" mode</p>
+		</item>
+
+		<item>
+			<p><gui style="menuitem"><em>Show incorrect cells. ==</em><media type="image" mime="image/png" width="24" height="24" src="./Manual/Check.png"/></gui></p>
+			<p>Compare the working grid with the solution and colour incorrectly completed cells red. Inactive when in "design" mode</p>
+		</item>
+
+		<item>
+			<p><gui style="menuitem"><em>Restart. ==</em><media type="image" mime="image/png" width="24" height="24" src="./Manual/Restart.png"/></gui></p>
+			<p>Set all the cells in the "working" grid to unknown and stay in "working" mode. Inactive when in "design" mode</p>
+		</item>
+
+		<item>
+			<p><gui style="menuitem"><em>Let the computer solve it. ==</em><media type="image" mime="image/png" width="24" height="24" src="./Manual/Computer-solve.png"/></gui></p>
+			<p>Run the computer solver on the clues and display the solution (or partial solution) in the "working grid". Enters "working" mode</p>
+		</item>
+
+		<item>
+			<p><gui style="menuitem"><em>Computer generated puzzle. ==</em><media type="image" mime="image/png" width="24" height="24" src="./Manual/Random-game.png"/></gui></p>
+			<p>Generate a random pattern in the solution grid and enter "working" mode. By default, the pattern generated is guaranteed to have a unique solution that can be found by simple logic looking at one row or column at a time.  Higher <var>difficulty</var> settings give patterns with fewer filled cells and shorter blocks that are harder to solve.  If the <gui style="checkbox"><em>Generate difficult games</em></gui> item on the Settings menu is checked then the patterns generated may be ambiguous or require more advanced logic involving two or more rows or columns at a time. This may take some time for larger grids.</p>
+			<p> An approximate measure of difficulty ("Score:") is given in the game information panel .</p>
+		</item>
+
+		<item>
+			<p><gui style="menuitem"><em>Edit game description</em></gui></p>
+			<p>Allows you to enter or change the name of the puzzle shown in the puzzle information panel.  Maximum name length is 32 characters.  This is not necessarily the same as the name of the file in which the game is stored.  You will have to save the puzzle () for the change to persist.</p>
+		</item>
+
+	</list>
 </page>

@@ -998,6 +998,9 @@ static gboolean gnonogram_controller_key_pressed (Gnonogram_controller* self, Gd
 	static GQuark _tmp6__label6 = 0;
 	static GQuark _tmp6__label7 = 0;
 	static GQuark _tmp6__label8 = 0;
+	static GQuark _tmp6__label9 = 0;
+	static GQuark _tmp6__label10 = 0;
+	static GQuark _tmp6__label11 = 0;
 	g_return_val_if_fail (IS_GNONOGRAM_CONTROLLER (self), FALSE);
 	_tmp0_ = gdk_keyval_name ((*e).keyval);
 	_tmp1_ = g_utf8_strup (_tmp0_, (gssize) (-1));
@@ -1066,7 +1069,7 @@ static gboolean gnonogram_controller_key_pressed (Gnonogram_controller* self, Gd
 				break;
 			}
 		}
-	} else if (_tmp6_ == ((0 != _tmp6__label4) ? _tmp6__label4 : (_tmp6__label4 = g_quark_from_static_string ("CONTROL_L")))) {
+	} else if ((_tmp6_ == ((0 != _tmp6__label4) ? _tmp6__label4 : (_tmp6__label4 = g_quark_from_static_string ("F")))) || (_tmp6_ == ((0 != _tmp6__label5) ? _tmp6__label5 : (_tmp6__label5 = g_quark_from_static_string ("f"))))) {
 		switch (0) {
 			default:
 			{
@@ -1076,7 +1079,7 @@ static gboolean gnonogram_controller_key_pressed (Gnonogram_controller* self, Gd
 				break;
 			}
 		}
-	} else if (_tmp6_ == ((0 != _tmp6__label5) ? _tmp6__label5 : (_tmp6__label5 = g_quark_from_static_string ("SHIFT_L")))) {
+	} else if ((_tmp6_ == ((0 != _tmp6__label6) ? _tmp6__label6 : (_tmp6__label6 = g_quark_from_static_string ("E")))) || (_tmp6_ == ((0 != _tmp6__label7) ? _tmp6__label7 : (_tmp6__label7 = g_quark_from_static_string ("e"))))) {
 		switch (0) {
 			default:
 			{
@@ -1086,19 +1089,21 @@ static gboolean gnonogram_controller_key_pressed (Gnonogram_controller* self, Gd
 				break;
 			}
 		}
-	} else if (_tmp6_ == ((0 != _tmp6__label6) ? _tmp6__label6 : (_tmp6__label6 = g_quark_from_static_string ("ALT_L")))) {
+	} else if ((_tmp6_ == ((0 != _tmp6__label8) ? _tmp6__label8 : (_tmp6__label8 = g_quark_from_static_string ("X")))) || (_tmp6_ == ((0 != _tmp6__label9) ? _tmp6__label9 : (_tmp6__label9 = g_quark_from_static_string ("x"))))) {
 		switch (0) {
 			default:
 			{
 				if (self->priv->__state == GAME_STATE_SOLVING) {
 					self->priv->_current_cell.state = CELL_STATE_UNKNOWN;
-					gnonogram_controller_update_cell (self, &self->priv->_current_cell, TRUE);
-					self->priv->_is_button_down = TRUE;
+				} else {
+					self->priv->_current_cell.state = CELL_STATE_EMPTY;
 				}
+				gnonogram_controller_update_cell (self, &self->priv->_current_cell, TRUE);
+				self->priv->_is_button_down = TRUE;
 				break;
 			}
 		}
-	} else if (_tmp6_ == ((0 != _tmp6__label7) ? _tmp6__label7 : (_tmp6__label7 = g_quark_from_static_string ("EQUAL")))) {
+	} else if (_tmp6_ == ((0 != _tmp6__label10) ? _tmp6__label10 : (_tmp6__label10 = g_quark_from_static_string ("EQUAL")))) {
 		switch (0) {
 			default:
 			{
@@ -1106,7 +1111,7 @@ static gboolean gnonogram_controller_key_pressed (Gnonogram_controller* self, Gd
 				break;
 			}
 		}
-	} else if (_tmp6_ == ((0 != _tmp6__label8) ? _tmp6__label8 : (_tmp6__label8 = g_quark_from_static_string ("MINUS")))) {
+	} else if (_tmp6_ == ((0 != _tmp6__label11) ? _tmp6__label11 : (_tmp6__label11 = g_quark_from_static_string ("MINUS")))) {
 		switch (0) {
 			default:
 			{
@@ -1136,21 +1141,28 @@ static gboolean gnonogram_controller_key_released (Gnonogram_controller* self, G
 	gchar* name;
 	gboolean _tmp2_ = FALSE;
 	gboolean _tmp3_ = FALSE;
+	gboolean _tmp4_ = FALSE;
 	g_return_val_if_fail (IS_GNONOGRAM_CONTROLLER (self), FALSE);
 	_tmp0_ = gdk_keyval_name ((*e).keyval);
 	_tmp1_ = g_utf8_strup (_tmp0_, (gssize) (-1));
 	name = _tmp1_;
-	if (g_strcmp0 (name, "CONTROL_L") == 0) {
+	if (g_strcmp0 (name, "UP") == 0) {
+		_tmp4_ = TRUE;
+	} else {
+		_tmp4_ = g_strcmp0 (name, "DOWN") == 0;
+	}
+	if (_tmp4_) {
 		_tmp3_ = TRUE;
 	} else {
-		_tmp3_ = g_strcmp0 (name, "ALT_L") == 0;
+		_tmp3_ = g_strcmp0 (name, "LEFT") == 0;
 	}
 	if (_tmp3_) {
 		_tmp2_ = TRUE;
 	} else {
-		_tmp2_ = g_strcmp0 (name, "SHIFT_L") == 0;
+		_tmp2_ = g_strcmp0 (name, "RIGHT") == 0;
 	}
 	if (_tmp2_) {
+	} else {
 		self->priv->_is_button_down = FALSE;
 	}
 	result = TRUE;
@@ -1391,9 +1403,7 @@ void gnonogram_controller_save_game (Gnonogram_controller* self) {
 		return;
 	}
 	_tmp11_ = strlen (filename);
-	if (_tmp11_ < 5) {
-		_tmp10_ = TRUE;
-	} else {
+	if (_tmp11_ > 3) {
 		gint _tmp12_;
 		gchar* _tmp13_ = NULL;
 		gchar* _tmp14_;
@@ -1402,6 +1412,8 @@ void gnonogram_controller_save_game (Gnonogram_controller* self) {
 		_tmp14_ = _tmp13_;
 		_tmp10_ = g_strcmp0 (_tmp14_, RESOURCE_GAMEFILEEXTENSION) != 0;
 		_g_free0 (_tmp14_);
+	} else {
+		_tmp10_ = FALSE;
 	}
 	if (_tmp10_) {
 		gchar* _tmp15_;
@@ -2215,98 +2227,135 @@ void gnonogram_controller_random_game (Gnonogram_controller* self) {
 	const gchar* _tmp0_ = NULL;
 	gint passes;
 	gint count;
+	gint grade;
 	g_return_if_fail (IS_GNONOGRAM_CONTROLLER (self));
 	gnonogram_controller_new_game (self);
 	_tmp0_ = _ ("Thinking ....");
 	gnonogram_view_set_name (self->_gnonogram_view, _tmp0_);
-	gtk_widget_show_all (GTK_WIDGET (self->_gnonogram_view));
+	gtk_main_iteration_do (TRUE);
 	passes = 0;
 	count = 0;
+	grade = self->priv->_grade;
 	if (self->priv->_difficult) {
-		gint _tmp1_;
-		gnonogram_controller_generate_difficult_game (self, self->priv->_grade);
-		_tmp1_ = gnonogram_controller_solve_game (self, FALSE, TRUE, FALSE);
-		passes = _tmp1_;
-	} else {
-		gint grade;
-		grade = self->priv->_grade;
 		while (TRUE) {
+			gint _tmp1_;
 			gint _tmp2_;
-			gboolean _tmp3_ = FALSE;
+			gchar* _tmp3_ = NULL;
+			gchar* _tmp4_;
+			gchar* _tmp5_ = NULL;
+			gchar* _tmp6_;
+			if (!(count < 100)) {
+				break;
+			}
+			count++;
+			_tmp1_ = gnonogram_controller_generate_difficult_game (self, grade);
+			passes = _tmp1_;
+			if (passes > 0) {
+				if (grade < 10) {
+					grade++;
+				}
+				continue;
+			}
+			_tmp2_ = gnonogram_controller_solve_game (self, FALSE, TRUE, FALSE);
+			passes = _tmp2_;
+			_tmp3_ = g_strdup_printf ("%i", passes);
+			_tmp4_ = _tmp3_;
+			_tmp5_ = g_strconcat ("Passes:  ", _tmp4_, "\n", NULL);
+			_tmp6_ = _tmp5_;
+			fprintf (stdout, "%s", _tmp6_);
+			_g_free0 (_tmp6_);
+			_g_free0 (_tmp4_);
+			if (passes < (3 * self->priv->_grade)) {
+				continue;
+			}
+			if ((passes > 1000) & (grade > 1)) {
+				grade--;
+			}
+			if (passes < 1000) {
+				break;
+			}
+		}
+	} else {
+		while (TRUE) {
+			gint _tmp7_;
+			gboolean _tmp8_ = FALSE;
+			gboolean _tmp9_ = FALSE;
 			if (!(count < 10)) {
 				break;
 			}
-			_tmp2_ = gnonogram_controller_generate_simple_game (self, grade);
-			passes = _tmp2_;
+			count++;
+			_tmp7_ = gnonogram_controller_generate_simple_game (self, grade);
+			passes = _tmp7_;
 			if (passes > self->priv->_grade) {
-				_tmp3_ = TRUE;
+				_tmp8_ = TRUE;
 			} else {
-				_tmp3_ = passes < 0;
+				_tmp8_ = passes < 0;
 			}
-			if (_tmp3_) {
+			if (_tmp8_) {
 				break;
 			}
 			if (passes == 0) {
-				grade--;
-				if (self->priv->_grade < 1) {
-					break;
-				}
+				_tmp9_ = grade > 1;
+			} else {
+				_tmp9_ = FALSE;
 			}
-			count++;
+			if (_tmp9_) {
+				grade--;
+			}
 		}
 	}
 	self->priv->_have_solution = TRUE;
 	if (passes >= 0) {
-		const gchar* _tmp4_ = NULL;
-		gchar* _tmp7_;
+		const gchar* _tmp10_ = NULL;
+		gchar* _tmp13_;
 		gchar* name;
-		const gchar* _tmp8_ = NULL;
-		gchar* _tmp9_ = NULL;
-		gchar* _tmp10_;
-		gchar* _tmp11_ = NULL;
-		gchar* _tmp12_;
+		const gchar* _tmp14_ = NULL;
+		gchar* _tmp15_ = NULL;
+		gchar* _tmp16_;
+		gchar* _tmp17_ = NULL;
+		gchar* _tmp18_;
 		if (passes > 15) {
-			const gchar* _tmp5_ = NULL;
-			_tmp5_ = _ ("Difficult random");
-			_tmp4_ = _tmp5_;
+			const gchar* _tmp11_ = NULL;
+			_tmp11_ = _ ("Difficult random");
+			_tmp10_ = _tmp11_;
 		} else {
-			const gchar* _tmp6_ = NULL;
-			_tmp6_ = _ ("Simple random");
-			_tmp4_ = _tmp6_;
+			const gchar* _tmp12_ = NULL;
+			_tmp12_ = _ ("Simple random");
+			_tmp10_ = _tmp12_;
 		}
-		_tmp7_ = g_strdup (_tmp4_);
-		name = _tmp7_;
+		_tmp13_ = g_strdup (_tmp10_);
+		name = _tmp13_;
 		gnonogram_view_set_name (self->_gnonogram_view, name);
-		_tmp8_ = _ ("Computer");
-		gnonogram_view_set_author (self->_gnonogram_view, _tmp8_);
-		_tmp9_ = utils_get_todays_date_string ();
-		_tmp10_ = _tmp9_;
-		gnonogram_view_set_date (self->_gnonogram_view, _tmp10_);
-		_g_free0 (_tmp10_);
-		_tmp11_ = g_strdup_printf ("%i", passes);
-		_tmp12_ = _tmp11_;
-		gnonogram_view_set_score_label (self->_gnonogram_view, _tmp12_);
-		_g_free0 (_tmp12_);
+		_tmp14_ = _ ("Computer");
+		gnonogram_view_set_author (self->_gnonogram_view, _tmp14_);
+		_tmp15_ = utils_get_todays_date_string ();
+		_tmp16_ = _tmp15_;
+		gnonogram_view_set_date (self->_gnonogram_view, _tmp16_);
+		_g_free0 (_tmp16_);
+		_tmp17_ = g_strdup_printf ("%i", passes);
+		_tmp18_ = _tmp17_;
+		gnonogram_view_set_score_label (self->_gnonogram_view, _tmp18_);
+		_g_free0 (_tmp18_);
 		self->priv->_have_solution = TRUE;
 		gnonogram_model_use_working (self->_model);
 		gnonogram_controller_start_solving (self);
 		_g_free0 (name);
 	} else {
-		const gchar* _tmp13_ = NULL;
-		gchar* _tmp14_ = NULL;
-		gchar* _tmp15_;
-		gchar* _tmp16_;
-		const gchar* _tmp17_ = NULL;
-		_tmp13_ = _ ("Error occurred in solver\n");
-		utils_show_warning_dialog (_tmp13_);
-		_tmp14_ = gnonogram_solver_get_error (self->_solver);
-		_tmp15_ = _tmp14_;
-		_tmp16_ = g_strconcat (_tmp15_, "\n", NULL);
-		fprintf (stdout, "%s", _tmp16_);
-		_g_free0 (_tmp16_);
-		_g_free0 (_tmp15_);
-		_tmp17_ = _ ("Error in solver");
-		gnonogram_view_set_name (self->_gnonogram_view, _tmp17_);
+		const gchar* _tmp19_ = NULL;
+		gchar* _tmp20_ = NULL;
+		gchar* _tmp21_;
+		gchar* _tmp22_;
+		const gchar* _tmp23_ = NULL;
+		_tmp19_ = _ ("Error occurred in solver\n");
+		utils_show_warning_dialog (_tmp19_);
+		_tmp20_ = gnonogram_solver_get_error (self->_solver);
+		_tmp21_ = _tmp20_;
+		_tmp22_ = g_strconcat (_tmp21_, "\n", NULL);
+		fprintf (stdout, "%s", _tmp22_);
+		_g_free0 (_tmp22_);
+		_g_free0 (_tmp21_);
+		_tmp23_ = _ ("Error in solver");
+		gnonogram_view_set_name (self->_gnonogram_view, _tmp23_);
 		gnonogram_view_set_author (self->_gnonogram_view, "");
 		gnonogram_view_set_date (self->_gnonogram_view, "");
 		gnonogram_model_use_solution (self->_model);
@@ -2452,7 +2501,6 @@ static void gnonogram_controller_save_config (Gnonogram_controller* self) {
 	config_set_difficulty (config_instance, _tmp1_);
 	config_set_dimensions (config_instance, self->priv->_rows, self->priv->_cols);
 	config_set_colors (config_instance);
-	gnonogram_controller_save_position (self);
 	_config_unref0 (config_instance);
 }
 

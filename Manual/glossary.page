@@ -12,7 +12,7 @@
 	</item>
 	<item>
 	<title>Block extent</title>
-	<p>The total number of filled cells in a row or column (when completed).</p>
+	<p>The minimum number of cells required to accomodate the blocks (with one empty space between each).</p>
 	</item>
 	<item>
 		<title>Cell</title>
