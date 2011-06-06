@@ -628,10 +628,6 @@ public class Gnonogram_controller
 		{
 			_model.check_solution();
 			redraw_all();
-		//change_state(GameState.SETTING);
-		//var timer = new TimeoutSource.seconds(1);
-		//timer.set_callback(()=>{unpeek_game(); return false;});
-		//timer.attach(null);
 		}
 		else
 		{

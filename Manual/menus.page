@@ -2,8 +2,14 @@
       type="guide"
       id="menus">
 <info>
-  <link type="guide" xref="index"/>
+   <link type="guide" xref="index"/>
 </info>
+<link type="guide" xref="index"/>
 <title>Gnonograms Menus and Toolbar</title>
 <media type="image" mime="image/png" src="./Manual/Menu-Toolbar.png"/>
+   <p><link type="topic" xref="filemenu"/></p>
+   <p><link type="topic" xref="gamemenu"/></p>
+   <p><link type="topic" xref="settingsmenu"/></p>
+   <p><link type="topic" xref="viewmenu"/></p>
+   <p><link type="topic" xref="helpmenu"/></p>
 </page>

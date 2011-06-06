@@ -3,6 +3,8 @@
       id="controls">
 <info>
   <link type="guide" xref="index"/>
+  <link type="topic" xref="designmode"/>
+  <link type="topic" xref="solvingmode"/>
 </info>
 <title>Gnonogram Mouse/Keyboard Controls</title>
 <p>Manipulation of the grid is achieved either by using the mouse (or trackpad) or by using the keyboard.</p>
@@ -12,10 +14,10 @@
 			<p> The selected cell is marked by a rectangular coloured line and the corresponding row and column clues are highlighted.</p>
 	</item>
 	<item><p>Mark a cell filled</p>
-		<p><key>Left click</key>  <em>or</em> <key>F</key></p> 
+		<p><key>Left click</key>  <em>or</em> <key>F</key></p>
 	</item>
 	<item><p>Mark a cell empty</p>
-		<p><key>Right click</key>  <em>or</em> <key>E</key></p> 
+		<p><key>Right click</key>  <em>or</em> <key>E</key></p>
 	</item>
 	<item><p>Mark a cell unknown</p>
 		<p><key>Left double click</key>  <em>or</em> <key>X</key></p>
@@ -32,7 +34,7 @@
 		<p>Position the cursor within the grid.  Press <key>+</key> to increase font size or <key>-</key> to decrease it.</p>
 	</item>
 	<item><p>To determine the block extent and freedom of a row or column</p>
-			<p>Hover the cursor over the clue.  A tooltip appears giving the required information.</p>	
+			<p>Hover the cursor over the clue.  A tooltip appears giving the required information.</p>
 	</item>
 </list>
 </page>

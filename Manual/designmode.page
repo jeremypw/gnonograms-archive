@@ -2,7 +2,7 @@
       type="topic"
       id="designmode">
 <info>
-  <link type="guide" xref="features"/>
+  <link type="guide" xref="index"/>
 </info>
 <title>Design mode</title>
 <media type="image" mime="image/png" width="350" height="400" src="./Manual/Screenshot-Gnonograms-design.png"/>

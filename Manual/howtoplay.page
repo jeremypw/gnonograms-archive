@@ -15,5 +15,6 @@
 	<media type="image" src="./Manual/row.png"/>
 </figure>
 <p>In a well-designed puzzle it should be possible to discover the corresponding picture by applying pure logic.</p>
+<p>For some tips on how to solve Gnonogram puzzles see <link type="topic" xref="strategy"/></p>
 <p> For further information see the <link href="http://en.wikipedia.org/wiki/Nonogram">Wikipedia page</link> on Nonograms</p>
 </page>

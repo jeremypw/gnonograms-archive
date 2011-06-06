@@ -2,10 +2,25 @@
       type="topic"
       id="gamemenu">
 	<info>
-	  <link type="guide" xref="menus"/>
+	  <link type="next" xref="settingsmenu"/>
 	</info>
 	<title>Game Menu and Toolbar icons</title>
-	<list>
+	<media type="image" mime="image/png" width="187" height="165" src="./Manual/Gamemenu.png"/>
+	<media type="image" mime="image/png" src="./Manual/Gametoolbar.png"/>
+	<synopsis>
+		<title>Summary</title>
+		<desc>The game menu provides the following functions</desc>
+		<code>
+Switch to design mode*
+Switch to solving mode*
+Check the working grid for errors*
+Clear the working grid and restart solving*
+Let the computer solve the puzzle (if it can)*
+Let the computer generate a random pattern puzzle*
+Change the description of the puzzle.
+		</code>
+		<note><p>*These functions are also provided by the tool bar</p></note>
+	</synopsis>	<list>
 		<item>
 			<p><gui style="menuitem"><em>Show solution. ==</em><media type="image" mime="image/png" width="24" height="24" src="./Manual/Design-Solve.png"/></gui></p>
 			<p>Show the puzzle solution and enter "design" mode. Inactive when in "design" mode</p>

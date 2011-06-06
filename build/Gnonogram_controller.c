@@ -20,7 +20,7 @@
  * As a special exception, if you use inline functions from this file, this
  * file does not by itself cause the resulting executable to be covered by
  * the GNU Lesser General Public License.
- * 
+ *
  *  Author:
  * 	Jeremy Wootten <jeremwootten@gmail.com>
  */
@@ -1304,7 +1304,7 @@ void gnonogram_controller_new_game (Gnonogram_controller* self) {
 	const gchar* _tmp0_ = NULL;
 	g_return_if_fail (IS_GNONOGRAM_CONTROLLER (self));
 	gnonogram_model_clear (self->_model);
-	self->priv->_have_solution = FALSE;
+	self->priv->_have_solution = TRUE;
 	gnonogram_controller_update_labels_from_model (self);
 	_tmp0_ = _ ("New game");
 	gnonogram_view_set_name (self->_gnonogram_view, _tmp0_);

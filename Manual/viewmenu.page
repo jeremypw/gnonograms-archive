@@ -1,0 +1,20 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      type="topic"
+      id="viewmenu">
+	<info>
+		<link type="next" xref="helpmenu" />
+	</info>
+	<title>View menu </title>
+	<media type="image" mime="image/png" width="187" height="165" src="./Manual/Viewmenu.png"/>
+
+	<p>These options affect how the puzzle is displayed.  There are no equivalent toolbar icons</p>
+	<list>
+		<item><p><em>Toolbar</em></p>
+			<p>Selected by default.  Determines whether the toolbar is displayed.  Removing the toolbar creates a little more space for larger puzzles.</p>
+		</item>
+		<item><p><em>Grid</em></p>
+			<p>By default, the grid is not displayed when setting a puzzle (to get a better picture effect) and displayed when solving. This option allows this behavious to be overridden</p>
+		</item>
+
+	</list>
+</page>

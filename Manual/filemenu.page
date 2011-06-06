@@ -2,9 +2,11 @@
       type="topic"
       id="filemenu">
 	<info>
-	  <link type="guide" xref="menus"/>
+	  <link type="next" xref="gamemenu"/>
 	</info>
 	<title>File Menu and Toolbar icons</title>
+	<media type="image" mime="image/png" width="320" height="153" src="./Manual/Filemenu.png"/>
+	<media type="image" mime="image/png" src="./Manual/Filetoolbar.png"/>
 	<synopsis>
 		<title>Summary</title>
 		<desc>The file menu provides the following functions</desc>
@@ -16,7 +18,7 @@ Save puzzle designs to storage media*
 Save current (unfinished) puzzle and the working grid to storage media
 Quit the program.
 		</code>
-		<note>* These functions are also provided by the tool bar</note>
+		<note><p>*These functions are also provided by the tool bar</p></note>
 	</synopsis>
 	<list>
 		<item><title>New<media type="image" mime="image/png" width="24" height="24" src="./Manual/New.png"/></title>

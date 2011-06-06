@@ -17,11 +17,11 @@
  * As a special exception, if you use inline functions from this file, this
  * file does not by itself cause the resulting executable to be covered by
  * the GNU Lesser General Public License.
- * 
+ *
  *  Author:
  * 	Jeremy Wootten <jeremwootten@gmail.com>
  */
- 
+
  public class Gnonogram_model {
 	private int _rows;
 	private int _cols;
@@ -30,7 +30,7 @@
 	private My2DCellArray _working_data; //display when solving
 	public CellState[] _arr;
 	private Rand _rand_gen;
-	
+
 	public Gnonogram_model(int r, int c) {
 	_rows = r; _cols = c;
 	_solution_data=new My2DCellArray(Resource.MAXROWSIZE,Resource.MAXCOLSIZE,CellState.EMPTY);
@@ -44,15 +44,16 @@
 	{
 		CellState cs;
 		int count=0;
-		for (int r=0;r<=_rows; r++)
+		for (int r=0;r<_rows; r++)
 		{
-			for (int c=0;c<=_cols;c++)
+			for (int c=0;c<_cols;c++)
 			{
 				cs=_working_data.get_data_from_rc(r,c);
 				if (cs!=CellState.UNKNOWN && cs!=_solution_data.get_cell(r,c).state)
 				{
 					_working_data.set_data_from_rc(r,c,CellState.ERROR);
 					count++;
+					stdout.printf(@"Cell $r, $c error.  Working $cs  Solution $(_solution_data.get_cell(r,c).state)\n");
 				}
 			}
 		}
@@ -121,7 +122,7 @@
 		if (cs.length!=_cols)
 		{
 			Utils.show_warning_dialog(_("Error - wrong number of columns"));
-			return false; 
+			return false;
 		}
 		_display_data.set_row(r, cs);
 		return true;
@@ -155,11 +156,11 @@
 	public void fill_random(int grade)
 	{
 		clear();
-		int midcol = _rows/2; 
+		int midcol = _rows/2;
 		int midrow =_cols/2;
 		int mincdf = 2+(int)((_rows*grade)/(Resource.MAXGRADE*3));
 		int minrdf = 2+(int)((_cols*grade)/(Resource.MAXGRADE*3));
-		
+
 		for (int e=0; e<_arr.length; e++) _arr[e]=CellState.EMPTY;
 
 		int maxb=1+(int)(_cols*(1.0-grade/15.0));
@@ -178,14 +179,14 @@
 		}
 
 		if (grade<5) return;  //dont bother with adjustment for lower difficulty levels
-		
+
 		for (int r=0;r<_rows;r++)
 		{
 			_solution_data.get_row(r, ref _arr);
 			adjust_region(_cols, ref _arr,minrdf);
 			_solution_data.set_row(r, _arr);
 		}
-		
+
 		for (int c=0;c<_cols;c++)
 		{
 			_solution_data.get_col(c, ref _arr);
@@ -199,34 +200,34 @@
 		//e is larger for rows/cols further from edge
 		//do not want too many edge cells filled
 		//maxb is maximum size of one random block
-		//maxp is range of random number generator 
-		
+		//maxp is range of random number generator
+
 		if (maxb<=1) return;
-		
+
 		int p=0; //pointer
 		int mid=size/2;
 		int bsize; // blocksize
 		int baseline = e+grade-10; // relates to the probability of a filled block before adjusting for distance from edge of region.
 		bool fill;
-		
+
 		while (p<size)
 		{
 			// random length up to remaining space but not larger than maxb
 			bsize=int.min(_rand_gen.int_range(0,size-p),maxb);
 			// random choice whether to be full or empty, weighted so less likely to fill squares close to edge
 			fill=_rand_gen.int_range(0,maxp)>(baseline+(p-mid).abs());
-			
+
 			for (int i=0; i<bsize; i++)
 			{
 				if (fill) _arr[p]=CellState.FILLED;
 				p++;
 			}
 			p++; //at least one space between blocks
-			
+
 			if (fill && p<size) _arr[p]=CellState.EMPTY;
 		}
 	}
-//=========================================================================		
+//=========================================================================
 	private void adjust_region(int s, ref CellState [] arr, int mindf)
 	{	//s is size of region
 		// mindf = minimum degrees of freedom
@@ -242,7 +243,7 @@
 			}
 		}
 		df=s-b-bc+1;
-		
+
 		if (df>s) //completely empty
 		{
 			arr[_rand_gen.int_range(0,s)]=CellState.FILLED;

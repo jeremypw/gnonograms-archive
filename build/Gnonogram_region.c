@@ -20,7 +20,7 @@
  * As a special exception, if you use inline functions from this file, this
  * file does not by itself cause the resulting executable to be covered by
  * the GNU Lesser General Public License.
- * 
+ *
  *  Author:
  * 	Jeremy Wootten <jeremwootten@gmail.com>
  */
@@ -212,9 +212,9 @@ static gboolean gnonogram_region_find_edge (Gnonogram_region* self, gint* idx, g
 static gboolean gnonogram_region_set_cell_owner (Gnonogram_region* self, gint cell, gint owner, gboolean exclusive, gboolean can_be_empty);
 static gint* gnonogram_region_blocks_available (Gnonogram_region* self, int* result_length1);
 static gint gnonogram_region_count_available_ranges (Gnonogram_region* self, gboolean not_empty);
+static gint gnonogram_region_count_capped_ranges (Gnonogram_region* self);
 static void gnonogram_region_record_error (Gnonogram_region* self, const gchar* method, const gchar* errmessage, gboolean debug);
 static gboolean gnonogram_region_check_nblocks (Gnonogram_region* self);
-static gint gnonogram_region_count_capped_ranges (Gnonogram_region* self);
 static gint gnonogram_region_count_owners_and_empty (Gnonogram_region* self, gint cell);
 static gboolean gnonogram_region_invalid_data (Gnonogram_region* self, gint start, gint block, gint length);
 static void _vala_array_add8 (gint** array, int* length, int* size, gint value);
@@ -1760,6 +1760,13 @@ static gboolean gnonogram_region_fix_blocks_in_ranges (Gnonogram_region* self) {
 	block_end_length2 = 2;
 	_tmp5_ = gnonogram_region_count_available_ranges (self, FALSE);
 	nranges = _tmp5_;
+	if (nranges < 2) {
+		result = FALSE;
+		block_end = (g_free (block_end), NULL);
+		block_start = (g_free (block_start), NULL);
+		blocks = (g_free (blocks), NULL);
+		return result;
+	}
 	rng = 0;
 	offset = 0;
 	length = 0;
@@ -1794,7 +1801,6 @@ static gboolean gnonogram_region_fix_blocks_in_ranges (Gnonogram_region* self) {
 						rng++;
 					}
 					if (rng >= nranges) {
-						gnonogram_region_record_error (self, "Fix blocks in ranges", "Dont fit", FALSE);
 						result = FALSE;
 						block_end = (g_free (block_end), NULL);
 						block_start = (g_free (block_start), NULL);
@@ -1841,7 +1847,6 @@ static gboolean gnonogram_region_fix_blocks_in_ranges (Gnonogram_region* self) {
 						rng--;
 					}
 					if (rng < 0) {
-						gnonogram_region_record_error (self, "Reverse Fix blocks in ranges", "Dont fit", FALSE);
 						result = FALSE;
 						block_end = (g_free (block_end), NULL);
 						block_start = (g_free (block_start), NULL);
@@ -1929,6 +1934,92 @@ static gboolean gnonogram_region_fix_blocks_in_ranges (Gnonogram_region* self) {
 	block_end = (g_free (block_end), NULL);
 	block_start = (g_free (block_start), NULL);
 	blocks = (g_free (blocks), NULL);
+	return result;
+}
+
+
+static gboolean gnonogram_region_capped_range_audit (Gnonogram_region* self) {
+	gboolean result = FALSE;
+	gint start;
+	gint length;
+	gint idx;
+	gint _tmp0_;
+	gint nranges;
+	g_return_val_if_fail (IS_GNONOGRAM_REGION (self), FALSE);
+	start = 0;
+	length = 0;
+	idx = 0;
+	_tmp0_ = gnonogram_region_count_capped_ranges (self);
+	nranges = _tmp0_;
+	if (nranges == 0) {
+		result = FALSE;
+		return result;
+	}
+	{
+		gint rng;
+		rng = 0;
+		{
+			gboolean _tmp1_;
+			_tmp1_ = TRUE;
+			while (TRUE) {
+				if (!_tmp1_) {
+					rng++;
+				}
+				_tmp1_ = FALSE;
+				if (!(rng < nranges)) {
+					break;
+				}
+				start = self->priv->_ranges[(rng * self->priv->_ranges_length2) + 0];
+				length = self->priv->_ranges[(rng * self->priv->_ranges_length2) + 1];
+				{
+					gboolean _tmp2_;
+					idx = start;
+					_tmp2_ = TRUE;
+					while (TRUE) {
+						gint count;
+						if (!_tmp2_) {
+							idx++;
+						}
+						_tmp2_ = FALSE;
+						if (!(idx < (start + length))) {
+							break;
+						}
+						count = 0;
+						{
+							gint b;
+							b = 0;
+							{
+								gboolean _tmp3_;
+								_tmp3_ = TRUE;
+								while (TRUE) {
+									if (!_tmp3_) {
+										b++;
+									}
+									_tmp3_ = FALSE;
+									if (!(b < self->priv->_nblocks)) {
+										break;
+									}
+									if (self->priv->_tags[(idx * self->priv->_tags_length2) + b]) {
+										count++;
+										if (self->priv->_blocks[b] != length) {
+											self->priv->_tags[(idx * self->priv->_tags_length2) + b] = FALSE;
+											count--;
+										}
+									}
+								}
+							}
+						}
+						if (count == 0) {
+							gnonogram_region_record_error (self, "capped range audit", "filled cell with no owners", FALSE);
+							result = FALSE;
+							return result;
+						}
+					}
+				}
+			}
+		}
+	}
+	result = FALSE;
 	return result;
 }
 
@@ -2148,7 +2239,6 @@ static gint gnonogram_region_count_available_ranges (Gnonogram_region* self, gbo
 				_tmp3_ = FALSE;
 			}
 			if (_tmp3_) {
-				continue;
 			} else {
 				self->priv->_ranges[(range * self->priv->_ranges_length2) + 1] = length;
 				range++;
@@ -2862,92 +2952,6 @@ static void gnonogram_region_set_block_complete_and_cap (Gnonogram_region* self,
 			}
 		}
 	}
-}
-
-
-static gboolean gnonogram_region_capped_range_audit (Gnonogram_region* self) {
-	gboolean result = FALSE;
-	gint start;
-	gint length;
-	gint idx;
-	gint _tmp0_;
-	gint nranges;
-	g_return_val_if_fail (IS_GNONOGRAM_REGION (self), FALSE);
-	start = 0;
-	length = 0;
-	idx = 0;
-	_tmp0_ = gnonogram_region_count_capped_ranges (self);
-	nranges = _tmp0_;
-	if (nranges == 0) {
-		result = FALSE;
-		return result;
-	}
-	{
-		gint rng;
-		rng = 0;
-		{
-			gboolean _tmp1_;
-			_tmp1_ = TRUE;
-			while (TRUE) {
-				if (!_tmp1_) {
-					rng++;
-				}
-				_tmp1_ = FALSE;
-				if (!(rng < nranges)) {
-					break;
-				}
-				start = self->priv->_ranges[(rng * self->priv->_ranges_length2) + 0];
-				length = self->priv->_ranges[(rng * self->priv->_ranges_length2) + 1];
-				{
-					gboolean _tmp2_;
-					idx = start;
-					_tmp2_ = TRUE;
-					while (TRUE) {
-						gint count;
-						if (!_tmp2_) {
-							idx++;
-						}
-						_tmp2_ = FALSE;
-						if (!(idx < (start + length))) {
-							break;
-						}
-						count = 0;
-						{
-							gint b;
-							b = 0;
-							{
-								gboolean _tmp3_;
-								_tmp3_ = TRUE;
-								while (TRUE) {
-									if (!_tmp3_) {
-										b++;
-									}
-									_tmp3_ = FALSE;
-									if (!(b < self->priv->_nblocks)) {
-										break;
-									}
-									if (self->priv->_tags[(idx * self->priv->_tags_length2) + b]) {
-										count++;
-										if (self->priv->_blocks[b] != length) {
-											self->priv->_tags[(idx * self->priv->_tags_length2) + b] = FALSE;
-											count--;
-										}
-									}
-								}
-							}
-						}
-						if (count == 0) {
-							gnonogram_region_record_error (self, "capped range audit", "filled cell with no owners", FALSE);
-							result = FALSE;
-							return result;
-						}
-					}
-				}
-			}
-		}
-	}
-	result = FALSE;
-	return result;
 }
 
 

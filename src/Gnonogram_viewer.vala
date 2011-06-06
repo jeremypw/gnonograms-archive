@@ -17,11 +17,11 @@
  * As a special exception, if you use inline functions from this file, this
  * file does not by itself cause the resulting executable to be covered by
  * the GNU Lesser General Public License.
- * 
+ *
  *  Author:
  * 	Jeremy Wootten <jeremwootten@gmail.com>
  */
- 
+
  using Gtk;
  using Gdk;
 
@@ -49,7 +49,7 @@ public class Gnonogram_view : Gtk.Window
 	public signal void debugmode(bool debug);
 	public signal void advancedmode(bool advanced);
 	public signal void difficultmode(bool difficult);
-	
+
 	private Gnonogram_controller _controller;
 	private Gtk.SpinButton _grade_spin;
 	private Gtk.ToggleToolButton _hide_tool;
@@ -66,14 +66,14 @@ public class Gnonogram_view : Gtk.Window
 	private Label _date_label;
 	private Label _size_label;
 	private Label _score_label;
-	
+
 //	private Gtk.Image _logo;
-	
+
 	public Gnonogram_view(Gnonogram_LabelBox rb, Gnonogram_LabelBox cb, Gnonogram_CellGrid dg, Gnonogram_controller controller)
 	{	_controller=controller; //seems to be necessary to get signals to work.  Not sure why.
-		
-		delete_event.connect (()=>{quitgamesignal();return true;});		
-				
+
+		delete_event.connect (()=>{quitgamesignal();return true;});
+
 		var info_frame=new Frame(null);
 		var info_box = new VBox(false,0);
 		_name_label= new Label("");
@@ -95,22 +95,22 @@ public class Gnonogram_view : Gtk.Window
 		info_box.add(_size_label);
 		info_box.add(_score_label);
 		info_frame.add(info_box);
-		
+
 		var table = new Table(2,2,false);
-		
+
 		var ao = AttachOptions.FILL|AttachOptions.EXPAND;
 		table.attach(info_frame,0,1,0,1,AttachOptions.SHRINK,AttachOptions.SHRINK,0,0);
 		table.attach(rb,0,1,1,2,ao,ao,0,0);
 		table.attach(cb,1,2,0,1,ao,ao,0,0);
 		table.attach(dg,1,2,1,2,ao,ao,0,0);
-		
+
 		create_viewer_toolbar();
-		
+
 		var vbox = new VBox(false,0);
 		vbox.pack_start(create_viewer_menubar(),false,false,0);
 		vbox.pack_start(_toolbar,false,false,0);
 		vbox.pack_start(table,true,true,0);
-		
+
 		add(vbox);
 	}
 //======================================================================
@@ -122,7 +122,7 @@ public class Gnonogram_view : Gtk.Window
 		var settingsmenuitem = new MenuItem.with_mnemonic(_("_Settings"));
 		var viewmenuitem = new MenuItem.with_mnemonic(_("_View"));
 		var helpmenuitem = new MenuItem.with_mnemonic(_("_Help"));
-		
+
 		menubar.append(filemenuitem);
 		menubar.append(gamemenuitem);
 		menubar.append(settingsmenuitem);
@@ -150,14 +150,14 @@ public class Gnonogram_view : Gtk.Window
 				loadsubmenu.add(loadpuzzlemenuitem);
 				var loadpositionmenuitem=new MenuItem.with_mnemonic(_("_Unfinished"));
 				loadsubmenu.add(loadpositionmenuitem);
-					
+
 			var savesubmenu = new Menu();
 			savemenuitem.set_submenu(savesubmenu);
 				var savepuzzlemenuitem=new MenuItem.with_mnemonic(_("_Puzzle"));
 				savesubmenu.add(savepuzzlemenuitem);
 				var savepositionmenuitem=new MenuItem.with_mnemonic(_("_Unfinished"));
 				savesubmenu.add(savepositionmenuitem);
-					
+
 		var gamesubmenu=new Menu();
 		gamemenuitem.set_submenu(gamesubmenu);
 			_showsolutionmenuitem=new MenuItem.with_mnemonic(_("_Show solution"));
@@ -178,13 +178,13 @@ public class Gnonogram_view : Gtk.Window
 			var infomenuitem=new MenuItem.with_mnemonic(_("_Edit game description"));
 			gamesubmenu.add(infomenuitem);
 
-							
+
 		var settingssubmenu=new Menu();
 		settingsmenuitem.set_submenu(settingssubmenu);
 			var colormenuitem=new MenuItem.with_mnemonic(_("_Colors ..."));
-			settingssubmenu.add(colormenuitem);	
+			settingssubmenu.add(colormenuitem);
 			var fontmenuitem=new MenuItem.with_mnemonic(_("_Font ..."));
-			settingssubmenu.add(fontmenuitem);	
+			settingssubmenu.add(fontmenuitem);
 			var resizemenuitem=new MenuItem.with_mnemonic(_("_Resize ..."));
 			settingssubmenu.add(resizemenuitem);
 			grademenuitem=new MenuItem.with_mnemonic(_("_Difficulty ..."));
@@ -192,7 +192,7 @@ public class Gnonogram_view : Gtk.Window
 			settingssubmenu.add(new SeparatorMenuItem());
 			var debugmenuitem=new CheckMenuItem.with_mnemonic("D_ebug");
 			debugmenuitem.set_active(false);
-			debugmenuitem.set_sensitive(false); //for development only
+			debugmenuitem.set_sensitive(true); //for development only
 			settingssubmenu.add(debugmenuitem);
 			var advancedmenuitem=new CheckMenuItem.with_mnemonic(_("_Use advanced solver"));
 			advancedmenuitem.set_active(true);
@@ -200,7 +200,7 @@ public class Gnonogram_view : Gtk.Window
 			var difficultmenuitem=new CheckMenuItem.with_mnemonic(_("_Generate difficult games"));
 			difficultmenuitem.set_active(false);
 			settingssubmenu.add(difficultmenuitem);
-						
+
 		var viewsubmenu=new Menu();
 		viewmenuitem.set_submenu(viewsubmenu);
 			var toolbarmenuitem=new CheckMenuItem.with_mnemonic(_("_Toolbar"));
@@ -209,14 +209,14 @@ public class Gnonogram_view : Gtk.Window
 			_gridmenuitem=new CheckMenuItem.with_mnemonic(_("_Grid"));
 			viewsubmenu.add(_gridmenuitem);
 			_gridmenuitem.set_active(false);
-			
+
 		var helpsubmenu=new Menu();
 		helpmenuitem.set_submenu(helpsubmenu);
 			var aboutmenuitem=new MenuItem.with_mnemonic(_("About"));
 			helpsubmenu.add(aboutmenuitem);
 			var manualmenuitem=new MenuItem.with_mnemonic(_("Manual"));
 			helpsubmenu.add(manualmenuitem);
-			
+
 		newmenuitem.activate.connect(()=>{newgame();});
 		loadpuzzlemenuitem.activate.connect(()=>{loadgame();});
 		savepuzzlemenuitem.activate.connect(()=>{savegame();});
@@ -224,14 +224,14 @@ public class Gnonogram_view : Gtk.Window
 		loadpositionmenuitem.activate.connect(()=>{loadposition();});
 		savepositionmenuitem.activate.connect(()=>{saveposition();});
 		quitmenuitem.activate.connect(()=>{quitgamesignal();});
-		
+
 		_showsolutionmenuitem.activate.connect(()=>{revealgame();});
 		_showworkingmenuitem.activate.connect(()=>{hidegame();});
 		_checkerrorsmenuitem.activate.connect(()=>{checkerrors();});
 		restartmenuitem.activate.connect(()=>{restartgame();});
 		computersolvemenuitem.activate.connect(()=>{solvegame();});
 		computergeneratemenuitem.activate.connect(()=>{randomgame();});
-		
+
 		colormenuitem.activate.connect(()=>{setcolors();});
 		fontmenuitem.activate.connect(()=>{setfont();});
 		resizemenuitem.activate.connect(()=>{resizegame();});
@@ -240,13 +240,13 @@ public class Gnonogram_view : Gtk.Window
 		debugmenuitem.activate.connect(()=>{debugmode(debugmenuitem.active);});
 		advancedmenuitem.activate.connect(()=>{advancedmode(advancedmenuitem.active);});
 		difficultmenuitem.activate.connect(()=>{difficultmode(difficultmenuitem.active);});
-		
+
 		toolbarmenuitem.activate.connect(toggle_toolbar);
 		_gridmenuitem.activate.connect(()=>{togglegrid(_gridmenuitem.active);});
 
 		aboutmenuitem.activate.connect(show_about);
 		manualmenuitem.activate.connect(show_manual);
-		
+
 		return menubar;
 	}
 //======================================================================
@@ -254,7 +254,7 @@ public class Gnonogram_view : Gtk.Window
 	{
 		_toolbar = new Toolbar();
 		_toolbar.set_style(Gtk.ToolbarStyle.ICONS);
-		
+
 		var new_tool=new ToolButton.from_stock(Stock.CLEAR);
 		new_tool.set_tooltip_text(_("New game"));
 		_toolbar.add(new_tool);
@@ -273,28 +273,28 @@ public class Gnonogram_view : Gtk.Window
 		_hide_tool.set_tooltip_text(_("Hide the solution and start solving"));
 		_hide_tool.active=false;
 		_toolbar.add(_hide_tool);
-		
+
 		var peek_icon=new Gtk.Image.from_file(Resource.icon_dir+"/eyeballs.png");
 		_check_tool=new ToolButton(peek_icon,_("Check"));
 		_check_tool.set_tooltip_text(_("Show any incorrect cells"));
 		_toolbar.add(_check_tool);
-		
+
 		var restart_tool=new ToolButton.from_stock(Stock.REFRESH);
 		restart_tool.set_tooltip_text(_("Start this puzzle again"));
 		_toolbar.add(restart_tool);
-		
-		_toolbar.add(new SeparatorToolItem());
-				
+
 		var solve_icon=new Gtk.Image.from_file(Resource.icon_dir+"/laptop.png");
 		var solve_tool=new ToolButton(solve_icon,_("Solve"));
 		solve_tool.set_tooltip_text(_("Solve by computer"));
 		_toolbar.add(solve_tool);
-		
+
 		var random_icon=new Gtk.Image.from_file(Resource.icon_dir+"/Dices.png");
 		var random_tool=new ToolButton(random_icon,_("Random"));
 		random_tool.set_tooltip_text(_("Generate a random game"));
 		_toolbar.add(random_tool);
-		
+
+		_toolbar.add(new SeparatorToolItem());
+
 		var grade_tool=new ToolItem();
 		_grade_spin=new SpinButton.with_range(1,Resource.MAXGRADE,1);
 		_grade_spin.set_tooltip_text(_("Set the difficulty of generated games"));
@@ -302,22 +302,20 @@ public class Gnonogram_view : Gtk.Window
 		grade_tool.add(_grade_spin);
 		_toolbar.add(grade_tool);
 
-		_toolbar.add(new SeparatorToolItem());
-			
 		var resize_icon=new Gtk.Image.from_file(Resource.icon_dir+"/newsheet.png");
 		var resize_tool=new ToolButton(resize_icon,_("Resize"));
-		resize_tool.set_tooltip_text(_("Change dimensions of the game grid")); 
+		resize_tool.set_tooltip_text(_("Change dimensions of the game grid"));
 		_toolbar.add(resize_tool);
 
 		var zoom_in_tool=new ToolButton.from_stock(Stock.ZOOM_IN);
 		zoom_in_tool.set_tooltip_text(_("Increase font size"));
 		_toolbar.add(zoom_in_tool);
-		
+
 		var zoom_out_tool=new ToolButton.from_stock(Stock.ZOOM_OUT);
 		zoom_out_tool.set_tooltip_text(_("Decrease font size"));
 		_toolbar.add(zoom_out_tool);
 
-		
+
 		new_tool.clicked.connect(()=>{newgame();});
 		save_as_tool.clicked.connect(()=>{savegame();});
 		load_tool.clicked.connect(()=>{loadgame();});
@@ -355,12 +353,12 @@ public class Gnonogram_view : Gtk.Window
 //	}
 //======================================================================
 	private void toggle_toolbar(Gtk.MenuItem cmi)
-	{	
+	{
 		_toolbar.visible=((Gtk.CheckMenuItem)cmi).active;
 	}
 //======================================================================
 	private void getdifficulty()
-	{	
+	{
 		var win=new Gtk.Window(Gtk.WindowType.TOPLEVEL);
 		win.set_decorated(false);
 		var grade_spin2=new SpinButton.with_range(1,10,1);
@@ -415,7 +413,7 @@ public class Gnonogram_view : Gtk.Window
 		_("Ok"), Gtk.ResponseType.OK,
 		_("Cancel"), Gtk.ResponseType.CANCEL
 		);
-		
+
 		var name_label=new Gtk.Label(_("Name of puzzle"));
 		var author_label=new Gtk.Label(_("Designed by"));
 		var date_label=new Gtk.Label(_("Date designed"));
@@ -434,7 +432,7 @@ public class Gnonogram_view : Gtk.Window
 		var date_entry = new Gtk.Entry();
 		date_entry.set_max_length(16);
 		date_entry.set_text(get_date());
-		
+
 		var entry_box=new VBox(false,5);
 		entry_box.add(name_entry);
 		entry_box.add(author_entry);

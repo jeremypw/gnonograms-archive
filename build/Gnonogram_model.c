@@ -20,13 +20,14 @@
  * As a special exception, if you use inline functions from this file, this
  * file does not by itself cause the resulting executable to be covered by
  * the GNU Lesser General Public License.
- * 
+ *
  *  Author:
  * 	Jeremy Wootten <jeremwootten@gmail.com>
  */
 
 #include <glib.h>
 #include <glib-object.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <glib/gi18n-lib.h>
@@ -140,6 +141,7 @@ Cell* cell_dup (const Cell* self);
 void cell_free (Cell* self);
 void my2_dcell_array_get_cell (My2DCellArray* self, gint r, gint c, Cell* result);
 void my2_dcell_array_set_data_from_rc (My2DCellArray* self, gint r, gint c, CellState s);
+const gchar* cell_state_to_string (CellState self);
 void utils_show_info_dialog (const gchar* msg);
 void gnonogram_model_clear (Gnonogram_model* self);
 void gnonogram_model_blank_solution (Gnonogram_model* self, CellState blank);
@@ -238,7 +240,7 @@ void gnonogram_model_check_solution (Gnonogram_model* self) {
 					r++;
 				}
 				_tmp0_ = FALSE;
-				if (!(r <= self->priv->_rows)) {
+				if (!(r < self->priv->_rows)) {
 					break;
 				}
 				{
@@ -254,7 +256,7 @@ void gnonogram_model_check_solution (Gnonogram_model* self) {
 								c++;
 							}
 							_tmp1_ = FALSE;
-							if (!(c <= self->priv->_cols)) {
+							if (!(c < self->priv->_cols)) {
 								break;
 							}
 							_tmp2_ = my2_dcell_array_get_data_from_rc (self->priv->_working_data, r, c);
@@ -268,8 +270,29 @@ void gnonogram_model_check_solution (Gnonogram_model* self) {
 								_tmp3_ = FALSE;
 							}
 							if (_tmp3_) {
+								gchar* _tmp6_ = NULL;
+								gchar* _tmp7_;
+								gchar* _tmp8_ = NULL;
+								gchar* _tmp9_;
+								GEnumValue* _tmp10_;
+								Cell _tmp11_ = {0};
+								Cell _tmp12_ = {0};
+								GEnumValue* _tmp13_;
+								gchar* _tmp14_ = NULL;
+								gchar* _tmp15_;
 								my2_dcell_array_set_data_from_rc (self->priv->_working_data, r, c, CELL_STATE_ERROR);
 								count++;
+								_tmp6_ = g_strdup_printf ("%i", r);
+								_tmp7_ = _tmp6_;
+								_tmp8_ = g_strdup_printf ("%i", c);
+								_tmp9_ = _tmp8_;
+								_tmp12_ = (my2_dcell_array_get_cell (self->priv->_solution_data, r, c, &_tmp11_), _tmp11_);
+								_tmp14_ = g_strconcat ("Cell ", _tmp7_, ", ", _tmp9_, " error.  Working ", (_tmp10_ = g_enum_get_value (g_type_class_ref (TYPE_CELL_STATE), cs), (_tmp10_ != NULL) ? _tmp10_->value_name : NULL), "  Solution ", (_tmp13_ = g_enum_get_value (g_type_class_ref (TYPE_CELL_STATE), _tmp12_.state), (_tmp13_ != NULL) ? _tmp13_->value_name : NULL), "\n", NULL);
+								_tmp15_ = _tmp14_;
+								fprintf (stdout, "%s", _tmp15_);
+								_g_free0 (_tmp15_);
+								_g_free0 (_tmp9_);
+								_g_free0 (_tmp7_);
 							}
 						}
 					}
@@ -278,18 +301,18 @@ void gnonogram_model_check_solution (Gnonogram_model* self) {
 		}
 	}
 	if (count == 0) {
-		const gchar* _tmp6_ = NULL;
-		_tmp6_ = _ ("No errors");
-		utils_show_info_dialog (_tmp6_);
+		const gchar* _tmp16_ = NULL;
+		_tmp16_ = _ ("No errors");
+		utils_show_info_dialog (_tmp16_);
 	} else {
-		const gchar* _tmp7_ = NULL;
-		gchar* _tmp8_ = NULL;
-		gchar* _tmp9_;
-		_tmp7_ = _ ("There are %d incorrect cells");
-		_tmp8_ = g_strdup_printf (_tmp7_, count);
-		_tmp9_ = _tmp8_;
-		utils_show_info_dialog (_tmp9_);
-		_g_free0 (_tmp9_);
+		const gchar* _tmp17_ = NULL;
+		gchar* _tmp18_ = NULL;
+		gchar* _tmp19_;
+		_tmp17_ = _ ("There are %d incorrect cells");
+		_tmp18_ = g_strdup_printf (_tmp17_, count);
+		_tmp19_ = _tmp18_;
+		utils_show_info_dialog (_tmp19_);
+		_g_free0 (_tmp19_);
 	}
 }
 

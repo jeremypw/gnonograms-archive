@@ -2,7 +2,7 @@
       type="topic"
       id="solvingmode">
 <info>
-  <link type="guide" xref="features"/>
+  <link type="guide" xref="index"/>
 </info>
 <title>Solving mode</title>
 <media type="image" mime="image/png" width="350" height="400" src="./Manual/Screenshot-Gnonograms-solve.png"/>
