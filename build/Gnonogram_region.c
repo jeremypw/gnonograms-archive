@@ -1135,6 +1135,7 @@ static gboolean gnonogram_region_fill_gaps (Gnonogram_region* self) {
 						}
 						changed = _tmp9_;
 					}
+					idx--;
 				}
 			}
 		}
@@ -1244,6 +1245,7 @@ static void gnonogram_region_assign_and_cap_range (Gnonogram_region* self, gint 
 	gint _max_blocks_size_;
 	gint first;
 	gint last;
+	gint end;
 	g_return_if_fail (IS_GNONOGRAM_REGION (self));
 	count = 0;
 	_tmp0_ = g_new0 (gint, self->priv->_nblocks);
@@ -1252,6 +1254,7 @@ static void gnonogram_region_assign_and_cap_range (Gnonogram_region* self, gint 
 	_max_blocks_size_ = self->priv->_nblocks;
 	first = self->priv->_nblocks;
 	last = 0;
+	end = (start + length) - 1;
 	{
 		gint i;
 		i = 0;
@@ -1259,6 +1262,7 @@ static void gnonogram_region_assign_and_cap_range (Gnonogram_region* self, gint 
 			gboolean _tmp1_;
 			_tmp1_ = TRUE;
 			while (TRUE) {
+				gboolean _tmp2_ = FALSE;
 				if (!_tmp1_) {
 					i++;
 				}
@@ -1273,6 +1277,11 @@ static void gnonogram_region_assign_and_cap_range (Gnonogram_region* self, gint 
 					continue;
 				}
 				if (!self->priv->_tags[(start * self->priv->_tags_length2) + i]) {
+					_tmp2_ = TRUE;
+				} else {
+					_tmp2_ = !self->priv->_tags[(end * self->priv->_tags_length2) + i];
+				}
+				if (_tmp2_) {
 					continue;
 				}
 				max_blocks[count] = i;
@@ -1295,25 +1304,7 @@ static void gnonogram_region_assign_and_cap_range (Gnonogram_region* self, gint 
 	} else {
 		{
 			gint i;
-			i = last;
-			{
-				gboolean _tmp2_;
-				_tmp2_ = TRUE;
-				while (TRUE) {
-					if (!_tmp2_) {
-						i++;
-					}
-					_tmp2_ = FALSE;
-					if (!(i < self->priv->_nblocks)) {
-						break;
-					}
-					gnonogram_region_remove_block_from_cell_to_end (self, i, (start + length) - 1, -1);
-				}
-			}
-		}
-		{
-			gint i;
-			i = 0;
+			i = last + 1;
 			{
 				gboolean _tmp3_;
 				_tmp3_ = TRUE;
@@ -1322,10 +1313,10 @@ static void gnonogram_region_assign_and_cap_range (Gnonogram_region* self, gint 
 						i++;
 					}
 					_tmp3_ = FALSE;
-					if (!(i <= first)) {
+					if (!(i < self->priv->_nblocks)) {
 						break;
 					}
-					gnonogram_region_remove_block_from_cell_to_end (self, i, start, 1);
+					gnonogram_region_remove_block_from_cell_to_end (self, i, (start + length) - 1, -1);
 				}
 			}
 		}
@@ -1340,10 +1331,10 @@ static void gnonogram_region_assign_and_cap_range (Gnonogram_region* self, gint 
 						i++;
 					}
 					_tmp4_ = FALSE;
-					if (!(i < count)) {
+					if (!(i < first)) {
 						break;
 					}
-					gnonogram_region_set_range_owner (self, max_blocks[i], start, length, FALSE, FALSE);
+					gnonogram_region_remove_block_from_cell_to_end (self, i, start, 1);
 				}
 			}
 		}
@@ -1365,6 +1356,24 @@ static void gnonogram_region_assign_and_cap_range (Gnonogram_region* self, gint 
 						continue;
 					}
 					gnonogram_region_remove_block_from_range (self, i, start, length, 1);
+				}
+			}
+		}
+		{
+			gint i;
+			i = 0;
+			{
+				gboolean _tmp6_;
+				_tmp6_ = TRUE;
+				while (TRUE) {
+					if (!_tmp6_) {
+						i++;
+					}
+					_tmp6_ = FALSE;
+					if (!(i < count)) {
+						break;
+					}
+					gnonogram_region_set_range_owner (self, max_blocks[i], start, length, FALSE, FALSE);
 				}
 			}
 		}
@@ -2189,7 +2198,7 @@ static gint gnonogram_region_count_available_ranges (Gnonogram_region* self, gbo
 	while (TRUE) {
 		gboolean _tmp0_ = FALSE;
 		if (idx < self->priv->_ncells) {
-			_tmp0_ = self->priv->_status[idx] == CELL_STATE_EMPTY;
+			_tmp0_ = self->priv->_tags[(idx * self->priv->_tags_length2) + self->priv->_is_finished_ptr];
 		} else {
 			_tmp0_ = FALSE;
 		}
@@ -2211,7 +2220,7 @@ static gint gnonogram_region_count_available_ranges (Gnonogram_region* self, gbo
 		while (TRUE) {
 			gboolean _tmp1_ = FALSE;
 			if (idx < self->priv->_ncells) {
-				_tmp1_ = self->priv->_status[idx] != CELL_STATE_EMPTY;
+				_tmp1_ = !self->priv->_tags[(idx * self->priv->_tags_length2) + self->priv->_is_finished_ptr];
 			} else {
 				_tmp1_ = FALSE;
 			}
@@ -2226,32 +2235,24 @@ static gint gnonogram_region_count_available_ranges (Gnonogram_region* self, gbo
 			idx++;
 			length++;
 		}
-		if (length > 0) {
-			_tmp2_ = self->priv->_ranges[(range * self->priv->_ranges_length2) + 3] != 0;
+		if (not_empty) {
+			_tmp2_ = self->priv->_ranges[(range * self->priv->_ranges_length2) + 2] == 0;
 		} else {
 			_tmp2_ = FALSE;
 		}
 		if (_tmp2_) {
+		} else {
+			self->priv->_ranges[(range * self->priv->_ranges_length2) + 1] = length;
+			range++;
+		}
+		while (TRUE) {
 			gboolean _tmp3_ = FALSE;
-			if (not_empty) {
-				_tmp3_ = self->priv->_ranges[(range * self->priv->_ranges_length2) + 2] == 0;
+			if (idx < self->priv->_ncells) {
+				_tmp3_ = self->priv->_tags[(idx * self->priv->_tags_length2) + self->priv->_is_finished_ptr];
 			} else {
 				_tmp3_ = FALSE;
 			}
-			if (_tmp3_) {
-			} else {
-				self->priv->_ranges[(range * self->priv->_ranges_length2) + 1] = length;
-				range++;
-			}
-		}
-		while (TRUE) {
-			gboolean _tmp4_ = FALSE;
-			if (idx < self->priv->_ncells) {
-				_tmp4_ = self->priv->_status[idx] == CELL_STATE_EMPTY;
-			} else {
-				_tmp4_ = FALSE;
-			}
-			if (!_tmp4_) {
+			if (!_tmp3_) {
 				break;
 			}
 			idx++;
@@ -3352,7 +3353,7 @@ static gboolean gnonogram_region_invalid_data (Gnonogram_region* self, gint star
 	if (_tmp1_) {
 		_tmp0_ = TRUE;
 	} else {
-		_tmp0_ = block > self->priv->_nblocks;
+		_tmp0_ = block >= self->priv->_nblocks;
 	}
 	result = _tmp0_;
 	return result;

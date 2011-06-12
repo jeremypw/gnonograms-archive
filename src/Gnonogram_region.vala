@@ -371,6 +371,7 @@
 				{
 					changed=set_range_owner(owner,cell1,idx-cell1+1,true,false)||changed;
 				}
+				idx--;//TEST
 			}
 		}
 		return changed;
@@ -430,12 +431,13 @@
 		int[] max_blocks=new int[_nblocks];
 		int first=_nblocks;
 		int last=0;
+		int end=start+length-1;  //TEST
 
 		for (int i=0;i<_nblocks;i++)
 		{
 			if (_completed_blocks[i]) continue;
 			if (_blocks[i]!=length) continue;
-			if (!_tags[start,i]) continue;
+			if (!_tags[start,i]||!_tags[end,i]) continue;
 
 			max_blocks[count]=i;
 			count++;
@@ -452,19 +454,14 @@
 		else
 		{//ambiguous owner
 			//delete out of sequence blocks before end of range
-			for (int i=last;i<_nblocks;i++)
+			for (int i=last+1;i<_nblocks;i++) //TEST
 			{
 				remove_block_from_cell_to_end(i,start+length-1,-1);
 			}
 			//delete out of sequence blocks after start of range
-			for (int i=0;i<=first;i++)
+			for (int i=0;i<first;i++) //TEST
 			{
 				remove_block_from_cell_to_end(i,start,1);
-			}
-			//for each possible mark as possible owner of subregion (not exclusive)
-			for (int i=0;i<count;i++)
-			{
-				set_range_owner(max_blocks[i],start,length,false, false);
 			}
 			//remove as possible owner blocks between first and last that are wrong length
 			for (int i=first+1;i<last;i++)
@@ -472,6 +469,13 @@
 				if (_blocks[i]==length) continue;
 				remove_block_from_range(i,start,length,1);
 			}
+
+			//for each possible mark as possible owner of subregion (not exclusive)
+			for (int i=0;i<count;i++)
+			{
+				set_range_owner(max_blocks[i],start,length,false, false);
+			}
+
 			// cap range
 			if (start>0) set_cell_empty(start-1);
 			if (start+length<_ncells) set_cell_empty(start+length);
@@ -817,7 +821,7 @@
 		return count;
 	}
 //======================================================================
-	private int count_available_ranges(bool not_empty) {
+/*	private int count_available_ranges(bool not_empty) {
 	// determine location of ranges of unknown or filled cells
 	// and store in _ranges[,]
 	// _ranges[ ,2] indicates number of filled,
@@ -851,6 +855,47 @@
 			while (idx<_ncells && _status[idx]==CellState.EMPTY) idx++; //skip to beginning of next range
 		}
 		return range;
+	}
+	*/
+	//EXPERIMENTAL
+	private int count_available_ranges(bool not_empty) {
+	// determine location of ranges of unknown or unfinished filled cells
+	// and store in _ranges[,]
+	// _ranges[ ,2] indicates number of filled,
+	// _ranges[ ,3] indicates number of unknown
+		int range=0, start=0, length=0, idx=0;
+		//skip to start of first range;
+//		while (idx<_ncells && _status[idx]==CellState.EMPTY) idx++;
+		while (idx<_ncells && _tags[idx,_is_finished_ptr]) idx++;
+
+		while (idx<_ncells)
+		{
+			length=0;
+			start=idx;
+			_ranges[range,0]=start;
+			_ranges[range,2]=0;
+			_ranges[range,3]=0;
+
+		//	while (idx<_ncells && _status[idx]!=CellState.EMPTY)
+			while (idx<_ncells && !_tags[idx,_is_finished_ptr])
+			{
+				if (!_tags[idx,_can_be_empty_ptr]) _ranges[range,2]++; //FILLED
+				else _ranges[range,3]++; //UNKNOWN
+
+				idx++; length++;
+			}
+
+//			if (length>0 && _ranges[range,3]!=0) //not completely filled yet
+//			{
+				if(not_empty && _ranges[range,2]==0) {} //dont include completely empty ranges
+				else {_ranges[range,1]=length; range++;}
+//			}
+
+			//while (idx<_ncells && _status[idx]==CellState.EMPTY) idx++; //skip to beginning of next range
+			while (idx<_ncells && _tags[idx,_is_finished_ptr]) idx++;
+		}
+		//stdout.printf(@"$(this) Ranges found - $range\n");
+		return range; //number of ranges - not last index!
 	}
 //======================================================================
 	private bool check_nblocks()
@@ -1279,7 +1324,7 @@
 //======================================================================
 	private bool invalid_data(int start, int block=0, int length=1)
 	{
-		return (start<0||start>=_ncells||length<0||start+length>_ncells||block<0||block>_nblocks);
+		return (start<0||start>=_ncells||length<0||start+length>_ncells||block<0||block>=_nblocks);  //TEST
 	}
 //======================================================================
 	private bool cell_filled(int cell)
