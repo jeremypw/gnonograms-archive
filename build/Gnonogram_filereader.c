@@ -20,7 +20,7 @@
  * As a special exception, if you use inline functions from this file, this
  * file does not by itself cause the resulting executable to be covered by
  * the GNU Lesser General Public License.
- * 
+ *
  *  Author:
  * 	Jeremy Wootten <jeremwootten@gmail.com>
  */
@@ -137,8 +137,8 @@ enum  {
 	GNONOGRAM_FILEREADER_DUMMY_PROPERTY
 };
 GType gnonogram_filetype_get_type (void) G_GNUC_CONST;
-Gnonogram_filereader* gnonogram_filereader_new (Gnonogram_FileType type);
-Gnonogram_filereader* gnonogram_filereader_construct (GType object_type, Gnonogram_FileType type);
+Gnonogram_filereader* gnonogram_filereader_new (Gnonogram_FileType type, const gchar* fname);
+Gnonogram_filereader* gnonogram_filereader_construct (GType object_type, Gnonogram_FileType type, const gchar* fname);
 void gnonogram_filereader_ask_filename (Gnonogram_filereader* self);
 #define RESOURCE_POSITIONFILENAME "currentposition"
 gchar* utils_get_filename (GtkFileChooserAction action, const gchar* dialogname, gchar** filternames, int filternames_length1, gchar** filters, int filters_length1, const gchar* start_path);
@@ -181,35 +181,45 @@ static void _vala_array_free (gpointer array, gint array_length, GDestroyNotify 
 static gint _vala_array_length (gpointer array);
 
 
-Gnonogram_filereader* gnonogram_filereader_construct (GType object_type, Gnonogram_FileType type) {
+Gnonogram_filereader* gnonogram_filereader_construct (GType object_type, Gnonogram_FileType type, const gchar* fname) {
 	Gnonogram_filereader* self = NULL;
+	g_return_val_if_fail (fname != NULL, NULL);
 	self = (Gnonogram_filereader*) g_type_create_instance (object_type);
 	if (type == GNONOGRAM_FILETYPE_GAME) {
-		gboolean _tmp0_;
-		gnonogram_filereader_ask_filename (self);
-		_tmp0_ = g_str_has_suffix (self->filename, ".pattern");
-		if (_tmp0_) {
+		gboolean _tmp2_;
+		if (g_strcmp0 (fname, "") == 0) {
+			gnonogram_filereader_ask_filename (self);
+		} else {
+			gchar* _tmp0_;
+			gchar* _tmp1_;
+			_tmp0_ = g_strdup (fname);
+			_tmp1_ = _tmp0_;
+			_g_free0 (self->filename);
+			self->filename = _tmp1_;
+		}
+		_tmp2_ = g_str_has_suffix (self->filename, ".pattern");
+		if (_tmp2_) {
 			self->priv->is_picto_game = TRUE;
 		} else {
 			self->priv->is_picto_game = FALSE;
 		}
 		self->priv->is_game = TRUE;
 	} else {
-		gchar* _tmp1_;
-		gchar* _tmp2_;
-		_tmp1_ = g_strconcat (resource_game_dir, "/", NULL);
-		_tmp2_ = g_strconcat (_tmp1_, RESOURCE_POSITIONFILENAME, NULL);
+		gchar* _tmp3_;
+		gchar* _tmp4_;
+		_tmp3_ = g_strconcat (resource_game_dir, "/", NULL);
+		_tmp4_ = g_strconcat (_tmp3_, RESOURCE_POSITIONFILENAME, NULL);
 		_g_free0 (self->filename);
-		self->filename = _tmp2_;
-		_g_free0 (_tmp1_);
+		self->filename = _tmp4_;
+		_g_free0 (_tmp3_);
 		self->priv->is_game = FALSE;
 	}
 	return self;
 }
 
 
-Gnonogram_filereader* gnonogram_filereader_new (Gnonogram_FileType type) {
-	return gnonogram_filereader_construct (TYPE_GNONOGRAM_FILEREADER, type);
+Gnonogram_filereader* gnonogram_filereader_new (Gnonogram_FileType type, const gchar* fname) {
+	return gnonogram_filereader_construct (TYPE_GNONOGRAM_FILEREADER, type, fname);
 }
 
 
@@ -327,7 +337,7 @@ static gboolean gnonogram_filereader_parse_gnonogram_game_file (Gnonogram_filere
 	_tmp2_ = _tmp1_;
 	_g_free0 (_tmp2_);
 	if (_inner_error_ != NULL) {
-		goto __catch4_g_error;
+		goto __catch5_g_error;
 	}
 	while (TRUE) {
 		gsize _tmp3_;
@@ -341,14 +351,14 @@ static gboolean gnonogram_filereader_parse_gnonogram_game_file (Gnonogram_filere
 		headerlength = _tmp3_;
 		_tmp5_ = _tmp4_;
 		if (_inner_error_ != NULL) {
-			goto __catch4_g_error;
+			goto __catch5_g_error;
 		}
 		_vala_array_add1 (&self->priv->headings, &self->priv->headings_length1, &self->priv->_headings_size_, _tmp5_);
 		_tmp7_ = g_data_input_stream_read_until (self->priv->stream, "[", &_tmp6_, NULL, &_inner_error_);
 		bodylength = _tmp6_;
 		_tmp8_ = _tmp7_;
 		if (_inner_error_ != NULL) {
-			goto __catch4_g_error;
+			goto __catch5_g_error;
 		}
 		_vala_array_add2 (&self->priv->bodies, &self->priv->bodies_length1, &self->priv->_bodies_size_, _tmp8_);
 		if (headerlength == 0) {
@@ -360,8 +370,8 @@ static gboolean gnonogram_filereader_parse_gnonogram_game_file (Gnonogram_filere
 			break;
 		}
 	}
-	goto __finally4;
-	__catch4_g_error:
+	goto __finally5;
+	__catch5_g_error:
 	{
 		GError * e;
 		e = _inner_error_;
@@ -371,7 +381,7 @@ static gboolean gnonogram_filereader_parse_gnonogram_game_file (Gnonogram_filere
 		_g_error_free0 (e);
 		return result;
 	}
-	__finally4:
+	__finally5:
 	if (_inner_error_ != NULL) {
 		g_critical ("file %s: line %d: uncaught error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
 		g_clear_error (&_inner_error_);
@@ -499,7 +509,7 @@ static gboolean gnonogram_filereader_parse_picto_game_file (Gnonogram_filereader
 				length = _tmp1_;
 				_tmp3_ = _tmp2_;
 				if (_inner_error_ != NULL) {
-					goto __catch5_g_error;
+					goto __catch6_g_error;
 				}
 				_tmp4_ = _tmp3_;
 				_g_free0 (line);
@@ -531,7 +541,7 @@ static gboolean gnonogram_filereader_parse_picto_game_file (Gnonogram_filereader
 	length = _tmp14_;
 	_tmp16_ = _tmp15_;
 	if (_inner_error_ != NULL) {
-		goto __catch5_g_error;
+		goto __catch6_g_error;
 	}
 	_tmp17_ = _tmp16_;
 	_g_free0 (line);
@@ -564,14 +574,14 @@ static gboolean gnonogram_filereader_parse_picto_game_file (Gnonogram_filereader
 		length = _tmp23_;
 		_tmp25_ = _tmp24_;
 		if (_inner_error_ != NULL) {
-			goto __catch5_g_error;
+			goto __catch6_g_error;
 		}
 		_tmp26_ = _tmp25_;
 		_g_free0 (line);
 		line = _tmp26_;
 	}
-	goto __finally5;
-	__catch5_g_error:
+	goto __finally6;
+	__catch6_g_error:
 	{
 		GError * e;
 		e = _inner_error_;
@@ -582,7 +592,7 @@ static gboolean gnonogram_filereader_parse_picto_game_file (Gnonogram_filereader
 		_g_free0 (line);
 		return result;
 	}
-	__finally5:
+	__finally6:
 	if (_inner_error_ != NULL) {
 		_g_free0 (line);
 		g_critical ("file %s: line %d: uncaught error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);

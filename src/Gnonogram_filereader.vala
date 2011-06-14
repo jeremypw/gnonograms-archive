@@ -17,13 +17,13 @@
  * As a special exception, if you use inline functions from this file, this
  * file does not by itself cause the resulting executable to be covered by
  * the GNU Lesser General Public License.
- * 
+ *
  *  Author:
  * 	Jeremy Wootten <jeremwootten@gmail.com>
  */
- 
+
 public class Gnonogram_filereader {
-	
+
 	public string filename;
 	public int rows=0;
 	public int cols=0;
@@ -51,13 +51,16 @@ public class Gnonogram_filereader {
 	private string[] bodies;
 	private string[] picto_grid_data;
 //=========================================================================
-	public Gnonogram_filereader(Gnonogram_FileType type)
+	public Gnonogram_filereader(Gnonogram_FileType type, string fname="")
 	{
 		if (type==Gnonogram_FileType.GAME)
 		{
-			ask_filename();
+			if(fname=="")	ask_filename();
+			else filename=fname;
+
 			if (filename.has_suffix(".pattern")) is_picto_game=true;
 			else is_picto_game=false;
+
 			is_game=true;
 		}
 		else
@@ -66,7 +69,7 @@ public class Gnonogram_filereader {
 			is_game=false;
 		}
 	}
-//=========================================================================	
+//=========================================================================
 	public void ask_filename()
 	{
 			filename=Utils.get_filename(
@@ -77,13 +80,13 @@ public class Gnonogram_filereader {
 			Resource.game_dir
 			);
 	}
-//=========================================================================	
+//=========================================================================
 	public bool open_datainputstream()
 	{	stream= Utils.open_datainputstream(filename);
 		if (stream==null) return false;
 		else return true;
 	}
-//=========================================================================	
+//=========================================================================
 	public bool parse_game_file()
 	{
 		if (is_picto_game) return parse_picto_game_file();
@@ -120,9 +123,9 @@ public class Gnonogram_filereader {
 				if (s[1].strip()=="") bodies+=_("Unknown");
 				else 	bodies += s[1].strip();
 			}
-			
+
 			line=stream.read_line(out length);//blank separator line
-			
+
 			while (line!=null) //pattern lines
 			{
 				line=line.chomp().strip();
@@ -131,7 +134,7 @@ public class Gnonogram_filereader {
 			}
 		}
 		catch (Error e) {Utils.show_warning_dialog(e.message); return false;}
-		
+
 		return get_game_description(bodies[0]+"\n"+bodies[1]+"\n"+bodies[2]) &&
 				get_picto_dimensions(bodies[3],true) &&
 				get_picto_dimensions(bodies[4],false) &&
@@ -151,7 +154,7 @@ public class Gnonogram_filereader {
 			{
 				case "DIM" :
 					in_error=!get_gnonogram_dimensions(bodies[i]); break;
-				case "ROW" : 
+				case "ROW" :
 					in_error=!get_gnonogram_clues(bodies[i],false); break;
 				case "COL" :
 					in_error=!get_gnonogram_clues(bodies[i],true); break;
@@ -198,13 +201,13 @@ public class Gnonogram_filereader {
 		has_dimensions=(rows>0 && cols>0);
 		return (dim>0);
 	}
-//=========================================================================	
+//=========================================================================
 	private bool get_gnonogram_clues(string? body, bool is_column)
 	{//stdout.printf("In get_clues\n");
 		string[] arr={};
 		if (body==null) return false;
 		string[] s = Utils.remove_blank_lines(body.split("\n"));
-		
+
 		if (s==null||s.length<1) return false;
 		for (int i=0; i< s.length; i++)
 		{
@@ -230,7 +233,7 @@ public class Gnonogram_filereader {
 		if (body==null) return false;
 		string[] s = Utils.remove_blank_lines(body.split("\n"));
 		if (s==null||s.length!=rows) return false;
-	
+
 		for (int i=0; i<s.length;i++)
 		{
 			//stdout.printf(@"s[$i] $(s[i])\n");
@@ -250,7 +253,7 @@ public class Gnonogram_filereader {
 		//stdout.printf("Leaving get_cellstate array\n");
 		return true;
 	}
-//=========================================================================	
+//=========================================================================
 	private bool parse_picto_grid_data()
 	{//stdout.printf("In parse grid data\n");
 		if (picto_grid_data==null) return false;
@@ -266,7 +269,7 @@ public class Gnonogram_filereader {
 
 		return true;
 	}
-//=========================================================================	
+//=========================================================================
 	private bool get_gnonogram_state(string? body)
 	{  //stdout.printf("In get_state\n");
 		if (body==null) return false;
@@ -286,7 +289,7 @@ public class Gnonogram_filereader {
 		if (s.length>=2) author=Utils.convert_html(s[1]);
 		if (s.length>=3) date=s[2];
 		if (s.length>=4) score=s[3];
-		
+
 		//stdout.printf(@"Name $name Author $author Date $date\n");
 		return true;
 	}
@@ -295,7 +298,7 @@ public class Gnonogram_filereader {
 	{
 		string[] s=Utils.remove_blank_lines(line.split_set(", "));
 		int b, zero_count=0;
-		
+
 		if (s==null) return "";
 		StringBuilder sb=new StringBuilder();
 		for (int i=0; i<s.length; i++)
@@ -304,10 +307,10 @@ public class Gnonogram_filereader {
 			b=int.parse(s[i]);
 			if (b==0 && zero_count>0) continue;
 			else zero_count++;
-			
+
 			sb.append(s[i]+Resource.BLOCKSEPARATOR);
 		}
 		sb.truncate(sb.len-1);
 		return sb.str;
-	}	
+	}
 }

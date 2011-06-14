@@ -1,6 +1,6 @@
 PROGRAM = gnonograms
 
-VERSION = 0.1.0--
+VERSION = 0.8.0
 GETTEXT_PACKAGE = $(PROGRAM)
 BUILD_ROOT = 1
 
@@ -10,7 +10,7 @@ INSTALL_PROGRAM = install
 INSTALL_DATA = install -m 644
 
 # defaults that may be overridden by configure.mk
-PREFIX=/usr/local
+PREFIX=/usr
 SCHEMA_FILE_DIR=/etc/gconf/schemas
 BUILD_RELEASE=1
 
@@ -42,9 +42,9 @@ SRC_FILES = \
 	utils.vala
 
 RESOURCE_FILES = \
-	
 
-SRC_HEADER_FILES = 
+
+SRC_HEADER_FILES =
 
 TEXT_FILES = \
 	AUTHORS \
@@ -63,12 +63,12 @@ EXT_PKGS = \
    pango \
    cairo \
    gconf-2.0 \
-	
+
 EXT_PKG_VERSIONS = \
    gtk+-2.0 >= 2.20.0 \
 	cairo >= 1.8.0 \
 	pango >= 1.28.0
-	
+
 PKGS = $(EXT_PKGS) $(LOCAL_PKGS)
 
 ifndef BUILD_DIR
@@ -76,11 +76,11 @@ BUILD_DIR=build
 endif
 
 DESKTOP_APPLICATION_NAME="Gnonograms"
-DESKTOP_APPLICATION_COMMENT="Solve and design Gnonogram puzzles"
+DESKTOP_APPLICATION_COMMENT="Design and solve Gnonogram puzzles"
 DESKTOP_APPLICATION_CLASS="Games"
 DIRECT_EDIT_DESKTOP_APPLICATION_NAME="Gnonograms"
 DIRECT_EDIT_DESKTOP_APPLICATION_CLASS="Games"
-TEMPORARY_DESKTOP_FILES = misc/gnonograms.desktop 
+TEMPORARY_DESKTOP_FILES = misc/gnonograms.desktop
 EXPANDED_PO_FILES = $(foreach po,$(SUPPORTED_LANGUAGES),po/$(po).po)
 EXPANDED_SRC_FILES = $(foreach src,$(SRC_FILES),src/$(src))
 EXPANDED_C_FILES = $(foreach src,$(SRC_FILES),$(BUILD_DIR)/$(src:.vala=.c))
@@ -90,9 +90,9 @@ EXPANDED_OBJ_FILES = $(foreach src,$(SRC_FILES),$(BUILD_DIR)/$(src:.vala=.o))
 VALA_STAMP = $(BUILD_DIR)/.stamp
 LANG_STAMP = $(LOCAL_LANG_DIR)/.langstamp
 
-DIST_FILES = Makefile configure minver 
-DIST_FILES+= $(TEXT_FILES) $(EXPANDED_PO_FILES) $(EXPANDED_SRC_FILES) 
-DIST_FILES+= po/gnonogram.pot icons/*
+DIST_FILES = Makefile configure minver
+DIST_FILES+= $(TEXT_FILES) $(EXPANDED_PO_FILES) $(EXPANDED_SRC_FILES)
+DIST_FILES+= po/gnonograms.pot icons/*  games/*.gno Manual/*.* misc/*.*
 
 PACKAGE_ORIG_GZ = $(PROGRAM)_`parsechangelog | grep Version | sed 's/.*: //'`.orig.tar.gz
 
@@ -143,7 +143,7 @@ $(VALA_STAMP): $(EXPANDED_SRC_FILES) $(EXPANDED_VAPI_FILES) $(EXPANDED_SRC_HEADE
 #####################################################################
 ifndef NO_VALA
 	@ ./minver `valac --version | awk '{print $$2}'` $(MIN_VALAC_VERSION) || ( echo 'gnonograms requires Vala compiler $(MIN_VALAC_VERSION) or greater.  You are running' `valac --version` '\b.'; exit 1 )
-	
+
 ifndef ASSUME_PKGS
 ifdef EXT_PKG_VERSIONS
 	pkg-config --print-errors --exists '$(EXT_PKG_VERSIONS)'
@@ -207,39 +207,41 @@ dist_with_c:
 	cp --parents $(EXPANDED_C_FILES) $(PROGRAM)-$(VERSION)c
 	tar --gzip -cvf $(PROGRAM)-$(VERSION)c.tar.gz $(PROGRAM)-$(VERSION)c
 	rm -rf $(PROGRAM)-$(VERSION)c
-	
+
 distclean: clean
 ##########
 	rm -f configure.mk
 
 install:
 ####
-	cp misc/gnonogram.desktop.head misc/gnonograms.desktop
+	cp misc/gnonograms.desktop.head misc/gnonograms.desktop
 	$(foreach lang,$(SUPPORTED_LANGUAGES), echo Name[$(lang)]=`TEXTDOMAINDIR=locale \
      LANGUAGE=$(lang) gettext --domain=gnonograms $(DESKTOP_APPLICATION_NAME)` \
     >> misc/gnonograms.desktop ; \
         echo GenericName[$(lang)]=`TEXTDOMAINDIR=locale LANGUAGE=$(lang) \
         gettext --domain=gnonograms $(DESKTOP_APPLICATION_CLASS)` >> misc/gnonograms.desktop ; \
         echo Comment[$(lang)]=`TEXTDOMAINDIR=locale LANGUAGE=$(lang) gettext \
-        --domain=gnonogram $(DESKTOP_APPLICATION_COMMENT)` >> misc/gnonograms.desktop ; 
+        --domain=gnonogram $(DESKTOP_APPLICATION_COMMENT)` >> misc/gnonograms.desktop ;)
 	touch $(LANG_STAMP)
 	mkdir -p $(DESTDIR)$(PREFIX)/bin
 	$(INSTALL_PROGRAM) $(PROGRAM) $(DESTDIR)$(PREFIX)/bin
 	mkdir -p $(DESTDIR)$(PREFIX)/share/gnonograms/icons
 	$(INSTALL_DATA) icons/* $(DESTDIR)$(PREFIX)/share/gnonograms/icons
-	mkdir -p $(DESTDIR)$(PREFIX)/share/gnonogram/games
+	mkdir -p $(DESTDIR)$(PREFIX)/share/gnonograms/games
 	$(INSTALL_DATA) games/* $(DESTDIR)$(PREFIX)/share/gnonograms/games
-	mkdir -p $(DESTDIR)$(PREFIX)/share/icons/hicolor/scalable/apps
-	$(INSTALL_DATA) icons/gnonograms.svg $(DESTDIR)$(PREFIX)/share/icons/hicolor/scalable/apps
+	mkdir -p $(DESTDIR)$(PREFIX)/share/icons/hicolor/128x128/apps
+	$(INSTALL_DATA) icons/gnonograms128.png $(DESTDIR)$(PREFIX)/share/icons/hicolor/128x128/apps/gnonograms.png
+	mkdir -p $(DESTDIR)$(PREFIX)/share/icons/hicolor/48x48/apps
+	$(INSTALL_DATA) icons/gnonograms48.png $(DESTDIR)$(PREFIX)/share/icons/hicolor/48x48/apps/gnonograms.png
+
 ifndef DISABLE_ICON_UPDATE
 	-gtk-update-icon-cache -t -f $(DESTDIR)$(PREFIX)/share/icons/hicolor || :
 endif
 	mkdir -p $(DESTDIR)$(PREFIX)/share/applications
 	$(INSTALL_DATA) misc/gnonograms.desktop $(DESTDIR)$(PREFIX)/share/applications
-	$(INSTALL_DATA) gnonogramLINGUAS $(DESTDIR)$(PREFIX)/share/gnonograms
-	
+
 ifndef DISABLE_DESKTOP_UPDATE
-	-update-desktop-game || :
+	-update-desktop-database || :
 endif
 
 #ifndef DISABLE_SCHEMAS_INSTALL
@@ -253,16 +255,24 @@ endif
         $(INSTALL_DATA) $(LOCAL_LANG_DIR)/$(lang)/LC_MESSAGES/gnonograms.mo \
             $(SYSTEM_LANG_DIR)/$(lang)/LC_MESSAGES/gnonograms.mo`)
 
+	mkdir -p $(DESTDIR)$(PREFIX)/share/mime/packages
+	$(INSTALL_DATA) misc/x-gnonogram-puzzle.xml $(DESTDIR)$(PREFIX)/share/mime/packages
+
+	update-mime-database $(DESTDIR)$(PREFIX)/share/mime
+
 uninstall:
 ######
 	rm -f $(DESTDIR)$(PREFIX)/bin/$(PROGRAM)
 	rm -fr $(DESTDIR)$(PREFIX)/share/gnonograms
-	rm -fr $(DESTDIR)$(PREFIX)/share/icons/hicolor/scalable/apps/gnonograms.svg
+	rm -fr $(DESTDIR)$(PREFIX)/share/icons/hicolor/128x128/gnonograms.png	rm -fr $(DESTDIR)$(PREFIX)/share/icons/hicolor/48x48/gnonograms.png
 	rm -f $(DESTDIR)$(PREFIX)/share/applications/gnonograms.desktop
 	rm -f misc/gnonograms.desktop
-	
+	rm -f $(DESTDIR)$(PREFIX)/share/mime/packages/x-gnonogram-puzzle.xml
+
+	update-mime-database $(DESTDIR)$(PREFIX)/share/mime
+
 ifndef DISABLE_DESKTOP_UPDATE
-	-update-desktop-game || :
+	-update-desktop-database || :
 endif
 
 #ifndef DISABLE_SCHEMAS_INSTALL

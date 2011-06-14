@@ -31,8 +31,8 @@
 	public CellState[] _arr;
 	private Rand _rand_gen;
 
-	public Gnonogram_model(int r, int c) {
-	_rows = r; _cols = c;
+	public Gnonogram_model() {
+	_rows = 10; _cols = 10; //default values
 	_solution_data=new My2DCellArray(Resource.MAXROWSIZE,Resource.MAXCOLSIZE,CellState.EMPTY);
 	_working_data=new My2DCellArray(Resource.MAXROWSIZE,Resource.MAXCOLSIZE,CellState.UNKNOWN);
 	_arr = new CellState[Resource.MAXCOLSIZE];

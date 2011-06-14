@@ -1,0 +1,13 @@
+[Desktop Entry]
+Type=Application
+Encoding=UTF-8
+Version=0.8.0
+Name=Gnonograms
+GenericName=Logic game
+Comment=Design and solve Nonograms puzzles
+Exec=gnonograms %f
+Icon=gnonograms.png
+MimeType=application/x-gnonogram-puzzle
+Terminal=false
+StartupNotify=true
+Categories=Game;LogicGame;GNOME;GTK;

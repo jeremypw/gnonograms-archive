@@ -50,32 +50,33 @@ public class Gnonogram_controller
 	private int _grade;
 
 //======================================================================
-	public Gnonogram_controller(int r, int c)
+	public Gnonogram_controller(string game_filename)
 	{
-		if (r<1||c<1)
-		{
-			Config.get_instance().get_dimensions(out _rows, out _cols);
-		}
-		else
-		{
-			_rows=r;
-			_cols=c;
-		}
-		_model=new Gnonogram_model(_rows,_cols);
+
+		_model=new Gnonogram_model();
+		_solver=new Gnonogram_solver();
 		_have_solution=false;
 
-		_grade=(int)(Config.get_instance().get_difficulty());
+		Config.get_instance().get_dimensions(out _rows, out _cols); //defaults to 10x10
+		_grade=(int)(Config.get_instance().get_difficulty()); //defaults to 5
 
 		create_view();
 		initialize_view();
 
-		_solver=new Gnonogram_solver(_rows, _cols);
 		_solver.showsolvergrid.connect(show_solver_grid);
 		_solver.showprogress.connect((guesses)=>{_gnonogram_view.set_score_label(guesses.to_string());_gnonogram_view.show_all();});
 
+		_model.set_dimensions(_rows,_cols);
+		_solver.set_dimensions(_rows,_cols);
 
 		_gnonogram_view.show_all();
 		change_state(GameState.SETTING);
+
+		if(game_filename.length>4)
+		{
+			load_game(game_filename);
+		}
+
 	}
 //======================================================================
 
@@ -91,6 +92,11 @@ public class Gnonogram_controller
 		_gnonogram_view.title = _("Gnonograms");
 		_gnonogram_view.position = WindowPosition.CENTER;
 		_gnonogram_view.resizable=false;
+		try
+		{
+			_gnonogram_view.set_icon_from_file(Resource.icon_dir+"/gnonograms.png");
+		}
+		catch (GLib.Error e) {stdout.printf("Icon file not loaded\n");}
 
 		_gnonogram_view.solvegame.connect(this.viewer_solve_game);
 		_gnonogram_view.savegame.connect(this.save_game);
@@ -476,9 +482,9 @@ public class Gnonogram_controller
 		return true;
 	}
 //=========================================================================
-	public void load_game()
+	public void load_game(string fname="")
 	{
-		var reader = new Gnonogram_filereader(Gnonogram_FileType.GAME);
+		var reader = new Gnonogram_filereader(Gnonogram_FileType.GAME, fname);
 		if (reader.filename=="") return;
 		new_game();
 		if (load_common(reader))
@@ -637,7 +643,13 @@ public class Gnonogram_controller
 //======================================================================
 	private void viewer_solve_game()
 	{
+		var timer=new Timer();
+		timer.start();
 		int passes = solve_game(true, _advanced,_advanced);
+		timer.stop();
+		ulong microseconds;
+		double time_taken=timer.elapsed(out microseconds);
+		show_solver_grid();
 		switch (passes)
 		{
 			case -2:
@@ -651,10 +663,10 @@ public class Gnonogram_controller
 				break;
 			default:
 				_gnonogram_view.set_score_label(passes.to_string());
+				Utils.show_info_dialog((_("Solved in %8.3f seconds").printf(time_taken)));
 				break;
 		}
 
-		show_solver_grid();
 		change_state(GameState.SOLVING);
 
 	}

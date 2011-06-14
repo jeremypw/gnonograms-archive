@@ -1,20 +1,17 @@
 
   Gnonograms.   Nonogram puzzle generator and solver for Gtk/Gnome.
   -----------------------------------------------------------------------------------------------------
-    
+
   * Introduction
-    
-  
+   Gnonograms is an implementation for the Gnome desktop  of the Japanese logic puzzle "Nonograms", 	also known as "Tsunami", "Griddlers" .....". The object of the game is to discover the pattern in the grid which is encoded by the clues which are give for each row and column. Each clue is a series of numbers which represent blocks of filled in cells in the corresponding row or column.  Each number indicates how many cells are in the block it represents.  Each block must be separated by at least one empty cell from neighbouring blocks.  The order of the numbers in the clue shows the order in which the blocks appear in the row or column.
+
 
   * Installation & Licensing
-    
-    Please consult the INSTALL and COPYING files for more information.
-    
 
-  * Quick Start
-    
-   
-    Copyright 
+    Please consult the INSTALL and COPYING files for more information.
+
+
+   Copyright
 	Jeremy Wootten <jeremywootten@gmail.com> 2010 - 2011
 	except:
 	minver - Yorba Foundation 2009

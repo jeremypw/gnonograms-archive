@@ -17,12 +17,12 @@
  * As a special exception, if you use inline functions from this file, this
  * file does not by itself cause the resulting executable to be covered by
  * the GNU Lesser General Public License.
- * 
+ *
  *  Author:
  * 	Jeremy Wootten <jeremwootten@gmail.com>
  */
- 
- 
+
+
 using Gtk;
 using Gdk;
 
@@ -38,13 +38,13 @@ namespace Resource
 	public const string GAMEFILEEXTENSION=".gno";
 	public const string POSITIONFILENAME="currentposition";
 
-//Performace/capability related parameters	
+//Performace/capability related parameters
 	public static int MAXROWSIZE = 100; // max number rows
 	public static int MAXCOLSIZE = 100; //max number of cols
 	public static int MAXGRADE = 10; //max grade level
 	public static int MAXTRIES = 30; //max attempts to generate solvable game
 
-//Appearance related parameters	
+//Appearance related parameters
 	public static int MINFONTSIZE=6;
 	public static int MAXFONTSIZE=16;
 	public static string font_desc;
@@ -53,8 +53,8 @@ namespace Resource
 	public static double[] MINORGRIDDASH;
 	public static Gdk.Color[,] colors;
 	public const string BLOCKSEPARATOR=",";
-	
-//File location related parameters		
+
+//File location related parameters
 	public static string exec_dir;
 	public static string resource_dir;
 	public static string game_dir;
@@ -68,7 +68,7 @@ namespace Resource
 	{
 		prefix=_PREFIX;
 		stdout.printf("Prefix is %s \n",prefix);
-		stdout.printf("gettext package is %s \n",APP_GETTEXT_PACKAGE);		
+		stdout.printf("gettext package is %s \n",APP_GETTEXT_PACKAGE);
 
 		File exec_file =File.new_for_path(Environment.find_program_in_path(arg0));
 		exec_dir=exec_file.get_parent().get_path();
@@ -77,15 +77,15 @@ namespace Resource
 		installed=is_installed(exec_dir);
 		stdout.printf("Is installed is %s\n",installed.to_string());
 
-		resource_dir=installed ? exec_file.get_parent().get_parent().get_path()+"/share/gnonogram" : exec_dir;
+		resource_dir=installed ? exec_file.get_parent().get_parent().get_path()+"/share/gnonograms" : exec_dir;
 		stdout.printf("Resource_dir is %s \n",resource_dir);
-		
+
 		icon_dir=resource_dir+"/icons";
-//		manual_dir=resource_dir+"/Manual";
+		manual_dir=resource_dir+"/Manual";
 //		manual_dir="/home/jeremy/Mallard";
-		manual_dir="/media/shared/shared_data/Vala/Gnonograms/Manual";
+//		manual_dir="/media/shared/shared_data/Vala/Gnonograms/Manual";
 		game_dir=(Config.get_instance()).get_game_dir(resource_dir+"/games");
-		
+
 		game_name=(Config.get_instance()).get_game_name(DEFAULTGAMENAME);
 
 		colors = new Gdk.Color[2,4];
@@ -109,14 +109,14 @@ namespace Resource
 		Gdk.Color.parse(config_colors[3], out colors[solving,(int)CellState.FILLED]);
 
 		font_desc="Ariel";
-		MINORGRIDDASH={0.5, 3.0};		
+		MINORGRIDDASH={0.5, 3.0};
 	}
-	
+
 	private static bool is_installed (string exec_dir)
 	{
 		return exec_dir.has_prefix(prefix) ? true : false;
 	}
-	
+
 	public static string get_langpack_dir()
 	{
 		return resource_dir+"/locale";
@@ -161,7 +161,7 @@ namespace Resource
 		var hbox=new HBox(false,5);
 		hbox.add(label_box);
 		hbox.add(button_box);
-		
+
 		dialog.vbox.add(hbox);
 		dialog.show_all();
 		if (dialog.run()==ResponseType.OK)

@@ -130,8 +130,8 @@ GType my2_dcell_array_get_type (void) G_GNUC_CONST;
 enum  {
 	GNONOGRAM_MODEL_DUMMY_PROPERTY
 };
-Gnonogram_model* gnonogram_model_new (gint r, gint c);
-Gnonogram_model* gnonogram_model_construct (GType object_type, gint r, gint c);
+Gnonogram_model* gnonogram_model_new (void);
+Gnonogram_model* gnonogram_model_construct (GType object_type);
 My2DCellArray* my2_dcell_array_new (gint rows, gint cols, CellState init);
 My2DCellArray* my2_dcell_array_construct (GType object_type, gint rows, gint cols, CellState init);
 void gnonogram_model_check_solution (Gnonogram_model* self);
@@ -179,7 +179,7 @@ static gpointer _my2_dcell_array_ref0 (gpointer self) {
 }
 
 
-Gnonogram_model* gnonogram_model_construct (GType object_type, gint r, gint c) {
+Gnonogram_model* gnonogram_model_construct (GType object_type) {
 	Gnonogram_model* self = NULL;
 	My2DCellArray* _tmp0_ = NULL;
 	My2DCellArray* _tmp1_;
@@ -192,8 +192,8 @@ Gnonogram_model* gnonogram_model_construct (GType object_type, gint r, gint c) {
 	GRand* _tmp8_ = NULL;
 	GRand* _tmp9_;
 	self = (Gnonogram_model*) g_type_create_instance (object_type);
-	self->priv->_rows = r;
-	self->priv->_cols = c;
+	self->priv->_rows = 10;
+	self->priv->_cols = 10;
 	_tmp0_ = my2_dcell_array_new (resource_MAXROWSIZE, resource_MAXCOLSIZE, CELL_STATE_EMPTY);
 	_tmp1_ = _tmp0_;
 	_my2_dcell_array_unref0 (self->priv->_solution_data);
@@ -219,8 +219,8 @@ Gnonogram_model* gnonogram_model_construct (GType object_type, gint r, gint c) {
 }
 
 
-Gnonogram_model* gnonogram_model_new (gint r, gint c) {
-	return gnonogram_model_construct (TYPE_GNONOGRAM_MODEL, r, c);
+Gnonogram_model* gnonogram_model_new (void) {
+	return gnonogram_model_construct (TYPE_GNONOGRAM_MODEL);
 }
 
 

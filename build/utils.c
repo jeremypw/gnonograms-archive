@@ -542,7 +542,7 @@ GDataInputStream* utils_open_datainputstream (const gchar* filename) {
 	_tmp7_ = g_file_read (file, NULL, &_inner_error_);
 	_tmp8_ = _tmp7_;
 	if (_inner_error_ != NULL) {
-		goto __catch7_g_error;
+		goto __catch8_g_error;
 	}
 	_tmp9_ = _tmp8_;
 	_tmp10_ = g_data_input_stream_new (G_INPUT_STREAM (_tmp9_));
@@ -550,8 +550,8 @@ GDataInputStream* utils_open_datainputstream (const gchar* filename) {
 	_g_object_unref0 (stream);
 	stream = _tmp11_;
 	_g_object_unref0 (_tmp9_);
-	goto __finally7;
-	__catch7_g_error:
+	goto __finally8;
+	__catch8_g_error:
 	{
 		GError * e;
 		e = _inner_error_;
@@ -563,7 +563,7 @@ GDataInputStream* utils_open_datainputstream (const gchar* filename) {
 		_g_object_unref0 (stream);
 		return result;
 	}
-	__finally7:
+	__finally8:
 	if (_inner_error_ != NULL) {
 		_g_object_unref0 (file);
 		_g_object_unref0 (stream);
@@ -946,7 +946,7 @@ gchar* utils_convert_html (const gchar* html) {
 	regex = _tmp1_;
 	if (_inner_error_ != NULL) {
 		if (_inner_error_->domain == G_REGEX_ERROR) {
-			goto __catch8_g_regex_error;
+			goto __catch9_g_regex_error;
 		}
 		g_critical ("file %s: line %d: unexpected error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
 		g_clear_error (&_inner_error_);
@@ -1010,8 +1010,8 @@ gchar* utils_convert_html (const gchar* html) {
 	return result;
 	s = (_vala_array_free (s, s_length1, (GDestroyNotify) g_free), NULL);
 	_g_regex_unref0 (regex);
-	goto __finally8;
-	__catch8_g_regex_error:
+	goto __finally9;
+	__catch9_g_regex_error:
 	{
 		GError * re;
 		gchar* _tmp10_;
@@ -1023,7 +1023,7 @@ gchar* utils_convert_html (const gchar* html) {
 		_g_error_free0 (re);
 		return result;
 	}
-	__finally8:
+	__finally9:
 	g_critical ("file %s: line %d: uncaught error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
 	g_clear_error (&_inner_error_);
 	return NULL;

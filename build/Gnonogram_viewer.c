@@ -431,7 +431,7 @@ static void __lambda14__gtk_menu_item_activate (GtkMenuItem* _sender, gpointer s
 
 
 static void _lambda15_ (Gnonogram_view* self) {
-	g_signal_emit_by_name (self, "loadgame");
+	g_signal_emit_by_name (self, "loadgame", "");
 }
 
 
@@ -1070,7 +1070,7 @@ static void __lambda2__gtk_tool_button_clicked (GtkToolButton* _sender, gpointer
 
 
 static void _lambda3_ (Gnonogram_view* self) {
-	g_signal_emit_by_name (self, "loadgame");
+	g_signal_emit_by_name (self, "loadgame", "");
 }
 
 
@@ -1524,10 +1524,10 @@ static void gnonogram_view_show_manual (Gnonogram_view* self) {
 	_tmp1_ = gtk_get_current_event_time ();
 	gtk_show_uri (_tmp0_, manual_uri, _tmp1_, &_inner_error_);
 	if (_inner_error_ != NULL) {
-		goto __catch6_g_error;
+		goto __catch7_g_error;
 	}
-	goto __finally6;
-	__catch6_g_error:
+	goto __finally7;
+	__catch7_g_error:
 	{
 		GError * e;
 		e = _inner_error_;
@@ -1535,7 +1535,7 @@ static void gnonogram_view_show_manual (Gnonogram_view* self) {
 		utils_show_warning_dialog (e->message);
 		_g_error_free0 (e);
 	}
-	__finally6:
+	__finally7:
 	if (_inner_error_ != NULL) {
 		_g_free0 (manual_uri);
 		g_critical ("file %s: line %d: uncaught error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
@@ -1913,7 +1913,7 @@ static void gnonogram_view_class_init (Gnonogram_viewClass * klass) {
 	g_signal_new ("solvegame", TYPE_GNONOGRAM_VIEW, G_SIGNAL_RUN_LAST, 0, NULL, NULL, g_cclosure_marshal_VOID__VOID, G_TYPE_NONE, 0);
 	g_signal_new ("savegame", TYPE_GNONOGRAM_VIEW, G_SIGNAL_RUN_LAST, 0, NULL, NULL, g_cclosure_marshal_VOID__VOID, G_TYPE_NONE, 0);
 	g_signal_new ("savepictogame", TYPE_GNONOGRAM_VIEW, G_SIGNAL_RUN_LAST, 0, NULL, NULL, g_cclosure_marshal_VOID__VOID, G_TYPE_NONE, 0);
-	g_signal_new ("loadgame", TYPE_GNONOGRAM_VIEW, G_SIGNAL_RUN_LAST, 0, NULL, NULL, g_cclosure_marshal_VOID__VOID, G_TYPE_NONE, 0);
+	g_signal_new ("loadgame", TYPE_GNONOGRAM_VIEW, G_SIGNAL_RUN_LAST, 0, NULL, NULL, g_cclosure_marshal_VOID__STRING, G_TYPE_NONE, 1, G_TYPE_STRING);
 	g_signal_new ("saveposition", TYPE_GNONOGRAM_VIEW, G_SIGNAL_RUN_LAST, 0, NULL, NULL, g_cclosure_marshal_VOID__VOID, G_TYPE_NONE, 0);
 	g_signal_new ("loadposition", TYPE_GNONOGRAM_VIEW, G_SIGNAL_RUN_LAST, 0, NULL, NULL, g_cclosure_marshal_VOID__VOID, G_TYPE_NONE, 0);
 	g_signal_new ("quitgamesignal", TYPE_GNONOGRAM_VIEW, G_SIGNAL_RUN_LAST, 0, NULL, NULL, g_cclosure_marshal_VOID__VOID, G_TYPE_NONE, 0);

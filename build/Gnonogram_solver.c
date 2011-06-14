@@ -201,8 +201,8 @@ enum  {
 	GNONOGRAM_SOLVER_DUMMY_PROPERTY
 };
 #define GNONOGRAM_SOLVER_GUESSES_BEFORE_ASK 50000
-Gnonogram_solver* gnonogram_solver_new (gint rows, gint cols, gboolean testing, gboolean debug, gboolean test_column, gint test_idx);
-Gnonogram_solver* gnonogram_solver_construct (GType object_type, gint rows, gint cols, gboolean testing, gboolean debug, gboolean test_column, gint test_idx);
+Gnonogram_solver* gnonogram_solver_new (gboolean testing, gboolean debug, gboolean test_column, gint test_idx);
+Gnonogram_solver* gnonogram_solver_construct (GType object_type, gboolean testing, gboolean debug, gboolean test_column, gint test_idx);
 My2DCellArray* my2_dcell_array_new (gint rows, gint cols, CellState init);
 My2DCellArray* my2_dcell_array_construct (GType object_type, gint rows, gint cols, CellState init);
 Gnonogram_region* gnonogram_region_new (My2DCellArray* grid);
@@ -253,7 +253,7 @@ static void _vala_array_destroy (gpointer array, gint array_length, GDestroyNoti
 static void _vala_array_free (gpointer array, gint array_length, GDestroyNotify destroy_func);
 
 
-Gnonogram_solver* gnonogram_solver_construct (GType object_type, gint rows, gint cols, gboolean testing, gboolean debug, gboolean test_column, gint test_idx) {
+Gnonogram_solver* gnonogram_solver_construct (GType object_type, gboolean testing, gboolean debug, gboolean test_column, gint test_idx) {
 	Gnonogram_solver* self = NULL;
 	My2DCellArray* _tmp0_ = NULL;
 	My2DCellArray* _tmp1_;
@@ -294,13 +294,14 @@ Gnonogram_solver* gnonogram_solver_construct (GType object_type, gint rows, gint
 			}
 		}
 	}
-	gnonogram_solver_set_dimensions (self, rows, cols);
+	self->priv->_rows = 10;
+	self->priv->_cols = 10;
 	return self;
 }
 
 
-Gnonogram_solver* gnonogram_solver_new (gint rows, gint cols, gboolean testing, gboolean debug, gboolean test_column, gint test_idx) {
-	return gnonogram_solver_construct (TYPE_GNONOGRAM_SOLVER, rows, cols, testing, debug, test_column, test_idx);
+Gnonogram_solver* gnonogram_solver_new (gboolean testing, gboolean debug, gboolean test_column, gint test_idx) {
+	return gnonogram_solver_construct (TYPE_GNONOGRAM_SOLVER, testing, debug, test_column, test_idx);
 }
 
 

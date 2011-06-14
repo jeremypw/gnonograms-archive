@@ -216,6 +216,7 @@
 	private bool full_fix()
 	{	if (_debug) stdout.printf("\n\nfull_fix\n");
 
+
 		//stdout.printf("Capped range audit\n");
 		if (capped_range_audit()||_in_error||tags_to_status()) {
 			//stdout.printf("Capped range audit\n");
@@ -240,7 +241,7 @@
 		if (filled_subregion_audit()||_in_error||tags_to_status()) {
 			//stdout.printf("filled sub region made change\n");
 			return true;}
-		//stdout.printf("Fill_gaps\n");
+		//stdout.printf("Fill_gaps\n"); //Redundant?
 		if (fill_gaps()||_in_error||tags_to_status()) {
 			//stdout.printf("fill gaps made change\n");
 			return true;}
@@ -307,6 +308,7 @@
 						}
 
 						if (start_capped || end_capped)
+						//TODO look for empty cells nearer than difference between smallest and length.
 						{
 							int smallest=find_smallest_possible_in_cell(idx);
 

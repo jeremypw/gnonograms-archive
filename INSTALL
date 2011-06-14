@@ -2,26 +2,40 @@
     Gnonograms Installation
     ---------------------
 
-    To build and install gnonograms, type the following commands:
+	If you have the Vala source package then you will need to have the Vala compiler installed as well as the usual build tools (gcc etc).
+	Otherwise download the C source version.
+
+	Put the tarball in a directory for which you have read/write and execute rights.
+
+	Extract the files from the tar.gz file - this creates a gnonograms-0.8.0 directory.
+
+	Open a terminal in this directory
+
+	Type the following commands:
 
     $ ./configure
     $ make
-   [ $ make install  - not currently recommended - installer not fully tested]
+
+    This compiles the source code and creates an executable 'gnonograms'.
+
+    Type ./gnonograms to run the program.
+
+    [To install the program on the desktop:
+	$ make install  - not currently recommended - installer not fully tested
 
     * By default, gnonogramsl will install under /usr/local.  The configure script
       can customize the prefix directory.  Run ./configure --help for
       instructions and other installation options.
-  
+
     * You may need to execute "make install" as root (i.e. sudo make install)
-      if installing to system directories.
+      if installing to system directories.]
 
     *RECOMMENDED:  If you wish to try gnonograms before installing it, you may execute it
-      directly from its build directory.  
+      directly from its build directory.
 
 ****TO DO**************
 	Note that certain desktop integration  (such as being listed in an application menu) requires full installation.
 
-    Once installed, gnonograms will be available 
-
+    Once installed, gnonograms will be available
 
 

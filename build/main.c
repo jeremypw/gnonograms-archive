@@ -20,7 +20,7 @@
  * As a special exception, if you use inline functions from this file, this
  * file does not by itself cause the resulting executable to be covered by
  * the GNU Lesser General Public License.
- * 
+ *
  *  Author:
  * 	Jeremy Wootten <jeremwootten@gmail.com>
  */
@@ -43,6 +43,7 @@
 typedef struct _Cell Cell;
 
 #define TYPE_BUTTON_PRESS (button_press_get_type ())
+#define _g_free0(var) (var = (g_free (var), NULL))
 
 #define TYPE_GNONOGRAM_CONTROLLER (gnonogram_controller_get_type ())
 #define GNONOGRAM_CONTROLLER(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), TYPE_GNONOGRAM_CONTROLLER, Gnonogram_controller))
@@ -54,7 +55,6 @@ typedef struct _Cell Cell;
 typedef struct _Gnonogram_controller Gnonogram_controller;
 typedef struct _Gnonogram_controllerClass Gnonogram_controllerClass;
 #define _gnonogram_controller_unref0(var) ((var == NULL) ? NULL : (var = (gnonogram_controller_unref (var), NULL)))
-#define _g_free0(var) (var = (g_free (var), NULL))
 
 typedef enum  {
 	GAME_STATE_SETTING,
@@ -106,8 +106,8 @@ gint _vala_main (gchar** args, int args_length1);
 void resource_init (const gchar* arg0);
 #define RESOURCE_APP_GETTEXT_PACKAGE GETTEXT_PACKAGE
 gchar* resource_get_langpack_dir (void);
-Gnonogram_controller* gnonogram_controller_new (gint r, gint c);
-Gnonogram_controller* gnonogram_controller_construct (GType object_type, gint r, gint c);
+Gnonogram_controller* gnonogram_controller_new (const gchar* game_filename);
+Gnonogram_controller* gnonogram_controller_construct (GType object_type, const gchar* game_filename);
 gpointer gnonogram_controller_ref (gpointer instance);
 void gnonogram_controller_unref (gpointer instance);
 GParamSpec* param_spec_gnonogram_controller (const gchar* name, const gchar* nick, const gchar* blurb, GType object_type, GParamFlags flags);
@@ -232,90 +232,60 @@ GType button_press_get_type (void) {
 
 gint _vala_main (gchar** args, int args_length1) {
 	gint result = 0;
-	gboolean testing;
-	gboolean debug;
-	gboolean test_column;
-	gint test_idx;
-	gint _start_rows;
-	gint _start_cols;
-	gchar* _tmp4_;
+	gchar* _tmp0_;
+	gchar* game_filename;
+	gchar* _tmp8_;
 	gchar* package_name;
-	gchar* _tmp5_ = NULL;
+	gchar* _tmp9_ = NULL;
 	gchar* langpackdir;
-	Gnonogram_controller* _tmp6_ = NULL;
-	Gnonogram_controller* _tmp7_;
-	testing = FALSE;
-	debug = FALSE;
-	test_column = FALSE;
-	test_idx = -1;
-	_start_rows = -1;
-	_start_cols = -1;
-	{
-		gint i;
-		i = 1;
-		{
-			gboolean _tmp0_;
-			_tmp0_ = TRUE;
-			while (TRUE) {
-				if (!_tmp0_) {
-					i++;
-				}
-				_tmp0_ = FALSE;
-				if (!(i < args_length1)) {
-					break;
-				}
-				if (g_strcmp0 (args[i], "--test") == 0) {
-					testing = TRUE;
-					_start_rows = 1;
-					_start_cols = 10;
-					debug = TRUE;
-					continue;
-				}
-				if (g_strcmp0 (args[i], "--rows") == 0) {
-					gint _tmp1_;
-					_tmp1_ = atoi (args[i + 1]);
-					_start_rows = _tmp1_;
-					i++;
-					continue;
-				}
-				if (g_strcmp0 (args[i], "--cols") == 0) {
-					gint _tmp2_;
-					_tmp2_ = atoi (args[i + 1]);
-					_start_cols = _tmp2_;
-					i++;
-					continue;
-				}
-				if (g_strcmp0 (args[i], "--debug") == 0) {
-					if ((args_length1 - i) >= 2) {
-						gint _tmp3_;
-						debug = FALSE;
-						test_column = g_strcmp0 (args[i + 1], "column") == 0;
-						_tmp3_ = atoi (args[i + 2]);
-						test_idx = _tmp3_;
-					} else {
-						debug = TRUE;
-					}
-					continue;
-				}
-			}
+	Gnonogram_controller* _tmp10_ = NULL;
+	Gnonogram_controller* _tmp11_;
+	_tmp0_ = g_strdup ("");
+	game_filename = _tmp0_;
+	if (args_length1 >= 2) {
+		gchar* _tmp1_;
+		gchar* _tmp2_;
+		gboolean _tmp3_ = FALSE;
+		gboolean _tmp4_;
+		_tmp1_ = g_strdup (args[1]);
+		_tmp2_ = _tmp1_;
+		_g_free0 (game_filename);
+		game_filename = _tmp2_;
+		_tmp4_ = g_str_has_suffix (game_filename, ".pattern");
+		if (_tmp4_) {
+			_tmp3_ = TRUE;
+		} else {
+			gboolean _tmp5_;
+			_tmp5_ = g_str_has_suffix (game_filename, ".gno");
+			_tmp3_ = _tmp5_;
+		}
+		if (_tmp3_) {
+		} else {
+			gchar* _tmp6_;
+			gchar* _tmp7_;
+			_tmp6_ = g_strdup ("");
+			_tmp7_ = _tmp6_;
+			_g_free0 (game_filename);
+			game_filename = _tmp7_;
 		}
 	}
 	resource_init (args[0]);
 	gtk_init (&args_length1, &args);
-	_tmp4_ = g_strdup (RESOURCE_APP_GETTEXT_PACKAGE);
-	package_name = _tmp4_;
-	_tmp5_ = resource_get_langpack_dir ();
-	langpackdir = _tmp5_;
+	_tmp8_ = g_strdup (RESOURCE_APP_GETTEXT_PACKAGE);
+	package_name = _tmp8_;
+	_tmp9_ = resource_get_langpack_dir ();
+	langpackdir = _tmp9_;
 	bindtextdomain (package_name, langpackdir);
 	bind_textdomain_codeset (package_name, "UTF-8");
 	textdomain (package_name);
-	_tmp6_ = gnonogram_controller_new (_start_rows, _start_cols);
-	_tmp7_ = _tmp6_;
-	_gnonogram_controller_unref0 (_tmp7_);
+	_tmp10_ = gnonogram_controller_new (game_filename);
+	_tmp11_ = _tmp10_;
+	_gnonogram_controller_unref0 (_tmp11_);
 	gtk_main ();
 	result = 0;
 	_g_free0 (langpackdir);
 	_g_free0 (package_name);
+	_g_free0 (game_filename);
 	return result;
 }
 

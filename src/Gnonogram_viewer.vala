@@ -30,7 +30,7 @@ public class Gnonogram_view : Gtk.Window
 	public signal void solvegame();
 	public signal void savegame();
 	public signal void savepictogame();
-	public signal void loadgame();
+	public signal void loadgame(string fname);
 	public signal void saveposition();
 	public signal void loadposition();
 	public signal void quitgamesignal();
@@ -218,7 +218,7 @@ public class Gnonogram_view : Gtk.Window
 			helpsubmenu.add(manualmenuitem);
 
 		newmenuitem.activate.connect(()=>{newgame();});
-		loadpuzzlemenuitem.activate.connect(()=>{loadgame();});
+		loadpuzzlemenuitem.activate.connect(()=>{loadgame("");});
 		savepuzzlemenuitem.activate.connect(()=>{savegame();});
 		savepictomenuitem.activate.connect(()=>{savepictogame();});
 		loadpositionmenuitem.activate.connect(()=>{loadposition();});
@@ -318,7 +318,7 @@ public class Gnonogram_view : Gtk.Window
 
 		new_tool.clicked.connect(()=>{newgame();});
 		save_as_tool.clicked.connect(()=>{savegame();});
-		load_tool.clicked.connect(()=>{loadgame();});
+		load_tool.clicked.connect(()=>{loadgame("");});
 		_hide_tool.toggled.connect(toggle_execute);
 		_check_tool.clicked.connect(()=>{checkerrors();});
 		restart_tool.clicked.connect(()=>{restartgame();});

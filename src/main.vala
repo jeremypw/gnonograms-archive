@@ -17,11 +17,11 @@
  * As a special exception, if you use inline functions from this file, this
  * file does not by itself cause the resulting executable to be covered by
  * the GNU Lesser General Public License.
- * 
+ *
  *  Author:
  * 	Jeremy Wootten <jeremwootten@gmail.com>
  */
- 
+
  public enum GameState {
 	SETTING,
 	SOLVING
@@ -34,12 +34,12 @@ public enum CellState {
 	ERROR,
 	COMPLETED
 	}
-	
+
 public enum Gnonogram_FileType {
 	GAME,
 	POSITION
 }
-	
+
 public struct Cell {
 		public int row;
 		public int col;
@@ -52,7 +52,7 @@ public struct Cell {
 				return false;
 			}
 		}
-	
+
 		public void copy(Cell b) {
 			this.row=b.row;
 			this.col=b.col;
@@ -88,13 +88,15 @@ public enum ButtonPress {
 //======================================================================
 
 public static int main(string[] args)  {
-	bool testing=false;
+
+	string game_filename="";
+//	int _start_rows=-1;
+//	int _start_cols=-1;
+/*	bool testing=false;
 	bool debug=false;
 	bool test_column=false;
 	int test_idx=-1;
-	int _start_rows=-1;
-	int _start_cols=-1;
-	
+
 	for (int i=1;i<args.length;i++) {
 		if (args[i]=="--test") {testing=true; _start_rows=1; _start_cols=10; debug=true; continue;}
 		if (args[i]=="--rows") {_start_rows=int.parse(args[i+1]);i++;continue;}
@@ -109,18 +111,25 @@ public static int main(string[] args)  {
 			continue;
 		}
 	}
+*/
+	if (args.length>=2) //a filename has been provided
+	{
+		game_filename=args[1];
+		if (game_filename.has_suffix(".pattern")||game_filename.has_suffix(".gno")){}
+		else game_filename="";
+	}
 
 	Resource.init(args[0]);
 	Gtk.init(ref args);
-	
+
 	string package_name=Resource.APP_GETTEXT_PACKAGE;
 	string langpackdir=Resource.get_langpack_dir();
 	Intl.bindtextdomain(package_name, langpackdir);
 	Intl.bind_textdomain_codeset(package_name, "UTF-8");
 	Intl.textdomain(package_name);
-	
-	new Gnonogram_controller(_start_rows,_start_cols);//, testing, debug, test_column, test_idx);
-	
+
+	new Gnonogram_controller(game_filename);//, testing, debug, test_column, test_idx);
+
 	Gtk.main();
 	return 0;
 }
