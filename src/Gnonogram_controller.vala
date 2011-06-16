@@ -94,7 +94,7 @@ public class Gnonogram_controller
 		_gnonogram_view.resizable=false;
 		try
 		{
-			_gnonogram_view.set_icon_from_file(Resource.icon_dir+"/gnonograms.png");
+			_gnonogram_view.set_icon_from_file(Resource.icon_dir+"/gnonograms.svg");
 		}
 		catch (GLib.Error e) {stdout.printf("Icon file not loaded\n");}
 

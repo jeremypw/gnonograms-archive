@@ -3,5 +3,6 @@
    <mime-type type="application/x-gnonogram-puzzle">
      <comment>Gnonogram puzzle file</comment>
      <glob pattern="*.gno"/>
+     <icon name="application-x-gnonogram-puzzle.png"/>
    </mime-type>
 </mime-info>

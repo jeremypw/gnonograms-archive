@@ -807,7 +807,7 @@ static void gnonogram_controller_create_view (Gnonogram_controller* self) {
 	gtk_window_set_title (GTK_WINDOW (self->_gnonogram_view), _tmp8_);
 	GTK_WINDOW (self->_gnonogram_view)->position = (guint) GTK_WIN_POS_CENTER;
 	gtk_window_set_resizable (GTK_WINDOW (self->_gnonogram_view), FALSE);
-	_tmp9_ = g_strconcat (resource_icon_dir, "/gnonograms.png", NULL);
+	_tmp9_ = g_strconcat (resource_icon_dir, "/gnonograms.svg", NULL);
 	gtk_window_set_icon_from_file (GTK_WINDOW (self->_gnonogram_view), _tmp9_, &_inner_error_);
 	_g_free0 (_tmp9_);
 	if (_inner_error_ != NULL) {

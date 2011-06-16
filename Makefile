@@ -43,7 +43,6 @@ SRC_FILES = \
 
 RESOURCE_FILES = \
 
-
 SRC_HEADER_FILES =
 
 TEXT_FILES = \
@@ -92,7 +91,11 @@ LANG_STAMP = $(LOCAL_LANG_DIR)/.langstamp
 
 DIST_FILES = Makefile configure minver
 DIST_FILES+= $(TEXT_FILES) $(EXPANDED_PO_FILES) $(EXPANDED_SRC_FILES)
-DIST_FILES+= po/gnonograms.pot icons/*  games/*.gno Manual/*.* misc/*.*
+DIST_FILES+= po/gnonograms.pot
+DIST_FILES+=icons/*.png icons/*.svg
+DIST_FILES+=games/*.gno
+DIST_FILES+=Manual/*.page Manual/*.png
+DIST_FILES+=misc/gnonograms.desktop.head misc/x-gnonogram-puzzle.xml
 
 PACKAGE_ORIG_GZ = $(PROGRAM)_`parsechangelog | grep Version | sed 's/.*: //'`.orig.tar.gz
 
@@ -110,17 +113,13 @@ CFLAGS = -O2 -g -pipe
 endif
 endif
 
-# Required for gudev-1.0
-#CFLAGS += -DG_UDEV_API_IS_SUBJECT_TO_CHANGE
-
 #-----------------------------------TARGETS----------------------------------------------
 all: $(PROGRAM)
-###########
+###############
 
 $(PROGRAM): $(EXPANDED_OBJ_FILES) $(RESOURCES) $(LANG_STAMP)
 ############################################################
 	$(CC) $(EXPANDED_OBJ_FILES) $(CFLAGS) $(RESOURCES) $(VALA_LDFLAGS) -o $@
-
 
 $(EXPANDED_OBJ_FILES): %.o: %.c $(CONFIG_IN) Makefile
 ####################################################
@@ -132,15 +131,15 @@ $(EXPANDED_C_FILES): $(VALA_STAMP)
 	@
 
 $(LANG_STAMP): $(EXPANDED_PO_FILES)
-##########################
+#####################################
 	$(foreach po,$(SUPPORTED_LANGUAGES),`mkdir -p $(LOCAL_LANG_DIR)/$(po)/LC_MESSAGES ; \
         msgfmt -o $(LOCAL_LANG_DIR)/$(po)/LC_MESSAGES/gnonograms.mo po/$(po).po`)
 	touch $(LANG_STAMP)
 
-
 $(VALA_STAMP): $(EXPANDED_SRC_FILES) $(EXPANDED_VAPI_FILES) $(EXPANDED_SRC_HEADER_FILES) Makefile \
 	$(CONFIG_IN)
 #####################################################################
+
 ifndef NO_VALA
 	@ ./minver `valac --version | awk '{print $$2}'` $(MIN_VALAC_VERSION) || ( echo 'gnonograms requires Vala compiler $(MIN_VALAC_VERSION) or greater.  You are running' `valac --version` '\b.'; exit 1 )
 
@@ -156,9 +155,7 @@ endif
 	mkdir -p $(BUILD_DIR)
 	$(VALAC) --ccode --directory=$(BUILD_DIR) --basedir=src $(VALAFLAGS) \
 	$(foreach pkg,$(PKGS),--pkg=$(pkg)) \
-	$(foreach vapidir,$(VAPI_DIRS),--vapidir=$(vapidir)) \
 	$(foreach def,$(DEFINES),-X -D$(def)) \
-	$(foreach hdir,$(HEADER_DIRS),-X -I$(hdir)) \
 	$(VALA_DEFINES) \
 	$(EXPANDED_SRC_FILES)
 	touch $@
@@ -202,7 +199,6 @@ dist: $(DIST_FILES)
 dist_with_c:
 ###########
 	mkdir -p $(PROGRAM)-$(VERSION)c
-	mkdir -p $(PROGRAM)-$(VERSION)c/games
 	cp --parents $(DIST_FILES) $(PROGRAM)-$(VERSION)c
 	cp --parents $(EXPANDED_C_FILES) $(PROGRAM)-$(VERSION)c
 	tar --gzip -cvf $(PROGRAM)-$(VERSION)c.tar.gz $(PROGRAM)-$(VERSION)c
@@ -229,27 +225,12 @@ install:
 	$(INSTALL_DATA) icons/* $(DESTDIR)$(PREFIX)/share/gnonograms/icons
 	mkdir -p $(DESTDIR)$(PREFIX)/share/gnonograms/games
 	$(INSTALL_DATA) games/* $(DESTDIR)$(PREFIX)/share/gnonograms/games
-	mkdir -p $(DESTDIR)$(PREFIX)/share/icons/hicolor/128x128/apps
-	$(INSTALL_DATA) icons/gnonograms128.png $(DESTDIR)$(PREFIX)/share/icons/hicolor/128x128/apps/gnonograms.png
 	mkdir -p $(DESTDIR)$(PREFIX)/share/icons/hicolor/48x48/apps
 	$(INSTALL_DATA) icons/gnonograms48.png $(DESTDIR)$(PREFIX)/share/icons/hicolor/48x48/apps/gnonograms.png
-
-ifndef DISABLE_ICON_UPDATE
-	-gtk-update-icon-cache -t -f $(DESTDIR)$(PREFIX)/share/icons/hicolor || :
-endif
-	mkdir -p $(DESTDIR)$(PREFIX)/share/applications
-	$(INSTALL_DATA) misc/gnonograms.desktop $(DESTDIR)$(PREFIX)/share/applications
-
-ifndef DISABLE_DESKTOP_UPDATE
-	-update-desktop-database || :
-endif
-
-#ifndef DISABLE_SCHEMAS_INSTALL
-#	GCONF_CONFIG_SOURCE=`gconftool-2 --get-default-source` gconftool-2 --makefile-install-rule misc/gnonogram.schemas
-#else
-#	mkdir -p $(DESTDIR)$(SCHEMA_FILE_DIR)
-#	$(INSTALL_DATA) misc/gnonogram.schemas $(DESTDIR)$(SCHEMA_FILE_DIR)
-#endif
+	mkdir -p $(DESTDIR)$(PREFIX)/share/icons/hicolor/48x48/mimetypes
+	$(INSTALL_DATA) icons/gnonogram-puzzle.png $(DESTDIR)$(PREFIX)/share/icons/hicolor/48x48/mimetypes/application-x-gnomogram-puzzle.png
+	mkdir -p $(DESTDIR)$(PREFIX)/share/icons/hicolor/scalable/apps
+	$(INSTALL_DATA) icons/gnonograms.svg $(DESTDIR)$(PREFIX)/share/icons/hicolor/scalable/apps/gnonograms.svg
 
 	-$(foreach lang,$(SUPPORTED_LANGUAGES),`mkdir -p $(SYSTEM_LANG_DIR)/$(lang)/LC_MESSAGES ; \
         $(INSTALL_DATA) $(LOCAL_LANG_DIR)/$(lang)/LC_MESSAGES/gnonograms.mo \
@@ -258,28 +239,26 @@ endif
 	mkdir -p $(DESTDIR)$(PREFIX)/share/mime/packages
 	$(INSTALL_DATA) misc/x-gnonogram-puzzle.xml $(DESTDIR)$(PREFIX)/share/mime/packages
 
+	mkdir -p $(DESTDIR)$(PREFIX)/share/applications
+	$(INSTALL_DATA) misc/gnonograms.desktop $(DESTDIR)$(PREFIX)/share/applications
+
+	update-desktop-database
 	update-mime-database $(DESTDIR)$(PREFIX)/share/mime
 
 uninstall:
 ######
 	rm -f $(DESTDIR)$(PREFIX)/bin/$(PROGRAM)
 	rm -fr $(DESTDIR)$(PREFIX)/share/gnonograms
-	rm -fr $(DESTDIR)$(PREFIX)/share/icons/hicolor/128x128/gnonograms.png	rm -fr $(DESTDIR)$(PREFIX)/share/icons/hicolor/48x48/gnonograms.png
+	rm -fr $(DESTDIR)$(PREFIX)/share/icons/hicolor/scalable/apps/gnonograms.png
+	rm -fr $(DESTDIR)$(PREFIX)/share/icons/hicolor/48x48/apps/gnonograms.png
+	rm -fr $(DESTDIR)$(PREFIX)/share/icons/hicolor/48x48/mimetypes/application-x-gnonogram-puzzle.png
 	rm -f $(DESTDIR)$(PREFIX)/share/applications/gnonograms.desktop
 	rm -f misc/gnonograms.desktop
 	rm -f $(DESTDIR)$(PREFIX)/share/mime/packages/x-gnonogram-puzzle.xml
 
 	update-mime-database $(DESTDIR)$(PREFIX)/share/mime
+	update-desktop-database
 
-ifndef DISABLE_DESKTOP_UPDATE
-	-update-desktop-database || :
-endif
-
-#ifndef DISABLE_SCHEMAS_INSTALL
-#	GCONF_CONFIG_SOURCE=`gconftool-2 --get-default-source` gconftool-2 --makefile-uninstall-rule misc/gnonogram.schemas
-#else
-#	rm -f $(DESTDIR)$(SCHEMA_FILE_DIR)/gnonogram.schemas
-#endif
 
 	$(foreach lang,$(SUPPORTED_LANGUAGES),`rm -f $(SYSTEM_LANG_DIR)/$(lang)/LC_MESSAGES/gnonograms.mo`)
 
