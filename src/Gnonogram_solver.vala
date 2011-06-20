@@ -118,7 +118,7 @@
 		}
 		return 0;
 	}
-//======================================================================
+////======================================================================
 	private int simple_solver(bool debug, bool log_error=false)
 	{//stdout.printf("Simple solver\n");
 		bool changed=true;
@@ -137,10 +137,6 @@
 				{
 					if(_regions[i].message!="")stdout.printf("Region - %d: %s\n",i,_regions[i].message);
 				}
-				//TEST
-//				showsolvergrid();
-//				Utils.show_confirm_dialog("Continue?");
-
 				if (_regions[i]._in_error) return -1;
 			}
 
@@ -155,7 +151,6 @@
 		if (pass>30) stdout.printf("Simple solver - too many passes\n");
 		return 0;
 	}
-
 //======================================================================
 	public bool solved()
 	{
@@ -165,10 +160,6 @@
 		}
 		return true;
 	}
-//======================================================================
-// Debugging assistants
-//	public bool get_current_iscolumn() {return _regions[_current_region]._is_column;}
-//	public int get_current_index() {return _regions[_current_region]._index;}
 //======================================================================
 	private int advanced_solver(CellState[] grid_store, bool debug)
 	//single cell guesses, depth 1 (no recursion)

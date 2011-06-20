@@ -108,6 +108,7 @@ typedef struct _Cell Cell;
 #define _g_object_unref0(var) ((var == NULL) ? NULL : (var = (g_object_unref (var), NULL)))
 #define _gnonogram_model_unref0(var) ((var == NULL) ? NULL : (var = (gnonogram_model_unref (var), NULL)))
 #define _gnonogram_solver_unref0(var) ((var == NULL) ? NULL : (var = (gnonogram_solver_unref (var), NULL)))
+#define _g_timer_destroy0(var) ((var == NULL) ? NULL : (var = (g_timer_destroy (var), NULL)))
 
 #define TYPE_CONFIG (config_get_type ())
 #define CONFIG(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), TYPE_CONFIG, Config))
@@ -138,7 +139,6 @@ typedef struct _Gnonogram_filereader Gnonogram_filereader;
 typedef struct _Gnonogram_filereaderClass Gnonogram_filereaderClass;
 typedef struct _Gnonogram_filereaderPrivate Gnonogram_filereaderPrivate;
 #define _gnonogram_filereader_unref0(var) ((var == NULL) ? NULL : (var = (gnonogram_filereader_unref (var), NULL)))
-#define _g_timer_destroy0(var) ((var == NULL) ? NULL : (var = (g_timer_destroy (var), NULL)))
 
 #define TYPE_MY2_DCELL_ARRAY (my2_dcell_array_get_type ())
 #define MY2_DCELL_ARRAY(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), TYPE_MY2_DCELL_ARRAY, My2DCellArray))
@@ -189,18 +189,19 @@ typedef enum  {
 } GameState;
 
 struct _Gnonogram_controllerPrivate {
-	gint _rows;
-	gint _cols;
 	Cell _current_cell;
 	Cell _previous_cell;
+	GTimer* _timer;
+	GameState __state;
 	gboolean _is_button_down;
 	gboolean _have_solution;
-	GameState __state;
 	gboolean _gridlinesvisible;
 	gboolean _debug;
 	gboolean _advanced;
 	gboolean _difficult;
 	gint _grade;
+	gint _rows;
+	gint _cols;
 };
 
 typedef enum  {
@@ -403,6 +404,7 @@ void gnonogram_labelbox_resize (Gnonogram_LabelBox* self, gint new_size, gint ot
 void gnonogram_cellgrid_resize (Gnonogram_CellGrid* self, gint r, gint c);
 GType button_press_get_type (void) G_GNUC_CONST;
 void gnonogram_controller_update_cell (Gnonogram_controller* self, Cell* c, gboolean highlight);
+void utils_show_info_dialog (const gchar* msg);
 static void gnonogram_controller_highlight_labels (Gnonogram_controller* self, Cell* c, gboolean is_highlight);
 void gnonogram_cellgrid_draw_cell (Gnonogram_CellGrid* self, Cell* cell, GameState gs, gboolean highlight);
 void cell_copy (Cell *self, Cell* b);
@@ -412,6 +414,8 @@ void gnonogram_labelbox_highlight (Gnonogram_LabelBox* self, gint idx, gboolean 
 void gnonogram_model_set_data_from_cell (Gnonogram_model* self, Cell* cell);
 void gnonogram_labelbox_update_label (Gnonogram_LabelBox* self, gint idx, const gchar* txt);
 gchar* gnonogram_model_get_label_text (Gnonogram_model* self, gint idx, gboolean is_column);
+static void gnonogram_controller_check_solved (Gnonogram_controller* self);
+gint gnonogram_model_count_unsolved (Gnonogram_model* self);
 void gnonogram_cellgrid_prepare_to_redraw_cells (Gnonogram_CellGrid* self, gboolean show_grid);
 void gnonogram_model_clear (Gnonogram_model* self);
 void gnonogram_view_set_name (Gnonogram_view* self, const gchar* name);
@@ -421,7 +425,6 @@ void gnonogram_model_blank_working (Gnonogram_model* self, CellState blank);
 gchar* utils_get_filename (GtkFileChooserAction action, const gchar* dialogname, gchar** filternames, int filternames_length1, gchar** filters, int filters_length1, const gchar* start_path);
 #define RESOURCE_GAMEFILEEXTENSION ".gno"
 static gboolean gnonogram_controller_write_game_file (Gnonogram_controller* self, FILE* f);
-void utils_show_info_dialog (const gchar* msg);
 static gboolean gnonogram_controller_write_pictogame_file (Gnonogram_controller* self, FILE* f);
 gchar* gnonogram_view_get_name (Gnonogram_view* self);
 gchar* gnonogram_view_get_author (Gnonogram_view* self);
@@ -454,7 +457,7 @@ gboolean gnonogram_filereader_parse_game_file (Gnonogram_filereader* self);
 static gint gnonogram_controller_solve_game (Gnonogram_controller* self, gboolean use_startgrid, gboolean use_advanced, gboolean use_ultimate);
 static void gnonogram_controller_set_solution_from_solver (Gnonogram_controller* self);
 void gnonogram_controller_unpeek_game (Gnonogram_controller* self);
-void gnonogram_model_check_solution (Gnonogram_model* self);
+gint gnonogram_model_count_errors (Gnonogram_model* self);
 static void gnonogram_controller_set_working_from_solver (Gnonogram_controller* self);
 gpointer my2_dcell_array_ref (gpointer instance);
 void my2_dcell_array_unref (gpointer instance);
@@ -517,14 +520,16 @@ Gnonogram_controller* gnonogram_controller_construct (GType object_type, const g
 	Gnonogram_model* _tmp1_;
 	Gnonogram_solver* _tmp2_ = NULL;
 	Gnonogram_solver* _tmp3_;
-	Config* _tmp4_ = NULL;
-	Config* _tmp5_;
-	gint _tmp6_;
-	gint _tmp7_;
-	Config* _tmp8_ = NULL;
-	Config* _tmp9_;
-	gdouble _tmp10_;
-	gint _tmp11_;
+	GTimer* _tmp4_ = NULL;
+	GTimer* _tmp5_;
+	Config* _tmp6_ = NULL;
+	Config* _tmp7_;
+	gint _tmp8_;
+	gint _tmp9_;
+	Config* _tmp10_ = NULL;
+	Config* _tmp11_;
+	gdouble _tmp12_;
+	gint _tmp13_;
 	g_return_val_if_fail (game_filename != NULL, NULL);
 	self = (Gnonogram_controller*) g_type_create_instance (object_type);
 	_tmp0_ = gnonogram_model_new ();
@@ -535,18 +540,21 @@ Gnonogram_controller* gnonogram_controller_construct (GType object_type, const g
 	_tmp3_ = _tmp2_;
 	_gnonogram_solver_unref0 (self->_solver);
 	self->_solver = _tmp3_;
-	self->priv->_have_solution = FALSE;
-	_tmp4_ = config_get_instance ();
+	_tmp4_ = g_timer_new ();
 	_tmp5_ = _tmp4_;
-	config_get_dimensions (_tmp5_, &_tmp6_, &_tmp7_);
-	self->priv->_rows = _tmp6_;
-	self->priv->_cols = _tmp7_;
-	_config_unref0 (_tmp5_);
-	_tmp8_ = config_get_instance ();
-	_tmp9_ = _tmp8_;
-	_tmp10_ = config_get_difficulty (_tmp9_);
-	self->priv->_grade = (gint) _tmp10_;
-	_config_unref0 (_tmp9_);
+	_g_timer_destroy0 (self->priv->_timer);
+	self->priv->_timer = _tmp5_;
+	_tmp6_ = config_get_instance ();
+	_tmp7_ = _tmp6_;
+	config_get_dimensions (_tmp7_, &_tmp8_, &_tmp9_);
+	self->priv->_rows = _tmp8_;
+	self->priv->_cols = _tmp9_;
+	_config_unref0 (_tmp7_);
+	_tmp10_ = config_get_instance ();
+	_tmp11_ = _tmp10_;
+	_tmp12_ = config_get_difficulty (_tmp11_);
+	self->priv->_grade = (gint) _tmp12_;
+	_config_unref0 (_tmp11_);
 	gnonogram_controller_create_view (self);
 	gnonogram_controller_initialize_view (self);
 	g_signal_connect (self->_solver, "showsolvergrid", (GCallback) _gnonogram_controller_show_solver_grid_gnonogram_solver_showsolvergrid, self);
@@ -555,8 +563,8 @@ Gnonogram_controller* gnonogram_controller_construct (GType object_type, const g
 	gnonogram_solver_set_dimensions (self->_solver, self->priv->_rows, self->priv->_cols);
 	gtk_widget_show_all (GTK_WIDGET (self->_gnonogram_view));
 	gnonogram_controller_change_state (self, GAME_STATE_SETTING);
-	_tmp11_ = strlen (game_filename);
-	if (_tmp11_ > 4) {
+	_tmp13_ = strlen (game_filename);
+	if (_tmp13_ > 4) {
 		gnonogram_controller_load_game (self, game_filename);
 	}
 	return self;
@@ -1024,6 +1032,8 @@ static gboolean gnonogram_controller_key_pressed (Gnonogram_controller* self, Gd
 	static GQuark _tmp6__label9 = 0;
 	static GQuark _tmp6__label10 = 0;
 	static GQuark _tmp6__label11 = 0;
+	static GQuark _tmp6__label12 = 0;
+	static GQuark _tmp6__label13 = 0;
 	g_return_val_if_fail (IS_GNONOGRAM_CONTROLLER (self), FALSE);
 	_tmp0_ = gdk_keyval_name ((*e).keyval);
 	_tmp1_ = g_utf8_strup (_tmp0_, (gssize) (-1));
@@ -1126,7 +1136,18 @@ static gboolean gnonogram_controller_key_pressed (Gnonogram_controller* self, Gd
 				break;
 			}
 		}
-	} else if (_tmp6_ == ((0 != _tmp6__label10) ? _tmp6__label10 : (_tmp6__label10 = g_quark_from_static_string ("EQUAL")))) {
+	} else if ((_tmp6_ == ((0 != _tmp6__label10) ? _tmp6__label10 : (_tmp6__label10 = g_quark_from_static_string ("P")))) || (_tmp6_ == ((0 != _tmp6__label11) ? _tmp6__label11 : (_tmp6__label11 = g_quark_from_static_string ("p"))))) {
+		switch (0) {
+			default:
+			{
+				g_timer_stop (self->priv->_timer);
+				utils_show_info_dialog ("Timer paused");
+				g_timer_continue (self->priv->_timer);
+				self->priv->_is_button_down = FALSE;
+				break;
+			}
+		}
+	} else if (_tmp6_ == ((0 != _tmp6__label12) ? _tmp6__label12 : (_tmp6__label12 = g_quark_from_static_string ("EQUAL")))) {
 		switch (0) {
 			default:
 			{
@@ -1134,7 +1155,7 @@ static gboolean gnonogram_controller_key_pressed (Gnonogram_controller* self, Gd
 				break;
 			}
 		}
-	} else if (_tmp6_ == ((0 != _tmp6__label11) ? _tmp6__label11 : (_tmp6__label11 = g_quark_from_static_string ("MINUS")))) {
+	} else if (_tmp6_ == ((0 != _tmp6__label13) ? _tmp6__label13 : (_tmp6__label13 = g_quark_from_static_string ("MINUS")))) {
 		switch (0) {
 			default:
 			{
@@ -1275,6 +1296,20 @@ void gnonogram_controller_update_cell (Gnonogram_controller* self, Cell* c, gboo
 		_tmp3_ = _tmp2_;
 		gnonogram_labelbox_update_label (self->_colbox, (*c).col, _tmp3_);
 		_g_free0 (_tmp3_);
+	} else {
+		gnonogram_controller_check_solved (self);
+	}
+}
+
+
+static void gnonogram_controller_check_solved (Gnonogram_controller* self) {
+	gint _tmp0_;
+	g_return_if_fail (IS_GNONOGRAM_CONTROLLER (self));
+	_tmp0_ = gnonogram_model_count_unsolved (self->_model);
+	if (_tmp0_ == 0) {
+		g_timer_stop (self->priv->_timer);
+		gnonogram_controller_peek_game (self);
+		self->priv->_is_button_down = FALSE;
 	}
 }
 
@@ -1345,6 +1380,7 @@ void gnonogram_controller_restart_game (Gnonogram_controller* self) {
 	gnonogram_model_blank_working (self->_model, CELL_STATE_UNKNOWN);
 	gnonogram_controller_initialize_view (self);
 	gnonogram_controller_redraw_all (self);
+	g_timer_start (self->priv->_timer);
 }
 
 
@@ -1980,37 +2016,71 @@ void gnonogram_controller_unpeek_game (Gnonogram_controller* self) {
 
 
 void gnonogram_controller_peek_game (Gnonogram_controller* self) {
+	gdouble _tmp0_;
+	gdouble seconds;
+	gint hours;
+	gint minutes;
+	gchar* _tmp1_ = NULL;
+	gchar* time_taken;
 	g_return_if_fail (IS_GNONOGRAM_CONTROLLER (self));
+	_tmp0_ = g_timer_elapsed (self->priv->_timer, NULL);
+	seconds = _tmp0_;
+	hours = ((gint) seconds) / 3600;
+	seconds = seconds - (((gdouble) hours) * 3600.000);
+	minutes = ((gint) seconds) / 60;
+	seconds = seconds - (((gdouble) minutes) * 60.000);
+	_tmp1_ = g_strdup_printf ("\n\nTime taken is %d hours, %d minutes, %8.3f seconds", hours, minutes, seconds);
+	time_taken = _tmp1_;
 	if (self->priv->_have_solution) {
-		gnonogram_model_check_solution (self->_model);
+		gint _tmp2_;
+		gint count;
+		_tmp2_ = gnonogram_model_count_errors (self->_model);
+		count = _tmp2_;
+		if (count == 0) {
+			gchar* _tmp3_;
+			const gchar* _tmp4_ = NULL;
+			_tmp3_ = g_strconcat ("No errors", time_taken, NULL);
+			_tmp4_ = _ (_tmp3_);
+			utils_show_info_dialog (_tmp4_);
+			_g_free0 (_tmp3_);
+		} else {
+			gchar* _tmp5_;
+			const gchar* _tmp6_ = NULL;
+			gchar* _tmp7_ = NULL;
+			gchar* _tmp8_;
+			_tmp5_ = g_strconcat ("There are %d incorrect cells", time_taken, NULL);
+			_tmp6_ = _ (_tmp5_);
+			_tmp7_ = g_strdup_printf (_tmp6_, count);
+			_tmp8_ = _tmp7_;
+			utils_show_info_dialog (_tmp8_);
+			_g_free0 (_tmp8_);
+			_g_free0 (_tmp5_);
+		}
 		gnonogram_controller_redraw_all (self);
 	} else {
-		const gchar* _tmp0_ = NULL;
-		_tmp0_ = _ ("No solution available");
-		utils_show_info_dialog (_tmp0_);
+		gchar* _tmp9_;
+		const gchar* _tmp10_ = NULL;
+		_tmp9_ = g_strconcat ("No solution available", time_taken, NULL);
+		_tmp10_ = _ (_tmp9_);
+		utils_show_info_dialog (_tmp10_);
+		_g_free0 (_tmp9_);
 	}
+	_g_free0 (time_taken);
 }
 
 
 static void gnonogram_controller_viewer_solve_game (Gnonogram_controller* self) {
-	GTimer* _tmp0_ = NULL;
-	GTimer* timer;
-	gint _tmp1_;
+	gint _tmp0_;
 	gint passes;
-	gulong microseconds = 0UL;
-	gulong _tmp2_;
-	gdouble _tmp3_;
+	gdouble _tmp1_;
 	gdouble time_taken;
 	g_return_if_fail (IS_GNONOGRAM_CONTROLLER (self));
-	_tmp0_ = g_timer_new ();
-	timer = _tmp0_;
-	g_timer_start (timer);
-	_tmp1_ = gnonogram_controller_solve_game (self, TRUE, self->priv->_advanced, self->priv->_advanced);
-	passes = _tmp1_;
-	g_timer_stop (timer);
-	_tmp3_ = g_timer_elapsed (timer, &_tmp2_);
-	microseconds = _tmp2_;
-	time_taken = _tmp3_;
+	g_timer_start (self->priv->_timer);
+	_tmp0_ = gnonogram_controller_solve_game (self, TRUE, self->priv->_advanced, self->priv->_advanced);
+	passes = _tmp0_;
+	g_timer_stop (self->priv->_timer);
+	_tmp1_ = g_timer_elapsed (self->priv->_timer, NULL);
+	time_taken = _tmp1_;
 	gnonogram_controller_show_solver_grid (self);
 	switch (passes) {
 		case -2:
@@ -2019,39 +2089,38 @@ static void gnonogram_controller_viewer_solve_game (Gnonogram_controller* self) 
 		}
 		case -1:
 		{
-			const gchar* _tmp4_ = NULL;
-			_tmp4_ = _ ("Invalid - no solution");
-			utils_show_warning_dialog (_tmp4_);
+			const gchar* _tmp2_ = NULL;
+			_tmp2_ = _ ("Invalid - no solution");
+			utils_show_warning_dialog (_tmp2_);
 			break;
 		}
 		case 0:
 		{
-			const gchar* _tmp5_ = NULL;
-			_tmp5_ = _ ("Failed to solve or no unique solution");
-			utils_show_info_dialog (_tmp5_);
+			const gchar* _tmp3_ = NULL;
+			_tmp3_ = _ ("Failed to solve or no unique solution");
+			utils_show_info_dialog (_tmp3_);
 			break;
 		}
 		default:
 		{
-			gchar* _tmp6_ = NULL;
-			gchar* _tmp7_;
-			const gchar* _tmp8_ = NULL;
-			gchar* _tmp9_ = NULL;
-			gchar* _tmp10_;
-			_tmp6_ = g_strdup_printf ("%i", passes);
-			_tmp7_ = _tmp6_;
-			gnonogram_view_set_score_label (self->_gnonogram_view, _tmp7_);
-			_g_free0 (_tmp7_);
-			_tmp8_ = _ ("Solved in %8.3f seconds");
-			_tmp9_ = g_strdup_printf (_tmp8_, time_taken);
-			_tmp10_ = _tmp9_;
-			utils_show_info_dialog (_tmp10_);
-			_g_free0 (_tmp10_);
+			gchar* _tmp4_ = NULL;
+			gchar* _tmp5_;
+			const gchar* _tmp6_ = NULL;
+			gchar* _tmp7_ = NULL;
+			gchar* _tmp8_;
+			_tmp4_ = g_strdup_printf ("%i", passes);
+			_tmp5_ = _tmp4_;
+			gnonogram_view_set_score_label (self->_gnonogram_view, _tmp5_);
+			_g_free0 (_tmp5_);
+			_tmp6_ = _ ("Solved in %8.3f seconds");
+			_tmp7_ = g_strdup_printf (_tmp6_, time_taken);
+			_tmp8_ = _tmp7_;
+			utils_show_info_dialog (_tmp8_);
+			_g_free0 (_tmp8_);
 			break;
 		}
 	}
 	gnonogram_controller_change_state (self, GAME_STATE_SOLVING);
-	_g_timer_destroy0 (timer);
 }
 
 
@@ -2556,8 +2625,10 @@ static void gnonogram_controller_change_state (Gnonogram_controller* self, GameS
 	gnonogram_controller_initialize_cursor (self);
 	gnonogram_controller_set__state (self, gs);
 	if (gs == GAME_STATE_SETTING) {
+		g_timer_stop (self->priv->_timer);
 		gnonogram_model_use_solution (self->_model);
 	} else {
+		g_timer_start (self->priv->_timer);
 		gnonogram_model_use_working (self->_model);
 	}
 	gnonogram_view_state_has_changed (self->_gnonogram_view, gs);
@@ -2697,6 +2768,7 @@ static void gnonogram_controller_class_init (Gnonogram_controllerClass * klass) 
 
 static void gnonogram_controller_instance_init (Gnonogram_controller * self) {
 	self->priv = GNONOGRAM_CONTROLLER_GET_PRIVATE (self);
+	self->priv->_have_solution = TRUE;
 	self->priv->_debug = FALSE;
 	self->priv->_advanced = TRUE;
 	self->priv->_difficult = FALSE;
@@ -2713,6 +2785,7 @@ static void gnonogram_controller_finalize (Gnonogram_controller* obj) {
 	_g_object_unref0 (self->_cellgrid);
 	_gnonogram_model_unref0 (self->_model);
 	_gnonogram_solver_unref0 (self->_solver);
+	_g_timer_destroy0 (self->priv->_timer);
 }
 
 

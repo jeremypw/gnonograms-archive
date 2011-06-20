@@ -1,9 +1,6 @@
 <page xmlns="http://projectmallard.org/1.0/"
       type="topic"
       id="gamemenu">
-	<info>
-	  <link type="next" xref="settingsmenu"/>
-	</info>
 	<title>Game Menu and Toolbar icons</title>
 	<media type="image" mime="image/png" width="187" height="165" src="./Manual/Gamemenu.png"/>
 	<media type="image" mime="image/png" src="./Manual/Gametoolbar.png"/>

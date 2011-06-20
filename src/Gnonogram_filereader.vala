@@ -290,7 +290,6 @@ public class Gnonogram_filereader {
 		if (s.length>=3) date=s[2];
 		if (s.length>=4) score=s[3];
 
-		//stdout.printf(@"Name $name Author $author Date $date\n");
 		return true;
 	}
 //=========================================================================

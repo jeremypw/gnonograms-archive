@@ -3,8 +3,10 @@
       id="fileformat">
 <info>
   <link type="guide" xref="index"/>
+  <link type="next" xref="glossary"/>
+
 </info>
-<title>Gnonogram file format</title>
+<title>8. Gnonogram file format</title>
 <synopsis>
    <p>The Gnonogram puzzle file format is a simple text file with the extension .gno</p>
    <p>It is sufficiently simple to allow manual creation of files using a text editor from published puzzles where only the clues are available.</p>

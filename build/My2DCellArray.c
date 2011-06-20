@@ -20,7 +20,7 @@
  * As a special exception, if you use inline functions from this file, this
  * file does not by itself cause the resulting executable to be covered by
  * the GNU Lesser General Public License.
- * 
+ *
  *  Author:
  * 	Jeremy Wootten <jeremwootten@gmail.com>
  */
@@ -121,7 +121,6 @@ void my2_dcell_array_get_array (My2DCellArray* self, gint idx, gboolean iscolumn
 void my2_dcell_array_set_array (My2DCellArray* self, gint idx, gboolean iscolumn, CellState* sa, int sa_length1, gint start);
 void my2_dcell_array_get_region (My2DCellArray* self, gint idx, gboolean iscolumn, CellState** sa, int* sa_length1, gint start, gint end);
 void my2_dcell_array_set_region (My2DCellArray* self, gint idx, gboolean iscolumn, CellState* sa, int sa_length1, gint start, gint end);
-gint my2_dcell_array_count_all (My2DCellArray* self, CellState s);
 gchar* my2_dcell_array_data2text (My2DCellArray* self, gint idx, gint length, gboolean iscolumn);
 gchar* utils_block_string_from_cellstate_array (CellState* cs, int cs_length1);
 void my2_dcell_array_copy (My2DCellArray* self, My2DCellArray* ca);
@@ -364,53 +363,6 @@ void my2_dcell_array_set_all (My2DCellArray* self, CellState s) {
 			}
 		}
 	}
-}
-
-
-gint my2_dcell_array_count_all (My2DCellArray* self, CellState s) {
-	gint result = 0;
-	gint count;
-	g_return_val_if_fail (IS_MY2_DCELL_ARRAY (self), 0);
-	count = 0;
-	{
-		gint r;
-		r = 0;
-		{
-			gboolean _tmp0_;
-			_tmp0_ = TRUE;
-			while (TRUE) {
-				if (!_tmp0_) {
-					r++;
-				}
-				_tmp0_ = FALSE;
-				if (!(r < self->priv->_rows)) {
-					break;
-				}
-				{
-					gint c;
-					c = 0;
-					{
-						gboolean _tmp1_;
-						_tmp1_ = TRUE;
-						while (TRUE) {
-							if (!_tmp1_) {
-								c++;
-							}
-							_tmp1_ = FALSE;
-							if (!(c < self->priv->_cols)) {
-								break;
-							}
-							if (self->priv->_data[(r * self->priv->_data_length2) + c] == s) {
-								count++;
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-	result = count;
-	return result;
 }
 
 

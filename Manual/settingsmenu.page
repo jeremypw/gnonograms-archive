@@ -1,9 +1,6 @@
 <page xmlns="http://projectmallard.org/1.0/"
       type="topic"
       id="settingsmenu">
-	<info>
-		<link type="next" xref="viewmenu" />
-	</info>
 	<title>Settings Menu and Toolbar icons</title>
 
 	<media type="image" mime="image/png" width="187" height="165" src="./Manual/Settingsmenu.png"/>

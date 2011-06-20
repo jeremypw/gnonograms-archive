@@ -3,10 +3,10 @@
       id="controls">
 <info>
   <link type="guide" xref="index"/>
-  <link type="topic" xref="designmode"/>
-  <link type="topic" xref="solvingmode"/>
+  <link type="next" xref="menus"/>
+
 </info>
-<title>Gnonogram Mouse/Keyboard Controls</title>
+<title>5. Gnonogram Mouse/Keyboard Controls</title>
 <p>Manipulation of the grid is achieved either by using the mouse (or trackpad) or by using the keyboard.</p>
 <list>
 	<item><p>Move grid cursor</p>

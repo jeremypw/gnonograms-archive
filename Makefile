@@ -211,13 +211,17 @@ distclean: clean
 install:
 ####
 	cp misc/gnonograms.desktop.head misc/gnonograms.desktop
-	$(foreach lang,$(SUPPORTED_LANGUAGES), echo Name[$(lang)]=`TEXTDOMAINDIR=locale \
-     LANGUAGE=$(lang) gettext --domain=gnonograms $(DESKTOP_APPLICATION_NAME)` \
-    >> misc/gnonograms.desktop ; \
-        echo GenericName[$(lang)]=`TEXTDOMAINDIR=locale LANGUAGE=$(lang) \
-        gettext --domain=gnonograms $(DESKTOP_APPLICATION_CLASS)` >> misc/gnonograms.desktop ; \
-        echo Comment[$(lang)]=`TEXTDOMAINDIR=locale LANGUAGE=$(lang) gettext \
-        --domain=gnonogram $(DESKTOP_APPLICATION_COMMENT)` >> misc/gnonograms.desktop ;)
+	echo Version=$(VERSION) \
+		>> misc/gnonograms.desktop
+	$(foreach lang,$(SUPPORTED_LANGUAGES), \
+		echo Name[$(lang)]=`TEXTDOMAINDIR=locale LANGUAGE=$(lang) gettext --domain=gnonograms $(DESKTOP_APPLICATION_NAME)` \
+		>> misc/gnonograms.desktop ; \
+		echo GenericName[$(lang)]=`TEXTDOMAINDIR=locale LANGUAGE=$(lang) \
+		gettext --domain=gnonograms $(DESKTOP_APPLICATION_CLASS)` \
+		>> misc/gnonograms.desktop ; \
+		echo Comment[$(lang)]=`TEXTDOMAINDIR=locale LANGUAGE=$(lang) gettext	--domain=gnonogram $(DESKTOP_APPLICATION_COMMENT)`\
+		>> misc/gnonograms.desktop ; \
+	)
 	touch $(LANG_STAMP)
 	mkdir -p $(DESTDIR)$(PREFIX)/bin
 	$(INSTALL_PROGRAM) $(PROGRAM) $(DESTDIR)$(PREFIX)/bin
@@ -225,10 +229,15 @@ install:
 	$(INSTALL_DATA) icons/* $(DESTDIR)$(PREFIX)/share/gnonograms/icons
 	mkdir -p $(DESTDIR)$(PREFIX)/share/gnonograms/games
 	$(INSTALL_DATA) games/* $(DESTDIR)$(PREFIX)/share/gnonograms/games
+	mkdir -p $(DESTDIR)$(PREFIX)/share/gnonograms/Manual
+	$(INSTALL_DATA) Manual/* $(DESTDIR)$(PREFIX)/share/gnonograms/Manual
+
 	mkdir -p $(DESTDIR)$(PREFIX)/share/icons/hicolor/48x48/apps
 	$(INSTALL_DATA) icons/gnonograms48.png $(DESTDIR)$(PREFIX)/share/icons/hicolor/48x48/apps/gnonograms.png
+
 	mkdir -p $(DESTDIR)$(PREFIX)/share/icons/hicolor/48x48/mimetypes
 	$(INSTALL_DATA) icons/gnonogram-puzzle.png $(DESTDIR)$(PREFIX)/share/icons/hicolor/48x48/mimetypes/application-x-gnomogram-puzzle.png
+
 	mkdir -p $(DESTDIR)$(PREFIX)/share/icons/hicolor/scalable/apps
 	$(INSTALL_DATA) icons/gnonograms.svg $(DESTDIR)$(PREFIX)/share/icons/hicolor/scalable/apps/gnonograms.svg
 
@@ -249,11 +258,15 @@ uninstall:
 ######
 	rm -f $(DESTDIR)$(PREFIX)/bin/$(PROGRAM)
 	rm -fr $(DESTDIR)$(PREFIX)/share/gnonograms
+	rm -fr $(DESTDIR)$(PREFIX)/share/gnonograms/Manual
+
 	rm -fr $(DESTDIR)$(PREFIX)/share/icons/hicolor/scalable/apps/gnonograms.png
 	rm -fr $(DESTDIR)$(PREFIX)/share/icons/hicolor/48x48/apps/gnonograms.png
 	rm -fr $(DESTDIR)$(PREFIX)/share/icons/hicolor/48x48/mimetypes/application-x-gnonogram-puzzle.png
+
 	rm -f $(DESTDIR)$(PREFIX)/share/applications/gnonograms.desktop
 	rm -f misc/gnonograms.desktop
+
 	rm -f $(DESTDIR)$(PREFIX)/share/mime/packages/x-gnonogram-puzzle.xml
 
 	update-mime-database $(DESTDIR)$(PREFIX)/share/mime

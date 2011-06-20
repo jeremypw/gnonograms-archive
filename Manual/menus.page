@@ -3,9 +3,9 @@
       id="menus">
 <info>
    <link type="guide" xref="index"/>
+   <link type="next" xref="config"/>
 </info>
-<link type="guide" xref="index"/>
-<title>Gnonograms Menus and Toolbar</title>
+<title>6. Gnonograms Menus and Toolbar</title>
 <media type="image" mime="image/png" src="./Manual/Menu-Toolbar.png"/>
    <p><link type="topic" xref="filemenu"/></p>
    <p><link type="topic" xref="gamemenu"/></p>

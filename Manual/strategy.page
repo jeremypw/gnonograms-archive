@@ -3,9 +3,10 @@
       id="strategy">
 	<info>
 	  <link type="guide" xref="index"/>
+	  <link type="next" xref="controls"/>
+		<link type="section"/>
 	</info>
-	<link type="section"/>
-	<title>Strategies for solving Gnonograms</title>
+	<title>4. Strategies for solving Gnonograms</title>
 	<p>Many puzzles can be solved by considering only one row or column at a time. Certain cells in that row/column can be inferred to be filled or empty. The effect of completing those cells on other rows/columns is then considered.  This is repeated until the puzzle is complete.</p>
 	<p>Below are some methods that can be applied to single rows/columns.</p>
 	<p>See <link type="topic" xref="glossary"/> for the meanings of <em>italicised words</em></p>

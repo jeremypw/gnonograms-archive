@@ -3,8 +3,9 @@
       id="config">
 	<info>
 	  <link type="guide" xref="index"/>
+	  <link type="next" xref="fileformat"/>
 	</info>
-	<title>Configuration and preferences</title>
+	<title>7. Configuration and preferences</title>
 
 	<p>The behaviour and appearance of the program can be controlled using</p>
 	<list>

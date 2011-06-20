@@ -1,13 +1,50 @@
+
+19/06/2011	Added facility to show time taken to solve puzzle manually. Small changes to manual.
+16/06/2011	New svg program icon designed. File-type icon created and integrated with desktop.  First tarball created and uploaded to |Google code
+
+
+Gnonograms version 0.8.0
+************************
+* Design puzzles manually
+* Generate random pattern puzzles with choice of difficulty
+* Save and load puzzles in native and Picto formats
+* Shows title, author, date created and difficulty score.
+* Solve puzzles manually and automatically, displaying time taken
+* Save current position
+* Choice of grid size from 1x1 to 100x100
+* Autoscaling of grid
+* Manual scaling of grid
+* Show/hide grid lines
+* Show/hide tool bar
+* Hint when hovering over clue
+* Mouse or keyboard controls
+* Check for incorrect cells on demand
+* Choice of colors and font used for grid.
+* Creates Game menu entry and mime-type icon when installed.
+
+
+14/06/2011	Added Gnome desktop integration file and created mime type for 'gno' files.  Program essentially complete and stable so version bumped to 0.8.0.
+
+06/06/2011	Added facilty to show time taken for computer to solve puzzle.
+31/05/2011	More manual pages
+25/05/2011	Manual started
+18/05/2011	Added ability to export in Picto (.pattern) format
+08/05/2011	Solver improvements. Added Author, Date and Score to native file format and display in UI.
+01/05/2011	Japanese translation
+24/04/2011	Add option of generating 'difficult'games
+23/04/2011	Optimisation of solver.
+18/04/2011	Added a number of native (.gno) puzzle files
+09/04/2011	First version of advanced solver
 01/04/2011	Fixed bug related to invalid game files and game files not containing the solution
 				Minor changes to 2D array class
 				Additional error checking
-
 22/03/2011  Project name decided to be Gnonograms.
 				Project created on Google Code
 				Temporary icon designed
 				Files uploaded
 
-14/06/2011	Solver refined to the point that most puzzles are solved
-				Manual started
-				Interface essentially complete and stable
-				Still requires some integration work
+March 2011	Added internationization
+Jan 2011		Re-factored monochrome version as Gnome project
+Sep 2010		Early colour version
+July 2010	Converted program to Vala
+Jan 2010		Original version of program written in Ruby

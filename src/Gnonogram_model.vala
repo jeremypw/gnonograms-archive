@@ -40,7 +40,7 @@
 	_rand_gen = new Rand();
 	}
 //======================================================================
-	public void check_solution()
+	public int count_errors()
 	{
 		CellState cs;
 		int count=0;
@@ -53,18 +53,24 @@
 				{
 					_working_data.set_data_from_rc(r,c,CellState.ERROR);
 					count++;
-					stdout.printf(@"Cell $r, $c error.  Working $cs  Solution $(_solution_data.get_cell(r,c).state)\n");
 				}
 			}
 		}
-		if (count==0)
-		{
-			Utils.show_info_dialog(_("No errors"));
+		return count;
+	}
+//======================================================================
+	public int count_unsolved()
+	{
+		int count=0;
+		CellState cs;
+		for (int r=0;r<_rows; r++)
+		{for (int c=0;c<_cols;c++)
+			{
+				cs=_working_data.get_data_from_rc(r,c);
+				if (cs==CellState.UNKNOWN || cs==CellState.ERROR)count++;
+			}
 		}
-		else
-		{
-			Utils.show_info_dialog(_("There are %d incorrect cells").printf(count));
-		}
+		return count;
 	}
 //======================================================================
 	public void clear()

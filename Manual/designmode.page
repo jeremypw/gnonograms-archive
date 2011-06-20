@@ -3,8 +3,9 @@
       id="designmode">
 <info>
   <link type="guide" xref="index"/>
+  <link type="next" xref="solvingmode"/>
 </info>
-<title>Design mode</title>
+<title>2. Design mode</title>
 <media type="image" mime="image/png" width="350" height="400" src="./Manual/Screenshot-Gnonograms-design.png"/>
 <p> When Gnonograms starts it is in "design" mode and displays the "design grid". This grid contains the solution to the puzzle.</p>
 <p>In this mode you can:</p>

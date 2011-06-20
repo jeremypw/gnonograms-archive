@@ -36,18 +36,21 @@ public class Gnonogram_controller
 	public Gnonogram_model _model;
 	public Gnonogram_solver _solver;
 
-	private int _rows;
-	private int _cols;
 	private Cell _current_cell;
 	private Cell _previous_cell;
-	private bool _is_button_down;
-	private bool _have_solution;
+	private Timer _timer;
 	private GameState _state {get; private set;}
+
+	private bool _is_button_down;
+	private bool _have_solution=true;
 	private bool _gridlinesvisible;
 	private bool _debug=false;
 	private bool _advanced=true;
 	private bool _difficult=false;
+
 	private int _grade;
+	private int _rows;
+	private int _cols;
 
 //======================================================================
 	public Gnonogram_controller(string game_filename)
@@ -55,7 +58,7 @@ public class Gnonogram_controller
 
 		_model=new Gnonogram_model();
 		_solver=new Gnonogram_solver();
-		_have_solution=false;
+		_timer=new Timer();
 
 		Config.get_instance().get_dimensions(out _rows, out _cols); //defaults to 10x10
 		_grade=(int)(Config.get_instance().get_difficulty()); //defaults to 5
@@ -234,50 +237,57 @@ public class Gnonogram_controller
 		switch (name)
 		{
 			case "UP":
-				if (currentrow>0) currentrow-=1;
-				break;
+					if (currentrow>0) currentrow-=1;
+					break;
 			case "DOWN":
-				if (currentrow<_rows-1) currentrow+=1;
-				break;
+					if (currentrow<_rows-1) currentrow+=1;
+					break;
 			case	"LEFT":
-				if (currentcol>0) currentcol-=1;
-				break;
+					if (currentcol>0) currentcol-=1;
+					break;
 			case "RIGHT":
-				if (currentcol<_cols-1) currentcol+=1;
-				break;
+					if (currentcol<_cols-1) currentcol+=1;
+					break;
 			case "F":
 			case "f":
-				_current_cell.state=CellState.FILLED;
-				update_cell(_current_cell,true);
-				_is_button_down=true;
-				break;
+					_current_cell.state=CellState.FILLED;
+					update_cell(_current_cell,true);
+					_is_button_down=true;
+					break;
 			case "E":
 			case "e":
-				_current_cell.state=CellState.EMPTY;
-				update_cell(_current_cell,true);
-				_is_button_down=true;
-				break;
+					_current_cell.state=CellState.EMPTY;
+					update_cell(_current_cell,true);
+					_is_button_down=true;
+					break;
 			case "X":
 			case "x":
-				if (_state==GameState.SOLVING)
-				{
-				_current_cell.state=CellState.UNKNOWN;
-				}
-				else
-				{
-				_current_cell.state=CellState.EMPTY;
-				}
-				update_cell(_current_cell,true);
-				_is_button_down=true;
-				break;
+					if (_state==GameState.SOLVING)
+					{
+						_current_cell.state=CellState.UNKNOWN;
+					}
+					else
+					{
+						_current_cell.state=CellState.EMPTY;
+					}
+					update_cell(_current_cell,true);
+					_is_button_down=true;
+					break;
+			case "P":
+			case "p":
+					_timer.stop();
+					Utils.show_info_dialog("Timer paused");
+					_timer.continue();
+					_is_button_down=false;
+					break;
 			case "EQUAL":
 					change_font_size(true);
-								break;
+					break;
 			case "MINUS":
 					change_font_size(false);
-								break;
+					break;
 			default:
-								break;
+					break;
 		}
 		grid_cursor_moved(currentrow,currentcol);
 		return true;
@@ -339,6 +349,17 @@ public class Gnonogram_controller
 			_rowbox.update_label(c.row, _model.get_label_text(c.row,false));
 			_colbox.update_label(c.col, _model.get_label_text(c.col,true));
 		}
+		else	check_solved();
+	}
+
+	private void check_solved()
+	{
+		if (_model.count_unsolved()==0)
+		{
+			_timer.stop(); //timer started when switched to SOLVING state
+			peek_game();
+			_is_button_down=false;
+		}
 	}
 //======================================================================
 	private void redraw_all()
@@ -371,6 +392,7 @@ public class Gnonogram_controller
 			_model.blank_working();
 			initialize_view();
 			redraw_all();
+			_timer.start();
 	}
 //======================================================================
 	public void save_game()
@@ -630,25 +652,39 @@ public class Gnonogram_controller
 //======================================================================
 	public void peek_game()
 	{//stdout.printf("Peek game\n");
+
+		double seconds=_timer.elapsed();
+		int hours= ((int)seconds)/3600;
+		seconds-=((double)hours)*3600.000;
+		int minutes=((int)seconds)/60;
+		seconds-=(double)(minutes)*60.000;
+		string time_taken=("\n\nTime taken is %d hours, %d minutes, %8.3f seconds").printf(hours, minutes, seconds);
 		if (_have_solution)
 		{
-			_model.check_solution();
+			int count=_model.count_errors();
+			if (count==0)
+			{
+				Utils.show_info_dialog(_("No errors"+time_taken));
+			}
+			else
+			{
+				Utils.show_info_dialog(_("There are %d incorrect cells"+time_taken).printf(count));
+			}
 			redraw_all();
 		}
 		else
 		{
-			Utils.show_info_dialog(_("No solution available"));
+			Utils.show_info_dialog(_("No solution available"+time_taken));
 		}
 	}
 //======================================================================
 	private void viewer_solve_game()
 	{
-		var timer=new Timer();
-		timer.start();
+		_timer.start();
 		int passes = solve_game(true, _advanced,_advanced);
-		timer.stop();
-		ulong microseconds;
-		double time_taken=timer.elapsed(out microseconds);
+		_timer.stop();
+//		ulong microseconds;
+		double time_taken=_timer.elapsed();
 		show_solver_grid();
 		switch (passes)
 		{
@@ -666,9 +702,7 @@ public class Gnonogram_controller
 				Utils.show_info_dialog((_("Solved in %8.3f seconds").printf(time_taken)));
 				break;
 		}
-
 		change_state(GameState.SOLVING);
-
 	}
 
 //======================================================================
@@ -865,8 +899,8 @@ public class Gnonogram_controller
 	{
 		initialize_cursor();
 		_state=gs;
-		if (gs==GameState.SETTING)	_model.use_solution();
-		else	_model.use_working();
+		if (gs==GameState.SETTING)	{_timer.stop(); _model.use_solution();}
+		else	{_timer.start();_model.use_working();}
 		_gnonogram_view.state_has_changed(gs);
 	}
 }

@@ -1496,7 +1496,7 @@ static void gnonogram_view_show_about (Gnonogram_view* self) {
 	authors_length1 = 2;
 	_authors_size_ = 2;
 	_tmp2_ = _ ("About Gnonogram Game");
-	gtk_show_about_dialog (NULL, "program-name", "Gnonograms", "version", "0.1.1", "comments", "Set and solve gnonogram puzzles", "license", "Gnonograms is free software; you can redistribute it and/or modify it " \
+	gtk_show_about_dialog (NULL, "program-name", "Gnonograms", "version", _VERSION, "comments", "Set and solve gnonogram puzzles", "license", "Gnonograms is free software; you can redistribute it and/or modify it " \
 "under the terms of the GNU General Public Licence as published by the " \
 "Free Software Foundation; either version 2 of the Licence, or (at your" \
 " option) any later version.\n" \

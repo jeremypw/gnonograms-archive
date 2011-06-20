@@ -1,9 +1,6 @@
 <page xmlns="http://projectmallard.org/1.0/"
       type="topic"
       id="viewmenu">
-	<info>
-		<link type="next" xref="helpmenu" />
-	</info>
 	<title>View menu </title>
 	<media type="image" mime="image/png" width="187" height="165" src="./Manual/Viewmenu.png"/>
 
