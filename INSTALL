@@ -13,17 +13,17 @@
 
 	Type the following commands:
 
-    $ ./configure
+    $ ./configure   (or to compile from the C source $ ./configure --novala)
     $ make
 
     This compiles the source code and creates an executable 'gnonograms'.
 
-    Type ./gnonograms to run the program.
+    Type ./gnonograms to run the program in the directory in which it was built.
 
-    [To install the program on the desktop:
-	$ make install  - not currently recommended - installer not fully tested
+    To install the program on the desktop:
+	$ sudo make install 
 
-    * By default, gnonogramsl will install under /usr/local.  The configure script
+    * By default, gnonogramsl will install under /usr  The configure script
       can customize the prefix directory.  Run ./configure --help for
       instructions and other installation options.
 
@@ -32,9 +32,6 @@
 
     *RECOMMENDED:  If you wish to try gnonograms before installing it, you may execute it
       directly from its build directory.
-
-****TO DO**************
-	Note that certain desktop integration  (such as being listed in an application menu) requires full installation.
 
     Once installed, gnonograms will be available
 
