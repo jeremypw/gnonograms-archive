@@ -47,8 +47,6 @@
 	private int _nblocks;
 	private int _block_total; //total cells to be filled
 	private int _block_extent; //int.minimum span of blocks, including gaps of 1 cell.
-//	private int _cycles;
-//	private int _pass;
 	private int _unknown;
 	private int _unknown_store;
 	private int _filled;
@@ -822,44 +820,7 @@
 
 		return count;
 	}
-//======================================================================
-/*	private int count_available_ranges(bool not_empty) {
-	// determine location of ranges of unknown or filled cells
-	// and store in _ranges[,]
-	// _ranges[ ,2] indicates number of filled,
-	// _ranges[ ,3] indicates number of unknown
-		int range=0, start=0, length=0, idx=0;
-		//skip to start of first range;
-		while (idx<_ncells && _status[idx]==CellState.EMPTY) idx++;
-		while (idx<_ncells)
-		{
-			length=0;
-			start=idx;
-			_ranges[range,0]=start;
-			_ranges[range,2]=0;
-			_ranges[range,3]=0;
-
-			while (idx<_ncells && _status[idx]!=CellState.EMPTY)
-			{
-				if (!_tags[idx,_can_be_empty_ptr]) _ranges[range,2]++;
-				else _ranges[range,3]++;
-
-				idx++; length++;
-			}
-
-			if (length>0 && _ranges[range,3]!=0) //not completely filled yet
-			{
-//				if(not_empty && _ranges[range,2]==0) continue;
-				if(not_empty && _ranges[range,2]==0) {}
-				else {_ranges[range,1]=length; range++;}
-			}
-
-			while (idx<_ncells && _status[idx]==CellState.EMPTY) idx++; //skip to beginning of next range
-		}
-		return range;
-	}
-	*/
-	//EXPERIMENTAL
+//===================================================================
 	private int count_available_ranges(bool not_empty) {
 	// determine location of ranges of unknown or unfinished filled cells
 	// and store in _ranges[,]
@@ -867,7 +828,6 @@
 	// _ranges[ ,3] indicates number of unknown
 		int range=0, start=0, length=0, idx=0;
 		//skip to start of first range;
-//		while (idx<_ncells && _status[idx]==CellState.EMPTY) idx++;
 		while (idx<_ncells && _tags[idx,_is_finished_ptr]) idx++;
 
 		while (idx<_ncells)
@@ -878,7 +838,6 @@
 			_ranges[range,2]=0;
 			_ranges[range,3]=0;
 
-		//	while (idx<_ncells && _status[idx]!=CellState.EMPTY)
 			while (idx<_ncells && !_tags[idx,_is_finished_ptr])
 			{
 				if (!_tags[idx,_can_be_empty_ptr]) _ranges[range,2]++; //FILLED
@@ -887,16 +846,12 @@
 				idx++; length++;
 			}
 
-//			if (length>0 && _ranges[range,3]!=0) //not completely filled yet
-//			{
 				if(not_empty && _ranges[range,2]==0) {} //dont include completely empty ranges
 				else {_ranges[range,1]=length; range++;}
-//			}
 
-			//while (idx<_ncells && _status[idx]==CellState.EMPTY) idx++; //skip to beginning of next range
+			//skip to beginning of next range
 			while (idx<_ncells && _tags[idx,_is_finished_ptr]) idx++;
 		}
-		//stdout.printf(@"$(this) Ranges found - $range\n");
 		return range; //number of ranges - not last index!
 	}
 //======================================================================
@@ -1054,40 +1009,6 @@
 		}
 		return changed;
 	}
-//=======================================================================
-/*	private bool fix_blocks_in_range(int first_block, int last_block, int start, int length)
-	{
-	// blocks must be limited to range, range must not contain empty cells
-
-		bool changed=false;
-		if (first_block<0||first_block>_nblocks||last_block<0||last_block>_nblocks)
-		{
-			record_error("Fix_blocks_in_range",@"Invalid block number first_block $first_block last_block $last_block", false);
-			return false;
-		}
-		int range_start=start, range_end=start+length;
-		int block_extent=0;
-		for (int b=first_block; b<=last_block;b++) block_extent+=(_blocks[b]+1);
-		block_extent--; //minimum space required by blocks
-		if (_debug) stdout.printf(@"Block extent $block_extent\n");
-		int freedom=length-block_extent;
-		int idx=start;
-		for (int b=first_block; b<=last_block; b++)
-		{
-			for (int j=range_start; j<range_end; j++) {_tags[j,b]=false;}
-			int blength=_blocks[b]+freedom;
-			//set as possible owner if cell not marked empty
-			for (int j=idx; j<idx+blength; j++) _tags[j,b]=(_status[j]!=CellState.EMPTY);
-			if (freedom<_blocks[b])
-			{
-				changed=set_range_owner(b,idx+freedom,_blocks[b]-freedom,true,false)||changed;
-			}
-			idx=idx+_blocks[b]+1; //leave a gap between blocks
-		}
-
-		return changed;
-	}
-	*/
 //======================================================================
 	private int find_largest_possible_in_cell(int cell)
 	{
@@ -1102,6 +1023,7 @@
 		}
 		return max_size;
 	}
+//==============================================================
 	private int find_smallest_possible_in_cell(int cell)
 	{
 	// find the largest incomplete block possible for given cell
@@ -1270,11 +1192,6 @@
 		{
 			if (exclusive)
 			{
-				//_tags[cell,_can_be_empty_ptr]=false;
-//				if(!can_be_empty)
-//				{
-//					_tags[cell,_can_be_empty_ptr]=false;
-//				}
 				for (int i=0; i<_nblocks; i++) _tags[cell,i]=false;
 			}
 			if(!can_be_empty)
@@ -1283,7 +1200,6 @@
 				_tags[cell,_can_be_empty_ptr]=false;
 			}
 			_tags[cell,owner]=true;
-//
 		}
 		return changed;
 	}
@@ -1326,7 +1242,7 @@
 //======================================================================
 	private bool invalid_data(int start, int block=0, int length=1)
 	{
-		return (start<0||start>=_ncells||length<0||start+length>_ncells||block<0||block>=_nblocks);  //TEST
+		return (start<0||start>=_ncells||length<0||start+length>_ncells||block<0||block>=_nblocks);
 	}
 //======================================================================
 	private bool cell_filled(int cell)
@@ -1375,7 +1291,7 @@
 			switch (_temp_status[i])
 			{
 				case CellState.UNKNOWN :
-					_status[i]=CellState.UNKNOWN; //???????????
+					_status[i]=CellState.UNKNOWN;
 					break;
 
 				case CellState.EMPTY :
@@ -1383,12 +1299,8 @@
 					{
 						record_error("get_status", @"cell $i cannot be empty");
 					}
-					else
-					{	_status[i]=CellState.EMPTY;
-//						foreach (bool t in _tags) t=false;
-//						_tags[i,_can_be_empty_ptr]=true;
-//						_tags[i,_is_finished_ptr]=true;
-					}
+					else	_status[i]=CellState.EMPTY;
+
 					break;
 
 				case CellState.FILLED :
@@ -1400,7 +1312,6 @@
 					else if (_status[i]!=CellState.COMPLETED)
 					{
 						_status[i]=CellState.FILLED;
-	//					_tags[i,_can_be_empty_ptr]=false;
 					}
 
 					break;

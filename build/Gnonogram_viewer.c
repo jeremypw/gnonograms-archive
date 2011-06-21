@@ -116,7 +116,6 @@ struct _Gnonogram_viewPrivate {
 struct _Block1Data {
 	int _ref_count_;
 	Gnonogram_view * self;
-	GtkCheckMenuItem* debugmenuitem;
 	GtkCheckMenuItem* advancedmenuitem;
 	GtkCheckMenuItem* difficultmenuitem;
 };
@@ -143,6 +142,7 @@ typedef enum  {
 static gpointer gnonogram_view_parent_class = NULL;
 extern gchar* resource_icon_dir;
 extern gint resource_MAXGRADE;
+extern gchar* resource_resource_dir;
 extern gchar* resource_manual_dir;
 
 GType gnonogram_view_get_type (void) G_GNUC_CONST;
@@ -211,12 +211,10 @@ static void _lambda30_ (Block1Data* _data1_);
 static void __lambda30__gtk_menu_item_activate (GtkMenuItem* _sender, gpointer self);
 static void _lambda31_ (Block1Data* _data1_);
 static void __lambda31__gtk_menu_item_activate (GtkMenuItem* _sender, gpointer self);
-static void _lambda32_ (Block1Data* _data1_);
-static void __lambda32__gtk_menu_item_activate (GtkMenuItem* _sender, gpointer self);
 static void gnonogram_view_toggle_toolbar (Gnonogram_view* self, GtkMenuItem* cmi);
 static void _gnonogram_view_toggle_toolbar_gtk_menu_item_activate (GtkMenuItem* _sender, gpointer self);
-static void _lambda33_ (Gnonogram_view* self);
-static void __lambda33__gtk_menu_item_activate (GtkMenuItem* _sender, gpointer self);
+static void _lambda32_ (Gnonogram_view* self);
+static void __lambda32__gtk_menu_item_activate (GtkMenuItem* _sender, gpointer self);
 static void gnonogram_view_show_about (Gnonogram_view* self);
 static void _gnonogram_view_show_about_gtk_menu_item_activate (GtkMenuItem* _sender, gpointer self);
 static void gnonogram_view_show_manual (Gnonogram_view* self);
@@ -414,7 +412,6 @@ static void block1_data_unref (Block1Data* _data1_) {
 		_g_object_unref0 (_data1_->self);
 		_g_object_unref0 (_data1_->difficultmenuitem);
 		_g_object_unref0 (_data1_->advancedmenuitem);
-		_g_object_unref0 (_data1_->debugmenuitem);
 		g_slice_free (Block1Data, _data1_);
 	}
 }
@@ -594,8 +591,8 @@ static void _lambda30_ (Block1Data* _data1_) {
 	Gnonogram_view * self;
 	gboolean _tmp0_;
 	self = _data1_->self;
-	_tmp0_ = gtk_check_menu_item_get_active (_data1_->debugmenuitem);
-	g_signal_emit_by_name (self, "debugmode", _tmp0_);
+	_tmp0_ = gtk_check_menu_item_get_active (_data1_->advancedmenuitem);
+	g_signal_emit_by_name (self, "advancedmode", _tmp0_);
 }
 
 
@@ -608,8 +605,8 @@ static void _lambda31_ (Block1Data* _data1_) {
 	Gnonogram_view * self;
 	gboolean _tmp0_;
 	self = _data1_->self;
-	_tmp0_ = gtk_check_menu_item_get_active (_data1_->advancedmenuitem);
-	g_signal_emit_by_name (self, "advancedmode", _tmp0_);
+	_tmp0_ = gtk_check_menu_item_get_active (_data1_->difficultmenuitem);
+	g_signal_emit_by_name (self, "difficultmode", _tmp0_);
 }
 
 
@@ -618,34 +615,20 @@ static void __lambda31__gtk_menu_item_activate (GtkMenuItem* _sender, gpointer s
 }
 
 
-static void _lambda32_ (Block1Data* _data1_) {
-	Gnonogram_view * self;
-	gboolean _tmp0_;
-	self = _data1_->self;
-	_tmp0_ = gtk_check_menu_item_get_active (_data1_->difficultmenuitem);
-	g_signal_emit_by_name (self, "difficultmode", _tmp0_);
-}
-
-
-static void __lambda32__gtk_menu_item_activate (GtkMenuItem* _sender, gpointer self) {
-	_lambda32_ (self);
-}
-
-
 static void _gnonogram_view_toggle_toolbar_gtk_menu_item_activate (GtkMenuItem* _sender, gpointer self) {
 	gnonogram_view_toggle_toolbar (self, _sender);
 }
 
 
-static void _lambda33_ (Gnonogram_view* self) {
+static void _lambda32_ (Gnonogram_view* self) {
 	gboolean _tmp0_;
 	_tmp0_ = gtk_check_menu_item_get_active (self->priv->_gridmenuitem);
 	g_signal_emit_by_name (self, "togglegrid", _tmp0_);
 }
 
 
-static void __lambda33__gtk_menu_item_activate (GtkMenuItem* _sender, gpointer self) {
-	_lambda33_ (self);
+static void __lambda32__gtk_menu_item_activate (GtkMenuItem* _sender, gpointer self) {
+	_lambda32_ (self);
 }
 
 
@@ -759,26 +742,25 @@ static GtkMenuBar* gnonogram_view_create_viewer_menubar (Gnonogram_view* self) {
 	GtkMenuItem* _tmp67_;
 	GtkSeparatorMenuItem* _tmp68_ = NULL;
 	GtkSeparatorMenuItem* _tmp69_;
-	GtkCheckMenuItem* _tmp70_ = NULL;
-	const gchar* _tmp71_ = NULL;
-	GtkCheckMenuItem* _tmp72_ = NULL;
-	const gchar* _tmp73_ = NULL;
-	GtkCheckMenuItem* _tmp74_ = NULL;
-	GtkMenu* _tmp75_ = NULL;
+	const gchar* _tmp70_ = NULL;
+	GtkCheckMenuItem* _tmp71_ = NULL;
+	const gchar* _tmp72_ = NULL;
+	GtkCheckMenuItem* _tmp73_ = NULL;
+	GtkMenu* _tmp74_ = NULL;
 	GtkMenu* viewsubmenu;
-	const gchar* _tmp76_ = NULL;
-	GtkCheckMenuItem* _tmp77_ = NULL;
+	const gchar* _tmp75_ = NULL;
+	GtkCheckMenuItem* _tmp76_ = NULL;
 	GtkCheckMenuItem* toolbarmenuitem;
-	const gchar* _tmp78_ = NULL;
-	GtkCheckMenuItem* _tmp79_ = NULL;
-	GtkCheckMenuItem* _tmp80_;
-	GtkMenu* _tmp81_ = NULL;
+	const gchar* _tmp77_ = NULL;
+	GtkCheckMenuItem* _tmp78_ = NULL;
+	GtkCheckMenuItem* _tmp79_;
+	GtkMenu* _tmp80_ = NULL;
 	GtkMenu* helpsubmenu;
-	const gchar* _tmp82_ = NULL;
-	GtkMenuItem* _tmp83_ = NULL;
+	const gchar* _tmp81_ = NULL;
+	GtkMenuItem* _tmp82_ = NULL;
 	GtkMenuItem* aboutmenuitem;
-	const gchar* _tmp84_ = NULL;
-	GtkMenuItem* _tmp85_ = NULL;
+	const gchar* _tmp83_ = NULL;
+	GtkMenuItem* _tmp84_ = NULL;
 	GtkMenuItem* manualmenuitem;
 	g_return_val_if_fail (IS_GNONOGRAM_VIEW (self), NULL);
 	_data1_ = g_slice_new0 (Block1Data);
@@ -930,46 +912,41 @@ static GtkMenuBar* gnonogram_view_create_viewer_menubar (Gnonogram_view* self) {
 	_tmp69_ = g_object_ref_sink (_tmp68_);
 	gtk_container_add (GTK_CONTAINER (settingssubmenu), GTK_WIDGET (_tmp69_));
 	_g_object_unref0 (_tmp69_);
-	_tmp70_ = (GtkCheckMenuItem*) gtk_check_menu_item_new_with_mnemonic ("D_ebug");
-	_data1_->debugmenuitem = g_object_ref_sink (_tmp70_);
-	gtk_check_menu_item_set_active (_data1_->debugmenuitem, FALSE);
-	gtk_widget_set_sensitive (GTK_WIDGET (_data1_->debugmenuitem), TRUE);
-	gtk_container_add (GTK_CONTAINER (settingssubmenu), GTK_WIDGET (_data1_->debugmenuitem));
-	_tmp71_ = _ ("_Use advanced solver");
-	_tmp72_ = (GtkCheckMenuItem*) gtk_check_menu_item_new_with_mnemonic (_tmp71_);
-	_data1_->advancedmenuitem = g_object_ref_sink (_tmp72_);
+	_tmp70_ = _ ("_Use advanced solver");
+	_tmp71_ = (GtkCheckMenuItem*) gtk_check_menu_item_new_with_mnemonic (_tmp70_);
+	_data1_->advancedmenuitem = g_object_ref_sink (_tmp71_);
 	gtk_check_menu_item_set_active (_data1_->advancedmenuitem, TRUE);
 	gtk_container_add (GTK_CONTAINER (settingssubmenu), GTK_WIDGET (_data1_->advancedmenuitem));
-	_tmp73_ = _ ("_Generate difficult games");
-	_tmp74_ = (GtkCheckMenuItem*) gtk_check_menu_item_new_with_mnemonic (_tmp73_);
-	_data1_->difficultmenuitem = g_object_ref_sink (_tmp74_);
+	_tmp72_ = _ ("_Generate difficult games");
+	_tmp73_ = (GtkCheckMenuItem*) gtk_check_menu_item_new_with_mnemonic (_tmp72_);
+	_data1_->difficultmenuitem = g_object_ref_sink (_tmp73_);
 	gtk_check_menu_item_set_active (_data1_->difficultmenuitem, FALSE);
 	gtk_container_add (GTK_CONTAINER (settingssubmenu), GTK_WIDGET (_data1_->difficultmenuitem));
-	_tmp75_ = (GtkMenu*) gtk_menu_new ();
-	viewsubmenu = g_object_ref_sink (_tmp75_);
+	_tmp74_ = (GtkMenu*) gtk_menu_new ();
+	viewsubmenu = g_object_ref_sink (_tmp74_);
 	gtk_menu_item_set_submenu (viewmenuitem, GTK_WIDGET (viewsubmenu));
-	_tmp76_ = _ ("_Toolbar");
-	_tmp77_ = (GtkCheckMenuItem*) gtk_check_menu_item_new_with_mnemonic (_tmp76_);
-	toolbarmenuitem = g_object_ref_sink (_tmp77_);
+	_tmp75_ = _ ("_Toolbar");
+	_tmp76_ = (GtkCheckMenuItem*) gtk_check_menu_item_new_with_mnemonic (_tmp75_);
+	toolbarmenuitem = g_object_ref_sink (_tmp76_);
 	gtk_container_add (GTK_CONTAINER (viewsubmenu), GTK_WIDGET (toolbarmenuitem));
 	gtk_check_menu_item_set_active (toolbarmenuitem, TRUE);
-	_tmp78_ = _ ("_Grid");
-	_tmp79_ = (GtkCheckMenuItem*) gtk_check_menu_item_new_with_mnemonic (_tmp78_);
-	_tmp80_ = g_object_ref_sink (_tmp79_);
+	_tmp77_ = _ ("_Grid");
+	_tmp78_ = (GtkCheckMenuItem*) gtk_check_menu_item_new_with_mnemonic (_tmp77_);
+	_tmp79_ = g_object_ref_sink (_tmp78_);
 	_g_object_unref0 (self->priv->_gridmenuitem);
-	self->priv->_gridmenuitem = _tmp80_;
+	self->priv->_gridmenuitem = _tmp79_;
 	gtk_container_add (GTK_CONTAINER (viewsubmenu), GTK_WIDGET (self->priv->_gridmenuitem));
 	gtk_check_menu_item_set_active (self->priv->_gridmenuitem, FALSE);
-	_tmp81_ = (GtkMenu*) gtk_menu_new ();
-	helpsubmenu = g_object_ref_sink (_tmp81_);
+	_tmp80_ = (GtkMenu*) gtk_menu_new ();
+	helpsubmenu = g_object_ref_sink (_tmp80_);
 	gtk_menu_item_set_submenu (helpmenuitem, GTK_WIDGET (helpsubmenu));
-	_tmp82_ = _ ("About");
-	_tmp83_ = (GtkMenuItem*) gtk_menu_item_new_with_mnemonic (_tmp82_);
-	aboutmenuitem = g_object_ref_sink (_tmp83_);
+	_tmp81_ = _ ("About");
+	_tmp82_ = (GtkMenuItem*) gtk_menu_item_new_with_mnemonic (_tmp81_);
+	aboutmenuitem = g_object_ref_sink (_tmp82_);
 	gtk_container_add (GTK_CONTAINER (helpsubmenu), GTK_WIDGET (aboutmenuitem));
-	_tmp84_ = _ ("Manual");
-	_tmp85_ = (GtkMenuItem*) gtk_menu_item_new_with_mnemonic (_tmp84_);
-	manualmenuitem = g_object_ref_sink (_tmp85_);
+	_tmp83_ = _ ("Manual");
+	_tmp84_ = (GtkMenuItem*) gtk_menu_item_new_with_mnemonic (_tmp83_);
+	manualmenuitem = g_object_ref_sink (_tmp84_);
 	gtk_container_add (GTK_CONTAINER (helpsubmenu), GTK_WIDGET (manualmenuitem));
 	g_signal_connect_object (newmenuitem, "activate", (GCallback) __lambda14__gtk_menu_item_activate, self, 0);
 	g_signal_connect_object (loadpuzzlemenuitem, "activate", (GCallback) __lambda15__gtk_menu_item_activate, self, 0);
@@ -989,11 +966,10 @@ static GtkMenuBar* gnonogram_view_create_viewer_menubar (Gnonogram_view* self) {
 	g_signal_connect_object (resizemenuitem, "activate", (GCallback) __lambda29__gtk_menu_item_activate, self, 0);
 	g_signal_connect_object (self->priv->grademenuitem, "activate", (GCallback) _gnonogram_view_getdifficulty_gtk_menu_item_activate, self, 0);
 	g_signal_connect_object (infomenuitem, "activate", (GCallback) _gnonogram_view_editdescription_gtk_menu_item_activate, self, 0);
-	g_signal_connect_data (GTK_MENU_ITEM (_data1_->debugmenuitem), "activate", (GCallback) __lambda30__gtk_menu_item_activate, block1_data_ref (_data1_), (GClosureNotify) block1_data_unref, 0);
-	g_signal_connect_data (GTK_MENU_ITEM (_data1_->advancedmenuitem), "activate", (GCallback) __lambda31__gtk_menu_item_activate, block1_data_ref (_data1_), (GClosureNotify) block1_data_unref, 0);
-	g_signal_connect_data (GTK_MENU_ITEM (_data1_->difficultmenuitem), "activate", (GCallback) __lambda32__gtk_menu_item_activate, block1_data_ref (_data1_), (GClosureNotify) block1_data_unref, 0);
+	g_signal_connect_data (GTK_MENU_ITEM (_data1_->advancedmenuitem), "activate", (GCallback) __lambda30__gtk_menu_item_activate, block1_data_ref (_data1_), (GClosureNotify) block1_data_unref, 0);
+	g_signal_connect_data (GTK_MENU_ITEM (_data1_->difficultmenuitem), "activate", (GCallback) __lambda31__gtk_menu_item_activate, block1_data_ref (_data1_), (GClosureNotify) block1_data_unref, 0);
 	g_signal_connect_object (GTK_MENU_ITEM (toolbarmenuitem), "activate", (GCallback) _gnonogram_view_toggle_toolbar_gtk_menu_item_activate, self, 0);
-	g_signal_connect_object (GTK_MENU_ITEM (self->priv->_gridmenuitem), "activate", (GCallback) __lambda33__gtk_menu_item_activate, self, 0);
+	g_signal_connect_object (GTK_MENU_ITEM (self->priv->_gridmenuitem), "activate", (GCallback) __lambda32__gtk_menu_item_activate, self, 0);
 	g_signal_connect_object (aboutmenuitem, "activate", (GCallback) _gnonogram_view_show_about_gtk_menu_item_activate, self, 0);
 	g_signal_connect_object (manualmenuitem, "activate", (GCallback) _gnonogram_view_show_manual_gtk_menu_item_activate, self, 0);
 	result = menubar;
@@ -1486,7 +1462,14 @@ static void gnonogram_view_show_about (Gnonogram_view* self) {
 	gchar** authors;
 	gint authors_length1;
 	gint _authors_size_;
-	const gchar* _tmp2_ = NULL;
+	gchar* _tmp2_;
+	GtkImage* _tmp3_ = NULL;
+	GtkImage* _tmp4_;
+	GtkImage* _logo;
+	const gchar* _tmp5_ = NULL;
+	const gchar* _tmp6_ = NULL;
+	GdkPixbuf* _tmp7_ = NULL;
+	const gchar* _tmp8_ = NULL;
 	g_return_if_fail (IS_GNONOGRAM_VIEW (self));
 	_tmp0_ = g_strdup ("Jeremy Wootten <jeremywootten@gmail.com>");
 	_tmp1_ = g_new0 (gchar*, 2 + 1);
@@ -1495,8 +1478,14 @@ static void gnonogram_view_show_about (Gnonogram_view* self) {
 	authors = _tmp1_;
 	authors_length1 = 2;
 	_authors_size_ = 2;
-	_tmp2_ = _ ("About Gnonogram Game");
-	gtk_show_about_dialog (NULL, "program-name", "Gnonograms", "version", _VERSION, "comments", "Set and solve gnonogram puzzles", "license", "Gnonograms is free software; you can redistribute it and/or modify it " \
+	_tmp2_ = g_strconcat (resource_resource_dir, "/icons/gnonograms48.png", NULL);
+	_tmp3_ = (GtkImage*) gtk_image_new_from_file (_tmp2_);
+	_logo = (_tmp4_ = g_object_ref_sink (_tmp3_), _g_free0 (_tmp2_), _tmp4_);
+	_tmp5_ = _ ("Gnonograms");
+	_tmp6_ = _ ("Design and solve Nonogram puzzles");
+	_tmp7_ = gtk_image_get_pixbuf (_logo);
+	_tmp8_ = _ ("About Gnonograms");
+	gtk_show_about_dialog (NULL, "program-name", _tmp5_, "version", _VERSION, "comments", _tmp6_, "license", "Gnonograms is free software; you can redistribute it and/or modify it " \
 "under the terms of the GNU General Public Licence as published by the " \
 "Free Software Foundation; either version 2 of the Licence, or (at your" \
 " option) any later version.\n" \
@@ -1508,7 +1497,8 @@ static void gnonogram_view_show_about (Gnonogram_view* self) {
 "\n" \
 "You should have received a copy of the GNU General Public Licence alon" \
 "g with Nautilus; if not, write to the Free Software Foundation, Inc., " \
-"51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA", "wrap_license", TRUE, "title", _tmp2_, "authors", authors, NULL, NULL);
+"51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA", "wrap_license", TRUE, "logo", _tmp7_, "title", _tmp8_, "authors", authors, NULL, NULL);
+	_g_object_unref0 (_logo);
 	authors = (_vala_array_free (authors, authors_length1, (GDestroyNotify) g_free), NULL);
 }
 
@@ -1929,7 +1919,6 @@ static void gnonogram_view_class_init (Gnonogram_viewClass * klass) {
 	g_signal_new ("resizegame", TYPE_GNONOGRAM_VIEW, G_SIGNAL_RUN_LAST, 0, NULL, NULL, g_cclosure_marshal_VOID__VOID, G_TYPE_NONE, 0);
 	g_signal_new ("togglegrid", TYPE_GNONOGRAM_VIEW, G_SIGNAL_RUN_LAST, 0, NULL, NULL, g_cclosure_marshal_VOID__BOOLEAN, G_TYPE_NONE, 1, G_TYPE_BOOLEAN);
 	g_signal_new ("changefont", TYPE_GNONOGRAM_VIEW, G_SIGNAL_RUN_LAST, 0, NULL, NULL, g_cclosure_marshal_VOID__BOOLEAN, G_TYPE_NONE, 1, G_TYPE_BOOLEAN);
-	g_signal_new ("debugmode", TYPE_GNONOGRAM_VIEW, G_SIGNAL_RUN_LAST, 0, NULL, NULL, g_cclosure_marshal_VOID__BOOLEAN, G_TYPE_NONE, 1, G_TYPE_BOOLEAN);
 	g_signal_new ("advancedmode", TYPE_GNONOGRAM_VIEW, G_SIGNAL_RUN_LAST, 0, NULL, NULL, g_cclosure_marshal_VOID__BOOLEAN, G_TYPE_NONE, 1, G_TYPE_BOOLEAN);
 	g_signal_new ("difficultmode", TYPE_GNONOGRAM_VIEW, G_SIGNAL_RUN_LAST, 0, NULL, NULL, g_cclosure_marshal_VOID__BOOLEAN, G_TYPE_NONE, 1, G_TYPE_BOOLEAN);
 }

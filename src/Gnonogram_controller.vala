@@ -122,7 +122,7 @@ public class Gnonogram_controller
 		_gnonogram_view.setdifficulty.connect(this.set_difficulty);
 		_gnonogram_view.togglegrid.connect(this.gridlines_toggled);
 		_gnonogram_view.changefont.connect(this.change_font_size);
-		_gnonogram_view.debugmode.connect((debug)=>{_debug=debug;});
+//		_gnonogram_view.debugmode.connect((debug)=>{_debug=debug;});
 		_gnonogram_view.advancedmode.connect((advanced)=>{_advanced=advanced;});
 		_gnonogram_view.difficultmode.connect((difficult)=>{_difficult=difficult;});
 		_gnonogram_view.set_grade_spin_value((double)_grade);
@@ -276,7 +276,7 @@ public class Gnonogram_controller
 			case "P":
 			case "p":
 					_timer.stop();
-					Utils.show_info_dialog("Timer paused");
+					Utils.show_info_dialog(_("Timer paused"));
 					_timer.continue();
 					_is_button_down=false;
 					break;
@@ -536,7 +536,7 @@ public class Gnonogram_controller
 		}
 		else
 		{
-			Utils.show_warning_dialog("Working missing");
+			Utils.show_warning_dialog(_("Working data missing"));
 			return false;
 		}
 		if (reader.has_state)
@@ -553,7 +553,7 @@ public class Gnonogram_controller
 		}
 		else
 		{
-			Utils.show_warning_dialog("State missing");
+			Utils.show_warning_dialog(_("State data missing"));
 			return false;
 		}
 		return true;
@@ -564,12 +564,12 @@ public class Gnonogram_controller
 		_have_solution=false;
 		if (!reader.open_datainputstream())
 		{
-			Utils.show_warning_dialog("Could not open game file");
+			Utils.show_warning_dialog(_("Could not open game file"));
 			return false;
 		}
 		if (!reader.parse_game_file())
 		{
-			Utils.show_warning_dialog("Game file format incorrect");
+			Utils.show_warning_dialog(_("File format incorrect"));
 			return false;
 		}
 		//stdout.printf("File parsed\n");
@@ -579,7 +579,7 @@ public class Gnonogram_controller
 			int cols=reader.cols;
 			if (rows>Resource.MAXROWSIZE||cols>Resource.MAXCOLSIZE)
 			{
-				Utils.show_warning_dialog("Dimensions too large");
+				Utils.show_warning_dialog(_("Dimensions too large"));
 				return false;
 			}
 			else resize(rows,cols);
@@ -588,7 +588,7 @@ public class Gnonogram_controller
 		}
 		else
 		{
-			Utils.show_warning_dialog("Dimensions missing");
+			Utils.show_warning_dialog(_("Dimensions data missing"));
 			return false;
 		}
 
@@ -600,11 +600,11 @@ public class Gnonogram_controller
 			_have_solution=true;
 		}
 		else if (reader.has_row_clues && reader.has_col_clues)
-		{	stdout.printf("loading clues\n");
+		{
 			for (int i=0; i<_rows; i++) _rowbox.update_label(i,reader.row_clues[i]);
 			for (int i=0; i<_cols; i++) _colbox.update_label(i,reader.col_clues[i]);
 			int passes=solve_game(false,true,false); //no start grid, use advanced if necessary but not ultimate - too slow
-			stdout.printf("Solver returned %d\n",passes);
+
 			if (passes>0)
 			{
 				_have_solution=true;
@@ -612,17 +612,17 @@ public class Gnonogram_controller
 			}
 			else if (passes<0)
 			{
-				Utils.show_warning_dialog("Clues contradictory");
+				Utils.show_warning_dialog(_("Clues contradictory"));
 				return false;
 			}
 			else
 			{
-				Utils.show_info_dialog("Game not soluble by computer");
+				Utils.show_info_dialog(_("Game not soluble by computer"));
 			}
 		}
 		else
 		{
-			Utils.show_warning_dialog("Clues and solution both missing");
+			Utils.show_warning_dialog(_("Clues and solution both missing"));
 			return false;
 		}
 
@@ -644,12 +644,6 @@ public class Gnonogram_controller
 		change_state(GameState.SETTING);
 	}
 //======================================================================
-	public void unpeek_game()
-	{//stdout.printf("Unpeek game\n");
-		//_model.check_solution();
-		//change_state(GameState.SOLVING);
-	}
-//======================================================================
 	public void peek_game()
 	{//stdout.printf("Peek game\n");
 
@@ -658,17 +652,17 @@ public class Gnonogram_controller
 		seconds-=((double)hours)*3600.000;
 		int minutes=((int)seconds)/60;
 		seconds-=(double)(minutes)*60.000;
-		string time_taken=("\n\nTime taken is %d hours, %d minutes, %8.3f seconds").printf(hours, minutes, seconds);
+		string time_taken=("\n\n"+_("Time taken is %d hours, %d minutes, %8.3f seconds")).printf(hours, minutes, seconds);
 		if (_have_solution)
 		{
 			int count=_model.count_errors();
 			if (count==0)
 			{
-				Utils.show_info_dialog(_("No errors"+time_taken));
+				Utils.show_info_dialog(_("No errors")+time_taken);
 			}
 			else
 			{
-				Utils.show_info_dialog(_("There are %d incorrect cells"+time_taken).printf(count));
+				Utils.show_info_dialog((_("There are %d incorrect cells"+time_taken)).printf(count));
 			}
 			redraw_all();
 		}
@@ -770,9 +764,6 @@ public class Gnonogram_controller
 	public void random_game()
 	{
 		new_game();
-		_gnonogram_view.set_name(_("Thinking ...."));
-		Gtk.main_iteration_do(true);
-
 		int passes=0, count=0;
 		int grade = _grade; //grade may be reduced but _grade always matches spin setting
 		if (_difficult)
@@ -821,7 +812,7 @@ public class Gnonogram_controller
 		}
 		else
 		{
-			Utils.show_warning_dialog(_("Error occurred in solver\n"));
+			Utils.show_warning_dialog(_("Error occurred in solver"));
 			stdout.printf(_solver.get_error()+"\n");
 			_gnonogram_view.set_name(_("Error in solver"));
 			_gnonogram_view.set_author("");
@@ -878,7 +869,6 @@ public class Gnonogram_controller
 		_rowbox.show_all(); _colbox.show_all();
 	}
 //======================================================================
-//	[CCode (instance_pos = -1)]
 	public void quit_game()
 	{	//stdout.printf("In quit game\n");
 		save_config();

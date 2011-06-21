@@ -20,7 +20,7 @@
  * As a special exception, if you use inline functions from this file, this
  * file does not by itself cause the resulting executable to be covered by
  * the GNU Lesser General Public License.
- * 
+ *
  *  Author:
  * 	Jeremy Wootten <jeremwootten@gmail.com>
  */
@@ -32,6 +32,7 @@
 #include <string.h>
 #include <float.h>
 #include <math.h>
+#include <stdio.h>
 
 
 #define TYPE_GNONOGRAM_LABELBOX (gnonogram_labelbox_get_type ())
@@ -102,7 +103,6 @@ Gnonogram_label* gnonogram_label_construct (GType object_type, const gchar* labe
 void gnonogram_labelbox_resize (Gnonogram_LabelBox* self, gint new_size, gint other_size);
 static void gnonogram_labelbox_unhighlight_all (Gnonogram_LabelBox* self);
 static void gnonogram_labelbox_remove_label (Gnonogram_LabelBox* self);
-void utils_show_warning_dialog (const gchar* msg);
 static void gnonogram_labelbox_set_default_fontheight (Gnonogram_LabelBox* self, gint size, gint other_size);
 static void gnonogram_labelbox_set_attribs (Gnonogram_LabelBox* self, gdouble fontheight);
 static void gnonogram_labelbox_set_all_to_zero (Gnonogram_LabelBox* self);
@@ -251,7 +251,7 @@ void gnonogram_labelbox_resize (Gnonogram_LabelBox* self, gint new_size, gint ot
 			}
 		}
 		if (self->priv->_size != new_size) {
-			utils_show_warning_dialog ("Error adding or removing labels");
+			fprintf (stdout, "Error adding or removing labels");
 		}
 	}
 	self->priv->_other_size = other_size;

@@ -17,11 +17,11 @@
  * As a special exception, if you use inline functions from this file, this
  * file does not by itself cause the resulting executable to be covered by
  * the GNU Lesser General Public License.
- * 
+ *
  *  Author:
  * 	Jeremy Wootten <jeremwootten@gmail.com>
  */
- 
+
  using Gtk;
  using Gdk;
 
@@ -67,7 +67,7 @@ class Gnonogram_label : Gtk.EventBox {
 	public void set_size(int s)
 	{
 		size=s;
-		l.set_tooltip_markup(attrib_start+@"Extent=$blockextent, Freedom=$(size-blockextent)"+attrib_end);
+		l.set_tooltip_markup(attrib_start+ _("Freedom=")+(size-blockextent).to_string()+attrib_end);
 	}
 
 	public string get_text() {return l.get_text();}

@@ -46,7 +46,7 @@ public class Gnonogram_view : Gtk.Window
 	public signal void resizegame();
 	public signal void togglegrid(bool active);
 	public signal void changefont(bool increase);
-	public signal void debugmode(bool debug);
+//	public signal void debugmode(bool debug);
 	public signal void advancedmode(bool advanced);
 	public signal void difficultmode(bool difficult);
 
@@ -66,8 +66,6 @@ public class Gnonogram_view : Gtk.Window
 	private Label _date_label;
 	private Label _size_label;
 	private Label _score_label;
-
-//	private Gtk.Image _logo;
 
 	public Gnonogram_view(Gnonogram_LabelBox rb, Gnonogram_LabelBox cb, Gnonogram_CellGrid dg, Gnonogram_controller controller)
 	{	_controller=controller; //seems to be necessary to get signals to work.  Not sure why.
@@ -190,10 +188,10 @@ public class Gnonogram_view : Gtk.Window
 			grademenuitem=new MenuItem.with_mnemonic(_("_Difficulty ..."));
 			settingssubmenu.add(grademenuitem);
 			settingssubmenu.add(new SeparatorMenuItem());
-			var debugmenuitem=new CheckMenuItem.with_mnemonic("D_ebug");
-			debugmenuitem.set_active(false);
-			debugmenuitem.set_sensitive(true); //for development only
-			settingssubmenu.add(debugmenuitem);
+//			var debugmenuitem=new CheckMenuItem.with_mnemonic("D_ebug");
+//			debugmenuitem.set_active(false);
+//			debugmenuitem.set_sensitive(true); //for development only
+//			settingssubmenu.add(debugmenuitem);
 			var advancedmenuitem=new CheckMenuItem.with_mnemonic(_("_Use advanced solver"));
 			advancedmenuitem.set_active(true);
 			settingssubmenu.add(advancedmenuitem);
@@ -237,7 +235,7 @@ public class Gnonogram_view : Gtk.Window
 		resizemenuitem.activate.connect(()=>{resizegame();});
 		grademenuitem.activate.connect(getdifficulty);
 		infomenuitem.activate.connect(editdescription);
-		debugmenuitem.activate.connect(()=>{debugmode(debugmenuitem.active);});
+//		debugmenuitem.activate.connect(()=>{debugmode(debugmenuitem.active);});
 		advancedmenuitem.activate.connect(()=>{advancedmode(advancedmenuitem.active);});
 		difficultmenuitem.activate.connect(()=>{difficultmode(difficultmenuitem.active);});
 
@@ -379,14 +377,15 @@ public class Gnonogram_view : Gtk.Window
 	private void show_about()
 	{
 		string[] authors={"Jeremy Wootten <jeremywootten@gmail.com>",null};
+		Gtk.Image _logo = new Gtk.Image.from_file(Resource.resource_dir+"/icons/gnonograms48.png");
 		show_about_dialog (null,
-                       "program-name", "Gnonograms",
+                       "program-name", _("Gnonograms"),
                        "version", _VERSION,
-                       "comments", "Set and solve gnonogram puzzles",
+                       "comments", _("Design and solve Nonogram puzzles"),
                        "license","Gnonograms is free software; you can redistribute it and/or modify it under the terms of the GNU General Public Licence as published by the Free Software Foundation; either version 2 of the Licence, or (at your option) any later version.\n\nGnonogram is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public Licence for more details.\n\nYou should have received a copy of the GNU General Public Licence along with Nautilus; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA",
                        "wrap_license",true,
-                      // "logo", _logo.get_pixbuf(),
-                       "title", _("About Gnonogram Game"),
+                       "logo", _logo.get_pixbuf(),
+                       "title", _("About Gnonograms"),
                        "authors", authors,
                        null);
 	}

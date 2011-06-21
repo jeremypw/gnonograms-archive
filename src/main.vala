@@ -59,12 +59,6 @@ public struct Cell {
 			this.state=b.state;
 		}
 
-//		public Cell invert() {
-//			if (state==CellState.EMPTY) state=CellState.FILLED;
-//			else state=CellState.EMPTY;
-//			return this;
-//		}
-
 		public Cell invert() {
 			Cell c={this.row, this.col, CellState.UNKNOWN};
 			if (this.state==CellState.EMPTY) c.state=CellState.FILLED;
@@ -90,28 +84,8 @@ public enum ButtonPress {
 public static int main(string[] args)  {
 
 	string game_filename="";
-//	int _start_rows=-1;
-//	int _start_cols=-1;
-/*	bool testing=false;
-	bool debug=false;
-	bool test_column=false;
-	int test_idx=-1;
+	string package_name=Resource.APP_GETTEXT_PACKAGE;
 
-	for (int i=1;i<args.length;i++) {
-		if (args[i]=="--test") {testing=true; _start_rows=1; _start_cols=10; debug=true; continue;}
-		if (args[i]=="--rows") {_start_rows=int.parse(args[i+1]);i++;continue;}
-		if (args[i]=="--cols") {_start_cols=int.parse(args[i+1]);i++;continue;}
-		if (args[i]=="--debug") {
-			if (args.length-i>=2) {
-				debug=false;
-				test_column=(args[i+1]=="column");
-				test_idx=int.parse(args[i+2]);
-			}
-			else {debug=true;}
-			continue;
-		}
-	}
-*/
 	if (args.length>=2) //a filename has been provided
 	{
 		game_filename=args[1];
@@ -122,13 +96,11 @@ public static int main(string[] args)  {
 	Resource.init(args[0]);
 	Gtk.init(ref args);
 
-	string package_name=Resource.APP_GETTEXT_PACKAGE;
-	string langpackdir=Resource.get_langpack_dir();
-	Intl.bindtextdomain(package_name, langpackdir);
+	Intl.bindtextdomain(package_name, Resource.locale_dir);
 	Intl.bind_textdomain_codeset(package_name, "UTF-8");
 	Intl.textdomain(package_name);
 
-	new Gnonogram_controller(game_filename);//, testing, debug, test_column, test_idx);
+	new Gnonogram_controller(game_filename);
 
 	Gtk.main();
 	return 0;

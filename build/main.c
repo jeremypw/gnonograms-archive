@@ -91,6 +91,7 @@ typedef enum  {
 } ButtonPress;
 
 
+extern gchar* resource_locale_dir;
 
 GType game_state_get_type (void) G_GNUC_CONST;
 GType cell_state_get_type (void) G_GNUC_CONST;
@@ -103,9 +104,8 @@ void cell_copy (Cell *self, Cell* b);
 void cell_invert (Cell *self, Cell* result);
 GType button_press_get_type (void) G_GNUC_CONST;
 gint _vala_main (gchar** args, int args_length1);
-void resource_init (const gchar* arg0);
 #define RESOURCE_APP_GETTEXT_PACKAGE GETTEXT_PACKAGE
-gchar* resource_get_langpack_dir (void);
+void resource_init (const gchar* arg0);
 Gnonogram_controller* gnonogram_controller_new (const gchar* game_filename);
 Gnonogram_controller* gnonogram_controller_construct (GType object_type, const gchar* game_filename);
 gpointer gnonogram_controller_ref (gpointer instance);
@@ -234,56 +234,51 @@ gint _vala_main (gchar** args, int args_length1) {
 	gint result = 0;
 	gchar* _tmp0_;
 	gchar* game_filename;
-	gchar* _tmp8_;
+	gchar* _tmp1_;
 	gchar* package_name;
-	gchar* _tmp9_ = NULL;
-	gchar* langpackdir;
-	Gnonogram_controller* _tmp10_ = NULL;
-	Gnonogram_controller* _tmp11_;
+	Gnonogram_controller* _tmp9_ = NULL;
+	Gnonogram_controller* _tmp10_;
 	_tmp0_ = g_strdup ("");
 	game_filename = _tmp0_;
+	_tmp1_ = g_strdup (RESOURCE_APP_GETTEXT_PACKAGE);
+	package_name = _tmp1_;
 	if (args_length1 >= 2) {
-		gchar* _tmp1_;
 		gchar* _tmp2_;
-		gboolean _tmp3_ = FALSE;
-		gboolean _tmp4_;
-		_tmp1_ = g_strdup (args[1]);
-		_tmp2_ = _tmp1_;
+		gchar* _tmp3_;
+		gboolean _tmp4_ = FALSE;
+		gboolean _tmp5_;
+		_tmp2_ = g_strdup (args[1]);
+		_tmp3_ = _tmp2_;
 		_g_free0 (game_filename);
-		game_filename = _tmp2_;
-		_tmp4_ = g_str_has_suffix (game_filename, ".pattern");
-		if (_tmp4_) {
-			_tmp3_ = TRUE;
+		game_filename = _tmp3_;
+		_tmp5_ = g_str_has_suffix (game_filename, ".pattern");
+		if (_tmp5_) {
+			_tmp4_ = TRUE;
 		} else {
-			gboolean _tmp5_;
-			_tmp5_ = g_str_has_suffix (game_filename, ".gno");
-			_tmp3_ = _tmp5_;
+			gboolean _tmp6_;
+			_tmp6_ = g_str_has_suffix (game_filename, ".gno");
+			_tmp4_ = _tmp6_;
 		}
-		if (_tmp3_) {
+		if (_tmp4_) {
 		} else {
-			gchar* _tmp6_;
 			gchar* _tmp7_;
-			_tmp6_ = g_strdup ("");
-			_tmp7_ = _tmp6_;
+			gchar* _tmp8_;
+			_tmp7_ = g_strdup ("");
+			_tmp8_ = _tmp7_;
 			_g_free0 (game_filename);
-			game_filename = _tmp7_;
+			game_filename = _tmp8_;
 		}
 	}
 	resource_init (args[0]);
 	gtk_init (&args_length1, &args);
-	_tmp8_ = g_strdup (RESOURCE_APP_GETTEXT_PACKAGE);
-	package_name = _tmp8_;
-	_tmp9_ = resource_get_langpack_dir ();
-	langpackdir = _tmp9_;
-	bindtextdomain (package_name, langpackdir);
+	bindtextdomain (package_name, resource_locale_dir);
 	bind_textdomain_codeset (package_name, "UTF-8");
 	textdomain (package_name);
-	_tmp10_ = gnonogram_controller_new (game_filename);
-	_tmp11_ = _tmp10_;
-	_gnonogram_controller_unref0 (_tmp11_);
+	_tmp9_ = gnonogram_controller_new (game_filename);
+	_tmp10_ = _tmp9_;
+	_gnonogram_controller_unref0 (_tmp10_);
 	gtk_main ();
 	result = 0;
-	_g_free0 (langpackdir);
 	_g_free0 (package_name);
 	_g_free0 (game_filename);
 	return result;

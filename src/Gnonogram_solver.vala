@@ -127,7 +127,7 @@
 		{//keep cycling through regions while at least one of them is changing (up to 30 times)
 			changed=false;
 			for (int i=0; i<_region_count; i++)
-			{	//stdout.printf("Region %d, ",i);
+			{
 				if (_regions[i]._completed)
 				{
 					continue;
@@ -167,7 +167,7 @@
 	// if leads to contradiction mark opposite to guess, continue simple solve, if still no solution start again.
 	// if does not lead to solution leave unknown and choose another cell
 
-	{	stdout.printf("Advanced solver\n");
+	{	//stdout.printf("Advanced solver\n");
 		int simple_result=0;
 		int wraps=0;
 		bool changed=false;
@@ -181,7 +181,6 @@
 		while (true)
 		{
 			increment_counter();
-//			this.save_position(grid_store);
 			make_guess();
 
 			if (_trial_cell.col==-1) //run out of guesses
@@ -196,7 +195,7 @@
 				_rdir=0; _cdir=1; _rlim=_rows; _clim=_cols; _turn=0;
 				changed=false;
 				wraps++;
-				stdout.printf("Wrapping ... max _turns %d\n", _max_turns);
+				//stdout.printf("Wrapping ... max _turns %d\n", _max_turns);
 				continue;
 			}
 			_grid.set_data_from_cell(_trial_cell);
@@ -287,12 +286,10 @@
 		simple_solver(false,true); //make sure region state correct
 
 		showsolvergrid();
-		if(!Utils.show_confirm_dialog("Start Ultimate solver?\n This can take a long time and may not work"))
-		{return 9999999;}
+		if(!Utils.show_confirm_dialog(_("Start Ultimate solver?\n This can take a long time and may not work"))) return 9999999;
 
 		CellState[] grid_store2 = new CellState[_rows*_cols];
 		CellState[] guess={};
-//		CellState[] guess_store;
 
 		while (true)
 		{
@@ -313,13 +310,12 @@
 			save_position(grid_store2);
 
 			p.initialise();
-//			possibles=0;
 			while (p.next())
 			{
 				increment_counter();
 				if (_guesses>limit)
 				{
-					if(Utils.show_confirm_dialog("This is taking a long time! /nKeep trying?")) limit+=GUESSES_BEFORE_ASK;
+					if(Utils.show_confirm_dialog(_("This is taking a long time!")+"\n"+_("Keep trying?"))) limit+=GUESSES_BEFORE_ASK;
 					else	return 9999999;
 					//need something to force screen update here - can take several seconds.
 				}
@@ -332,15 +328,6 @@
 				{
 					advanced_result=advanced_solver(grid_store, debug);
 					if (advanced_result>0 && advanced_result<9999999) return advanced_result; //solution found
-//					possibles++;
-//					if (possibles==1)
-//					{
-//						guess_store=new CellState[guess.length];
-//						for(int i=0;i<guess.length;i++)
-//						{
-//							guess_store[i]=guess[i];
-//						}
-//					}
 				}
 				else if (simple_result>0) return simple_result+_guesses; //unlikely!
 
@@ -348,12 +335,7 @@
 				for (int i=0; i<_region_count; i++) _regions[i].initial_state();
 			}
 			load_position(grid_store2); //back track
-//			if (possibles==1)
-//			{
-//				stdout.printf("Only one perm possible\n");
-//				_grid.set_array(idx,is_column,guess,start);
-//				save_position(grid_store2);
-//			}
+
 			for (int i=0; i<_region_count; i++) _regions[i].initial_state();
 			simple_solver(false,false);
 		}
@@ -392,8 +374,7 @@
 			Gtk.main_iteration_do(true); //process signals
 // Try to make sure screen actually updates - not sure of how to do this.
 // This helps but does not force screen update.
-//			Gtk.main_iteration_do(false); //process signals
-//			stdout.printf(@"Guesses $_guesses\n");
+
 			_counter=0;
 
 		}

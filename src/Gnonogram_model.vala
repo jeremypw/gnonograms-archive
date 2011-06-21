@@ -184,7 +184,7 @@
 			_solution_data.set_col(c, _arr);
 		}
 
-		if (grade<5) return;  //dont bother with adjustment for lower difficulty levels
+		if (grade<5) return;  //don't bother with adjustment for lower difficulty levels
 
 		for (int r=0;r<_rows;r++)
 		{

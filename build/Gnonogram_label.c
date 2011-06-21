@@ -20,7 +20,7 @@
  * As a special exception, if you use inline functions from this file, this
  * file does not by itself cause the resulting executable to be covered by
  * the GNU Lesser General Public License.
- * 
+ *
  *  Author:
  * 	Jeremy Wootten <jeremwootten@gmail.com>
  */
@@ -32,6 +32,7 @@
 #include <string.h>
 #include <float.h>
 #include <math.h>
+#include <glib/gi18n-lib.h>
 
 
 #define TYPE_GNONOGRAM_LABEL (gnonogram_label_get_type ())
@@ -157,28 +158,23 @@ void gnonogram_label_set_markup (Gnonogram_label* self, const gchar* start, cons
 
 
 void gnonogram_label_set_size (Gnonogram_label* self, gint s) {
-	gchar* _tmp0_ = NULL;
+	const gchar* _tmp0_ = NULL;
 	gchar* _tmp1_;
 	gchar* _tmp2_ = NULL;
 	gchar* _tmp3_;
-	gchar* _tmp4_ = NULL;
+	gchar* _tmp4_;
 	gchar* _tmp5_;
-	gchar* _tmp6_;
-	gchar* _tmp7_;
 	g_return_if_fail (IS_GNONOGRAM_LABEL (self));
 	self->priv->size = s;
-	_tmp0_ = g_strdup_printf ("%i", self->priv->blockextent);
-	_tmp1_ = _tmp0_;
+	_tmp0_ = _ ("Freedom=");
+	_tmp1_ = g_strconcat (self->priv->attrib_start, _tmp0_, NULL);
 	_tmp2_ = g_strdup_printf ("%i", self->priv->size - self->priv->blockextent);
 	_tmp3_ = _tmp2_;
-	_tmp4_ = g_strconcat ("Extent=", _tmp1_, ", Freedom=", _tmp3_, NULL);
-	_tmp5_ = _tmp4_;
-	_tmp6_ = g_strconcat (self->priv->attrib_start, _tmp5_, NULL);
-	_tmp7_ = g_strconcat (_tmp6_, self->priv->attrib_end, NULL);
-	gtk_widget_set_tooltip_markup (GTK_WIDGET (self->priv->l), _tmp7_);
-	_g_free0 (_tmp7_);
-	_g_free0 (_tmp6_);
+	_tmp4_ = g_strconcat (_tmp1_, _tmp3_, NULL);
+	_tmp5_ = g_strconcat (_tmp4_, self->priv->attrib_end, NULL);
+	gtk_widget_set_tooltip_markup (GTK_WIDGET (self->priv->l), _tmp5_);
 	_g_free0 (_tmp5_);
+	_g_free0 (_tmp4_);
 	_g_free0 (_tmp3_);
 	_g_free0 (_tmp1_);
 }

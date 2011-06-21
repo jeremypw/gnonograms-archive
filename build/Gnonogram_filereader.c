@@ -838,9 +838,9 @@ static gboolean gnonogram_filereader_get_gnonogram_dimensions (Gnonogram_filerea
 	gchar** s;
 	gint s_length1;
 	gint _s_size_;
-	gint _tmp6_;
 	gint _tmp7_;
-	gboolean _tmp8_ = FALSE;
+	gint _tmp8_;
+	gboolean _tmp9_ = FALSE;
 	g_return_val_if_fail (IS_GNONOGRAM_FILEREADER (self), FALSE);
 	if (body == NULL) {
 		result = FALSE;
@@ -854,22 +854,24 @@ static gboolean gnonogram_filereader_get_gnonogram_dimensions (Gnonogram_filerea
 	s_length1 = _tmp3_;
 	_s_size_ = _tmp3_;
 	if (s_length1 != 2) {
-		utils_show_warning_dialog ("Wrong number of dimensions");
+		const gchar* _tmp6_ = NULL;
+		_tmp6_ = _ ("Wrong number of dimensions");
+		utils_show_warning_dialog (_tmp6_);
 		result = FALSE;
 		s = (_vala_array_free (s, s_length1, (GDestroyNotify) g_free), NULL);
 		return result;
 	}
-	_tmp6_ = atoi (s[0]);
-	self->rows = _tmp6_;
-	_tmp7_ = atoi (s[1]);
-	self->cols = _tmp7_;
+	_tmp7_ = atoi (s[0]);
+	self->rows = _tmp7_;
+	_tmp8_ = atoi (s[1]);
+	self->cols = _tmp8_;
 	self->has_dimensions = TRUE;
 	if (self->rows > 0) {
-		_tmp8_ = self->cols > 0;
+		_tmp9_ = self->cols > 0;
 	} else {
-		_tmp8_ = FALSE;
+		_tmp9_ = FALSE;
 	}
-	result = _tmp8_;
+	result = _tmp9_;
 	s = (_vala_array_free (s, s_length1, (GDestroyNotify) g_free), NULL);
 	return result;
 }

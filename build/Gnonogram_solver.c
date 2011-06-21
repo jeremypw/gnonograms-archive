@@ -30,6 +30,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <glib/gi18n-lib.h>
 #include <gtk/gtk.h>
 #include <gobject/gvaluecollector.h>
 
@@ -636,7 +637,6 @@ static gint gnonogram_solver_advanced_solver (Gnonogram_solver* self, CellState*
 	gint initial_maxturns;
 	Cell _tmp0_ = {0};
 	g_return_val_if_fail (IS_GNONOGRAM_SOLVER (self), 0);
-	fprintf (stdout, "Advanced solver\n");
 	simple_result = 0;
 	wraps = 0;
 	changed = FALSE;
@@ -671,7 +671,6 @@ static gint gnonogram_solver_advanced_solver (Gnonogram_solver* self, CellState*
 			self->priv->_turn = 0;
 			changed = FALSE;
 			wraps++;
-			fprintf (stdout, "Wrapping ... max _turns %d\n", self->priv->_max_turns);
 			continue;
 		}
 		my2_dcell_array_set_data_from_cell (self->_grid, &self->priv->_trial_cell);
@@ -928,13 +927,14 @@ static gint gnonogram_solver_ultimate_solver (Gnonogram_solver* self, CellState*
 	gint advanced_result;
 	gint simple_result;
 	gint limit;
-	gboolean _tmp1_;
-	gint _tmp2_;
-	CellState* _tmp3_ = NULL;
+	const gchar* _tmp1_ = NULL;
+	gboolean _tmp2_;
+	gint _tmp3_;
+	CellState* _tmp4_ = NULL;
 	CellState* grid_store2;
 	gint grid_store2_length1;
 	gint _grid_store2_size_;
-	CellState* _tmp4_ = NULL;
+	CellState* _tmp5_ = NULL;
 	CellState* guess;
 	gint guess_length1;
 	gint _guess_size_;
@@ -966,43 +966,44 @@ static gint gnonogram_solver_ultimate_solver (Gnonogram_solver* self, CellState*
 	}
 	gnonogram_solver_simple_solver (self, FALSE, TRUE);
 	g_signal_emit_by_name (self, "showsolvergrid");
-	_tmp1_ = utils_show_confirm_dialog ("Start Ultimate solver?\n This can take a long time and may not work");
-	if (!_tmp1_) {
+	_tmp1_ = _ ("Start Ultimate solver?\n This can take a long time and may not work");
+	_tmp2_ = utils_show_confirm_dialog (_tmp1_);
+	if (!_tmp2_) {
 		result = 9999999;
 		return result;
 	}
-	_tmp3_ = g_new0 (CellState, _tmp2_ = self->priv->_rows * self->priv->_cols);
-	grid_store2 = _tmp3_;
-	grid_store2_length1 = _tmp2_;
-	_grid_store2_size_ = _tmp2_;
-	_tmp4_ = g_new0 (CellState, 0);
-	guess = _tmp4_;
+	_tmp4_ = g_new0 (CellState, _tmp3_ = self->priv->_rows * self->priv->_cols);
+	grid_store2 = _tmp4_;
+	grid_store2_length1 = _tmp3_;
+	_grid_store2_size_ = _tmp3_;
+	_tmp5_ = g_new0 (CellState, 0);
+	guess = _tmp5_;
 	guess_length1 = 0;
 	_guess_size_ = 0;
 	while (TRUE) {
-		gint _tmp5_;
-		gint start = 0;
 		gint _tmp6_;
-		Gnonogram_permutor* _tmp7_ = NULL;
+		gint start = 0;
+		gint _tmp7_;
+		Gnonogram_permutor* _tmp8_ = NULL;
 		Gnonogram_permutor* p;
-		gboolean _tmp8_ = FALSE;
+		gboolean _tmp9_ = FALSE;
 		gboolean is_column;
 		gint idx;
-		_tmp5_ = gnonogram_solver_choose_permute_region (self, &max_value);
-		perm_reg = _tmp5_;
+		_tmp6_ = gnonogram_solver_choose_permute_region (self, &max_value);
+		perm_reg = _tmp6_;
 		if (perm_reg < 0) {
 			fprintf (stdout, "No perm region found\n");
 			break;
 		}
-		_tmp7_ = gnonogram_region_get_permutor (self->priv->_regions[perm_reg], &_tmp6_);
-		start = _tmp6_;
-		p = _tmp7_;
+		_tmp8_ = gnonogram_region_get_permutor (self->priv->_regions[perm_reg], &_tmp7_);
+		start = _tmp7_;
+		p = _tmp8_;
 		if (p == NULL) {
-			_tmp8_ = TRUE;
+			_tmp9_ = TRUE;
 		} else {
-			_tmp8_ = p->valid == FALSE;
+			_tmp9_ = p->valid == FALSE;
 		}
-		if (_tmp8_) {
+		if (_tmp9_) {
 			fprintf (stdout, "No valid permutator generated\n");
 			_gnonogram_permutor_unref0 (p);
 			break;
@@ -1013,13 +1014,13 @@ static gint gnonogram_solver_ultimate_solver (Gnonogram_solver* self, CellState*
 			gint i;
 			i = 0;
 			{
-				gboolean _tmp9_;
-				_tmp9_ = TRUE;
+				gboolean _tmp10_;
+				_tmp10_ = TRUE;
 				while (TRUE) {
-					if (!_tmp9_) {
+					if (!_tmp10_) {
 						i++;
 					}
-					_tmp9_ = FALSE;
+					_tmp10_ = FALSE;
 					if (!(i < self->priv->_region_count)) {
 						break;
 					}
@@ -1030,20 +1031,29 @@ static gint gnonogram_solver_ultimate_solver (Gnonogram_solver* self, CellState*
 		gnonogram_solver_save_position (self, grid_store2, grid_store2_length1);
 		gnonogram_permutor_initialise (p);
 		while (TRUE) {
-			gboolean _tmp10_;
-			gint _tmp12_;
-			CellState* _tmp13_ = NULL;
-			CellState* _tmp14_;
-			gint _tmp15_;
-			_tmp10_ = gnonogram_permutor_next (p);
-			if (!_tmp10_) {
+			gboolean _tmp11_;
+			gint _tmp18_;
+			CellState* _tmp19_ = NULL;
+			CellState* _tmp20_;
+			gint _tmp21_;
+			_tmp11_ = gnonogram_permutor_next (p);
+			if (!_tmp11_) {
 				break;
 			}
 			gnonogram_solver_increment_counter (self);
 			if (self->priv->_guesses > limit) {
-				gboolean _tmp11_;
-				_tmp11_ = utils_show_confirm_dialog ("This is taking a long time! /nKeep trying?");
-				if (_tmp11_) {
+				const gchar* _tmp12_ = NULL;
+				gchar* _tmp13_;
+				const gchar* _tmp14_ = NULL;
+				gchar* _tmp15_;
+				gboolean _tmp16_;
+				gboolean _tmp17_;
+				_tmp12_ = _ ("This is taking a long time!");
+				_tmp13_ = g_strconcat (_tmp12_, "\n", NULL);
+				_tmp14_ = _ ("Keep trying?");
+				_tmp15_ = g_strconcat (_tmp13_, _tmp14_, NULL);
+				_tmp16_ = utils_show_confirm_dialog (_tmp15_);
+				if ((_tmp17_ = _tmp16_, _g_free0 (_tmp15_), _g_free0 (_tmp13_), _tmp17_)) {
 					limit = limit + GNONOGRAM_SOLVER_GUESSES_BEFORE_ASK;
 				} else {
 					result = 9999999;
@@ -1053,26 +1063,26 @@ static gint gnonogram_solver_ultimate_solver (Gnonogram_solver* self, CellState*
 					return result;
 				}
 			}
-			_tmp13_ = gnonogram_permutor_get (p, &_tmp12_);
-			_tmp14_ = _tmp13_;
+			_tmp19_ = gnonogram_permutor_get (p, &_tmp18_);
+			_tmp20_ = _tmp19_;
 			guess = (g_free (guess), NULL);
-			guess_length1 = _tmp12_;
+			guess_length1 = _tmp18_;
 			_guess_size_ = guess_length1;
-			guess = _tmp14_;
+			guess = _tmp20_;
 			my2_dcell_array_set_array (self->_grid, idx, is_column, guess, guess_length1, start);
-			_tmp15_ = gnonogram_solver_simple_solver (self, FALSE, FALSE);
-			simple_result = _tmp15_;
+			_tmp21_ = gnonogram_solver_simple_solver (self, FALSE, FALSE);
+			simple_result = _tmp21_;
 			if (simple_result == 0) {
-				gint _tmp16_;
-				gboolean _tmp17_ = FALSE;
-				_tmp16_ = gnonogram_solver_advanced_solver (self, grid_store, grid_store_length1, debug);
-				advanced_result = _tmp16_;
+				gint _tmp22_;
+				gboolean _tmp23_ = FALSE;
+				_tmp22_ = gnonogram_solver_advanced_solver (self, grid_store, grid_store_length1, debug);
+				advanced_result = _tmp22_;
 				if (advanced_result > 0) {
-					_tmp17_ = advanced_result < 9999999;
+					_tmp23_ = advanced_result < 9999999;
 				} else {
-					_tmp17_ = FALSE;
+					_tmp23_ = FALSE;
 				}
-				if (_tmp17_) {
+				if (_tmp23_) {
 					result = advanced_result;
 					_gnonogram_permutor_unref0 (p);
 					guess = (g_free (guess), NULL);
@@ -1093,13 +1103,13 @@ static gint gnonogram_solver_ultimate_solver (Gnonogram_solver* self, CellState*
 				gint i;
 				i = 0;
 				{
-					gboolean _tmp18_;
-					_tmp18_ = TRUE;
+					gboolean _tmp24_;
+					_tmp24_ = TRUE;
 					while (TRUE) {
-						if (!_tmp18_) {
+						if (!_tmp24_) {
 							i++;
 						}
-						_tmp18_ = FALSE;
+						_tmp24_ = FALSE;
 						if (!(i < self->priv->_region_count)) {
 							break;
 						}
@@ -1113,13 +1123,13 @@ static gint gnonogram_solver_ultimate_solver (Gnonogram_solver* self, CellState*
 			gint i;
 			i = 0;
 			{
-				gboolean _tmp19_;
-				_tmp19_ = TRUE;
+				gboolean _tmp25_;
+				_tmp25_ = TRUE;
 				while (TRUE) {
-					if (!_tmp19_) {
+					if (!_tmp25_) {
 						i++;
 					}
-					_tmp19_ = FALSE;
+					_tmp25_ = FALSE;
 					if (!(i < self->priv->_region_count)) {
 						break;
 					}

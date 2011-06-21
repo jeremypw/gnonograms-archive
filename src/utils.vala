@@ -17,7 +17,7 @@
  * As a special exception, if you use inline functions from this file, this
  * file does not by itself cause the resulting executable to be covered by
  * the GNU Lesser General Public License.
- * 
+ *
  *  Author:
  * 	Jeremy Wootten <jeremwootten@gmail.com>
  */
@@ -86,7 +86,7 @@ namespace Utils
 		}
 
 		string temp_working_dir=null;
-		
+
 		if (start_path!=null)
 		{
 			var start=File.new_for_path(start_path);
@@ -96,14 +96,14 @@ namespace Utils
 				Environment.set_current_dir(start_path);
 			}
 		}
-		
+
 		var response = dialog.run();
 		string fn="";
 		if (response!=ResponseType.CANCEL){
 			fn=dialog.get_filename();
 		}
 		dialog.destroy();
-		
+
 		if (temp_working_dir!=null) {
 			temp_working_dir=Environment.get_current_dir();
 			Environment.set_current_dir(temp_working_dir);
@@ -122,25 +122,25 @@ namespace Utils
 			Gtk.ResponseType.CANCEL
 			);
 		var hbox=new Gtk.HBox(true,6);
-		
+
 		var row_label=new Gtk.Label(_("Rows"));
 		var row_spin=new Gtk.SpinButton.with_range(1,Resource.MAXROWSIZE,5);
 		row_spin.set_value((double)currentr);
-		
+
 		var col_label=new Gtk.Label(_("Columns"));
 		var col_spin=new Gtk.SpinButton.with_range(1,Resource.MAXCOLSIZE,5);
 		col_spin.set_value((double)currentc);
-		
-		hbox.add(row_label); hbox.add(row_spin);	
+
+		hbox.add(row_label); hbox.add(row_spin);
 		hbox.add(col_label); hbox.add(col_spin);
-		
+
 		dialog.vbox.add(hbox);
 		dialog.set_default_response(Gtk.ResponseType.OK);
 		dialog.show_all();
 
 		bool success=false;
 		var response=dialog.run();
-		
+
 		if (response==Gtk.ResponseType.OK) {
 			r=int.max(1,row_spin.get_value_as_int());
 			c=int.max(1,col_spin.get_value_as_int());
@@ -170,7 +170,7 @@ namespace Utils
 	}
 	//*****************************************************************************
 	public static void show_warning_dialog(string msg)
-	{	
+	{
 		show_dlg(msg,Gtk.MessageType.WARNING,Gtk.ButtonsType.CLOSE);
 	}
 	//*****************************************************************************
@@ -219,7 +219,7 @@ namespace Utils
 	}
 	//*****************************************************************************
 	public string gnonogram_string_from_hex_string(string s, int pad_to_length)
-	{		
+	{
 		StringBuilder sb= new StringBuilder(""); int count=0;
 		for (int i=0; i<s.length; i++)
 		{
@@ -279,7 +279,7 @@ namespace Utils
 	}
 	//*****************************************************************************
 	public string hex_string_from_cellstate_array(CellState[] sa)
-	{		
+	{
 		StringBuilder sb= new StringBuilder("");
 		int length=sa.length;
 		int e=0, m=1, count=0;
@@ -308,34 +308,29 @@ namespace Utils
 	public string convert_html(string? html)
 	{
 		if (html==null) return "";
-		
+
 		try
 		{
 			var regex = new GLib.Regex("&#([0-9]+);");
 			string[] s = regex.split(html);
-			
-//			for (int i=0; i<s.length;i++)
-//			{
-//				stdout.printf("%d, %s\n", i , s[i]);
-//			}
+
 			if (s.length>1) //html entity found - convert to unicode
 			{
 				var sb=new StringBuilder("");
 				for (int i=0; i<s.length;i++)
 				{	int u=int.parse(s[i]);
-				//stdout.printf("u is %d\n",u);
 					if (u>31 && u<65535)
 					{
 						sb.append_unichar((unichar)u);
 					}
-					else if (s[i]!="") sb.append(s[i]);				
+					else if (s[i]!="") sb.append(s[i]);
 				}
 				return sb.str;
 			}
 			return html;
 		}
 		catch (RegexError re) {show_warning_dialog(re.message); return "";}
-		
+
 	}
 	//*****************************************************************************
 	public string string_from_cellstate_array(CellState[] cs)
@@ -386,7 +381,7 @@ namespace Utils
 		}
 		if (blocks==0) sb.append("0");
 		else sb.truncate(sb.len -1);
-		//stdout.printf("Array %s  Blocks %s\n",Utils.string_from_cellstate_array(cs), sb.str);
+
 		return sb.str;
 	}
 	//*****************************************************************************

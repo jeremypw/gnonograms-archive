@@ -75,7 +75,7 @@ BUILD_DIR=build
 endif
 
 DESKTOP_APPLICATION_NAME="Gnonograms"
-DESKTOP_APPLICATION_COMMENT="Design and solve Gnonogram puzzles"
+DESKTOP_APPLICATION_COMMENT="Design and solve Nonogram puzzles"
 DESKTOP_APPLICATION_CLASS="Games"
 DIRECT_EDIT_DESKTOP_APPLICATION_NAME="Gnonograms"
 DIRECT_EDIT_DESKTOP_APPLICATION_CLASS="Games"
@@ -132,8 +132,10 @@ $(EXPANDED_C_FILES): $(VALA_STAMP)
 
 $(LANG_STAMP): $(EXPANDED_PO_FILES)
 #####################################
-	$(foreach po,$(SUPPORTED_LANGUAGES),`mkdir -p $(LOCAL_LANG_DIR)/$(po)/LC_MESSAGES ; \
-        msgfmt -o $(LOCAL_LANG_DIR)/$(po)/LC_MESSAGES/gnonograms.mo po/$(po).po`)
+	$(foreach po,$(SUPPORTED_LANGUAGES), \
+		`mkdir -p $(LOCAL_LANG_DIR)/$(po)/LC_MESSAGES ; \
+       msgfmt -o $(LOCAL_LANG_DIR)/$(po)/LC_MESSAGES/gnonograms.mo po/$(po).po` \
+    )
 	touch $(LANG_STAMP)
 
 $(VALA_STAMP): $(EXPANDED_SRC_FILES) $(EXPANDED_VAPI_FILES) $(EXPANDED_SRC_HEADER_FILES) Makefile \
@@ -209,19 +211,21 @@ distclean: clean
 	rm -f configure.mk
 
 install:
-####
+#######
+
+#		echo Name[$(lang)]=`TEXTDOMAINDIR=locale LANGUAGE=$(lang) gettext --domain=gnonograms $(DESKTOP_APPLICATION_NAME)` >>  misc/gnonograms.desktop ; \
+#		echo GenericName[$(lang)]=`TEXTDOMAINDIR=locale LANGUAGE=$(lang) gettext --domain=gnonograms $(DESKTOP_APPLICATION_CLASS)` >>   misc/gnonograms.desktop ; \
+#echo Comment[$(lang)]=`TEXTDOMAINDIR=locale LANGUAGE=$(lang) gettext	--domain=gnonograms $(DESKTOP_APPLICATION_COMMENT)` >> misc/gnonograms.desktop
+
 	cp misc/gnonograms.desktop.head misc/gnonograms.desktop
-	echo Version=$(VERSION) \
-		>> misc/gnonograms.desktop
+	echo Version=$(VERSION) >> misc/gnonograms.desktop
 	$(foreach lang,$(SUPPORTED_LANGUAGES), \
-		echo Name[$(lang)]=`TEXTDOMAINDIR=locale LANGUAGE=$(lang) gettext --domain=gnonograms $(DESKTOP_APPLICATION_NAME)` \
-		>> misc/gnonograms.desktop ; \
-		echo GenericName[$(lang)]=`TEXTDOMAINDIR=locale LANGUAGE=$(lang) \
-		gettext --domain=gnonograms $(DESKTOP_APPLICATION_CLASS)` \
-		>> misc/gnonograms.desktop ; \
-		echo Comment[$(lang)]=`TEXTDOMAINDIR=locale LANGUAGE=$(lang) gettext	--domain=gnonogram $(DESKTOP_APPLICATION_COMMENT)`\
-		>> misc/gnonograms.desktop ; \
-	)
+		TEXTDOMAINDIR=locale; \
+		LANGUAGE=$(lang); \
+		echo Name[$(lang)]=`gettext --domain=gnonograms $(DESKTOP_APPLICATION_NAME)` >>  misc/gnonograms.desktop ; \
+		echo GenericName[$(lang)]=`gettext --domain=gnonograms $(DESKTOP_APPLICATION_CLASS)` >>  misc/gnonograms.desktop ; \
+		echo Comment[$(lang)]=`gettext --domain=gnonograms $(DESKTOP_APPLICATION_COMMENT)` >> misc/gnonograms.desktop;)
+
 	touch $(LANG_STAMP)
 	mkdir -p $(DESTDIR)$(PREFIX)/bin
 	$(INSTALL_PROGRAM) $(PROGRAM) $(DESTDIR)$(PREFIX)/bin
@@ -241,7 +245,7 @@ install:
 	mkdir -p $(DESTDIR)$(PREFIX)/share/icons/hicolor/scalable/apps
 	$(INSTALL_DATA) icons/gnonograms.svg $(DESTDIR)$(PREFIX)/share/icons/hicolor/scalable/apps/gnonograms.svg
 
-	-$(foreach lang,$(SUPPORTED_LANGUAGES),`mkdir -p $(SYSTEM_LANG_DIR)/$(lang)/LC_MESSAGES ; \
+	$(foreach lang,$(SUPPORTED_LANGUAGES),`mkdir -p $(SYSTEM_LANG_DIR)/$(lang)/LC_MESSAGES ; \
         $(INSTALL_DATA) $(LOCAL_LANG_DIR)/$(lang)/LC_MESSAGES/gnonograms.mo \
             $(SYSTEM_LANG_DIR)/$(lang)/LC_MESSAGES/gnonograms.mo`)
 

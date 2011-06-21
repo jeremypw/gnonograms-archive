@@ -57,6 +57,7 @@ namespace Resource
 //File location related parameters
 	public static string exec_dir;
 	public static string resource_dir;
+	public static string locale_dir;
 	public static string game_dir;
 	public static string game_name;
 	public static string icon_dir;
@@ -80,10 +81,12 @@ namespace Resource
 		resource_dir=installed ? exec_file.get_parent().get_parent().get_path()+"/share/gnonograms" : exec_dir;
 		stdout.printf("Resource_dir is %s \n",resource_dir);
 
+		locale_dir=installed ? exec_file.get_parent().get_parent().get_path()+"/share/locale" : resource_dir+"/locale";
+		stdout.printf("Locale_dir is %s \n",locale_dir);
+
 		icon_dir=resource_dir+"/icons";
 		manual_dir=resource_dir+"/Manual";
-//		manual_dir="/home/jeremy/Mallard";
-//		manual_dir="/media/shared/shared_data/Vala/Gnonograms/Manual";
+
 		game_dir=(Config.get_instance()).get_game_dir(resource_dir+"/games");
 
 		game_name=(Config.get_instance()).get_game_name(DEFAULTGAMENAME);
@@ -110,6 +113,7 @@ namespace Resource
 
 		font_desc="Ariel";
 		MINORGRIDDASH={0.5, 3.0};
+
 	}
 
 	private static bool is_installed (string exec_dir)
@@ -119,7 +123,7 @@ namespace Resource
 
 	public static string get_langpack_dir()
 	{
-		return resource_dir+"/locale";
+		return locale_dir;
 	}
 
 	public static void set_colors()

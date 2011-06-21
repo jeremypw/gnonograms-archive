@@ -17,11 +17,11 @@
  * As a special exception, if you use inline functions from this file, this
  * file does not by itself cause the resulting executable to be covered by
  * the GNU Lesser General Public License.
- * 
+ *
  *  Author:
  * 	Jeremy Wootten <jeremwootten@gmail.com>
  */
- 
+
  using Gtk;
 
 public class Gnonogram_LabelBox : Frame {
@@ -36,9 +36,9 @@ public class Gnonogram_LabelBox : Frame {
 //======================================================================
 	public Gnonogram_LabelBox(int size, int other_size, bool is_col)
 	{
-		_is_column=is_col; 
+		_is_column=is_col;
 		this.set_shadow_type(Gtk.ShadowType.NONE);
-	
+
 		if (_is_column)
 		{
 			 _box = new HBox(true,0) as Container;
@@ -65,7 +65,7 @@ public class Gnonogram_LabelBox : Frame {
 		unhighlight_all();
 		if (new_size!=_size)
 		{
-			int diff=(new_size-_size);		
+			int diff=(new_size-_size);
 			if (diff>0)	for (int i=0; i<diff; i++)
 			{
 				_box.add(_labels[_size]);
@@ -79,7 +79,7 @@ public class Gnonogram_LabelBox : Frame {
 					_size--;
 				}
 			}
-			if (_size!=new_size) Utils.show_warning_dialog("Error adding or removing labels");
+			if (_size!=new_size) stdout.printf("Error adding or removing labels");
 		}
 		_other_size=other_size;
 		set_default_fontheight(_size, _other_size);
@@ -126,7 +126,7 @@ public class Gnonogram_LabelBox : Frame {
 	public string to_string()
 	{
 		StringBuilder sb=new StringBuilder();
-		
+
 		for (int i=0; i<_size;i++)
 		{
 			sb.append(get_label_text(i));

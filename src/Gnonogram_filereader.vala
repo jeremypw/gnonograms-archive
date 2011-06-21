@@ -182,7 +182,7 @@ public class Gnonogram_filereader {
 		string[] s = Utils.remove_blank_lines(body.split("\n"));
 		if (s.length!=2)
 		{
-			Utils.show_warning_dialog("Wrong number of dimensions");
+			Utils.show_warning_dialog(_("Wrong number of dimensions"));
 			return false;
 		}
 		rows=int.parse(s[0]);
@@ -195,7 +195,6 @@ public class Gnonogram_filereader {
 	{	//stdout.printf("In get_dimensions\n");
 		if (body==null) return false;
 		int dim = int.parse(body);
-		//stdout.printf("Dimension is %d\n",dim);
 		if (is_column) cols=dim;
 		else rows=dim;
 		has_dimensions=(rows>0 && cols>0);
@@ -250,7 +249,6 @@ public class Gnonogram_filereader {
 			working=s;
 			has_working=true;
 		}
-		//stdout.printf("Leaving get_cellstate array\n");
 		return true;
 	}
 //=========================================================================
