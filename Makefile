@@ -11,7 +11,7 @@ INSTALL_DATA = install -m 644
 
 # defaults that may be overridden by configure.mk
 PREFIX=/usr
-SCHEMA_FILE_DIR=/etc/gconf/schemas
+#SCHEMA_FILE_DIR=/etc/gconf/schemas
 BUILD_RELEASE=1
 
 -include configure.mk
@@ -109,7 +109,7 @@ ifndef CFLAGS
 ifdef BUILD_DEBUG
 CFLAGS = -O0 -g -pipe
 else
-CFLAGS = -O2 -g -pipe
+CFLAGS = -O2 -g -pipe -Wall
 endif
 endif
 
@@ -227,8 +227,8 @@ install:
 		echo Comment[$(lang)]=`gettext --domain=gnonograms $(DESKTOP_APPLICATION_COMMENT)` >> misc/gnonograms.desktop;)
 
 	touch $(LANG_STAMP)
-	mkdir -p $(DESTDIR)$(PREFIX)/bin
-	$(INSTALL_PROGRAM) $(PROGRAM) $(DESTDIR)$(PREFIX)/bin
+	mkdir -p $(DESTDIR)$(PREFIX)/games
+	$(INSTALL_PROGRAM) $(PROGRAM) $(DESTDIR)$(PREFIX)/games
 	mkdir -p $(DESTDIR)$(PREFIX)/share/gnonograms/icons
 	$(INSTALL_DATA) icons/* $(DESTDIR)$(PREFIX)/share/gnonograms/icons
 	mkdir -p $(DESTDIR)$(PREFIX)/share/gnonograms/games
@@ -255,12 +255,16 @@ install:
 	mkdir -p $(DESTDIR)$(PREFIX)/share/applications
 	$(INSTALL_DATA) misc/gnonograms.desktop $(DESTDIR)$(PREFIX)/share/applications
 
-	update-desktop-database
-	update-mime-database $(DESTDIR)$(PREFIX)/share/mime
+ifndef DISABLE_DESKTOP_UPDATE
+	-update-desktop-database || :
+	-gtk-update-icon-cache -t -f $(DESTDIR)$(PREFIX)/share/icons/hicolor || :
+	-update-mime-database $(DESTDIR)$(PREFIX)/share/mime || :
+endif
+
 
 uninstall:
 ######
-	rm -f $(DESTDIR)$(PREFIX)/bin/$(PROGRAM)
+	rm -f $(DESTDIR)$(PREFIX)/games/$(PROGRAM)
 	rm -fr $(DESTDIR)$(PREFIX)/share/gnonograms
 	rm -fr $(DESTDIR)$(PREFIX)/share/gnonograms/Manual
 
@@ -273,8 +277,8 @@ uninstall:
 
 	rm -f $(DESTDIR)$(PREFIX)/share/mime/packages/x-gnonogram-puzzle.xml
 
-	update-mime-database $(DESTDIR)$(PREFIX)/share/mime
-	update-desktop-database
+	update-mime-database $(DESTDIR)$(PREFIX)/share/mime || :
+	update-desktop-database || :
 
 
 	$(foreach lang,$(SUPPORTED_LANGUAGES),`rm -f $(SYSTEM_LANG_DIR)/$(lang)/LC_MESSAGES/gnonograms.mo`)

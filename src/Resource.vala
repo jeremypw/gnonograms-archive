@@ -61,7 +61,8 @@ namespace Resource
 	public static string game_dir;
 	public static string game_name;
 	public static string icon_dir;
-	public static string manual_dir;
+	public static string mallard_manual_dir;
+	public static string html_manual_dir;
 	public static string prefix;
 	public static bool installed;
 
@@ -85,7 +86,8 @@ namespace Resource
 		stdout.printf("Locale_dir is %s \n",locale_dir);
 
 		icon_dir=resource_dir+"/icons";
-		manual_dir=resource_dir+"/Manual";
+		mallard_manual_dir=resource_dir+"/mallard";
+		html_manual_dir=resource_dir+"/html";
 
 		game_dir=(Config.get_instance()).get_game_dir(resource_dir+"/games");
 

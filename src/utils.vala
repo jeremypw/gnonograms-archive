@@ -22,6 +22,7 @@
  * 	Jeremy Wootten <jeremwootten@gmail.com>
  */
  using Gtk;
+ using GLib;
 
 //*****************************************************************************
 namespace Utils
@@ -60,11 +61,13 @@ namespace Utils
 		switch (action)
 		{
 			case FileChooserAction.OPEN:
-				button=Stock.OPEN;
+//				button=Gtk.Stock.OPEN;
+				button=Gtk.STOCK_OPEN;
 				break;
 
 			case FileChooserAction.SAVE:
-				button=Stock.SAVE;
+//				button=Gtk.Stock.SAVE;
+				button=Gtk.STOCK_SAVE;
 				break;
 			default :
 				break;
@@ -73,7 +76,8 @@ namespace Utils
 			dialogname,
 			null,
 			action,
-			Gtk.Stock.CANCEL, Gtk.ResponseType.CANCEL,
+//			Gtk.Stock.CANCEL, Gtk.ResponseType.CANCEL,
+			Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
 			button, Gtk.ResponseType.ACCEPT,
 			null);
 
@@ -116,9 +120,11 @@ namespace Utils
 		var dialog=new Gtk.Dialog.with_buttons(_("Adjust Size"),
 			null,
 			Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
-			Stock.OK,
+//			Gtk.Stock.OK,
+			Gtk.STOCK_OK,
 			Gtk.ResponseType.OK,
-			Stock.CANCEL,
+//			Gtk.Stock.CANCEL,
+			Gtk.STOCK_CANCEL,
 			Gtk.ResponseType.CANCEL
 			);
 		var hbox=new Gtk.HBox(true,6);
@@ -196,7 +202,7 @@ namespace Utils
 
 		DataInputStream stream;
 		var file = File.new_for_path (filename);
-	   if (!file.query_exists ())
+	   if (!file.query_exists (null))
 	   {
 		   stderr.printf ("File '%s' doesn't exist.\n", file.get_path ());
 		   return null;
@@ -204,7 +210,7 @@ namespace Utils
 
 		try
 		{
-			stream= new DataInputStream(file.read());
+			stream= new DataInputStream(file.read(null));
 		}
 		catch (Error e) {Utils.show_warning_dialog(e.message); return null;}
 		return stream;
@@ -214,7 +220,8 @@ namespace Utils
 	{
 		CellState[] cs ={};
 		string[] data=remove_blank_lines(s.split_set(", "));
-		for (int i=0; i<data.length; i++) cs+=(CellState)(int.parse(data[i]));
+//		for (int i=0; i<data.length; i++) cs+=(CellState)(int.parse(data[i]));
+		for (int i=0; i<data.length; i++) cs+=(CellState)(data[i].to_int());
 		return cs;
 	}
 	//*****************************************************************************
@@ -318,7 +325,8 @@ namespace Utils
 			{
 				var sb=new StringBuilder("");
 				for (int i=0; i<s.length;i++)
-				{	int u=int.parse(s[i]);
+//				{	int u=int.parse(s[i]);
+				{	int u=s[i].to_int();
 					if (u>31 && u<65535)
 					{
 						sb.append_unichar((unichar)u);
@@ -389,7 +397,8 @@ namespace Utils
 	{
 		string[] clues=remove_blank_lines(s.split_set(", "));
 		int[] blocks=new int[clues.length];
-		for (int i=0;i<clues.length;i++) blocks[i]=int.parse(clues[i]);
+//		for (int i=0;i<clues.length;i++) blocks[i]=int.parse(clues[i]);
+		for (int i=0;i<clues.length;i++) blocks[i]=clues[i].to_int();
 		return blocks;
 	}
 

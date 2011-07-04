@@ -39,7 +39,7 @@ public class Gnonogram_controller
 	private Cell _current_cell;
 	private Cell _previous_cell;
 	private Timer _timer;
-	private GameState _state {get; private set;}
+	private GameState _state;
 
 	private bool _is_button_down;
 	private bool _have_solution=true;

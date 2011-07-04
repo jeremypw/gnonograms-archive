@@ -1,12 +1,11 @@
 [Desktop Entry]
-Type=Application
-Encoding=UTF-8
+Type=Applicationsudosu  j
 Name=Gnonograms
 GenericName=Logic game
 Comment=Design and solve Nonogram puzzles
 Exec=gnonograms %f
-Icon=gnonograms.svg
-MimeType=application/x-gnonogram-puzzle
+Icon=gnonograms
+MimeType=application/x-gnonogram-puzzle;
 Terminal=false
 StartupNotify=true
-Categories=Game;LogicGame;GNOME;GTK;
+Categories=Game;LogicGame

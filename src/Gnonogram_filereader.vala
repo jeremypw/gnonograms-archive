@@ -22,6 +22,8 @@
  * 	Jeremy Wootten <jeremwootten@gmail.com>
  */
 
+using GLib;
+
 public class Gnonogram_filereader {
 
 	public string filename;
@@ -98,11 +100,11 @@ public class Gnonogram_filereader {
 		size_t headerlength, bodylength;
 		try
 		{
-			stream.read_until("[", out headerlength);
+			stream.read_until("[", out headerlength, null);
 			while (true)
 			{
-				headings += stream.read_until("]", out headerlength);
-				bodies += stream.read_until("[", out bodylength);
+				headings += stream.read_until("]", out headerlength, null);
+				bodies += stream.read_until("[", out bodylength, null);
 				if (headerlength==0 || bodylength==0) break;
 			}
 		}
@@ -117,20 +119,20 @@ public class Gnonogram_filereader {
 		{
 			for (int i=0; i<5; i++) //description lines
 			{
-				line=stream.read_line(out length);
+				line=stream.read_line(out length, null);
 				string[] s = line.split(":");
 				headings += s[0].strip();
 				if (s[1].strip()=="") bodies+=_("Unknown");
 				else 	bodies += s[1].strip();
 			}
 
-			line=stream.read_line(out length);//blank separator line
+			line=stream.read_line(out length,null);//blank separator line
 
 			while (line!=null) //pattern lines
 			{
 				line=line.chomp().strip();
 				if (line!=null) picto_grid_data+=line;
-				line=stream.read_line(out length);
+				line=stream.read_line(out length, null);
 			}
 		}
 		catch (Error e) {Utils.show_warning_dialog(e.message); return false;}
@@ -185,8 +187,10 @@ public class Gnonogram_filereader {
 			Utils.show_warning_dialog(_("Wrong number of dimensions"));
 			return false;
 		}
-		rows=int.parse(s[0]);
-		cols=int.parse(s[1]);
+//		rows=int.parse(s[0]);
+		rows=s[0].to_int();
+//		cols=int.parse(s[1]);
+		cols=s[1].to_int();
 		has_dimensions=true;
 		return (rows>0 && cols>0);
 	}
@@ -194,7 +198,8 @@ public class Gnonogram_filereader {
 	private bool get_picto_dimensions(string? body, bool is_column)
 	{	//stdout.printf("In get_dimensions\n");
 		if (body==null) return false;
-		int dim = int.parse(body);
+//		int dim = int.parse(body);
+		int dim = body.to_int();
 		if (is_column) cols=dim;
 		else rows=dim;
 		has_dimensions=(rows>0 && cols>0);
@@ -301,7 +306,8 @@ public class Gnonogram_filereader {
 		for (int i=0; i<s.length; i++)
 		{
 			// ignore extraneous non-digits (allow one zero)
-			b=int.parse(s[i]);
+//			b=int.parse(s[i]);
+			b=s[i].to_int();
 			if (b==0 && zero_count>0) continue;
 			else zero_count++;
 

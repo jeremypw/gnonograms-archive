@@ -34,6 +34,7 @@
 #include <glib/gi18n-lib.h>
 #include <float.h>
 #include <math.h>
+#include <stdio.h>
 
 
 #define TYPE_GNONOGRAM_VIEW (gnonogram_view_get_type ())
@@ -143,7 +144,8 @@ static gpointer gnonogram_view_parent_class = NULL;
 extern gchar* resource_icon_dir;
 extern gint resource_MAXGRADE;
 extern gchar* resource_resource_dir;
-extern gchar* resource_manual_dir;
+extern gchar* resource_mallard_manual_dir;
+extern gchar* resource_html_manual_dir;
 
 GType gnonogram_view_get_type (void) G_GNUC_CONST;
 gpointer gnonogram_controller_ref (gpointer instance);
@@ -217,8 +219,10 @@ static void _lambda32_ (Gnonogram_view* self);
 static void __lambda32__gtk_menu_item_activate (GtkMenuItem* _sender, gpointer self);
 static void gnonogram_view_show_about (Gnonogram_view* self);
 static void _gnonogram_view_show_about_gtk_menu_item_activate (GtkMenuItem* _sender, gpointer self);
-static void gnonogram_view_show_manual (Gnonogram_view* self);
-static void _gnonogram_view_show_manual_gtk_menu_item_activate (GtkMenuItem* _sender, gpointer self);
+static void gnonogram_view_show_mallard_manual (Gnonogram_view* self);
+static void _gnonogram_view_show_mallard_manual_gtk_menu_item_activate (GtkMenuItem* _sender, gpointer self);
+static void gnonogram_view_show_html_manual (Gnonogram_view* self);
+static void _gnonogram_view_show_html_manual_gtk_menu_item_activate (GtkMenuItem* _sender, gpointer self);
 static Block2Data* block2_data_ref (Block2Data* _data2_);
 static void block2_data_unref (Block2Data* _data2_);
 static void _lambda1_ (Gnonogram_view* self);
@@ -637,8 +641,13 @@ static void _gnonogram_view_show_about_gtk_menu_item_activate (GtkMenuItem* _sen
 }
 
 
-static void _gnonogram_view_show_manual_gtk_menu_item_activate (GtkMenuItem* _sender, gpointer self) {
-	gnonogram_view_show_manual (self);
+static void _gnonogram_view_show_mallard_manual_gtk_menu_item_activate (GtkMenuItem* _sender, gpointer self) {
+	gnonogram_view_show_mallard_manual (self);
+}
+
+
+static void _gnonogram_view_show_html_manual_gtk_menu_item_activate (GtkMenuItem* _sender, gpointer self) {
+	gnonogram_view_show_html_manual (self);
 }
 
 
@@ -762,6 +771,9 @@ static GtkMenuBar* gnonogram_view_create_viewer_menubar (Gnonogram_view* self) {
 	const gchar* _tmp83_ = NULL;
 	GtkMenuItem* _tmp84_ = NULL;
 	GtkMenuItem* manualmenuitem;
+	const gchar* _tmp85_ = NULL;
+	GtkMenuItem* _tmp86_ = NULL;
+	GtkMenuItem* htmlmanualmenuitem;
 	g_return_val_if_fail (IS_GNONOGRAM_VIEW (self), NULL);
 	_data1_ = g_slice_new0 (Block1Data);
 	_data1_->_ref_count_ = 1;
@@ -948,6 +960,10 @@ static GtkMenuBar* gnonogram_view_create_viewer_menubar (Gnonogram_view* self) {
 	_tmp84_ = (GtkMenuItem*) gtk_menu_item_new_with_mnemonic (_tmp83_);
 	manualmenuitem = g_object_ref_sink (_tmp84_);
 	gtk_container_add (GTK_CONTAINER (helpsubmenu), GTK_WIDGET (manualmenuitem));
+	_tmp85_ = _ ("Html Manual");
+	_tmp86_ = (GtkMenuItem*) gtk_menu_item_new_with_mnemonic (_tmp85_);
+	htmlmanualmenuitem = g_object_ref_sink (_tmp86_);
+	gtk_container_add (GTK_CONTAINER (helpsubmenu), GTK_WIDGET (htmlmanualmenuitem));
 	g_signal_connect_object (newmenuitem, "activate", (GCallback) __lambda14__gtk_menu_item_activate, self, 0);
 	g_signal_connect_object (loadpuzzlemenuitem, "activate", (GCallback) __lambda15__gtk_menu_item_activate, self, 0);
 	g_signal_connect_object (savepuzzlemenuitem, "activate", (GCallback) __lambda16__gtk_menu_item_activate, self, 0);
@@ -971,8 +987,10 @@ static GtkMenuBar* gnonogram_view_create_viewer_menubar (Gnonogram_view* self) {
 	g_signal_connect_object (GTK_MENU_ITEM (toolbarmenuitem), "activate", (GCallback) _gnonogram_view_toggle_toolbar_gtk_menu_item_activate, self, 0);
 	g_signal_connect_object (GTK_MENU_ITEM (self->priv->_gridmenuitem), "activate", (GCallback) __lambda32__gtk_menu_item_activate, self, 0);
 	g_signal_connect_object (aboutmenuitem, "activate", (GCallback) _gnonogram_view_show_about_gtk_menu_item_activate, self, 0);
-	g_signal_connect_object (manualmenuitem, "activate", (GCallback) _gnonogram_view_show_manual_gtk_menu_item_activate, self, 0);
+	g_signal_connect_object (manualmenuitem, "activate", (GCallback) _gnonogram_view_show_mallard_manual_gtk_menu_item_activate, self, 0);
+	g_signal_connect_object (htmlmanualmenuitem, "activate", (GCallback) _gnonogram_view_show_html_manual_gtk_menu_item_activate, self, 0);
 	result = menubar;
+	_g_object_unref0 (htmlmanualmenuitem);
 	_g_object_unref0 (manualmenuitem);
 	_g_object_unref0 (aboutmenuitem);
 	_g_object_unref0 (helpsubmenu);
@@ -1503,13 +1521,13 @@ static void gnonogram_view_show_about (Gnonogram_view* self) {
 }
 
 
-static void gnonogram_view_show_manual (Gnonogram_view* self) {
+static void gnonogram_view_show_mallard_manual (Gnonogram_view* self) {
 	gchar* manual_uri;
 	GdkScreen* _tmp0_ = NULL;
 	guint32 _tmp1_;
 	GError * _inner_error_ = NULL;
 	g_return_if_fail (IS_GNONOGRAM_VIEW (self));
-	manual_uri = g_strconcat ("ghelp:", resource_manual_dir, NULL);
+	manual_uri = g_strconcat ("ghelp:", resource_mallard_manual_dir, NULL);
 	_tmp0_ = gtk_window_get_screen (GTK_WINDOW (self));
 	_tmp1_ = gtk_get_current_event_time ();
 	gtk_show_uri (_tmp0_, manual_uri, _tmp1_, &_inner_error_);
@@ -1526,6 +1544,46 @@ static void gnonogram_view_show_manual (Gnonogram_view* self) {
 		_g_error_free0 (e);
 	}
 	__finally7:
+	if (_inner_error_ != NULL) {
+		_g_free0 (manual_uri);
+		g_critical ("file %s: line %d: uncaught error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
+		g_clear_error (&_inner_error_);
+		return;
+	}
+	_g_free0 (manual_uri);
+}
+
+
+static void gnonogram_view_show_html_manual (Gnonogram_view* self) {
+	gchar* _tmp0_;
+	gchar* _tmp1_;
+	gchar* manual_uri;
+	gchar* _tmp2_;
+	GdkScreen* _tmp3_ = NULL;
+	guint32 _tmp4_;
+	GError * _inner_error_ = NULL;
+	g_return_if_fail (IS_GNONOGRAM_VIEW (self));
+	_tmp0_ = g_strconcat ("file:///", resource_html_manual_dir, NULL);
+	manual_uri = (_tmp1_ = g_strconcat (_tmp0_, "/index.html", NULL), _g_free0 (_tmp0_), _tmp1_);
+	_tmp2_ = g_strconcat (manual_uri, "\n", NULL);
+	fprintf (stdout, "%s", _tmp2_);
+	_g_free0 (_tmp2_);
+	_tmp3_ = gtk_window_get_screen (GTK_WINDOW (self));
+	_tmp4_ = gtk_get_current_event_time ();
+	gtk_show_uri (_tmp3_, manual_uri, _tmp4_, &_inner_error_);
+	if (_inner_error_ != NULL) {
+		goto __catch8_g_error;
+	}
+	goto __finally8;
+	__catch8_g_error:
+	{
+		GError * e;
+		e = _inner_error_;
+		_inner_error_ = NULL;
+		utils_show_warning_dialog (e->message);
+		_g_error_free0 (e);
+	}
+	__finally8:
 	if (_inner_error_ != NULL) {
 		_g_free0 (manual_uri);
 		g_critical ("file %s: line %d: uncaught error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);

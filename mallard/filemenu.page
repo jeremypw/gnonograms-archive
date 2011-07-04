@@ -1,0 +1,63 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      type="topic"
+      id="filemenu">
+	<title>File Menu and Toolbar icons</title>
+	<media type="image" mime="image/png" width="320" height="153" src="media/Filemenu.png"/>
+	<media type="image" mime="image/png" src="media/Filetoolbar.png"/>
+	<synopsis>
+		<title>Summary</title>
+		<desc>The file menu provides the following functions</desc>
+		<code>
+Create a new puzzle design*
+Load puzzle designs from storage media*
+Load last (unfinished) puzzle and its working grid from storage media
+Save puzzle designs to storage media*
+Save current (unfinished) puzzle and the working grid to storage media
+Quit the program.
+		</code>
+		<note><p>*These functions are also provided by the tool bar</p></note>
+	</synopsis>
+	<list>
+		<item><title>New<media type="image" mime="image/png" width="24" height="24" src="media/New.png"/></title>
+			<p>Empty the current grid and enter "design" mode</p>
+		</item>
+		<item>
+			<title>Load ...</title>
+			<list>
+				<item>
+					<gui style="menuitem"><em>Load/Puzzle.==</em><media type="image" mime="image/png" width="24" height="24" src="media/Load.png"/></gui>
+					<p>Shows a file selection dialogue with the puzzles in the current game directory.  By default gnonogram game files are shown but the filter can be changed to Picto games.</p>
+					<note style="tip">
+						<p>If the directory is changed then that becomes the default game directory.</p>
+					</note>
+				</item>
+				<item>
+					<gui style="menuitem"><em>Load/Unfinished.</em></gui>
+					<p>If the program was closed before finishing a puzzle (or the unfinished puzzle was manually saved) then the partially completed puzzle is reloaded and solving mode entered</p>
+				</item>
+			</list>
+		</item>
+		<item>
+			<gui style="menuitem"><em>Save ...</em></gui>
+			<list>
+				<item><gui style="menuitem"><em>Save/Puzzle.==</em><media type="image" mime="image/png" width="24" height="24" src="media/Save.png"/></gui>
+					<p>Shows a file <gui>Save As</gui> dialogue in the current game directory.  The puzzle is saved in Gnonogram format.  Use the separate menu option to save in Picto format. If the directory is changed then that becomes the default game directory.</p>
+				</item>
+				<item><gui style="menuitem"><em>Save/Unfinished.</em></gui>
+					<p>Store the current puzzle and grid position in a temporary file so that it can be finished later.  Only one unfinished puzzle can be stored at a time.</p>
+					<note style="warning">
+						<p>If a second puzzle is stored it will over-write the previous one.</p>
+					</note>
+				</item>
+			</list>
+		</item>
+		<item>
+			<gui style="menuitem"><em>Save as Picto game.</em></gui>
+			<p>Shows a file <gui><em>Save As</em></gui> dialogue in the current game directory.  The puzzle is saved in Gnonogram format.  Use the separate menu option to save in Picto format. If the directory is changed then that becomes the default game directory.</p>
+		</item>
+		<item>
+			<gui style="menuitem"><em>Quit.</em></gui>
+			<p>Saves the current configuration settings (difficulty, dimensions, colours) and closes the program</p>
+		</item>
+	</list>
+</page>

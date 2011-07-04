@@ -214,6 +214,8 @@ public class Gnonogram_view : Gtk.Window
 			helpsubmenu.add(aboutmenuitem);
 			var manualmenuitem=new MenuItem.with_mnemonic(_("Manual"));
 			helpsubmenu.add(manualmenuitem);
+			var htmlmanualmenuitem=new MenuItem.with_mnemonic(_("Html Manual"));
+			helpsubmenu.add(htmlmanualmenuitem);
 
 		newmenuitem.activate.connect(()=>{newgame();});
 		loadpuzzlemenuitem.activate.connect(()=>{loadgame("");});
@@ -243,7 +245,8 @@ public class Gnonogram_view : Gtk.Window
 		_gridmenuitem.activate.connect(()=>{togglegrid(_gridmenuitem.active);});
 
 		aboutmenuitem.activate.connect(show_about);
-		manualmenuitem.activate.connect(show_manual);
+		manualmenuitem.activate.connect(show_mallard_manual);
+		htmlmanualmenuitem.activate.connect(show_html_manual);
 
 		return menubar;
 	}
@@ -253,21 +256,25 @@ public class Gnonogram_view : Gtk.Window
 		_toolbar = new Toolbar();
 		_toolbar.set_style(Gtk.ToolbarStyle.ICONS);
 
-		var new_tool=new ToolButton.from_stock(Stock.CLEAR);
+//		var new_tool=new ToolButton.from_stock(Gtk.Stock.CLEAR);
+		var new_tool=new ToolButton.from_stock(Gtk.STOCK_CLEAR);
 		new_tool.set_tooltip_text(_("New game"));
 		_toolbar.add(new_tool);
 
-		var load_tool=new ToolButton.from_stock(Stock.OPEN);
+//		var load_tool=new ToolButton.from_stock(Gtk.Stock.OPEN);
+		var load_tool=new ToolButton.from_stock(Gtk.STOCK_OPEN);
 		load_tool.set_tooltip_text(_("Load game"));
 		_toolbar.add(load_tool);
 
-		var save_as_tool=new ToolButton.from_stock(Stock.SAVE_AS);
+//		var save_as_tool=new ToolButton.from_stock(Gtk.Stock.SAVE_AS);
+		var save_as_tool=new ToolButton.from_stock(Gtk.STOCK_SAVE_AS);
 		save_as_tool.set_tooltip_text(_("Save game"));
 		_toolbar.add(save_as_tool);
 
 		_toolbar.add(new SeparatorToolItem());
 
-		_hide_tool=new ToggleToolButton.from_stock(Stock.EXECUTE);
+//		_hide_tool=new ToggleToolButton.from_stock(Gtk.Stock.EXECUTE);
+		_hide_tool=new ToggleToolButton.from_stock(Gtk.STOCK_EXECUTE);
 		_hide_tool.set_tooltip_text(_("Hide the solution and start solving"));
 		_hide_tool.active=false;
 		_toolbar.add(_hide_tool);
@@ -277,7 +284,8 @@ public class Gnonogram_view : Gtk.Window
 		_check_tool.set_tooltip_text(_("Show any incorrect cells"));
 		_toolbar.add(_check_tool);
 
-		var restart_tool=new ToolButton.from_stock(Stock.REFRESH);
+//		var restart_tool=new ToolButton.from_stock(Gtk.Stock.REFRESH);
+		var restart_tool=new ToolButton.from_stock(Gtk.STOCK_REFRESH);
 		restart_tool.set_tooltip_text(_("Start this puzzle again"));
 		_toolbar.add(restart_tool);
 
@@ -305,11 +313,13 @@ public class Gnonogram_view : Gtk.Window
 		resize_tool.set_tooltip_text(_("Change dimensions of the game grid"));
 		_toolbar.add(resize_tool);
 
-		var zoom_in_tool=new ToolButton.from_stock(Stock.ZOOM_IN);
+//		var zoom_in_tool=new ToolButton.from_stock(Gtk.Stock.ZOOM_IN);
+		var zoom_in_tool=new ToolButton.from_stock(Gtk.STOCK_ZOOM_IN);
 		zoom_in_tool.set_tooltip_text(_("Increase font size"));
 		_toolbar.add(zoom_in_tool);
 
-		var zoom_out_tool=new ToolButton.from_stock(Stock.ZOOM_OUT);
+//		var zoom_out_tool=new ToolButton.from_stock(Gtk.Stock.ZOOM_OUT);
+		var zoom_out_tool=new ToolButton.from_stock(Gtk.STOCK_ZOOM_OUT);
 		zoom_out_tool.set_tooltip_text(_("Decrease font size"));
 		_toolbar.add(zoom_out_tool);
 
@@ -389,10 +399,24 @@ public class Gnonogram_view : Gtk.Window
                        "authors", authors,
                        null);
 	}
-
-	private void show_manual()
+//======================================================================
+	private void show_mallard_manual()
 	{
-		var manual_uri="ghelp:"+Resource.manual_dir;
+		var manual_uri="ghelp:"+Resource.mallard_manual_dir;
+		try
+		{
+			show_uri(get_screen(),manual_uri,get_current_event_time());
+		}
+		catch (GLib.Error e)
+		{
+			Utils.show_warning_dialog(e.message);
+		}
+	}
+//======================================================================
+	private void show_html_manual()
+	{
+		var manual_uri="file:///"+Resource.html_manual_dir+"/index.html";
+		stdout.printf(manual_uri+"\n");
 		try
 		{
 			show_uri(get_screen(),manual_uri,get_current_event_time());

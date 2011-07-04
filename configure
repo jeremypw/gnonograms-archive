@@ -27,10 +27,10 @@ configure_help() {
 #    printf "\t\t\t\tDirectory for installing schema files.\n"
 #    printf "\t--disable-schemas-install\n"
 #   printf "\t\t\t\tDisable the schemas installation.\n"
-#    printf "\t--disable-desktop-update\n"
-#    printf "\t\t\t\tDisable desktop database update.\n"
-#    printf "\t--disable-icon-update\n"
-#    printf "\t\t\t\tDisable icon cache update.\n"
+    printf "\t--disable-desktop-update\n"
+    printf "\t\t\t\tDisable desktop, mime and icon database update.\n"
+ #   printf "\t--disable-icon-update\n"
+ #   printf "\t\t\t\tDisable icon cache update.\n"
     printf "\n"
 }
 
@@ -95,10 +95,10 @@ do
 #        --disable-schemas-install)        variables="${variables}DISABLE_SCHEMAS_INSTALL=1\n"
 #                                          ;;
 #
-#        --disable-desktop-update)         variables="${variables}DISABLE_DESKTOP_UPDATE=1\n"
-#                                          ;;
-#
-#        --disable-icon-update)            variables="${variables}DISABLE_ICON_UPDATE=1\n"
+        --disable-desktop-update)         variables="${variables}DISABLE_DESKTOP_UPDATE=1\n"
+                                          ;;
+
+ #       --disable-icon-update)            variables="${variables}DISABLE_ICON_UPDATE=1\n"
 #                                          ;;
 
         *)                  if [ ! $value ]

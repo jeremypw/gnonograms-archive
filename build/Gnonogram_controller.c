@@ -192,7 +192,7 @@ struct _Gnonogram_controllerPrivate {
 	Cell _current_cell;
 	Cell _previous_cell;
 	GTimer* _timer;
-	GameState __state;
+	GameState _state;
 	gboolean _is_button_down;
 	gboolean _have_solution;
 	gboolean _gridlinesvisible;
@@ -342,7 +342,6 @@ static void gnonogram_controller_save_position (Gnonogram_controller* self);
 static void _gnonogram_controller_save_position_gnonogram_view_saveposition (Gnonogram_view* _sender, gpointer self);
 static void _lambda33_ (Gnonogram_controller* self);
 void gnonogram_controller_load_position (Gnonogram_controller* self);
-static GameState gnonogram_controller_get__state (Gnonogram_controller* self);
 static void __lambda33__gnonogram_view_loadposition (Gnonogram_view* _sender, gpointer self);
 static void _lambda34_ (Gnonogram_controller* self);
 void gnonogram_controller_quit_game (Gnonogram_controller* self);
@@ -483,7 +482,6 @@ void config_set_difficulty (Config* self, gdouble difficulty);
 gdouble gnonogram_view_get_grade_spin_value (Gnonogram_view* self);
 void config_set_dimensions (Config* self, gint r, gint c);
 void config_set_colors (Config* self);
-static void gnonogram_controller_set__state (Gnonogram_controller* self, GameState value);
 void gnonogram_view_state_has_changed (Gnonogram_view* self, GameState gs);
 static void gnonogram_controller_finalize (Gnonogram_controller* obj);
 static void _vala_array_destroy (gpointer array, gint array_length, GDestroyNotify destroy_func);
@@ -600,7 +598,7 @@ static void _gnonogram_controller_save_position_gnonogram_view_saveposition (Gno
 
 static void _lambda33_ (Gnonogram_controller* self) {
 	gnonogram_controller_load_position (self);
-	gnonogram_controller_change_state (self, self->priv->__state);
+	gnonogram_controller_change_state (self, self->priv->_state);
 }
 
 
@@ -980,7 +978,7 @@ static gboolean gnonogram_controller_button_pressed (Gnonogram_controller* self,
 			}
 			default:
 			{
-				if (self->priv->__state == GAME_STATE_SOLVING) {
+				if (self->priv->_state == GAME_STATE_SOLVING) {
 					self->priv->_current_cell.state = CELL_STATE_UNKNOWN;
 				}
 				break;
@@ -1112,7 +1110,7 @@ static gboolean gnonogram_controller_key_pressed (Gnonogram_controller* self, Gd
 		switch (0) {
 			default:
 			{
-				if (self->priv->__state == GAME_STATE_SOLVING) {
+				if (self->priv->_state == GAME_STATE_SOLVING) {
 					self->priv->_current_cell.state = CELL_STATE_UNKNOWN;
 				} else {
 					self->priv->_current_cell.state = CELL_STATE_EMPTY;
@@ -1236,7 +1234,7 @@ void gnonogram_controller_grid_cursor_moved (Gnonogram_controller* self, gint r,
 	}
 	if (_tmp0_) {
 		gnonogram_controller_highlight_labels (self, &self->priv->_previous_cell, FALSE);
-		gnonogram_cellgrid_draw_cell (self->_cellgrid, &self->priv->_previous_cell, self->priv->__state, FALSE);
+		gnonogram_cellgrid_draw_cell (self->_cellgrid, &self->priv->_previous_cell, self->priv->_state, FALSE);
 		return;
 	}
 	cell_copy (&self->priv->_previous_cell, &self->priv->_current_cell);
@@ -1245,7 +1243,7 @@ void gnonogram_controller_grid_cursor_moved (Gnonogram_controller* self, gint r,
 		return;
 	}
 	gnonogram_controller_highlight_labels (self, &self->priv->_previous_cell, FALSE);
-	gnonogram_cellgrid_draw_cell (self->_cellgrid, &self->priv->_previous_cell, self->priv->__state, FALSE);
+	gnonogram_cellgrid_draw_cell (self->_cellgrid, &self->priv->_previous_cell, self->priv->_state, FALSE);
 	if (self->priv->_is_button_down) {
 		gnonogram_controller_update_cell (self, &self->priv->_current_cell, TRUE);
 	} else {
@@ -1253,7 +1251,7 @@ void gnonogram_controller_grid_cursor_moved (Gnonogram_controller* self, gint r,
 		Cell _tmp5_ = {0};
 		_tmp5_ = (gnonogram_model_get_cell (self->_model, r, c, &_tmp4_), _tmp4_);
 		self->priv->_current_cell = _tmp5_;
-		gnonogram_cellgrid_draw_cell (self->_cellgrid, &self->priv->_current_cell, self->priv->__state, TRUE);
+		gnonogram_cellgrid_draw_cell (self->_cellgrid, &self->priv->_current_cell, self->priv->_state, TRUE);
 	}
 	gnonogram_controller_highlight_labels (self, &self->priv->_current_cell, TRUE);
 	cell_copy (&self->priv->_previous_cell, &self->priv->_current_cell);
@@ -1270,8 +1268,8 @@ static void gnonogram_controller_highlight_labels (Gnonogram_controller* self, C
 void gnonogram_controller_update_cell (Gnonogram_controller* self, Cell* c, gboolean highlight) {
 	g_return_if_fail (IS_GNONOGRAM_CONTROLLER (self));
 	gnonogram_model_set_data_from_cell (self->_model, c);
-	gnonogram_cellgrid_draw_cell (self->_cellgrid, c, self->priv->__state, highlight);
-	if (self->priv->__state == GAME_STATE_SETTING) {
+	gnonogram_cellgrid_draw_cell (self->_cellgrid, c, self->priv->_state, highlight);
+	if (self->priv->_state == GAME_STATE_SETTING) {
 		gchar* _tmp0_ = NULL;
 		gchar* _tmp1_;
 		gchar* _tmp2_ = NULL;
@@ -1336,7 +1334,7 @@ static void gnonogram_controller_redraw_all (Gnonogram_controller* self) {
 								break;
 							}
 							_tmp3_ = (gnonogram_model_get_cell (self->_model, r, c, &_tmp2_), _tmp2_);
-							gnonogram_cellgrid_draw_cell (self->_cellgrid, &_tmp3_, self->priv->__state, FALSE);
+							gnonogram_cellgrid_draw_cell (self->_cellgrid, &_tmp3_, self->priv->_state, FALSE);
 						}
 					}
 				}
@@ -1625,7 +1623,7 @@ static gboolean gnonogram_controller_write_game_file (Gnonogram_controller* self
 	_tmp13_ = _tmp12_;
 	fprintf (f, "%s", _tmp13_);
 	_g_free0 (_tmp13_);
-	if (self->priv->__state == GAME_STATE_SOLVING) {
+	if (self->priv->_state == GAME_STATE_SOLVING) {
 		gnonogram_model_use_working (self->_model);
 	}
 	fflush (f);
@@ -1671,7 +1669,7 @@ static gboolean gnonogram_controller_write_pictogame_file (Gnonogram_controller*
 	_tmp7_ = _tmp6_;
 	fprintf (f, "%s", _tmp7_);
 	_g_free0 (_tmp7_);
-	if (self->priv->__state == GAME_STATE_SOLVING) {
+	if (self->priv->_state == GAME_STATE_SOLVING) {
 		gnonogram_model_use_working (self->_model);
 	}
 	fflush (f);
@@ -1728,7 +1726,7 @@ static gboolean gnonogram_controller_write_position_file (Gnonogram_controller* 
 	fprintf (f, "%s", _tmp1_);
 	_g_free0 (_tmp1_);
 	fprintf (f, "[State]\n");
-	_tmp3_ = g_strconcat ((_tmp2_ = g_enum_get_value (g_type_class_ref (TYPE_GAME_STATE), self->priv->__state), (_tmp2_ != NULL) ? _tmp2_->value_name : NULL), "\n", NULL);
+	_tmp3_ = g_strconcat ((_tmp2_ = g_enum_get_value (g_type_class_ref (TYPE_GAME_STATE), self->priv->_state), (_tmp2_ != NULL) ? _tmp2_->value_name : NULL), "\n", NULL);
 	fprintf (f, "%s", _tmp3_);
 	_g_free0 (_tmp3_);
 	fflush (f);
@@ -2623,7 +2621,7 @@ static void gnonogram_controller_save_config (Gnonogram_controller* self) {
 static void gnonogram_controller_change_state (Gnonogram_controller* self, GameState gs) {
 	g_return_if_fail (IS_GNONOGRAM_CONTROLLER (self));
 	gnonogram_controller_initialize_cursor (self);
-	gnonogram_controller_set__state (self, gs);
+	self->priv->_state = gs;
 	if (gs == GAME_STATE_SETTING) {
 		g_timer_stop (self->priv->_timer);
 		gnonogram_model_use_solution (self->_model);
@@ -2632,20 +2630,6 @@ static void gnonogram_controller_change_state (Gnonogram_controller* self, GameS
 		gnonogram_model_use_working (self->_model);
 	}
 	gnonogram_view_state_has_changed (self->_gnonogram_view, gs);
-}
-
-
-static GameState gnonogram_controller_get__state (Gnonogram_controller* self) {
-	GameState result;
-	g_return_val_if_fail (IS_GNONOGRAM_CONTROLLER (self), 0);
-	result = self->priv->__state;
-	return result;
-}
-
-
-static void gnonogram_controller_set__state (Gnonogram_controller* self, GameState value) {
-	g_return_if_fail (IS_GNONOGRAM_CONTROLLER (self));
-	self->priv->__state = value;
 }
 
 
