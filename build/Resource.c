@@ -32,11 +32,14 @@
 #include <float.h>
 #include <math.h>
 #include <gdk/gdk.h>
+#include <gtk/gtk.h>
 #include <stdio.h>
 #include <gio/gio.h>
-#include <gtk/gtk.h>
 #include <glib/gi18n-lib.h>
+#include <gdk-pixbuf/gdk-pixdata.h>
 
+
+#define RESOURCE_TYPE_ICON_ID (resource_icon_id_get_type ())
 #define _g_free0(var) (var = (g_free (var), NULL))
 #define _g_object_unref0(var) ((var == NULL) ? NULL : (var = (g_object_unref (var), NULL)))
 
@@ -54,6 +57,16 @@ typedef struct _ConfigClass ConfigClass;
 #define TYPE_GAME_STATE (game_state_get_type ())
 
 #define TYPE_CELL_STATE (cell_state_get_type ())
+#define _g_error_free0(var) ((var == NULL) ? NULL : (var = (g_error_free (var), NULL)))
+
+typedef enum  {
+	RESOURCE_ICON_ID_PEEK,
+	RESOURCE_ICON_ID_SOLVE,
+	RESOURCE_ICON_ID_RANDOM,
+	RESOURCE_ICON_ID_RESIZE,
+	RESOURCE_ICON_ID_HIDE,
+	RESOURCE_ICON_ID_REVEAL
+} ResourceIconID;
 
 typedef enum  {
 	GAME_STATE_SETTING,
@@ -117,11 +130,30 @@ extern gchar* resource_prefix;
 gchar* resource_prefix = NULL;
 extern gboolean resource_installed;
 gboolean resource_installed = FALSE;
+extern gint resource_icon_size;
+gint resource_icon_size = 24;
+extern GtkIconTheme* resource_icon_theme;
+GtkIconTheme* resource_icon_theme = NULL;
 
+GType resource_icon_id_get_type (void) G_GNUC_CONST;
 #define RESOURCE_APP_GETTEXT_PACKAGE GETTEXT_PACKAGE
 #define RESOURCE_DEFAULTGAMENAME "New game"
 #define RESOURCE_GAMEFILEEXTENSION ".gno"
 #define RESOURCE_POSITIONFILENAME "currentposition"
+#define RESOURCE_RANDOMICONFILENAME "dice.png"
+#define RESOURCE_PEEKICONFILENAME "errorcheck.png"
+#define RESOURCE_RESIZEICONFILENAME "resize.png"
+#define RESOURCE_SOLVEICONFILENAME "laptop.png"
+#define RESOURCE_HIDEICONFILENAME "eyes-open.png"
+#define RESOURCE_REVEALICONFILENAME "eyes-closed.png"
+#define RESOURCE_MISSINGICONFILENAME ""
+#define RESOURCE_SOLVEICONTHEMENAME "computer"
+#define RESOURCE_PEEKICONTHEMENAME ""
+#define RESOURCE_RANDOMICONTHEMENAME ""
+#define RESOURCE_RESIZEICONTHEMENAME "resize"
+#define RESOURCE_HIDEICONTHEMENAME "hide"
+#define RESOURCE_REVEALICONTHEMENAME "reveal"
+#define RESOURCE_MISSINGICONTHEMENAME "image-missing"
 #define RESOURCE_BLOCKSEPARATOR ","
 void resource_init (const gchar* arg0);
 gboolean resource_is_installed (const gchar* exec_dir);
@@ -141,8 +173,29 @@ gchar** config_get_colors (Config* self, int* result_length1);
 gchar* resource_get_langpack_dir (void);
 void resource_set_colors (void);
 void resource_set_font (void);
+void resource_get_icon_theme (void);
+GdkPixbuf* resource_get_theme_icon (const gchar* icon_name);
+GdkPixbuf* resource_get_app_icon (const gchar* icon_filename);
+GdkPixbuf* resource_get_icon (ResourceIconID id);
 static void _vala_array_destroy (gpointer array, gint array_length, GDestroyNotify destroy_func);
 static void _vala_array_free (gpointer array, gint array_length, GDestroyNotify destroy_func);
+
+
+GType resource_icon_id_get_type (void) {
+	static volatile gsize resource_icon_id_type_id__volatile = 0;
+	if (g_once_init_enter (&resource_icon_id_type_id__volatile)) {
+		static const GEnumValue values[] = {{RESOURCE_ICON_ID_PEEK, "RESOURCE_ICON_ID_PEEK", "peek"}, {RESOURCE_ICON_ID_SOLVE, "RESOURCE_ICON_ID_SOLVE", "solve"}, {RESOURCE_ICON_ID_RANDOM, "RESOURCE_ICON_ID_RANDOM", "random"}, {RESOURCE_ICON_ID_RESIZE, "RESOURCE_ICON_ID_RESIZE", "resize"}, {RESOURCE_ICON_ID_HIDE, "RESOURCE_ICON_ID_HIDE", "hide"}, {RESOURCE_ICON_ID_REVEAL, "RESOURCE_ICON_ID_REVEAL", "reveal"}, {0, NULL, NULL}};
+		GType resource_icon_id_type_id;
+		resource_icon_id_type_id = g_enum_register_static ("ResourceIconID", values);
+		g_once_init_leave (&resource_icon_id_type_id__volatile, resource_icon_id_type_id);
+	}
+	return resource_icon_id_type_id__volatile;
+}
+
+
+static gpointer _g_object_ref0 (gpointer self) {
+	return self ? g_object_ref (self) : NULL;
+}
 
 
 static gchar* bool_to_string (gboolean self) {
@@ -164,64 +217,68 @@ static gchar* bool_to_string (gboolean self) {
 void resource_init (const gchar* arg0) {
 	gchar* _tmp0_;
 	gchar* _tmp1_;
-	gchar* _tmp2_ = NULL;
-	gchar* _tmp3_;
-	GFile* _tmp4_ = NULL;
-	GFile* _tmp5_;
+	GtkIconTheme* _tmp2_ = NULL;
+	GtkIconTheme* _tmp3_;
+	GtkIconTheme* _tmp4_;
+	const gchar* _tmp5_ = NULL;
+	gchar* _tmp6_ = NULL;
+	gchar* _tmp7_;
+	GFile* _tmp8_ = NULL;
+	GFile* _tmp9_;
 	GFile* exec_file;
-	GFile* _tmp6_ = NULL;
-	GFile* _tmp7_;
-	gchar* _tmp8_ = NULL;
-	gchar* _tmp9_;
-	gboolean _tmp10_;
-	gchar* _tmp11_ = NULL;
-	gchar* _tmp12_;
-	gchar* _tmp13_ = NULL;
-	gchar* _tmp23_;
-	gchar* _tmp24_;
-	gchar* _tmp25_ = NULL;
-	gchar* _tmp34_;
-	gchar* _tmp35_;
-	gchar* _tmp36_;
-	gchar* _tmp37_;
+	GFile* _tmp10_ = NULL;
+	GFile* _tmp11_;
+	gchar* _tmp12_ = NULL;
+	gchar* _tmp13_;
+	gboolean _tmp14_;
+	gchar* _tmp15_ = NULL;
+	gchar* _tmp16_;
+	gchar* _tmp17_ = NULL;
+	gchar* _tmp27_;
+	gchar* _tmp28_;
+	gchar* _tmp29_ = NULL;
 	gchar* _tmp38_;
-	Config* _tmp39_ = NULL;
-	Config* _tmp40_;
+	gchar* _tmp39_;
+	gchar* _tmp40_;
 	gchar* _tmp41_;
-	gchar* _tmp42_ = NULL;
-	gchar* _tmp43_;
-	Config* _tmp44_ = NULL;
-	Config* _tmp45_;
+	gchar* _tmp42_;
+	Config* _tmp43_ = NULL;
+	Config* _tmp44_;
+	gchar* _tmp45_;
 	gchar* _tmp46_ = NULL;
 	gchar* _tmp47_;
-	GdkColor* _tmp48_ = NULL;
-	GdkColor* _tmp49_;
+	Config* _tmp48_ = NULL;
+	Config* _tmp49_;
+	gchar* _tmp50_ = NULL;
+	gchar* _tmp51_;
+	GdkColor* _tmp52_ = NULL;
+	GdkColor* _tmp53_;
 	gint setting;
-	GdkColor _tmp50_ = {0};
-	GdkColor _tmp51_ = {0};
-	GdkColor _tmp52_ = {0};
-	GdkColor _tmp53_ = {0};
-	gint solving;
 	GdkColor _tmp54_ = {0};
 	GdkColor _tmp55_ = {0};
 	GdkColor _tmp56_ = {0};
 	GdkColor _tmp57_ = {0};
-	Config* _tmp58_ = NULL;
-	Config* _tmp59_;
-	gint _tmp60_;
-	gchar** _tmp61_ = NULL;
-	gchar** _tmp62_;
+	gint solving;
+	GdkColor _tmp58_ = {0};
+	GdkColor _tmp59_ = {0};
+	GdkColor _tmp60_ = {0};
+	GdkColor _tmp61_ = {0};
+	Config* _tmp62_ = NULL;
+	Config* _tmp63_;
+	gint _tmp64_;
+	gchar** _tmp65_ = NULL;
+	gchar** _tmp66_;
 	gchar** config_colors;
 	gint config_colors_length1;
 	gint _config_colors_size_;
-	GdkColor _tmp63_ = {0};
-	GdkColor _tmp64_ = {0};
-	GdkColor _tmp65_ = {0};
-	GdkColor _tmp66_ = {0};
-	gchar* _tmp67_;
-	gchar* _tmp68_;
-	gdouble* _tmp69_ = NULL;
-	gdouble* _tmp70_;
+	GdkColor _tmp67_ = {0};
+	GdkColor _tmp68_ = {0};
+	GdkColor _tmp69_ = {0};
+	GdkColor _tmp70_ = {0};
+	gchar* _tmp71_;
+	gchar* _tmp72_;
+	gdouble* _tmp73_ = NULL;
+	gdouble* _tmp74_;
 	g_return_if_fail (arg0 != NULL);
 	_tmp0_ = g_strdup (_PREFIX);
 	_tmp1_ = _tmp0_;
@@ -229,165 +286,172 @@ void resource_init (const gchar* arg0) {
 	resource_prefix = _tmp1_;
 	fprintf (stdout, "Prefix is %s \n", resource_prefix);
 	fprintf (stdout, "gettext package is %s \n", RESOURCE_APP_GETTEXT_PACKAGE);
-	_tmp2_ = g_find_program_in_path (arg0);
-	_tmp3_ = _tmp2_;
-	_tmp4_ = g_file_new_for_path (_tmp3_);
-	exec_file = (_tmp5_ = _tmp4_, _g_free0 (_tmp3_), _tmp5_);
-	_tmp6_ = g_file_get_parent (exec_file);
+	_tmp2_ = gtk_icon_theme_get_default ();
+	_tmp3_ = _g_object_ref0 (_tmp2_);
+	_tmp4_ = _tmp3_;
+	_g_object_unref0 (resource_icon_theme);
+	resource_icon_theme = _tmp4_;
+	_tmp5_ = gtk_icon_theme_get_example_icon_name (resource_icon_theme);
+	fprintf (stdout, "Icon theme is %s\n", _tmp5_);
+	_tmp6_ = g_find_program_in_path (arg0);
 	_tmp7_ = _tmp6_;
-	_tmp8_ = g_file_get_path (_tmp7_);
-	_tmp9_ = _tmp8_;
+	_tmp8_ = g_file_new_for_path (_tmp7_);
+	exec_file = (_tmp9_ = _tmp8_, _g_free0 (_tmp7_), _tmp9_);
+	_tmp10_ = g_file_get_parent (exec_file);
+	_tmp11_ = _tmp10_;
+	_tmp12_ = g_file_get_path (_tmp11_);
+	_tmp13_ = _tmp12_;
 	_g_free0 (resource_exec_dir);
-	resource_exec_dir = _tmp9_;
-	_g_object_unref0 (_tmp7_);
+	resource_exec_dir = _tmp13_;
+	_g_object_unref0 (_tmp11_);
 	fprintf (stdout, "Exec_dir is %s \n", resource_exec_dir);
-	_tmp10_ = resource_is_installed (resource_exec_dir);
-	resource_installed = _tmp10_;
-	_tmp11_ = bool_to_string (resource_installed);
-	_tmp12_ = _tmp11_;
-	fprintf (stdout, "Is installed is %s\n", _tmp12_);
-	_g_free0 (_tmp12_);
+	_tmp14_ = resource_is_installed (resource_exec_dir);
+	resource_installed = _tmp14_;
+	_tmp15_ = bool_to_string (resource_installed);
+	_tmp16_ = _tmp15_;
+	fprintf (stdout, "Is installed is %s\n", _tmp16_);
+	_g_free0 (_tmp16_);
 	if (resource_installed) {
-		GFile* _tmp14_ = NULL;
-		GFile* _tmp15_;
-		GFile* _tmp16_ = NULL;
-		GFile* _tmp17_;
-		gchar* _tmp18_ = NULL;
-		gchar* _tmp19_;
-		gchar* _tmp20_;
-		_tmp14_ = g_file_get_parent (exec_file);
-		_tmp15_ = _tmp14_;
-		_tmp16_ = g_file_get_parent (_tmp15_);
-		_tmp17_ = _tmp16_;
-		_tmp18_ = g_file_get_path (_tmp17_);
+		GFile* _tmp18_ = NULL;
+		GFile* _tmp19_;
+		GFile* _tmp20_ = NULL;
+		GFile* _tmp21_;
+		gchar* _tmp22_ = NULL;
+		gchar* _tmp23_;
+		gchar* _tmp24_;
+		_tmp18_ = g_file_get_parent (exec_file);
 		_tmp19_ = _tmp18_;
-		_tmp20_ = g_strconcat (_tmp19_, "/share/gnonograms", NULL);
-		_g_free0 (_tmp13_);
-		_tmp13_ = _tmp20_;
-		_g_free0 (_tmp19_);
-		_g_object_unref0 (_tmp17_);
-		_g_object_unref0 (_tmp15_);
+		_tmp20_ = g_file_get_parent (_tmp19_);
+		_tmp21_ = _tmp20_;
+		_tmp22_ = g_file_get_path (_tmp21_);
+		_tmp23_ = _tmp22_;
+		_tmp24_ = g_strconcat (_tmp23_, "/share/gnonograms", NULL);
+		_g_free0 (_tmp17_);
+		_tmp17_ = _tmp24_;
+		_g_free0 (_tmp23_);
+		_g_object_unref0 (_tmp21_);
+		_g_object_unref0 (_tmp19_);
 	} else {
-		gchar* _tmp21_;
-		gchar* _tmp22_;
-		_tmp21_ = g_strdup (resource_exec_dir);
-		_tmp22_ = _tmp21_;
-		_g_free0 (_tmp13_);
-		_tmp13_ = _tmp22_;
+		gchar* _tmp25_;
+		gchar* _tmp26_;
+		_tmp25_ = g_strdup (resource_exec_dir);
+		_tmp26_ = _tmp25_;
+		_g_free0 (_tmp17_);
+		_tmp17_ = _tmp26_;
 	}
-	_tmp23_ = g_strdup (_tmp13_);
-	_tmp24_ = _tmp23_;
+	_tmp27_ = g_strdup (_tmp17_);
+	_tmp28_ = _tmp27_;
 	_g_free0 (resource_resource_dir);
-	resource_resource_dir = _tmp24_;
+	resource_resource_dir = _tmp28_;
 	fprintf (stdout, "Resource_dir is %s \n", resource_resource_dir);
 	if (resource_installed) {
-		GFile* _tmp26_ = NULL;
-		GFile* _tmp27_;
-		GFile* _tmp28_ = NULL;
-		GFile* _tmp29_;
-		gchar* _tmp30_ = NULL;
-		gchar* _tmp31_;
-		gchar* _tmp32_;
-		_tmp26_ = g_file_get_parent (exec_file);
-		_tmp27_ = _tmp26_;
-		_tmp28_ = g_file_get_parent (_tmp27_);
-		_tmp29_ = _tmp28_;
-		_tmp30_ = g_file_get_path (_tmp29_);
+		GFile* _tmp30_ = NULL;
+		GFile* _tmp31_;
+		GFile* _tmp32_ = NULL;
+		GFile* _tmp33_;
+		gchar* _tmp34_ = NULL;
+		gchar* _tmp35_;
+		gchar* _tmp36_;
+		_tmp30_ = g_file_get_parent (exec_file);
 		_tmp31_ = _tmp30_;
-		_tmp32_ = g_strconcat (_tmp31_, "/share/locale", NULL);
-		_g_free0 (_tmp25_);
-		_tmp25_ = _tmp32_;
-		_g_free0 (_tmp31_);
-		_g_object_unref0 (_tmp29_);
-		_g_object_unref0 (_tmp27_);
+		_tmp32_ = g_file_get_parent (_tmp31_);
+		_tmp33_ = _tmp32_;
+		_tmp34_ = g_file_get_path (_tmp33_);
+		_tmp35_ = _tmp34_;
+		_tmp36_ = g_strconcat (_tmp35_, "/share/locale", NULL);
+		_g_free0 (_tmp29_);
+		_tmp29_ = _tmp36_;
+		_g_free0 (_tmp35_);
+		_g_object_unref0 (_tmp33_);
+		_g_object_unref0 (_tmp31_);
 	} else {
-		gchar* _tmp33_;
-		_tmp33_ = g_strconcat (resource_resource_dir, "/locale", NULL);
-		_g_free0 (_tmp25_);
-		_tmp25_ = _tmp33_;
+		gchar* _tmp37_;
+		_tmp37_ = g_strconcat (resource_resource_dir, "/locale", NULL);
+		_g_free0 (_tmp29_);
+		_tmp29_ = _tmp37_;
 	}
-	_tmp34_ = g_strdup (_tmp25_);
-	_tmp35_ = _tmp34_;
+	_tmp38_ = g_strdup (_tmp29_);
+	_tmp39_ = _tmp38_;
 	_g_free0 (resource_locale_dir);
-	resource_locale_dir = _tmp35_;
+	resource_locale_dir = _tmp39_;
 	fprintf (stdout, "Locale_dir is %s \n", resource_locale_dir);
-	_tmp36_ = g_strconcat (resource_resource_dir, "/icons", NULL);
+	_tmp40_ = g_strconcat (resource_resource_dir, "/icons", NULL);
 	_g_free0 (resource_icon_dir);
-	resource_icon_dir = _tmp36_;
-	_tmp37_ = g_strconcat (resource_resource_dir, "/mallard", NULL);
+	resource_icon_dir = _tmp40_;
+	_tmp41_ = g_strconcat (resource_resource_dir, "/mallard", NULL);
 	_g_free0 (resource_mallard_manual_dir);
-	resource_mallard_manual_dir = _tmp37_;
-	_tmp38_ = g_strconcat (resource_resource_dir, "/html", NULL);
+	resource_mallard_manual_dir = _tmp41_;
+	_tmp42_ = g_strconcat (resource_resource_dir, "/html", NULL);
 	_g_free0 (resource_html_manual_dir);
-	resource_html_manual_dir = _tmp38_;
-	_tmp39_ = config_get_instance ();
-	_tmp40_ = _tmp39_;
-	_tmp41_ = g_strconcat (resource_resource_dir, "/games", NULL);
-	_tmp42_ = config_get_game_dir (_tmp40_, _tmp41_);
-	_tmp43_ = _tmp42_;
-	_g_free0 (resource_game_dir);
-	resource_game_dir = _tmp43_;
-	_g_free0 (_tmp41_);
-	_config_unref0 (_tmp40_);
-	_tmp44_ = config_get_instance ();
-	_tmp45_ = _tmp44_;
-	_tmp46_ = config_get_game_name (_tmp45_, RESOURCE_DEFAULTGAMENAME);
+	resource_html_manual_dir = _tmp42_;
+	_tmp43_ = config_get_instance ();
+	_tmp44_ = _tmp43_;
+	_tmp45_ = g_strconcat (resource_resource_dir, "/games", NULL);
+	_tmp46_ = config_get_game_dir (_tmp44_, _tmp45_);
 	_tmp47_ = _tmp46_;
-	_g_free0 (resource_game_name);
-	resource_game_name = _tmp47_;
-	_config_unref0 (_tmp45_);
-	_tmp48_ = g_new0 (GdkColor, 2 * 4);
+	_g_free0 (resource_game_dir);
+	resource_game_dir = _tmp47_;
+	_g_free0 (_tmp45_);
+	_config_unref0 (_tmp44_);
+	_tmp48_ = config_get_instance ();
 	_tmp49_ = _tmp48_;
+	_tmp50_ = config_get_game_name (_tmp49_, RESOURCE_DEFAULTGAMENAME);
+	_tmp51_ = _tmp50_;
+	_g_free0 (resource_game_name);
+	resource_game_name = _tmp51_;
+	_config_unref0 (_tmp49_);
+	_tmp52_ = g_new0 (GdkColor, 2 * 4);
+	_tmp53_ = _tmp52_;
 	resource_colors = (g_free (resource_colors), NULL);
 	resource_colors_length1 = 2;
 	resource_colors_length2 = 4;
-	resource_colors = _tmp49_;
+	resource_colors = _tmp53_;
 	setting = (gint) GAME_STATE_SETTING;
-	gdk_color_parse ("GREY", &_tmp50_);
-	resource_colors[(setting * resource_colors_length2) + ((gint) CELL_STATE_UNKNOWN)] = _tmp50_;
-	gdk_color_parse ("WHITE", &_tmp51_);
-	resource_colors[(setting * resource_colors_length2) + ((gint) CELL_STATE_EMPTY)] = _tmp51_;
-	gdk_color_parse ("BLACK", &_tmp52_);
-	resource_colors[(setting * resource_colors_length2) + ((gint) CELL_STATE_FILLED)] = _tmp52_;
-	gdk_color_parse ("RED", &_tmp53_);
-	resource_colors[(setting * resource_colors_length2) + ((gint) CELL_STATE_ERROR)] = _tmp53_;
-	solving = (gint) GAME_STATE_SOLVING;
 	gdk_color_parse ("GREY", &_tmp54_);
-	resource_colors[(solving * resource_colors_length2) + ((gint) CELL_STATE_UNKNOWN)] = _tmp54_;
-	gdk_color_parse ("YELLOW", &_tmp55_);
-	resource_colors[(solving * resource_colors_length2) + ((gint) CELL_STATE_EMPTY)] = _tmp55_;
-	gdk_color_parse ("BLUE", &_tmp56_);
-	resource_colors[(solving * resource_colors_length2) + ((gint) CELL_STATE_FILLED)] = _tmp56_;
+	resource_colors[(setting * resource_colors_length2) + ((gint) CELL_STATE_UNKNOWN)] = _tmp54_;
+	gdk_color_parse ("WHITE", &_tmp55_);
+	resource_colors[(setting * resource_colors_length2) + ((gint) CELL_STATE_EMPTY)] = _tmp55_;
+	gdk_color_parse ("BLACK", &_tmp56_);
+	resource_colors[(setting * resource_colors_length2) + ((gint) CELL_STATE_FILLED)] = _tmp56_;
 	gdk_color_parse ("RED", &_tmp57_);
-	resource_colors[(solving * resource_colors_length2) + ((gint) CELL_STATE_ERROR)] = _tmp57_;
-	_tmp58_ = config_get_instance ();
-	_tmp59_ = _tmp58_;
-	_tmp61_ = config_get_colors (_tmp59_, &_tmp60_);
-	config_colors = (_tmp62_ = _tmp61_, _config_unref0 (_tmp59_), _tmp62_);
-	config_colors_length1 = _tmp60_;
-	_config_colors_size_ = _tmp60_;
-	gdk_color_parse (config_colors[0], &_tmp63_);
-	resource_colors[(setting * resource_colors_length2) + ((gint) CELL_STATE_EMPTY)] = _tmp63_;
-	gdk_color_parse (config_colors[1], &_tmp64_);
-	resource_colors[(setting * resource_colors_length2) + ((gint) CELL_STATE_FILLED)] = _tmp64_;
-	gdk_color_parse (config_colors[2], &_tmp65_);
-	resource_colors[(solving * resource_colors_length2) + ((gint) CELL_STATE_EMPTY)] = _tmp65_;
-	gdk_color_parse (config_colors[3], &_tmp66_);
-	resource_colors[(solving * resource_colors_length2) + ((gint) CELL_STATE_FILLED)] = _tmp66_;
-	_tmp67_ = g_strdup ("Ariel");
-	_tmp68_ = _tmp67_;
+	resource_colors[(setting * resource_colors_length2) + ((gint) CELL_STATE_ERROR)] = _tmp57_;
+	solving = (gint) GAME_STATE_SOLVING;
+	gdk_color_parse ("GREY", &_tmp58_);
+	resource_colors[(solving * resource_colors_length2) + ((gint) CELL_STATE_UNKNOWN)] = _tmp58_;
+	gdk_color_parse ("YELLOW", &_tmp59_);
+	resource_colors[(solving * resource_colors_length2) + ((gint) CELL_STATE_EMPTY)] = _tmp59_;
+	gdk_color_parse ("BLUE", &_tmp60_);
+	resource_colors[(solving * resource_colors_length2) + ((gint) CELL_STATE_FILLED)] = _tmp60_;
+	gdk_color_parse ("RED", &_tmp61_);
+	resource_colors[(solving * resource_colors_length2) + ((gint) CELL_STATE_ERROR)] = _tmp61_;
+	_tmp62_ = config_get_instance ();
+	_tmp63_ = _tmp62_;
+	_tmp65_ = config_get_colors (_tmp63_, &_tmp64_);
+	config_colors = (_tmp66_ = _tmp65_, _config_unref0 (_tmp63_), _tmp66_);
+	config_colors_length1 = _tmp64_;
+	_config_colors_size_ = _tmp64_;
+	gdk_color_parse (config_colors[0], &_tmp67_);
+	resource_colors[(setting * resource_colors_length2) + ((gint) CELL_STATE_EMPTY)] = _tmp67_;
+	gdk_color_parse (config_colors[1], &_tmp68_);
+	resource_colors[(setting * resource_colors_length2) + ((gint) CELL_STATE_FILLED)] = _tmp68_;
+	gdk_color_parse (config_colors[2], &_tmp69_);
+	resource_colors[(solving * resource_colors_length2) + ((gint) CELL_STATE_EMPTY)] = _tmp69_;
+	gdk_color_parse (config_colors[3], &_tmp70_);
+	resource_colors[(solving * resource_colors_length2) + ((gint) CELL_STATE_FILLED)] = _tmp70_;
+	_tmp71_ = g_strdup ("Ariel");
+	_tmp72_ = _tmp71_;
 	_g_free0 (resource_font_desc);
-	resource_font_desc = _tmp68_;
-	_tmp69_ = g_new0 (gdouble, 2);
-	_tmp69_[0] = 0.5;
-	_tmp69_[1] = 3.0;
-	_tmp70_ = _tmp69_;
+	resource_font_desc = _tmp72_;
+	_tmp73_ = g_new0 (gdouble, 2);
+	_tmp73_[0] = 0.5;
+	_tmp73_[1] = 3.0;
+	_tmp74_ = _tmp73_;
 	resource_MINORGRIDDASH = (g_free (resource_MINORGRIDDASH), NULL);
 	resource_MINORGRIDDASH_length1 = 2;
-	resource_MINORGRIDDASH = _tmp70_;
+	resource_MINORGRIDDASH = _tmp74_;
 	config_colors = (_vala_array_free (config_colors, config_colors_length1, (GDestroyNotify) g_free), NULL);
-	_g_free0 (_tmp25_);
-	_g_free0 (_tmp13_);
+	_g_free0 (_tmp29_);
+	_g_free0 (_tmp17_);
 	_g_object_unref0 (exec_file);
 }
 
@@ -557,6 +621,259 @@ void resource_set_font (void) {
 	}
 	gtk_object_destroy (GTK_OBJECT (dialog));
 	_g_object_unref0 (dialog);
+}
+
+
+void resource_get_icon_theme (void) {
+	GtkIconTheme* _tmp0_ = NULL;
+	GtkIconTheme* _tmp1_;
+	GtkIconTheme* _tmp2_;
+	const gchar* _tmp3_ = NULL;
+	_tmp0_ = gtk_icon_theme_get_default ();
+	_tmp1_ = _g_object_ref0 (_tmp0_);
+	_tmp2_ = _tmp1_;
+	_g_object_unref0 (resource_icon_theme);
+	resource_icon_theme = _tmp2_;
+	_tmp3_ = gtk_icon_theme_get_example_icon_name (resource_icon_theme);
+	fprintf (stdout, "Icon theme is %s\n", _tmp3_);
+}
+
+
+GdkPixbuf* resource_get_theme_icon (const gchar* icon_name) {
+	GdkPixbuf* result = NULL;
+	GdkPixbuf* icon;
+	GdkPixbuf* _tmp0_ = NULL;
+	GdkPixbuf* _tmp1_;
+	GdkPixbuf* _tmp2_;
+	GError * _inner_error_ = NULL;
+	g_return_val_if_fail (icon_name != NULL, NULL);
+	icon = NULL;
+	fprintf (stdout, "Looking up theme icon %s\n", icon_name);
+	_tmp0_ = gtk_icon_theme_load_icon (resource_icon_theme, icon_name, resource_icon_size, GTK_ICON_LOOKUP_NO_SVG | GTK_ICON_LOOKUP_FORCE_SIZE, &_inner_error_);
+	_tmp1_ = _tmp0_;
+	if (_inner_error_ != NULL) {
+		goto __catch9_g_error;
+	}
+	_tmp2_ = _tmp1_;
+	_g_object_unref0 (icon);
+	icon = _tmp2_;
+	goto __finally9;
+	__catch9_g_error:
+	{
+		GError * e;
+		e = _inner_error_;
+		_inner_error_ = NULL;
+		fprintf (stdout, "Failed to load theme icon %s\n", icon_name);
+		_g_error_free0 (e);
+	}
+	__finally9:
+	if (_inner_error_ != NULL) {
+		_g_object_unref0 (icon);
+		g_critical ("file %s: line %d: uncaught error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
+		g_clear_error (&_inner_error_);
+		return NULL;
+	}
+	result = icon;
+	return result;
+}
+
+
+GdkPixbuf* resource_get_app_icon (const gchar* icon_filename) {
+	GdkPixbuf* result = NULL;
+	GdkPixbuf* icon;
+	gchar* _tmp0_;
+	gchar* _tmp1_;
+	gchar* _tmp2_;
+	gchar* _tmp3_;
+	GdkPixbuf* _tmp4_ = NULL;
+	GdkPixbuf* _tmp5_;
+	GdkPixbuf* _tmp6_;
+	GdkPixbuf* _tmp7_;
+	GError * _inner_error_ = NULL;
+	g_return_val_if_fail (icon_filename != NULL, NULL);
+	icon = NULL;
+	_tmp0_ = g_strconcat (resource_icon_dir, "/", NULL);
+	_tmp1_ = g_strconcat (_tmp0_, icon_filename, NULL);
+	fprintf (stdout, "Looking up app icon %s\n", _tmp1_);
+	_g_free0 (_tmp1_);
+	_g_free0 (_tmp0_);
+	_tmp2_ = g_strconcat (resource_icon_dir, "/", NULL);
+	_tmp3_ = g_strconcat (_tmp2_, icon_filename, NULL);
+	_tmp4_ = gdk_pixbuf_new_from_file (_tmp3_, &_inner_error_);
+	_tmp6_ = (_tmp5_ = _tmp4_, _g_free0 (_tmp3_), _g_free0 (_tmp2_), _tmp5_);
+	if (_inner_error_ != NULL) {
+		goto __catch10_g_error;
+	}
+	_tmp7_ = _tmp6_;
+	_g_object_unref0 (icon);
+	icon = _tmp7_;
+	goto __finally10;
+	__catch10_g_error:
+	{
+		GError * e;
+		e = _inner_error_;
+		_inner_error_ = NULL;
+		fprintf (stdout, "Failed to load app icon %s\n", icon_filename);
+		_g_error_free0 (e);
+	}
+	__finally10:
+	if (_inner_error_ != NULL) {
+		_g_object_unref0 (icon);
+		g_critical ("file %s: line %d: uncaught error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
+		g_clear_error (&_inner_error_);
+		return NULL;
+	}
+	result = icon;
+	return result;
+}
+
+
+GdkPixbuf* resource_get_icon (ResourceIconID id) {
+	GdkPixbuf* result = NULL;
+	GdkPixbuf* icon;
+	gchar* icon_filename = NULL;
+	gchar* icon_themename = NULL;
+	GdkPixbuf* _tmp28_ = NULL;
+	GdkPixbuf* _tmp29_;
+	icon = NULL;
+	switch (id) {
+		case RESOURCE_ICON_ID_PEEK:
+		{
+			gchar* _tmp0_;
+			gchar* _tmp1_;
+			gchar* _tmp2_;
+			gchar* _tmp3_;
+			_tmp0_ = g_strdup (RESOURCE_PEEKICONFILENAME);
+			_tmp1_ = _tmp0_;
+			_g_free0 (icon_filename);
+			icon_filename = _tmp1_;
+			_tmp2_ = g_strdup (RESOURCE_PEEKICONTHEMENAME);
+			_tmp3_ = _tmp2_;
+			_g_free0 (icon_themename);
+			icon_themename = _tmp3_;
+			break;
+		}
+		case RESOURCE_ICON_ID_SOLVE:
+		{
+			gchar* _tmp4_;
+			gchar* _tmp5_;
+			gchar* _tmp6_;
+			gchar* _tmp7_;
+			_tmp4_ = g_strdup (RESOURCE_SOLVEICONFILENAME);
+			_tmp5_ = _tmp4_;
+			_g_free0 (icon_filename);
+			icon_filename = _tmp5_;
+			_tmp6_ = g_strdup (RESOURCE_SOLVEICONTHEMENAME);
+			_tmp7_ = _tmp6_;
+			_g_free0 (icon_themename);
+			icon_themename = _tmp7_;
+			break;
+		}
+		case RESOURCE_ICON_ID_RANDOM:
+		{
+			gchar* _tmp8_;
+			gchar* _tmp9_;
+			gchar* _tmp10_;
+			gchar* _tmp11_;
+			_tmp8_ = g_strdup (RESOURCE_RANDOMICONFILENAME);
+			_tmp9_ = _tmp8_;
+			_g_free0 (icon_filename);
+			icon_filename = _tmp9_;
+			_tmp10_ = g_strdup (RESOURCE_RANDOMICONTHEMENAME);
+			_tmp11_ = _tmp10_;
+			_g_free0 (icon_themename);
+			icon_themename = _tmp11_;
+			break;
+		}
+		case RESOURCE_ICON_ID_RESIZE:
+		{
+			gchar* _tmp12_;
+			gchar* _tmp13_;
+			gchar* _tmp14_;
+			gchar* _tmp15_;
+			_tmp12_ = g_strdup (RESOURCE_RESIZEICONFILENAME);
+			_tmp13_ = _tmp12_;
+			_g_free0 (icon_filename);
+			icon_filename = _tmp13_;
+			_tmp14_ = g_strdup (RESOURCE_RESIZEICONTHEMENAME);
+			_tmp15_ = _tmp14_;
+			_g_free0 (icon_themename);
+			icon_themename = _tmp15_;
+			break;
+		}
+		case RESOURCE_ICON_ID_HIDE:
+		{
+			gchar* _tmp16_;
+			gchar* _tmp17_;
+			gchar* _tmp18_;
+			gchar* _tmp19_;
+			_tmp16_ = g_strdup (RESOURCE_HIDEICONFILENAME);
+			_tmp17_ = _tmp16_;
+			_g_free0 (icon_filename);
+			icon_filename = _tmp17_;
+			_tmp18_ = g_strdup (RESOURCE_HIDEICONTHEMENAME);
+			_tmp19_ = _tmp18_;
+			_g_free0 (icon_themename);
+			icon_themename = _tmp19_;
+			break;
+		}
+		case RESOURCE_ICON_ID_REVEAL:
+		{
+			gchar* _tmp20_;
+			gchar* _tmp21_;
+			gchar* _tmp22_;
+			gchar* _tmp23_;
+			_tmp20_ = g_strdup (RESOURCE_REVEALICONFILENAME);
+			_tmp21_ = _tmp20_;
+			_g_free0 (icon_filename);
+			icon_filename = _tmp21_;
+			_tmp22_ = g_strdup (RESOURCE_REVEALICONTHEMENAME);
+			_tmp23_ = _tmp22_;
+			_g_free0 (icon_themename);
+			icon_themename = _tmp23_;
+			break;
+		}
+		default:
+		{
+			gchar* _tmp24_;
+			gchar* _tmp25_;
+			gchar* _tmp26_;
+			gchar* _tmp27_;
+			_tmp24_ = g_strdup (RESOURCE_MISSINGICONFILENAME);
+			_tmp25_ = _tmp24_;
+			_g_free0 (icon_filename);
+			icon_filename = _tmp25_;
+			_tmp26_ = g_strdup (RESOURCE_MISSINGICONTHEMENAME);
+			_tmp27_ = _tmp26_;
+			_g_free0 (icon_themename);
+			icon_themename = _tmp27_;
+			break;
+		}
+	}
+	_tmp28_ = resource_get_theme_icon (icon_themename);
+	_tmp29_ = _tmp28_;
+	_g_object_unref0 (icon);
+	icon = _tmp29_;
+	if (icon == NULL) {
+		GdkPixbuf* _tmp30_ = NULL;
+		GdkPixbuf* _tmp31_;
+		_tmp30_ = resource_get_app_icon (icon_filename);
+		_tmp31_ = _tmp30_;
+		_g_object_unref0 (icon);
+		icon = _tmp31_;
+		if (icon == NULL) {
+			GdkPixbuf* _tmp32_ = NULL;
+			GdkPixbuf* _tmp33_;
+			_tmp32_ = resource_get_theme_icon (RESOURCE_MISSINGICONTHEMENAME);
+			_tmp33_ = _tmp32_;
+			_g_object_unref0 (icon);
+			icon = _tmp33_;
+		}
+	}
+	result = icon;
+	_g_free0 (icon_themename);
+	_g_free0 (icon_filename);
+	return result;
 }
 
 

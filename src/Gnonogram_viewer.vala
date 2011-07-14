@@ -66,6 +66,8 @@ public class Gnonogram_view : Gtk.Window
 	private Label _date_label;
 	private Label _size_label;
 	private Label _score_label;
+	private Gtk.Image hide_icon;
+	private Gtk.Image reveal_icon;
 
 	public Gnonogram_view(Gnonogram_LabelBox rb, Gnonogram_LabelBox cb, Gnonogram_CellGrid dg, Gnonogram_controller controller)
 	{	_controller=controller; //seems to be necessary to get signals to work.  Not sure why.
@@ -102,6 +104,7 @@ public class Gnonogram_view : Gtk.Window
 		table.attach(cb,1,2,0,1,ao,ao,0,0);
 		table.attach(dg,1,2,1,2,ao,ao,0,0);
 
+		Resource.get_icon_theme();
 		create_viewer_toolbar();
 
 		var vbox = new VBox(false,0);
@@ -110,6 +113,8 @@ public class Gnonogram_view : Gtk.Window
 		vbox.pack_start(table,true,true,0);
 
 		add(vbox);
+
+//		this.configure_event.connect(window_config_change);
 	}
 //======================================================================
 	private MenuBar create_viewer_menubar()
@@ -274,12 +279,16 @@ public class Gnonogram_view : Gtk.Window
 		_toolbar.add(new SeparatorToolItem());
 
 //		_hide_tool=new ToggleToolButton.from_stock(Gtk.Stock.EXECUTE);
-		_hide_tool=new ToggleToolButton.from_stock(Gtk.STOCK_EXECUTE);
-		_hide_tool.set_tooltip_text(_("Hide the solution and start solving"));
-		_hide_tool.active=false;
+		hide_icon=new Gtk.Image.from_pixbuf(Resource.get_icon(Resource.IconID.HIDE));
+		reveal_icon=new Gtk.Image.from_pixbuf(Resource.get_icon(Resource.IconID.REVEAL));
+		_hide_tool=new ToggleToolButton();
+//		_hide_tool.set_icon_widget(hide_icon);
+//		_hide_tool.set_tooltip_text(_("Hide the solution and start solving"));
+//		_hide_tool.active=false;
 		_toolbar.add(_hide_tool);
 
-		var peek_icon=new Gtk.Image.from_file(Resource.icon_dir+"/eyeballs.png");
+//		var peek_icon=new Gtk.Image.from_file(Resource.icon_dir+"/eyeballs.png");
+		var peek_icon=new Gtk.Image.from_pixbuf(Resource.get_icon(Resource.IconID.PEEK));
 		_check_tool=new ToolButton(peek_icon,_("Check"));
 		_check_tool.set_tooltip_text(_("Show any incorrect cells"));
 		_toolbar.add(_check_tool);
@@ -289,12 +298,18 @@ public class Gnonogram_view : Gtk.Window
 		restart_tool.set_tooltip_text(_("Start this puzzle again"));
 		_toolbar.add(restart_tool);
 
-		var solve_icon=new Gtk.Image.from_file(Resource.icon_dir+"/laptop.png");
+//		var solve_icon=new  Gtk.Image.from_file(Resource.icon_dir+"/laptop.png");
+
+		var solve_icon=new Gtk.Image.from_pixbuf(Resource.get_icon(Resource.IconID.SOLVE));
+
 		var solve_tool=new ToolButton(solve_icon,_("Solve"));
 		solve_tool.set_tooltip_text(_("Solve by computer"));
 		_toolbar.add(solve_tool);
 
-		var random_icon=new Gtk.Image.from_file(Resource.icon_dir+"/Dices.png");
+//		var random_icon=new Gtk.Image.from_file(Resource.icon_dir+"/Dices.png");
+
+		var random_icon=new Gtk.Image.from_pixbuf(Resource.get_icon(Resource.IconID.RANDOM));
+
 		var random_tool=new ToolButton(random_icon,_("Random"));
 		random_tool.set_tooltip_text(_("Generate a random game"));
 		_toolbar.add(random_tool);
@@ -308,7 +323,8 @@ public class Gnonogram_view : Gtk.Window
 		grade_tool.add(_grade_spin);
 		_toolbar.add(grade_tool);
 
-		var resize_icon=new Gtk.Image.from_file(Resource.icon_dir+"/newsheet.png");
+//		var resize_icon=new Gtk.Image.from_file(Resource.icon_dir+"/newsheet.png");
+		var resize_icon=new Gtk.Image.from_pixbuf(Resource.get_icon(Resource.IconID.RESIZE));
 		var resize_tool=new ToolButton(resize_icon,_("Resize"));
 		resize_tool.set_tooltip_text(_("Change dimensions of the game grid"));
 		_toolbar.add(resize_tool);
@@ -529,13 +545,23 @@ public class Gnonogram_view : Gtk.Window
 		if (gs==GameState.SETTING)
 		{
 			_hide_tool.set_tooltip_text(_("Hide the solution and start solving"));
+			_hide_tool.set_icon_widget(hide_icon);
+			_hide_tool.show_all();
 			_hide_tool.set_active(false);
 			_gridmenuitem.set_active(false);
 		}else
 		{
 			_hide_tool.set_tooltip_text(_("Reveal the solution"));
+			_hide_tool.set_icon_widget(reveal_icon);
+			_hide_tool.show_all();
 			_hide_tool.set_active(true);
 			_gridmenuitem.set_active(true);
 		}
 	}
+
+//	private bool window_config_change(Gdk.EventConfigure event)
+//	{
+//		stdout.printf(@"Window confg event $(event.type)\n");
+//		return false;
+//	}
 }

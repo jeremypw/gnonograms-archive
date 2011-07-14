@@ -33,10 +33,32 @@ extern const string GETTEXT_PACKAGE;
 
 namespace Resource
 {
+	public enum IconID {
+			PEEK,
+			SOLVE,
+			RANDOM,
+			RESIZE,
+			HIDE,
+			REVEAL
+	}
 	public const string APP_GETTEXT_PACKAGE = GETTEXT_PACKAGE;
 	public const string DEFAULTGAMENAME = "New game";
 	public const string GAMEFILEEXTENSION=".gno";
 	public const string POSITIONFILENAME="currentposition";
+	public const string RANDOMICONFILENAME="dice.png";
+	public const string PEEKICONFILENAME="errorcheck.png";
+	public const string RESIZEICONFILENAME="resize.png";
+	public const string SOLVEICONFILENAME="laptop.png";
+	public const string HIDEICONFILENAME="eyes-open.png";
+	public const string REVEALICONFILENAME="eyes-closed.png";
+	public const string MISSINGICONFILENAME="";
+	public const string SOLVEICONTHEMENAME="computer";
+	public const string PEEKICONTHEMENAME="";
+	public const string RANDOMICONTHEMENAME="";
+	public const string RESIZEICONTHEMENAME="resize";
+	public const string HIDEICONTHEMENAME="hide";
+	public const string REVEALICONTHEMENAME="reveal";
+	public const string MISSINGICONTHEMENAME="image-missing";
 
 //Performace/capability related parameters
 	public static int MAXROWSIZE = 100; // max number rows
@@ -65,6 +87,9 @@ namespace Resource
 	public static string html_manual_dir;
 	public static string prefix;
 	public static bool installed;
+	public static int icon_size=24;
+
+	private IconTheme icon_theme;
 
 	public static void init(string arg0)
 	{
@@ -72,6 +97,9 @@ namespace Resource
 		stdout.printf("Prefix is %s \n",prefix);
 		stdout.printf("gettext package is %s \n",APP_GETTEXT_PACKAGE);
 
+		icon_theme=Gtk.IconTheme.get_default();
+
+		stdout.printf("Icon theme is %s\n",icon_theme.get_example_icon_name());
 		File exec_file =File.new_for_path(Environment.find_program_in_path(arg0));
 		exec_dir=exec_file.get_parent().get_path();
 		stdout.printf("Exec_dir is %s \n",exec_dir);
@@ -185,6 +213,93 @@ namespace Resource
 		var dialog = new FontSelectionDialog("Select font used for the clues");
 		if (dialog.run()!=ResponseType.CANCEL)	font_desc=dialog.get_font_name();
 		dialog.destroy();
+	}
+
+	public void get_icon_theme()
+	{
+		icon_theme=Gtk.IconTheme.get_default();
+		stdout.printf("Icon theme is %s\n",icon_theme.get_example_icon_name());
+	}
+
+	public Gdk.Pixbuf? get_theme_icon(string icon_name)
+	{
+		Gdk.Pixbuf icon = null;
+//		if (!icon_theme.has_icon(icon_name)) icon_name="image-missing";
+		stdout.printf("Looking up theme icon %s\n",icon_name);
+		try
+		{
+			icon=icon_theme.load_icon(icon_name,icon_size,Gtk.IconLookupFlags.NO_SVG|Gtk.IconLookupFlags.FORCE_SIZE);
+		}
+		catch (GLib.Error e)
+		{
+			stdout.printf("Failed to load theme icon %s\n",icon_name);
+		}
+		return icon;
+	}
+
+	public Gdk.Pixbuf? get_app_icon(string icon_filename)
+	{
+		Gdk.Pixbuf icon = null;
+//		string icon_filename="";
+//		icon_filename=Resource.icon_dir+"/"+icon_filename;
+		stdout.printf("Looking up app icon %s\n",Resource.icon_dir+"/"+icon_filename);
+		try
+		{
+			icon=new Pixbuf.from_file(Resource.icon_dir+"/"+icon_filename);
+		}
+		catch (GLib.Error e)
+		{
+			stdout.printf("Failed to load app icon %s\n",icon_filename);
+		}
+		return icon;
+	}
+
+	public Gdk.Pixbuf? get_icon(Resource.IconID id)
+	{
+		Gdk.Pixbuf icon=null;
+		string icon_filename, icon_themename;
+		switch (id)
+		{
+			case IconID.PEEK:
+				icon_filename=PEEKICONFILENAME;
+				icon_themename=PEEKICONTHEMENAME;
+				break;
+			case IconID.SOLVE:
+				icon_filename=SOLVEICONFILENAME;
+				icon_themename=SOLVEICONTHEMENAME;
+				break;
+			case IconID.RANDOM:
+				icon_filename=RANDOMICONFILENAME;
+				icon_themename=RANDOMICONTHEMENAME;
+				break;
+			case IconID.RESIZE:
+				icon_filename=RESIZEICONFILENAME;
+				icon_themename=RESIZEICONTHEMENAME;
+				break;
+			case IconID.HIDE:
+				icon_filename=HIDEICONFILENAME;
+				icon_themename=HIDEICONTHEMENAME;
+				break;
+			case IconID.REVEAL:
+				icon_filename=REVEALICONFILENAME;
+				icon_themename=REVEALICONTHEMENAME;
+				break;
+			default:
+				icon_filename=MISSINGICONFILENAME;
+				icon_themename=MISSINGICONTHEMENAME;
+				break;
+
+		}
+		icon=get_theme_icon(icon_themename);
+		if (icon==null)
+		{
+			icon=get_app_icon(icon_filename);
+			if (icon==null)
+			{
+				icon=get_theme_icon(MISSINGICONTHEMENAME);
+			}
+		}
+		return icon;
 	}
 
 }

@@ -1,6 +1,15 @@
-21/06/2011	Added additional translated strings
-19/06/2011	Added facility to show time taken to solve puzzle manually. Small changes to manual.
-16/06/2011	New svg program icon designed. File-type icon created and integrated with desktop.  First tarball created and uploaded to |Google code
+10/Jul/2011	Replaced some icons of unknown origin with own design SVG icons (CC)
+				Implemented icon theming infra-structure (but only default hicolor icons currently provided, apart from stock Gtk icons)
+
+04/Jul/2011	Converted Mallard manual to HTML in accordance with Debian guidelines. Used yelp-tools 3.1.3 from ShaunMcCance (yelp-build html *.page)
+
+28/Jun/2011	Created trial .deb package for squeeze -
+				Changed some code back to deprecated functions to allow this.
+				Changed configure option to "disable-desktop-update", combining desktop, mime and icon update disabling.
+
+21/Jun/2011	Added additional translated strings
+19/Jun/2011	Added facility to show time taken to solve puzzle manually. Small changes to manual.
+16/Jun/2011	New svg program icon designed. File-type icon created and integrated with desktop.  First tarball created and uploaded to |Google code
 
 
 Gnonograms version 0.8.0

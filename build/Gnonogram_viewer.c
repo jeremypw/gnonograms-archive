@@ -34,6 +34,7 @@
 #include <glib/gi18n-lib.h>
 #include <float.h>
 #include <math.h>
+#include <gdk-pixbuf/gdk-pixdata.h>
 #include <stdio.h>
 
 
@@ -82,6 +83,8 @@ typedef struct _Gnonogram_CellGridClass Gnonogram_CellGridClass;
 #define _g_free0(var) (var = (g_free (var), NULL))
 typedef struct _Block1Data Block1Data;
 typedef struct _Block2Data Block2Data;
+
+#define RESOURCE_TYPE_ICON_ID (resource_icon_id_get_type ())
 typedef struct _Block3Data Block3Data;
 #define _g_error_free0(var) ((var == NULL) ? NULL : (var = (g_error_free (var), NULL)))
 
@@ -112,6 +115,8 @@ struct _Gnonogram_viewPrivate {
 	GtkLabel* _date_label;
 	GtkLabel* _size_label;
 	GtkLabel* _score_label;
+	GtkImage* hide_icon;
+	GtkImage* reveal_icon;
 };
 
 struct _Block1Data {
@@ -127,6 +132,15 @@ struct _Block2Data {
 	GtkToolItem* grade_tool;
 };
 
+typedef enum  {
+	RESOURCE_ICON_ID_PEEK,
+	RESOURCE_ICON_ID_SOLVE,
+	RESOURCE_ICON_ID_RANDOM,
+	RESOURCE_ICON_ID_RESIZE,
+	RESOURCE_ICON_ID_HIDE,
+	RESOURCE_ICON_ID_REVEAL
+} ResourceIconID;
+
 struct _Block3Data {
 	int _ref_count_;
 	Gnonogram_view * self;
@@ -141,7 +155,6 @@ typedef enum  {
 
 
 static gpointer gnonogram_view_parent_class = NULL;
-extern gchar* resource_icon_dir;
 extern gint resource_MAXGRADE;
 extern gchar* resource_resource_dir;
 extern gchar* resource_mallard_manual_dir;
@@ -169,6 +182,7 @@ void gnonogram_view_set_name (Gnonogram_view* self, const gchar* name);
 void gnonogram_view_set_author (Gnonogram_view* self, const gchar* author);
 void gnonogram_view_set_date (Gnonogram_view* self, const gchar* date);
 gchar* utils_get_todays_date_string (void);
+void resource_get_icon_theme (void);
 static void gnonogram_view_create_viewer_toolbar (Gnonogram_view* self);
 static GtkMenuBar* gnonogram_view_create_viewer_menubar (Gnonogram_view* self);
 static Block1Data* block1_data_ref (Block1Data* _data1_);
@@ -225,6 +239,8 @@ static void gnonogram_view_show_html_manual (Gnonogram_view* self);
 static void _gnonogram_view_show_html_manual_gtk_menu_item_activate (GtkMenuItem* _sender, gpointer self);
 static Block2Data* block2_data_ref (Block2Data* _data2_);
 static void block2_data_unref (Block2Data* _data2_);
+GType resource_icon_id_get_type (void) G_GNUC_CONST;
+GdkPixbuf* resource_get_icon (ResourceIconID id);
 static void _lambda1_ (Gnonogram_view* self);
 static void __lambda1__gtk_tool_button_clicked (GtkToolButton* _sender, gpointer self);
 static void _lambda2_ (Gnonogram_view* self);
@@ -382,6 +398,7 @@ Gnonogram_view* gnonogram_view_construct (GType object_type, Gnonogram_LabelBox*
 	gtk_table_attach (table, GTK_WIDGET (rb), (guint) 0, (guint) 1, (guint) 1, (guint) 2, ao, ao, (guint) 0, (guint) 0);
 	gtk_table_attach (table, GTK_WIDGET (cb), (guint) 1, (guint) 2, (guint) 0, (guint) 1, ao, ao, (guint) 0, (guint) 0);
 	gtk_table_attach (table, GTK_WIDGET (dg), (guint) 1, (guint) 2, (guint) 1, (guint) 2, ao, ao, (guint) 0, (guint) 0);
+	resource_get_icon_theme ();
 	gnonogram_view_create_viewer_toolbar (self);
 	_tmp19_ = (GtkVBox*) gtk_vbox_new (FALSE, 0);
 	vbox = g_object_ref_sink (_tmp19_);
@@ -1203,56 +1220,67 @@ static void gnonogram_view_create_viewer_toolbar (Gnonogram_view* self) {
 	const gchar* _tmp7_ = NULL;
 	GtkSeparatorToolItem* _tmp8_ = NULL;
 	GtkSeparatorToolItem* _tmp9_;
-	GtkToggleToolButton* _tmp10_ = NULL;
-	GtkToggleToolButton* _tmp11_;
-	const gchar* _tmp12_ = NULL;
-	gchar* _tmp13_;
-	GtkImage* _tmp14_ = NULL;
-	GtkImage* _tmp15_;
+	GdkPixbuf* _tmp10_ = NULL;
+	GdkPixbuf* _tmp11_;
+	GtkImage* _tmp12_ = NULL;
+	GtkImage* _tmp13_;
+	GdkPixbuf* _tmp14_ = NULL;
+	GdkPixbuf* _tmp15_;
+	GtkImage* _tmp16_ = NULL;
+	GtkImage* _tmp17_;
+	GtkToggleToolButton* _tmp18_ = NULL;
+	GtkToggleToolButton* _tmp19_;
+	GdkPixbuf* _tmp20_ = NULL;
+	GdkPixbuf* _tmp21_;
+	GtkImage* _tmp22_ = NULL;
+	GtkImage* _tmp23_;
 	GtkImage* peek_icon;
-	const gchar* _tmp16_ = NULL;
-	GtkToolButton* _tmp17_ = NULL;
-	GtkToolButton* _tmp18_;
-	const gchar* _tmp19_ = NULL;
-	GtkToolButton* _tmp20_ = NULL;
-	GtkToolButton* restart_tool;
-	const gchar* _tmp21_ = NULL;
-	gchar* _tmp22_;
-	GtkImage* _tmp23_ = NULL;
-	GtkImage* _tmp24_;
-	GtkImage* solve_icon;
-	const gchar* _tmp25_ = NULL;
-	GtkToolButton* _tmp26_ = NULL;
-	GtkToolButton* solve_tool;
+	const gchar* _tmp24_ = NULL;
+	GtkToolButton* _tmp25_ = NULL;
+	GtkToolButton* _tmp26_;
 	const gchar* _tmp27_ = NULL;
-	gchar* _tmp28_;
-	GtkImage* _tmp29_ = NULL;
-	GtkImage* _tmp30_;
+	GtkToolButton* _tmp28_ = NULL;
+	GtkToolButton* restart_tool;
+	const gchar* _tmp29_ = NULL;
+	GdkPixbuf* _tmp30_ = NULL;
+	GdkPixbuf* _tmp31_;
+	GtkImage* _tmp32_ = NULL;
+	GtkImage* _tmp33_;
+	GtkImage* solve_icon;
+	const gchar* _tmp34_ = NULL;
+	GtkToolButton* _tmp35_ = NULL;
+	GtkToolButton* solve_tool;
+	const gchar* _tmp36_ = NULL;
+	GdkPixbuf* _tmp37_ = NULL;
+	GdkPixbuf* _tmp38_;
+	GtkImage* _tmp39_ = NULL;
+	GtkImage* _tmp40_;
 	GtkImage* random_icon;
-	const gchar* _tmp31_ = NULL;
-	GtkToolButton* _tmp32_ = NULL;
+	const gchar* _tmp41_ = NULL;
+	GtkToolButton* _tmp42_ = NULL;
 	GtkToolButton* random_tool;
-	const gchar* _tmp33_ = NULL;
-	GtkSeparatorToolItem* _tmp34_ = NULL;
-	GtkSeparatorToolItem* _tmp35_;
-	GtkToolItem* _tmp36_ = NULL;
-	GtkSpinButton* _tmp37_ = NULL;
-	GtkSpinButton* _tmp38_;
-	const gchar* _tmp39_ = NULL;
-	gchar* _tmp40_;
-	GtkImage* _tmp41_ = NULL;
-	GtkImage* _tmp42_;
-	GtkImage* resize_icon;
 	const gchar* _tmp43_ = NULL;
-	GtkToolButton* _tmp44_ = NULL;
-	GtkToolButton* resize_tool;
-	const gchar* _tmp45_ = NULL;
-	GtkToolButton* _tmp46_ = NULL;
-	GtkToolButton* zoom_in_tool;
-	const gchar* _tmp47_ = NULL;
-	GtkToolButton* _tmp48_ = NULL;
-	GtkToolButton* zoom_out_tool;
+	GtkSeparatorToolItem* _tmp44_ = NULL;
+	GtkSeparatorToolItem* _tmp45_;
+	GtkToolItem* _tmp46_ = NULL;
+	GtkSpinButton* _tmp47_ = NULL;
+	GtkSpinButton* _tmp48_;
 	const gchar* _tmp49_ = NULL;
+	GdkPixbuf* _tmp50_ = NULL;
+	GdkPixbuf* _tmp51_;
+	GtkImage* _tmp52_ = NULL;
+	GtkImage* _tmp53_;
+	GtkImage* resize_icon;
+	const gchar* _tmp54_ = NULL;
+	GtkToolButton* _tmp55_ = NULL;
+	GtkToolButton* resize_tool;
+	const gchar* _tmp56_ = NULL;
+	GtkToolButton* _tmp57_ = NULL;
+	GtkToolButton* zoom_in_tool;
+	const gchar* _tmp58_ = NULL;
+	GtkToolButton* _tmp59_ = NULL;
+	GtkToolButton* zoom_out_tool;
+	const gchar* _tmp60_ = NULL;
 	g_return_if_fail (IS_GNONOGRAM_VIEW (self));
 	_data2_ = g_slice_new0 (Block2Data);
 	_data2_->_ref_count_ = 1;
@@ -1281,81 +1309,96 @@ static void gnonogram_view_create_viewer_toolbar (Gnonogram_view* self) {
 	_tmp9_ = g_object_ref_sink (_tmp8_);
 	gtk_container_add (GTK_CONTAINER (self->_toolbar), GTK_WIDGET (_tmp9_));
 	_g_object_unref0 (_tmp9_);
-	_tmp10_ = (GtkToggleToolButton*) gtk_toggle_tool_button_new_from_stock (GTK_STOCK_EXECUTE);
-	_tmp11_ = g_object_ref_sink (_tmp10_);
+	_tmp10_ = resource_get_icon (RESOURCE_ICON_ID_HIDE);
+	_tmp11_ = _tmp10_;
+	_tmp12_ = (GtkImage*) gtk_image_new_from_pixbuf (_tmp11_);
+	_tmp13_ = g_object_ref_sink (_tmp12_);
+	_g_object_unref0 (self->priv->hide_icon);
+	self->priv->hide_icon = _tmp13_;
+	_g_object_unref0 (_tmp11_);
+	_tmp14_ = resource_get_icon (RESOURCE_ICON_ID_REVEAL);
+	_tmp15_ = _tmp14_;
+	_tmp16_ = (GtkImage*) gtk_image_new_from_pixbuf (_tmp15_);
+	_tmp17_ = g_object_ref_sink (_tmp16_);
+	_g_object_unref0 (self->priv->reveal_icon);
+	self->priv->reveal_icon = _tmp17_;
+	_g_object_unref0 (_tmp15_);
+	_tmp18_ = (GtkToggleToolButton*) gtk_toggle_tool_button_new ();
+	_tmp19_ = g_object_ref_sink (_tmp18_);
 	_g_object_unref0 (self->priv->_hide_tool);
-	self->priv->_hide_tool = _tmp11_;
-	_tmp12_ = _ ("Hide the solution and start solving");
-	gtk_tool_item_set_tooltip_text (GTK_TOOL_ITEM (self->priv->_hide_tool), _tmp12_);
-	gtk_toggle_tool_button_set_active (self->priv->_hide_tool, FALSE);
+	self->priv->_hide_tool = _tmp19_;
 	gtk_container_add (GTK_CONTAINER (self->_toolbar), GTK_WIDGET (self->priv->_hide_tool));
-	_tmp13_ = g_strconcat (resource_icon_dir, "/eyeballs.png", NULL);
-	_tmp14_ = (GtkImage*) gtk_image_new_from_file (_tmp13_);
-	peek_icon = (_tmp15_ = g_object_ref_sink (_tmp14_), _g_free0 (_tmp13_), _tmp15_);
-	_tmp16_ = _ ("Check");
-	_tmp17_ = (GtkToolButton*) gtk_tool_button_new (GTK_WIDGET (peek_icon), _tmp16_);
-	_tmp18_ = g_object_ref_sink (_tmp17_);
+	_tmp20_ = resource_get_icon (RESOURCE_ICON_ID_PEEK);
+	_tmp21_ = _tmp20_;
+	_tmp22_ = (GtkImage*) gtk_image_new_from_pixbuf (_tmp21_);
+	peek_icon = (_tmp23_ = g_object_ref_sink (_tmp22_), _g_object_unref0 (_tmp21_), _tmp23_);
+	_tmp24_ = _ ("Check");
+	_tmp25_ = (GtkToolButton*) gtk_tool_button_new (GTK_WIDGET (peek_icon), _tmp24_);
+	_tmp26_ = g_object_ref_sink (_tmp25_);
 	_g_object_unref0 (self->priv->_check_tool);
-	self->priv->_check_tool = _tmp18_;
-	_tmp19_ = _ ("Show any incorrect cells");
-	gtk_tool_item_set_tooltip_text (GTK_TOOL_ITEM (self->priv->_check_tool), _tmp19_);
+	self->priv->_check_tool = _tmp26_;
+	_tmp27_ = _ ("Show any incorrect cells");
+	gtk_tool_item_set_tooltip_text (GTK_TOOL_ITEM (self->priv->_check_tool), _tmp27_);
 	gtk_container_add (GTK_CONTAINER (self->_toolbar), GTK_WIDGET (self->priv->_check_tool));
-	_tmp20_ = (GtkToolButton*) gtk_tool_button_new_from_stock (GTK_STOCK_REFRESH);
-	restart_tool = g_object_ref_sink (_tmp20_);
-	_tmp21_ = _ ("Start this puzzle again");
-	gtk_tool_item_set_tooltip_text (GTK_TOOL_ITEM (restart_tool), _tmp21_);
+	_tmp28_ = (GtkToolButton*) gtk_tool_button_new_from_stock (GTK_STOCK_REFRESH);
+	restart_tool = g_object_ref_sink (_tmp28_);
+	_tmp29_ = _ ("Start this puzzle again");
+	gtk_tool_item_set_tooltip_text (GTK_TOOL_ITEM (restart_tool), _tmp29_);
 	gtk_container_add (GTK_CONTAINER (self->_toolbar), GTK_WIDGET (restart_tool));
-	_tmp22_ = g_strconcat (resource_icon_dir, "/laptop.png", NULL);
-	_tmp23_ = (GtkImage*) gtk_image_new_from_file (_tmp22_);
-	solve_icon = (_tmp24_ = g_object_ref_sink (_tmp23_), _g_free0 (_tmp22_), _tmp24_);
-	_tmp25_ = _ ("Solve");
-	_tmp26_ = (GtkToolButton*) gtk_tool_button_new (GTK_WIDGET (solve_icon), _tmp25_);
-	solve_tool = g_object_ref_sink (_tmp26_);
-	_tmp27_ = _ ("Solve by computer");
-	gtk_tool_item_set_tooltip_text (GTK_TOOL_ITEM (solve_tool), _tmp27_);
+	_tmp30_ = resource_get_icon (RESOURCE_ICON_ID_SOLVE);
+	_tmp31_ = _tmp30_;
+	_tmp32_ = (GtkImage*) gtk_image_new_from_pixbuf (_tmp31_);
+	solve_icon = (_tmp33_ = g_object_ref_sink (_tmp32_), _g_object_unref0 (_tmp31_), _tmp33_);
+	_tmp34_ = _ ("Solve");
+	_tmp35_ = (GtkToolButton*) gtk_tool_button_new (GTK_WIDGET (solve_icon), _tmp34_);
+	solve_tool = g_object_ref_sink (_tmp35_);
+	_tmp36_ = _ ("Solve by computer");
+	gtk_tool_item_set_tooltip_text (GTK_TOOL_ITEM (solve_tool), _tmp36_);
 	gtk_container_add (GTK_CONTAINER (self->_toolbar), GTK_WIDGET (solve_tool));
-	_tmp28_ = g_strconcat (resource_icon_dir, "/Dices.png", NULL);
-	_tmp29_ = (GtkImage*) gtk_image_new_from_file (_tmp28_);
-	random_icon = (_tmp30_ = g_object_ref_sink (_tmp29_), _g_free0 (_tmp28_), _tmp30_);
-	_tmp31_ = _ ("Random");
-	_tmp32_ = (GtkToolButton*) gtk_tool_button_new (GTK_WIDGET (random_icon), _tmp31_);
-	random_tool = g_object_ref_sink (_tmp32_);
-	_tmp33_ = _ ("Generate a random game");
-	gtk_tool_item_set_tooltip_text (GTK_TOOL_ITEM (random_tool), _tmp33_);
+	_tmp37_ = resource_get_icon (RESOURCE_ICON_ID_RANDOM);
+	_tmp38_ = _tmp37_;
+	_tmp39_ = (GtkImage*) gtk_image_new_from_pixbuf (_tmp38_);
+	random_icon = (_tmp40_ = g_object_ref_sink (_tmp39_), _g_object_unref0 (_tmp38_), _tmp40_);
+	_tmp41_ = _ ("Random");
+	_tmp42_ = (GtkToolButton*) gtk_tool_button_new (GTK_WIDGET (random_icon), _tmp41_);
+	random_tool = g_object_ref_sink (_tmp42_);
+	_tmp43_ = _ ("Generate a random game");
+	gtk_tool_item_set_tooltip_text (GTK_TOOL_ITEM (random_tool), _tmp43_);
 	gtk_container_add (GTK_CONTAINER (self->_toolbar), GTK_WIDGET (random_tool));
-	_tmp34_ = (GtkSeparatorToolItem*) gtk_separator_tool_item_new ();
-	_tmp35_ = g_object_ref_sink (_tmp34_);
-	gtk_container_add (GTK_CONTAINER (self->_toolbar), GTK_WIDGET (_tmp35_));
-	_g_object_unref0 (_tmp35_);
-	_tmp36_ = gtk_tool_item_new ();
-	_data2_->grade_tool = g_object_ref_sink (_tmp36_);
-	_tmp37_ = (GtkSpinButton*) gtk_spin_button_new_with_range ((gdouble) 1, (gdouble) resource_MAXGRADE, (gdouble) 1);
-	_tmp38_ = g_object_ref_sink (_tmp37_);
+	_tmp44_ = (GtkSeparatorToolItem*) gtk_separator_tool_item_new ();
+	_tmp45_ = g_object_ref_sink (_tmp44_);
+	gtk_container_add (GTK_CONTAINER (self->_toolbar), GTK_WIDGET (_tmp45_));
+	_g_object_unref0 (_tmp45_);
+	_tmp46_ = gtk_tool_item_new ();
+	_data2_->grade_tool = g_object_ref_sink (_tmp46_);
+	_tmp47_ = (GtkSpinButton*) gtk_spin_button_new_with_range ((gdouble) 1, (gdouble) resource_MAXGRADE, (gdouble) 1);
+	_tmp48_ = g_object_ref_sink (_tmp47_);
 	_g_object_unref0 (self->priv->_grade_spin);
-	self->priv->_grade_spin = _tmp38_;
-	_tmp39_ = _ ("Set the difficulty of generated games");
-	gtk_widget_set_tooltip_text (GTK_WIDGET (self->priv->_grade_spin), _tmp39_);
+	self->priv->_grade_spin = _tmp48_;
+	_tmp49_ = _ ("Set the difficulty of generated games");
+	gtk_widget_set_tooltip_text (GTK_WIDGET (self->priv->_grade_spin), _tmp49_);
 	gtk_widget_set_can_focus (GTK_WIDGET (self->priv->_grade_spin), FALSE);
 	gtk_container_add (GTK_CONTAINER (_data2_->grade_tool), GTK_WIDGET (self->priv->_grade_spin));
 	gtk_container_add (GTK_CONTAINER (self->_toolbar), GTK_WIDGET (_data2_->grade_tool));
-	_tmp40_ = g_strconcat (resource_icon_dir, "/newsheet.png", NULL);
-	_tmp41_ = (GtkImage*) gtk_image_new_from_file (_tmp40_);
-	resize_icon = (_tmp42_ = g_object_ref_sink (_tmp41_), _g_free0 (_tmp40_), _tmp42_);
-	_tmp43_ = _ ("Resize");
-	_tmp44_ = (GtkToolButton*) gtk_tool_button_new (GTK_WIDGET (resize_icon), _tmp43_);
-	resize_tool = g_object_ref_sink (_tmp44_);
-	_tmp45_ = _ ("Change dimensions of the game grid");
-	gtk_tool_item_set_tooltip_text (GTK_TOOL_ITEM (resize_tool), _tmp45_);
+	_tmp50_ = resource_get_icon (RESOURCE_ICON_ID_RESIZE);
+	_tmp51_ = _tmp50_;
+	_tmp52_ = (GtkImage*) gtk_image_new_from_pixbuf (_tmp51_);
+	resize_icon = (_tmp53_ = g_object_ref_sink (_tmp52_), _g_object_unref0 (_tmp51_), _tmp53_);
+	_tmp54_ = _ ("Resize");
+	_tmp55_ = (GtkToolButton*) gtk_tool_button_new (GTK_WIDGET (resize_icon), _tmp54_);
+	resize_tool = g_object_ref_sink (_tmp55_);
+	_tmp56_ = _ ("Change dimensions of the game grid");
+	gtk_tool_item_set_tooltip_text (GTK_TOOL_ITEM (resize_tool), _tmp56_);
 	gtk_container_add (GTK_CONTAINER (self->_toolbar), GTK_WIDGET (resize_tool));
-	_tmp46_ = (GtkToolButton*) gtk_tool_button_new_from_stock (GTK_STOCK_ZOOM_IN);
-	zoom_in_tool = g_object_ref_sink (_tmp46_);
-	_tmp47_ = _ ("Increase font size");
-	gtk_tool_item_set_tooltip_text (GTK_TOOL_ITEM (zoom_in_tool), _tmp47_);
+	_tmp57_ = (GtkToolButton*) gtk_tool_button_new_from_stock (GTK_STOCK_ZOOM_IN);
+	zoom_in_tool = g_object_ref_sink (_tmp57_);
+	_tmp58_ = _ ("Increase font size");
+	gtk_tool_item_set_tooltip_text (GTK_TOOL_ITEM (zoom_in_tool), _tmp58_);
 	gtk_container_add (GTK_CONTAINER (self->_toolbar), GTK_WIDGET (zoom_in_tool));
-	_tmp48_ = (GtkToolButton*) gtk_tool_button_new_from_stock (GTK_STOCK_ZOOM_OUT);
-	zoom_out_tool = g_object_ref_sink (_tmp48_);
-	_tmp49_ = _ ("Decrease font size");
-	gtk_tool_item_set_tooltip_text (GTK_TOOL_ITEM (zoom_out_tool), _tmp49_);
+	_tmp59_ = (GtkToolButton*) gtk_tool_button_new_from_stock (GTK_STOCK_ZOOM_OUT);
+	zoom_out_tool = g_object_ref_sink (_tmp59_);
+	_tmp60_ = _ ("Decrease font size");
+	gtk_tool_item_set_tooltip_text (GTK_TOOL_ITEM (zoom_out_tool), _tmp60_);
 	gtk_container_add (GTK_CONTAINER (self->_toolbar), GTK_WIDGET (zoom_out_tool));
 	g_signal_connect_object (new_tool, "clicked", (GCallback) __lambda1__gtk_tool_button_clicked, self, 0);
 	g_signal_connect_object (save_as_tool, "clicked", (GCallback) __lambda2__gtk_tool_button_clicked, self, 0);
@@ -1942,12 +1985,16 @@ void gnonogram_view_state_has_changed (Gnonogram_view* self, GameState gs) {
 		const gchar* _tmp3_ = NULL;
 		_tmp3_ = _ ("Hide the solution and start solving");
 		gtk_tool_item_set_tooltip_text (GTK_TOOL_ITEM (self->priv->_hide_tool), _tmp3_);
+		gtk_tool_button_set_icon_widget (GTK_TOOL_BUTTON (self->priv->_hide_tool), GTK_WIDGET (self->priv->hide_icon));
+		gtk_widget_show_all (GTK_WIDGET (self->priv->_hide_tool));
 		gtk_toggle_tool_button_set_active (self->priv->_hide_tool, FALSE);
 		gtk_check_menu_item_set_active (self->priv->_gridmenuitem, FALSE);
 	} else {
 		const gchar* _tmp4_ = NULL;
 		_tmp4_ = _ ("Reveal the solution");
 		gtk_tool_item_set_tooltip_text (GTK_TOOL_ITEM (self->priv->_hide_tool), _tmp4_);
+		gtk_tool_button_set_icon_widget (GTK_TOOL_BUTTON (self->priv->_hide_tool), GTK_WIDGET (self->priv->reveal_icon));
+		gtk_widget_show_all (GTK_WIDGET (self->priv->_hide_tool));
 		gtk_toggle_tool_button_set_active (self->priv->_hide_tool, TRUE);
 		gtk_check_menu_item_set_active (self->priv->_gridmenuitem, TRUE);
 	}
@@ -2005,6 +2052,8 @@ static void gnonogram_view_finalize (GObject* obj) {
 	_g_object_unref0 (self->priv->_date_label);
 	_g_object_unref0 (self->priv->_size_label);
 	_g_object_unref0 (self->priv->_score_label);
+	_g_object_unref0 (self->priv->hide_icon);
+	_g_object_unref0 (self->priv->reveal_icon);
 	G_OBJECT_CLASS (gnonogram_view_parent_class)->finalize (obj);
 }
 

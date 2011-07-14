@@ -14,23 +14,31 @@ configure_help() {
     printf "\n"
     printf "Options:\n"
     printf "\t-h, --help\t\tPrint this help and exit.\n"
+
     printf "\t--assume-pkgs\t\tTurn off package version checking.\n"
+
     printf "\t--build=DIR\t\tBuild secondary files in DIR.\n"
+
     printf "\t--debug | --release\tBuild executable for debugging or release.\n"
     printf "\t\t\t\t[--release]\n"
+
     printf "\t--prefix=PREFIX\t\tPrepend PREFIX to program installation paths.\n"
     printf "\t\t\t\t[/usr]\n"
+
     printf "\t--define=SYMBOL\t\tDefine a symbol for the Vala compiler.\n"
 
     printf "\t--novala\t\tCompile from C source only\n"
-#    printf "\t--with-GConf-schema-file-dir=DIR\n"
-#    printf "\t\t\t\tDirectory for installing schema files.\n"
-#    printf "\t--disable-schemas-install\n"
-#   printf "\t\t\t\tDisable the schemas installation.\n"
+
     printf "\t--disable-desktop-update\n"
     printf "\t\t\t\tDisable desktop, mime and icon database update.\n"
- #   printf "\t--disable-icon-update\n"
- #   printf "\t\t\t\tDisable icon cache update.\n"
+
+#   printf "\t--disable-icon-update\n"
+#   printf "\t\t\t\tDisable icon cache update.\n"
+#   printf "\t--with-GConf-schema-file-dir=DIR\n"
+#   printf "\t\t\t\tDirectory for installing schema files.\n"
+#   printf "\t--disable-schemas-install\n"
+#   printf "\t\t\t\tDisable the schemas installation.\n"
+
     printf "\n"
 }
 
@@ -84,6 +92,11 @@ do
 		  --novala)				 variables="${variables}NO_VALA=1\n"
 									 ;;
 
+        --disable-desktop-update)         variables="${variables}DISABLE_DESKTOP_UPDATE=1\n"
+                                          ;;
+
+#       --disable-icon-update)            variables="${variables}DISABLE_ICON_UPDATE=1\n"
+#                                          ;;
 #        --with-GConf-schema-file-dir)     if [ ! $value ]
 #                                          then
 #                                              abort $1
@@ -95,11 +108,6 @@ do
 #        --disable-schemas-install)        variables="${variables}DISABLE_SCHEMAS_INSTALL=1\n"
 #                                          ;;
 #
-        --disable-desktop-update)         variables="${variables}DISABLE_DESKTOP_UPDATE=1\n"
-                                          ;;
-
- #       --disable-icon-update)            variables="${variables}DISABLE_ICON_UPDATE=1\n"
-#                                          ;;
 
         *)                  if [ ! $value ]
                             then
