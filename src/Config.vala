@@ -1,27 +1,24 @@
-/*  Copyright (C) 2010-2011  Jeremy Wootten
+/* Configuration class for Gnonograms
+ * Copyright (C) 2010-2011  Jeremy Wootten
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
+	This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License along
+    with this program; if not, write to the Free Software Foundation, Inc.,
+    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
- *
- * As a special exception, if you use inline functions from this file, this
- * file does not by itself cause the resulting executable to be covered by
- * the GNU Lesser General Public License.
- * 
  *  Author:
  * 	Jeremy Wootten <jeremwootten@gmail.com>
  */
- 
+
 
 public class Config {
 	private const string PATHS_CONF="/apps/gnonogram/preferences/paths/";
@@ -34,7 +31,7 @@ public class Config {
 		client=GConf.Client.get_default();
 		assert(client!=null);
 	}
-	
+
     private void report_get_error(string path, Error err) {
         Utils.show_warning_dialog(_("Unable to get GConf value")+@" $path: $(err.message)");
     }
@@ -55,7 +52,7 @@ public class Config {
             return client.get_bool(path);
         } catch (Error err) {
             report_get_error(path, err);
-            
+
         return def;
         }
 	}
@@ -71,14 +68,14 @@ public class Config {
 **/
 	private int get_int(string path, int def) {
        try {
-            if (client.get(path) == null) { 
+            if (client.get(path) == null) {
 				client.set_int(path,def);
                 return def;
             }
             return client.get_int(path);
         } catch (Error err) {
             report_get_error(path, err);
-            
+
             return def;
         }
 	}
@@ -100,7 +97,7 @@ public class Config {
             return client.get_string(path);
         } catch (Error err) {
             report_get_error(path, err);
-            
+
         return def;
         }
 	}
@@ -117,7 +114,7 @@ public class Config {
 	public bool set_game_dir(string path)
 	{
 		File game_dir=File.new_for_path(path);
-		
+
 		if (game_dir.query_exists(null) && game_dir.query_file_type(0,null)==FileType.DIRECTORY)
 		{
 			return set_string(PATHS_CONF+"game_dir", path);
@@ -127,7 +124,7 @@ public class Config {
 			return false;
 		}
 	}
-	
+
 	public string get_game_dir(string defaultdir)
 	{
 		string data_path=get_string(PATHS_CONF+"game_dir",defaultdir);
@@ -145,7 +142,7 @@ public class Config {
  	{
 		return set_string(PATHS_CONF+"game_name", name);
 	}
-	
+
 	public string get_game_name(string defaultname)
 	{
 		return get_string(PATHS_CONF+"game_name", defaultname);
@@ -187,8 +184,8 @@ public class Config {
 		string set_filled=get_string(UI_CONF+"setting_filled",Resource.colors[(int) GameState.SETTING, (int) CellState.FILLED].to_string());
 		string solve_empty=get_string(UI_CONF+"solving_empty",Resource.colors[(int) GameState.SOLVING, (int) CellState.EMPTY].to_string());
 		string solve_filled=get_string(UI_CONF+"solving_filled",Resource.colors[(int) GameState.SOLVING, (int) CellState.FILLED].to_string());
-		
+
 		return {set_empty,set_filled,solve_empty,solve_filled};
-			
+
 	}
 }

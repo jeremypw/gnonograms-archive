@@ -1,0 +1,20 @@
+Source: gnonograms
+Section: games
+Priority: extra
+Maintainer: Jeremy Paul Wootten <jeremywootten@gmail.com>
+Build-Depends: debhelper (>= 7), valac (>= 0.8.0), libgtk2.0-dev (>= 2.14.4), libgconf2-dev (>= 2.22.0),  libcairo2-dev (>=1.8.0)
+Standards-Version: 3.8.3
+Homepage: http://code.google.com/p/gnonograms/
+
+Package: gnonograms
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Design and solve Nonogram puzzles
+ Gnonograms is a program for the Gnome desktop for designing 
+ and solving Nonogram puzzles (also known as Tsunami, Pictogram or 
+ Griddler puzzles).  An automatic solver is included.  Grids up to 100 x 100 
+ can be accomodated, although the practical limit depends screen size.  
+ The program will also generate random pattern puzzles of controllable 
+ difficulty.  Over 100 ready made puzzles are included.
+ .
+ Gnonograms was written in Vala using the GTK+ toolkit.

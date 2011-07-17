@@ -1,10 +1,25 @@
 #! /bin/bash
 #
-# Copyright 2009 Yorba Foundation
-# modified Jeremy Wootten 2010.
+#  Configuration file for Gnonograms
+#  Copyright (C) 2010-2011  Jeremy Wootten
+#  based on the LGPL work of the Yorba Foundation 2009
 #
-# This software is licensed under the GNU LGPL (version 2.1 or later).
-# See the COPYING file in this distribution.
+#	This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License along
+#    with this program; if not, write to the Free Software Foundation, Inc.,
+#    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+# *
+# *  Author:
+# * 	Jeremy Wootten <jeremwootten@gmail.com>
 
 CONFIG_IN=configure.mk
 
@@ -31,13 +46,6 @@ configure_help() {
 
     printf "\t--disable-desktop-update\n"
     printf "\t\t\t\tDisable desktop, mime and icon database update.\n"
-
-#   printf "\t--disable-icon-update\n"
-#   printf "\t\t\t\tDisable icon cache update.\n"
-#   printf "\t--with-GConf-schema-file-dir=DIR\n"
-#   printf "\t\t\t\tDirectory for installing schema files.\n"
-#   printf "\t--disable-schemas-install\n"
-#   printf "\t\t\t\tDisable the schemas installation.\n"
 
     printf "\n"
 }
@@ -95,19 +103,6 @@ do
         --disable-desktop-update)         variables="${variables}DISABLE_DESKTOP_UPDATE=1\n"
                                           ;;
 
-#       --disable-icon-update)            variables="${variables}DISABLE_ICON_UPDATE=1\n"
-#                                          ;;
-#        --with-GConf-schema-file-dir)     if [ ! $value ]
-#                                          then
-#                                              abort $1
-#                                          fi
-#
-#                                          variables="${variables}SCHEMA_FILE_DIR=$value\n"
-#                                          ;;
-#
-#        --disable-schemas-install)        variables="${variables}DISABLE_SCHEMAS_INSTALL=1\n"
-#                                          ;;
-#
 
         *)                  if [ ! $value ]
                             then

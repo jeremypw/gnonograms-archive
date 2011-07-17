@@ -1,0 +1,2 @@
+?package(gnonograms):needs="X11" section="Games/Puzzles"\
+  title="gnonograms" command="/usr/games/gnonograms"

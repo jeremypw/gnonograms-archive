@@ -21,7 +21,7 @@
     Type ./gnonograms to run the program in the directory in which it was built.
 
     To install the program on the desktop:
-	$ sudo make install 
+	$ sudo make install
 
     * By default, gnonogramsl will install under /usr  The configure script
       can customize the prefix directory.  Run ./configure --help for
@@ -30,7 +30,7 @@
     * You may need to execute "make install" as root (i.e. sudo make install)
       if installing to system directories.]
 
-    *RECOMMENDED:  If you wish to try gnonograms before installing it, you may execute it
+    *If you wish to try gnonograms before installing it, you may execute it
       directly from its build directory.
 
     Once installed, gnonograms will be available

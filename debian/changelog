@@ -1,0 +1,5 @@
+gnonograms (0.8.0-1) unstable; urgency=low
+
+  * Initial release (Closes: #nnnn)  <nnnn is the bug number of your ITP>
+
+ -- Jeremy Paul Wootten <jeremywootten@gmail.com>  Tue, 28 Jun 2011 17:24:04 +0100
