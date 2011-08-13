@@ -251,20 +251,25 @@ install:
 		echo Comment[$(lang)]=`gettext --domain=gnonograms $(DESKTOP_APPLICATION_COMMENT)` >> misc/gnonograms.desktop;)
 
 	touch $(LANG_STAMP)
-	mkdir -p $(DESTDIR)$(PREFIX)/games
+
 	$(INSTALL_PROGRAM) $(PROGRAM) $(DESTDIR)$(PREFIX)/games
 
 	mkdir -p $(DESTDIR)$(PREFIX)/share/gnonograms/icons
 	$(INSTALL_DATA) icons/* $(DESTDIR)$(PREFIX)/share/gnonograms/icons
 
 	mkdir -p $(DESTDIR)$(PREFIX)/share/gnonograms/games
-	$(INSTALL_DATA) games/* $(DESTDIR)$(PREFIX)/share/gnonograms/games
-
-	mkdir -p $(DESTDIR)$(PREFIX)/share/gnonograms/media
-	$(INSTALL_DATA) media/* $(DESTDIR)$(PREFIX)/share/gnonograms/media
-
-	mkdir -p $(DESTDIR)$(PREFIX)/share/gnonograms/mallard
-	$(INSTALL_DATA) mallard/* $(DESTDIR)$(PREFIX)/share/gnonograms/mallard
+	mkdir -p $(DESTDIR)$(PREFIX)/share/gnonograms/games/easy
+	$(INSTALL_DATA) games/easy/* $(DESTDIR)$(PREFIX)/share/gnonograms/games/easy
+	mkdir -p $(DESTDIR)$(PREFIX)/share/gnonograms/games/moderately\ easy
+	$(INSTALL_DATA) games/moderately\ easy/* $(DESTDIR)$(PREFIX)/share/gnonograms/games/moderately\ easy
+	mkdir -p $(DESTDIR)$(PREFIX)/share/gnonograms/games/moderately\ hard
+	$(INSTALL_DATA) games/moderately\ hard/* $(DESTDIR)$(PREFIX)/share/gnonograms/games/moderately\ hard
+	mkdir -p $(DESTDIR)$(PREFIX)/share/gnonograms/games/hard
+	$(INSTALL_DATA) games/hard/* $(DESTDIR)$(PREFIX)/share/gnonograms/games/hard
+	mkdir -p $(DESTDIR)$(PREFIX)/share/gnonograms/games/very\ hard
+	$(INSTALL_DATA) games/very\ hard/* $(DESTDIR)$(PREFIX)/share/gnonograms/games/very\ hard
+	mkdir -p $(DESTDIR)$(PREFIX)/share/gnonograms/games/almost\ impossible
+	$(INSTALL_DATA) games/almost\ impossible/* $(DESTDIR)$(PREFIX)/share/gnonograms/games/almost\ impossible
 
 	mkdir -p $(DESTDIR)$(PREFIX)/share/gnonograms/html
 	mkdir -p $(DESTDIR)$(PREFIX)/share/gnonograms/html/media
