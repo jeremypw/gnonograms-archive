@@ -215,9 +215,7 @@ public class Gnonogram_view : Gtk.Window
 		helpmenuitem.set_submenu(helpsubmenu);
 			var aboutmenuitem=new MenuItem.with_mnemonic(_("About"));
 			helpsubmenu.add(aboutmenuitem);
-			var manualmenuitem=new MenuItem.with_mnemonic(_("Manual"));
-			helpsubmenu.add(manualmenuitem);
-			var htmlmanualmenuitem=new MenuItem.with_mnemonic(_("Html Manual"));
+			var htmlmanualmenuitem=new MenuItem.with_mnemonic(_("Manual"));
 			helpsubmenu.add(htmlmanualmenuitem);
 
 		newmenuitem.activate.connect(()=>{newgame();});
@@ -248,7 +246,6 @@ public class Gnonogram_view : Gtk.Window
 		_gridmenuitem.activate.connect(()=>{togglegrid(_gridmenuitem.active);});
 
 		aboutmenuitem.activate.connect(show_about);
-		manualmenuitem.activate.connect(show_mallard_manual);
 		htmlmanualmenuitem.activate.connect(show_html_manual);
 
 		return menubar;
@@ -398,26 +395,14 @@ public class Gnonogram_view : Gtk.Window
                        "program-name", _("Gnonograms"),
                        "version", _VERSION,
                        "comments", _("Design and solve Nonogram puzzles"),
-                       "license","Gnonograms is free software; you can redistribute it and/or modify it under the terms of the GNU General Public Licence as published by the Free Software Foundation; either version 2 of the Licence, or (at your option) any later version.\n\nGnonogram is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public Licence for more details.\n\nYou should have received a copy of the GNU General Public Licence along with Nautilus; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA",
+                       "license","Gnonograms is free software; you can redistribute it and/or modify it under the terms of the GNU General Public Licence as published by the Free Software Foundation; either version 2 of the Licence, or (at your option) any later version.\n\nGnonogram is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public Licence for more details.\n\nYou should have received a copy of the GNU General Public Licence along with this program; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA\n\nAny puzzles distributed with the program are licensed under the Creative Commons Attribution Share-Alike license.  A copy of the license should have been distributed with the program, if not, see http://creativecommons.org/licenses/ ",
                        "wrap_license",true,
                        "logo", _logo.get_pixbuf(),
                        "title", _("About Gnonograms"),
                        "authors", authors,
                        null);
 	}
-//======================================================================
-	private void show_mallard_manual()
-	{
-		var manual_uri="ghelp:"+Resource.mallard_manual_dir;
-		try
-		{
-			show_uri(get_screen(),manual_uri,get_current_event_time());
-		}
-		catch (GLib.Error e)
-		{
-			Utils.show_warning_dialog(e.message);
-		}
-	}
+
 //======================================================================
 	private void show_html_manual()
 	{

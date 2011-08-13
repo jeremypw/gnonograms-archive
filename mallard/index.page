@@ -1,9 +1,0 @@
-<page xmlns="http://projectmallard.org/1.0/"
-      type="guide"
-      id="index">
-<info>
-   <link type="next" xref="howtoplay"/>
-</info>
-<title> <media type="image" mime="image/png" src="./media/gnonograms48.png"/> Gnonogram Manual</title>
-
-</page>
