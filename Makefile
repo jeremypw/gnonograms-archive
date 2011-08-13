@@ -64,9 +64,12 @@ SRC_FILES = \
 RESOURCE_FILES = \
 	icons/*.png \
 	icons/*.svg \
-	games/*.gno \
-	mallard/*.page \
-	media/*.png \
+	games/easy/*.gno \
+	games/moderately\ easy/*.gno \
+	games/moderately\ hard/*.gno \
+	games/hard/*.gno \
+	games/very\ hard/*.gno \
+	games/almost\ impossible/*.gno \
 	html/*.html \
 	html/*.png \
 	html/media/*.png \
@@ -306,7 +309,6 @@ uninstall:
 ##########
 	rm -f $(DESTDIR)$(PREFIX)/games/$(PROGRAM)
 	rm -fr $(DESTDIR)$(PREFIX)/share/gnonograms
-	rm -fr $(DESTDIR)$(PREFIX)/share/gnonograms/mallard
 	rm -fr $(DESTDIR)$(PREFIX)/share/gnonograms/html/media
 	rm -fr $(DESTDIR)$(PREFIX)/share/gnonograms/html
 
