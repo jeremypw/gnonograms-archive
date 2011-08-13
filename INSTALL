@@ -1,9 +1,12 @@
 
-    Gnonograms Installation
-    ---------------------
+    Gnonograms Installation from Source
+    -----------------------------------
 
-	If you have the Vala source package then you will need to have the Vala compiler installed as well as the usual build tools (gcc etc).
-	Otherwise download the C source version.
+	Requirements to compile from source:
+	build-essentials package (libc6-dev, gcc, g++, make, dpkg-dev)
+	libgtk2.0-dev package and dependencies
+	libgconf2-dev package and dependencies
+	valac package and dependencies
 
 	Put the tarball in a directory for which you have read/write and execute rights.
 
