@@ -54,7 +54,6 @@ public class Gnonogram_view : Gtk.Window
 	private Gtk.ToolButton _check_tool;
 	public Gtk.Toolbar _toolbar;
 	private Gtk.CheckMenuItem _gridmenuitem;
-//	private Gtk.MenuItem _rotatemenuitem;
 	private Gtk.MenuItem _checkerrorsmenuitem;
 	private Gtk.MenuItem _showsolutionmenuitem;
 	private Gtk.MenuItem _showworkingmenuitem;
@@ -301,8 +300,6 @@ public class Gnonogram_view : Gtk.Window
 		solve_tool.set_tooltip_text(_("Solve by computer"));
 		_toolbar.add(solve_tool);
 
-//		var random_icon=new Gtk.Image.from_file(Resource.icon_dir+"/Dices.png");
-
 		var random_icon=new Gtk.Image.from_pixbuf(Resource.get_icon(Resource.IconID.RANDOM));
 
 		var random_tool=new ToolButton(random_icon,_("Random"));
@@ -318,7 +315,6 @@ public class Gnonogram_view : Gtk.Window
 		grade_tool.add(_grade_spin);
 		_toolbar.add(grade_tool);
 
-//		var resize_icon=new Gtk.Image.from_file(Resource.icon_dir+"/newsheet.png");
 		var resize_icon=new Gtk.Image.from_pixbuf(Resource.get_icon(Resource.IconID.RESIZE));
 		var resize_tool=new ToolButton(resize_icon,_("Resize"));
 		resize_tool.set_tooltip_text(_("Change dimensions of the game grid"));
@@ -534,9 +530,4 @@ public class Gnonogram_view : Gtk.Window
 		}
 	}
 
-//	private bool window_config_change(Gdk.EventConfigure event)
-//	{
-//		stdout.printf(@"Window confg event $(event.type)\n");
-//		return false;
-//	}
 }

@@ -64,8 +64,10 @@ namespace Resource
 	public static int MAXTRIES = 30; //max attempts to generate solvable game
 
 //Appearance related parameters
-	public static int MINFONTSIZE=6;
-	public static int MAXFONTSIZE=16;
+	public static double FONTBASESIZE=23.0;
+	public static double FONTSCALEFACTOR=0.4;
+	public static double MINFONTSIZE=6.0;
+	public static double MAXFONTSIZE=16.0;
 	public static string font_desc;
 	public static double CELLOFFSET_NOGRID=0.0;
 	public static double CELLOFFSET_WITHGRID=2.0;
@@ -237,9 +239,6 @@ namespace Resource
 	public Gdk.Pixbuf? get_app_icon(string icon_filename)
 	{
 		Gdk.Pixbuf icon = null;
-//		string icon_filename="";
-//		icon_filename=Resource.icon_dir+"/"+icon_filename;
-//		stdout.printf("Looking up app icon %s\n",Resource.icon_dir+"/"+icon_filename);
 		try
 		{
 			icon=new Pixbuf.from_file(Resource.icon_dir+"/"+icon_filename);
