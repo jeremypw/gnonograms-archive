@@ -18,15 +18,12 @@ Change the description of the puzzle.
 		</code>
 		<note><p>*These functions are also provided by the tool bar</p></note>
 	</synopsis>	<list>
-		<item>
-			<p><gui style="menuitem"><em>Show solution. ==</em><media type="image" mime="image/png" width="24" height="24" src="media/Design-Solve.png"/></gui></p>
-			<p>Show the puzzle solution and enter "design" mode. Inactive when in "design" mode</p>
-		</item>
 
 		<item>
-			<p><gui style="menuitem"><em>Show working. ==</em><media type="image" mime="image/png" width="24" height="24" src="media/Design-Solve.png"/></gui></p>
-			<p>Hide the puzzle solution and enter "working" mode. Inactive when in "working" mode</p>
+			<p><gui style="menuitem"><em>Show/hide solution. ==</em><media type="image" mime="image/png" width="24" height="24" src="media/Design-Solve-inactive.png"/>||<media type="image" mime="image/png" width="24" height="24" src="media/Design-Solve-active.png"/></gui></p>
+			<p>Switch between showing the solution/design grid and the solving grid</p>
 		</item>
+
 
 		<item>
 			<p><gui style="menuitem"><em>Show incorrect cells. ==</em><media type="image" mime="image/png" width="24" height="24" src="media/Check.png"/></gui></p>

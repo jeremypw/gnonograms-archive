@@ -215,14 +215,14 @@ namespace Resource
 	public void get_icon_theme()
 	{
 		icon_theme=Gtk.IconTheme.get_default();
-		stdout.printf("Icon theme is %s\n",icon_theme.get_example_icon_name());
+//		stdout.printf("Icon theme is %s\n",icon_theme.get_example_icon_name());
 	}
 
 	public Gdk.Pixbuf? get_theme_icon(string icon_name)
 	{
 		Gdk.Pixbuf icon = null;
 //		if (!icon_theme.has_icon(icon_name)) icon_name="image-missing";
-		stdout.printf("Looking up theme icon %s\n",icon_name);
+//		stdout.printf("Looking up theme icon %s\n",icon_name);
 		try
 		{
 			icon=icon_theme.load_icon(icon_name,icon_size,Gtk.IconLookupFlags.NO_SVG|Gtk.IconLookupFlags.FORCE_SIZE);
@@ -239,7 +239,7 @@ namespace Resource
 		Gdk.Pixbuf icon = null;
 //		string icon_filename="";
 //		icon_filename=Resource.icon_dir+"/"+icon_filename;
-		stdout.printf("Looking up app icon %s\n",Resource.icon_dir+"/"+icon_filename);
+//		stdout.printf("Looking up app icon %s\n",Resource.icon_dir+"/"+icon_filename);
 		try
 		{
 			icon=new Pixbuf.from_file(Resource.icon_dir+"/"+icon_filename);

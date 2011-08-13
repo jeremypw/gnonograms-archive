@@ -366,14 +366,6 @@ public class Gnonogram_view : Gtk.Window
 		else revealgame();
 	}
 //======================================================================
-// Discontinued when window made non-resizeable due to alignment problems.
-// Window size controlled by font size only.
-//	private void toggle_fullscreen(Gtk.MenuItem cmi)
-//	{
-//		if (((Gtk.CheckMenuItem)cmi).active) this.window.fullscreen();
-//		else this.window.unfullscreen();
-//	}
-//======================================================================
 	private void toggle_toolbar(Gtk.MenuItem cmi)
 	{
 		_toolbar.visible=((Gtk.CheckMenuItem)cmi).active;

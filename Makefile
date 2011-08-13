@@ -260,12 +260,16 @@ install:
 	mkdir -p $(DESTDIR)$(PREFIX)/share/gnonograms/games
 	$(INSTALL_DATA) games/* $(DESTDIR)$(PREFIX)/share/gnonograms/games
 
+	mkdir -p $(DESTDIR)$(PREFIX)/share/gnonograms/media
+	$(INSTALL_DATA) media/* $(DESTDIR)$(PREFIX)/share/gnonograms/media
+
 	mkdir -p $(DESTDIR)$(PREFIX)/share/gnonograms/mallard
 	$(INSTALL_DATA) mallard/* $(DESTDIR)$(PREFIX)/share/gnonograms/mallard
 
 	mkdir -p $(DESTDIR)$(PREFIX)/share/gnonograms/html
 	mkdir -p $(DESTDIR)$(PREFIX)/share/gnonograms/html/media
 	$(INSTALL_DATA) html/*.* $(DESTDIR)$(PREFIX)/share/gnonograms/html
+	$(INSTALL_DATA) html/media/*.* $(DESTDIR)$(PREFIX)/share/gnonograms/html/media
 
 	mkdir -p $(DESTDIR)$(PREFIX)/share/icons/hicolor/48x48/apps
 	$(INSTALL_DATA) icons/gnonograms48.png $(DESTDIR)$(PREFIX)/share/icons/hicolor/48x48/apps/gnonograms.png
