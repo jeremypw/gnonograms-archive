@@ -45,9 +45,17 @@
 			for (int c=0;c<_cols;c++)
 			{
 				cs=_working_data.get_data_from_rc(r,c);
-				if (cs!=CellState.UNKNOWN && cs!=_solution_data.get_cell(r,c).state)
+				if (cs==CellState.ERROR_EMPTY||cs==CellState.ERROR_FILLED||(cs!=CellState.UNKNOWN && cs!=_solution_data.get_cell(r,c).state))
 				{
-					_working_data.set_data_from_rc(r,c,CellState.ERROR);
+					if (cs==CellState.EMPTY)
+					{
+						_working_data.set_data_from_rc(r,c,CellState.ERROR_EMPTY);
+					}
+					else if (cs==CellState.FILLED)
+					{
+						_working_data.set_data_from_rc(r,c,CellState.ERROR_FILLED);
+
+					}
 					count++;
 				}
 			}
@@ -96,10 +104,11 @@
 //======================================================================
 	public void use_solution() {_display_data=_solution_data;}
 //======================================================================
-	public string get_label_text(int idx, bool is_column)
+	public string get_label_text(int idx, bool is_column, bool from_solution=true)
 	{
 		int length = is_column ? _rows : _cols;
-		return _solution_data.data2text(idx,length, is_column);
+		if (from_solution)	return _solution_data.data2text(idx,length, is_column);
+		else return _working_data.data2text(idx,length, is_column);
 	}
 //======================================================================
 	public Cell get_cell(int r, int c){

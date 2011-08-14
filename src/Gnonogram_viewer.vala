@@ -276,9 +276,10 @@ public class Gnonogram_view : Gtk.Window
 		hide_icon=new Gtk.Image.from_pixbuf(Resource.get_icon(Resource.IconID.HIDE));
 		reveal_icon=new Gtk.Image.from_pixbuf(Resource.get_icon(Resource.IconID.REVEAL));
 		_hide_tool=new ToggleToolButton();
-//		_hide_tool.set_icon_widget(hide_icon);
-//		_hide_tool.set_tooltip_text(_("Hide the solution and start solving"));
-//		_hide_tool.active=false;
+		_hide_tool.set_label("Hide/Reveal");
+		_hide_tool.set_icon_widget(hide_icon);
+		_hide_tool.set_tooltip_text(_("Hide the solution and start solving"));
+		_hide_tool.active=false;
 		_toolbar.add(_hide_tool);
 
 //		var peek_icon=new Gtk.Image.from_file(Resource.icon_dir+"/eyeballs.png");

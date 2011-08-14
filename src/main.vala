@@ -30,7 +30,9 @@ public enum CellState {
 	EMPTY,
 	FILLED,
 	ERROR,
-	COMPLETED
+	COMPLETED,
+	ERROR_EMPTY,
+	ERROR_FILLED
 	}
 
 public enum Gnonogram_FileType {

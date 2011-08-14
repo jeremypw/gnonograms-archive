@@ -138,7 +138,7 @@ public class Gnonogram_controller
 	}
 
 	private void initialize_cursor()
-	{
+	{//stdout.printf("Initialise cursor\n");
 		_current_cell.row=-1;
 		_current_cell.col=-1;
 		_current_cell.state=CellState.UNKNOWN;
@@ -188,7 +188,7 @@ public class Gnonogram_controller
 	}
 //======================================================================
 	private bool button_pressed(Gdk.EventButton e)
-	{
+	{//stdout.printf("Button pressed\n");
 		ButtonPress b=ButtonPress.UNDEFINED;
 		if (e.type!=EventType.@2BUTTON_PRESS)
 		{
@@ -225,7 +225,7 @@ public class Gnonogram_controller
 	}
 //======================================================================
 	private bool key_pressed(Gdk.EventKey e)
-	{
+	{stdout.printf("Key pressed\n");
 		string name=(Gdk.keyval_name(e.keyval)).up();
 		int currentrow=_current_cell.row;
 		int currentcol=_current_cell.col;
@@ -234,16 +234,28 @@ public class Gnonogram_controller
 		switch (name)
 		{
 			case "UP":
-					if (currentrow>0) currentrow-=1;
+					if (currentrow>0)
+					{	currentrow-=1;
+						grid_cursor_moved(currentrow,currentcol);
+					}
 					break;
 			case "DOWN":
-					if (currentrow<_rows-1) currentrow+=1;
+					if (currentrow<_rows-1)
+					{	currentrow+=1;
+						grid_cursor_moved(currentrow,currentcol);
+					}
 					break;
 			case	"LEFT":
-					if (currentcol>0) currentcol-=1;
+					if (currentcol>0)
+					{	currentcol-=1;
+						grid_cursor_moved(currentrow,currentcol);
+					}
 					break;
 			case "RIGHT":
-					if (currentcol<_cols-1) currentcol+=1;
+					if (currentcol<_cols-1)
+					{	currentcol+=1;
+						grid_cursor_moved(currentrow,currentcol);
+					}
 					break;
 			case "F":
 			case "f":
@@ -286,7 +298,7 @@ public class Gnonogram_controller
 			default:
 					break;
 		}
-		grid_cursor_moved(currentrow,currentcol);
+
 		return true;
 	}
 //======================================================================
@@ -351,10 +363,10 @@ public class Gnonogram_controller
 
 	private void check_solved()
 	{
-		if (_model.count_unsolved()==0)
+		if (_model.count_unsolved()==0) //puzzle has been completed (possible wrongly)
 		{
 			_timer.stop(); //timer started when switched to SOLVING state
-			peek_game();
+			peek_game(); //checks whether solution is correct
 			_is_button_down=false;
 		}
 	}
@@ -671,10 +683,9 @@ public class Gnonogram_controller
 //======================================================================
 	private void viewer_solve_game()
 	{
-		_timer.start();
+		restart_game(); //clears any erroneous entries and also re-starts timer
 		int passes = solve_game(true, _advanced,_advanced);
 		_timer.stop();
-//		ulong microseconds;
 		double time_taken=_timer.elapsed();
 		show_solver_grid();
 		switch (passes)

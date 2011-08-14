@@ -99,18 +99,18 @@ public class Gnonogram_LabelBox : Frame {
 	}
 //======================================================================
 	public void highlight(int idx, bool is_highlight)
-	{//stdout.printf("highlight idx %d",idx);
+	{//stdout.printf(@"highlight $idx $is_highlight \n");
 		if (idx>=_size||idx<0) return;
 		_labels[idx].highlight(is_highlight);
 	}
 //======================================================================
 	private void unhighlight_all()
-	{
+	{//stdout.printf("Unhighlight all\n");
 		for (int i=0;i<_size;i++) {highlight(i,false);}
 	}
 //======================================================================
 	public void update_label(int idx, string txt)
-	{	//stdout.printf("Idx %d Label txt %s\n",idx,txt);
+	{//stdout.printf("Idx %d Label txt %s\n",idx,txt);
 		_labels[idx].set_markup(_attribstart,txt,_attribend);
 		_labels[idx].set_size(_other_size);
 	}

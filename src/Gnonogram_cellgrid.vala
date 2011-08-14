@@ -33,11 +33,10 @@ public class Gnonogram_CellGrid : DrawingArea
 	private double _ah;
 	private double _wd;
 	private double _ht;
-	private 	Gdk.Color cr_color;
 	private double _cell_offset;
 	private double _cell_body_width;
 	private double _cell_body_height;
-
+	private Gdk.Color cr_color;
 //======================================================================
 	public Gnonogram_CellGrid(int r, int c)
 	{
@@ -90,29 +89,58 @@ public class Gnonogram_CellGrid : DrawingArea
  */
 		double x=cell.col*_wd +_cell_offset;
 		double y= cell.row*_ht +_cell_offset;
+		bool error=false;
 
-		int cs =(int) cell.state;
 		var _cr=Gdk.cairo_create(this.window);
 
-		if (cs==CellState.UNKNOWN)	cr_color=style.bg[Gtk.StateType.NORMAL];
-		else cr_color=Resource.colors[gs,cs];
+		switch (cell.state)
+		{
+			case CellState.EMPTY:
+			case CellState.FILLED:
+			case CellState.ERROR:
+				cr_color=Resource.colors[gs,(int) cell.state];
+				break;
+			case CellState.ERROR_EMPTY:
+				cr_color=Resource.colors[gs,(int) CellState.EMPTY];
+				error=true;
+				break;
+			case CellState.ERROR_FILLED:
+				cr_color=Resource.colors[gs,(int) CellState.FILLED];
+				error=true;
+				break;
+			default :
+				cr_color=style.bg[Gtk.StateType.NORMAL];
+				break;
+		}
+//		if (cs==CellState.UNKNOWN)	cr_color=style.bg[Gtk.StateType.NORMAL];
+//		else cr_color=Resource.colors[gs,cs];
 
 		Gdk.cairo_set_source_color(_cr, cr_color);
-		draw_cell_body(_cr, x,y, highlight);
+		draw_cell_body(_cr, x,y, highlight, error);
 	}
 //=========================================================================
-	private void draw_cell_body(Cairo.Context _cr, double x, double y, bool highlight=false)
+	private void draw_cell_body(Cairo.Context _cr, double x, double y, bool highlight=false, bool error=false)
 	{
 		_cr.rectangle(x, y, _cell_body_width, _cell_body_height);
 		_cr.fill();
 
-		if (highlight)
+		if (error)
 		{
+			_cr.set_line_width(4.0);
+			Gdk.cairo_set_source_color(_cr, Resource.colors[0,(int) CellState.ERROR]);
+			_cr.rectangle(x+3, y+3, _cell_body_width-6, _cell_body_height-6);
+			_cr.stroke();
+		}
+		else if (highlight)
+		{
+			_cr.set_line_width(1.0);
 			Gdk.cairo_set_source_color(_cr, style.bg[ Gtk.StateType.SELECTED]);
+			_cr.set_line_width(1.0);
 			_cr.rectangle(x+1, y+1, _cell_body_width-2, _cell_body_height-2);
 			_cr.stroke();
 		}
 	}
+
 //======================================================================
 	private void draw_grid()
 	{//stdout.printf("In draw grid\n");
@@ -167,13 +195,16 @@ public class Gnonogram_CellGrid : DrawingArea
 		int r= ((int) (e.y/_ah*_rows)).clamp(0,_rows-1);
 		int c= ((int) (e.x/_aw*_cols)).clamp(0,_cols-1);
 		cursor_moved(r,c); //signal connected to controller
-		return false;
+		return true;
 	}
 
 	private bool leave_grid(Gdk.EventCrossing e)
 	{
-		cursor_moved(-1,-1);
-		return false;
+		if (e.x<0||e.y<0) //ignore false leave events that sometimes occur for unknown reason
+		{
+			cursor_moved(-1,-1);
+		}
+		return true;
 	}
 //=========================================================================
 
