@@ -1,5 +1,6 @@
 /* Resource handling functions for Gnonograms
  * Copyright (C) 2010-2011  Jeremy Wootten
+ * based on the LGPL work of the Yorba Foundation 2009
  *
 	This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
