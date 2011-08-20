@@ -53,6 +53,11 @@ public struct Cell {
 			}
 		}
 
+		public bool same_coords(Cell c)
+		{
+			return (this.row==c.row && this.col==c.col);
+		}
+
 		public void copy(Cell b) {
 			this.row=b.row;
 			this.col=b.col;
@@ -68,6 +73,11 @@ public struct Cell {
 
 
 	}
+
+public struct Move {
+	public Cell previous;
+	public Cell replacement;
+}
 
 public enum ButtonPress {
 	LEFT_SINGLE,

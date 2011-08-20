@@ -92,8 +92,8 @@ public class Gnonogram_LabelBox : Frame {
 //======================================================================
 	public void change_font_height(bool increase)
 	{
-		if (increase) _fontheight+=0.5;
-		else _fontheight-=0.5;
+		if (increase) _fontheight+=1.0;
+		else _fontheight-=1.0;
 		set_attribs(_fontheight);
 		for (int i=0; i<_size;i++) update_label(i,get_label_text(i));
 	}
@@ -142,8 +142,8 @@ public class Gnonogram_LabelBox : Frame {
 //======================================================================
 	private void set_default_fontheight(int size, int other_size)
 	{
-		if(_is_column)_fontheight=Resource.FONTBASESIZE-(double)other_size*Resource.FONTSCALEFACTOR;
-		else _fontheight=Resource.FONTBASESIZE-(double)size*Resource.FONTSCALEFACTOR;
+		if(_is_column)_fontheight=Resource.FONTBASESIZE-(double)(other_size-15)*Resource.FONTSCALEFACTOR;
+		else _fontheight=Resource.FONTBASESIZE-(double)(size-15)*Resource.FONTSCALEFACTOR;
 		_fontheight=_fontheight.clamp(Resource.MINFONTSIZE, Resource.MAXFONTSIZE);
 	}
 //======================================================================

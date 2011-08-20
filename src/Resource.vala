@@ -63,12 +63,13 @@ namespace Resource
 	public static int MAXCOLSIZE = 100; //max number of cols
 	public static int MAXGRADE = 10; //max grade level
 	public static int MAXTRIES = 30; //max attempts to generate solvable game
+	public static int MAXUNDO = 100; //max moves that can be undone
 
 //Appearance related parameters
-	public static double FONTBASESIZE=23.0;
-	public static double FONTSCALEFACTOR=0.4;
+	public static double FONTBASESIZE=24;
+	public static double FONTSCALEFACTOR=0.6;
 	public static double MINFONTSIZE=6.0;
-	public static double MAXFONTSIZE=16.0;
+	public static double MAXFONTSIZE=48.0;
 	public static string font_desc;
 	public static double CELLOFFSET_NOGRID=0.0;
 	public static double CELLOFFSET_WITHGRID=2.0;

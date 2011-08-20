@@ -19,7 +19,7 @@
  * 	Jeremy Wootten <jeremwootten@gmail.com>
  */
 
- using Gtk;
+using Gtk;
 using Gdk;
 using Cairo;
 
@@ -112,8 +112,6 @@ public class Gnonogram_CellGrid : DrawingArea
 				cr_color=style.bg[Gtk.StateType.NORMAL];
 				break;
 		}
-//		if (cs==CellState.UNKNOWN)	cr_color=style.bg[Gtk.StateType.NORMAL];
-//		else cr_color=Resource.colors[gs,cs];
 
 		Gdk.cairo_set_source_color(_cr, cr_color);
 		draw_cell_body(_cr, x,y, highlight, error);
@@ -121,6 +119,7 @@ public class Gnonogram_CellGrid : DrawingArea
 //=========================================================================
 	private void draw_cell_body(Cairo.Context _cr, double x, double y, bool highlight=false, bool error=false)
 	{
+		_cr.set_line_width(0.5);
 		_cr.rectangle(x, y, _cell_body_width, _cell_body_height);
 		_cr.fill();
 
@@ -133,10 +132,9 @@ public class Gnonogram_CellGrid : DrawingArea
 		}
 		else if (highlight)
 		{
-			_cr.set_line_width(1.0);
+			_cr.set_line_width(2.0);
 			Gdk.cairo_set_source_color(_cr, style.bg[ Gtk.StateType.SELECTED]);
-			_cr.set_line_width(1.0);
-			_cr.rectangle(x+1, y+1, _cell_body_width-2, _cell_body_height-2);
+			_cr.rectangle(x+1.5, y+1.5, _cell_body_width-3, _cell_body_height-3);
 			_cr.stroke();
 		}
 	}

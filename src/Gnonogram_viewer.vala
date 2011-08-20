@@ -47,16 +47,23 @@ public class Gnonogram_view : Gtk.Window
 //	public signal void debugmode(bool debug);
 	public signal void advancedmode(bool advanced);
 	public signal void difficultmode(bool difficult);
+	public signal void undoredo(bool direction);
+	public signal void editgame();
 
 	private Gnonogram_controller _controller;
 	private Gtk.SpinButton _grade_spin;
 	private Gtk.ToggleToolButton _hide_tool;
 	private Gtk.ToolButton _check_tool;
+	private Gtk.ToolButton _undo_tool;
+	private Gtk.ToolButton _redo_tool;
+	private Gtk.ToolButton _restart_tool;
 	public Gtk.Toolbar _toolbar;
 	private Gtk.CheckMenuItem _gridmenuitem;
 	private Gtk.MenuItem _checkerrorsmenuitem;
 	private Gtk.MenuItem _showsolutionmenuitem;
 	private Gtk.MenuItem _showworkingmenuitem;
+	private Gtk.MenuItem _undomenuitem;
+	private Gtk.MenuItem _redomenuitem;
 	private Gtk.MenuItem grademenuitem;
 	private Label _name_label;
 	private Label _author_label;
@@ -111,7 +118,9 @@ public class Gnonogram_view : Gtk.Window
 
 		add(vbox);
 
-//		this.configure_event.connect(window_config_change);
+		this.title = _("Gnonograms");
+		this.position = WindowPosition.CENTER;
+		this.resizable=false;
 	}
 //======================================================================
 	private MenuBar create_viewer_menubar()
@@ -160,6 +169,12 @@ public class Gnonogram_view : Gtk.Window
 
 		var gamesubmenu=new Menu();
 		gamemenuitem.set_submenu(gamesubmenu);
+			_undomenuitem=new MenuItem.with_mnemonic(_("_Undo"));
+			_undomenuitem.sensitive=false;
+			gamesubmenu.add(_undomenuitem);
+			_redomenuitem=new MenuItem.with_mnemonic(_("_Redo"));
+			_redomenuitem.sensitive=false;
+			gamesubmenu.add(_redomenuitem);
 			_showsolutionmenuitem=new MenuItem.with_mnemonic(_("_Show solution"));
 			gamesubmenu.add(_showsolutionmenuitem);
 			_showworkingmenuitem=new MenuItem.with_mnemonic(_("Show _Working"));
@@ -175,9 +190,8 @@ public class Gnonogram_view : Gtk.Window
 			var computergeneratemenuitem=new MenuItem.with_mnemonic(_("_Computer generated puzzle"));
 			gamesubmenu.add(computergeneratemenuitem);
 			gamesubmenu.add(new SeparatorMenuItem());
-			var infomenuitem=new MenuItem.with_mnemonic(_("_Edit game description"));
+			var infomenuitem=new MenuItem.with_mnemonic(_("_Edit game"));
 			gamesubmenu.add(infomenuitem);
-
 
 		var settingssubmenu=new Menu();
 		settingsmenuitem.set_submenu(settingssubmenu);
@@ -225,6 +239,8 @@ public class Gnonogram_view : Gtk.Window
 		savepositionmenuitem.activate.connect(()=>{saveposition();});
 		quitmenuitem.activate.connect(()=>{quitgamesignal();});
 
+		_undomenuitem.activate.connect(()=>{undoredo(true);});
+		_redomenuitem.activate.connect(()=>{undoredo(false);});
 		_showsolutionmenuitem.activate.connect(()=>{revealgame();});
 		_showworkingmenuitem.activate.connect(()=>{hidegame();});
 		_checkerrorsmenuitem.activate.connect(()=>{checkerrors();});
@@ -236,7 +252,8 @@ public class Gnonogram_view : Gtk.Window
 		fontmenuitem.activate.connect(()=>{setfont();});
 		resizemenuitem.activate.connect(()=>{resizegame();});
 		grademenuitem.activate.connect(getdifficulty);
-		infomenuitem.activate.connect(editdescription);
+		infomenuitem.activate.connect(()=>{editgame();});
+
 //		debugmenuitem.activate.connect(()=>{debugmode(debugmenuitem.active);});
 		advancedmenuitem.activate.connect(()=>{advancedmode(advancedmenuitem.active);});
 		difficultmenuitem.activate.connect(()=>{difficultmode(difficultmenuitem.active);});
@@ -272,6 +289,19 @@ public class Gnonogram_view : Gtk.Window
 
 		_toolbar.add(new SeparatorToolItem());
 
+		_undo_tool=new ToolButton.from_stock(Gtk.STOCK_UNDO);
+		_undo_tool.set_tooltip_text(_("Undo last move"));
+		_toolbar.add(_undo_tool);
+
+		_redo_tool=new ToolButton.from_stock(Gtk.STOCK_REDO);
+		_redo_tool.set_tooltip_text(_("Redo last undone move"));
+		_toolbar.add(_redo_tool);
+//		var restart_tool=new ToolButton.from_stock(Gtk.Stock.REFRESH);
+		_restart_tool=new ToolButton.from_stock(Gtk.STOCK_REFRESH);
+		_restart_tool.set_tooltip_text(_("Start this puzzle again"));
+		_toolbar.add(_restart_tool);
+		_toolbar.add(new SeparatorToolItem());
+
 //		_hide_tool=new ToggleToolButton.from_stock(Gtk.Stock.EXECUTE);
 		hide_icon=new Gtk.Image.from_pixbuf(Resource.get_icon(Resource.IconID.HIDE));
 		reveal_icon=new Gtk.Image.from_pixbuf(Resource.get_icon(Resource.IconID.REVEAL));
@@ -279,24 +309,15 @@ public class Gnonogram_view : Gtk.Window
 		_hide_tool.set_label("Hide/Reveal");
 		_hide_tool.set_icon_widget(hide_icon);
 		_hide_tool.set_tooltip_text(_("Hide the solution and start solving"));
-		_hide_tool.active=false;
+//		_hide_tool.active=false;
 		_toolbar.add(_hide_tool);
 
-//		var peek_icon=new Gtk.Image.from_file(Resource.icon_dir+"/eyeballs.png");
 		var peek_icon=new Gtk.Image.from_pixbuf(Resource.get_icon(Resource.IconID.PEEK));
 		_check_tool=new ToolButton(peek_icon,_("Check"));
 		_check_tool.set_tooltip_text(_("Show any incorrect cells"));
 		_toolbar.add(_check_tool);
 
-//		var restart_tool=new ToolButton.from_stock(Gtk.Stock.REFRESH);
-		var restart_tool=new ToolButton.from_stock(Gtk.STOCK_REFRESH);
-		restart_tool.set_tooltip_text(_("Start this puzzle again"));
-		_toolbar.add(restart_tool);
-
-//		var solve_icon=new  Gtk.Image.from_file(Resource.icon_dir+"/laptop.png");
-
 		var solve_icon=new Gtk.Image.from_pixbuf(Resource.get_icon(Resource.IconID.SOLVE));
-
 		var solve_tool=new ToolButton(solve_icon,_("Solve"));
 		solve_tool.set_tooltip_text(_("Solve by computer"));
 		_toolbar.add(solve_tool);
@@ -308,13 +329,6 @@ public class Gnonogram_view : Gtk.Window
 		_toolbar.add(random_tool);
 
 		_toolbar.add(new SeparatorToolItem());
-
-		var grade_tool=new ToolItem();
-		_grade_spin=new SpinButton.with_range(1,Resource.MAXGRADE,1);
-		_grade_spin.set_tooltip_text(_("Set the difficulty of generated games"));
-		_grade_spin.set_can_focus(false);
-		grade_tool.add(_grade_spin);
-		_toolbar.add(grade_tool);
 
 		var resize_icon=new Gtk.Image.from_pixbuf(Resource.get_icon(Resource.IconID.RESIZE));
 		var resize_tool=new ToolButton(resize_icon,_("Resize"));
@@ -331,13 +345,22 @@ public class Gnonogram_view : Gtk.Window
 		zoom_out_tool.set_tooltip_text(_("Decrease font size"));
 		_toolbar.add(zoom_out_tool);
 
+		var grade_tool=new ToolItem();
+		_grade_spin=new SpinButton.with_range(1,Resource.MAXGRADE,1);
+		_grade_spin.set_tooltip_text(_("Set the difficulty of generated games"));
+		_grade_spin.set_can_focus(false);
+		grade_tool.add(_grade_spin);
+		_toolbar.add(grade_tool);
 
 		new_tool.clicked.connect(()=>{newgame();});
 		save_as_tool.clicked.connect(()=>{savegame();});
+		_undo_tool.clicked.connect(()=>{undoredo(true);});
+		_redo_tool.clicked.connect(()=>{undoredo(false);});
 		load_tool.clicked.connect(()=>{loadgame("");});
+
 		_hide_tool.toggled.connect(toggle_execute);
 		_check_tool.clicked.connect(()=>{checkerrors();});
-		restart_tool.clicked.connect(()=>{restartgame();});
+		_restart_tool.clicked.connect(()=>{this.restart_game();restartgame();});
 		solve_tool.clicked.connect(()=>{solvegame();});
 		random_tool.clicked.connect(()=>{randomgame();});
 		_grade_spin.value_changed.connect((sb)=>{setdifficulty(sb.get_value());});
@@ -348,6 +371,7 @@ public class Gnonogram_view : Gtk.Window
 			return true;
 			}
 		);
+
 		resize_tool.clicked.connect(()=>{resizegame();});
 		zoom_in_tool.clicked.connect(()=>{changefont(true);});
 		zoom_out_tool.clicked.connect(()=>{changefont(false);});
@@ -415,54 +439,56 @@ public class Gnonogram_view : Gtk.Window
 		}
 	}
 //======================================================================
-	private void editdescription()
-	{
-		var dialog = new Gtk.Dialog.with_buttons (
-		null,
-		null,
-		Gtk.DialogFlags.MODAL|Gtk.DialogFlags.DESTROY_WITH_PARENT,
-		_("Ok"), Gtk.ResponseType.OK,
-		_("Cancel"), Gtk.ResponseType.CANCEL
-		);
+//	replaced by Game_Editor class
+//	private void editdescription()
+//	{
+//		var dialog = new Gtk.Dialog.with_buttons (
+//		null,
+//		null,
+//		Gtk.DialogFlags.MODAL|Gtk.DialogFlags.DESTROY_WITH_PARENT,
+//		_("Ok"), Gtk.ResponseType.OK,
+//		_("Cancel"), Gtk.ResponseType.CANCEL
+//		);
 
-		var name_label=new Gtk.Label(_("Name of puzzle"));
-		var author_label=new Gtk.Label(_("Designed by"));
-		var date_label=new Gtk.Label(_("Date designed"));
+//		var name_label=new Gtk.Label(_("Name of puzzle"));
+//		var author_label=new Gtk.Label(_("Designed by"));
+//		var date_label=new Gtk.Label(_("Date designed"));
 
-		var label_box=new VBox(false,5);
-		label_box.add(name_label);
-		label_box.add(author_label);
-		label_box.add(date_label);
+//		var label_box=new VBox(false,5);
+//		label_box.add(name_label);
+//		label_box.add(author_label);
+//		label_box.add(date_label);
 
-		var name_entry = new Gtk.Entry();
-		name_entry.set_max_length(32);
-		name_entry.set_text(get_name());
-		var author_entry = new Gtk.Entry();
-		author_entry.set_max_length(32);
-		author_entry.set_text(get_author());
-		var date_entry = new Gtk.Entry();
-		date_entry.set_max_length(16);
-		date_entry.set_text(get_date());
+//		var name_entry = new Gtk.Entry();
+//		name_entry.set_max_length(32);
+//		name_entry.set_text(get_name());
+//		var author_entry = new Gtk.Entry();
+//		author_entry.set_max_length(32);
+//		author_entry.set_text(get_author());
+//		var date_entry = new Gtk.Entry();
+//		date_entry.set_max_length(16);
+//		date_entry.set_text(get_date());
 
-		var entry_box=new VBox(false,5);
-		entry_box.add(name_entry);
-		entry_box.add(author_entry);
-		entry_box.add(date_entry);
+//		var entry_box=new VBox(false,5);
+//		entry_box.add(name_entry);
+//		entry_box.add(author_entry);
+//		entry_box.add(date_entry);
 
-		var hbox=new HBox(false,5);
-		hbox.add(label_box);
-		hbox.add(entry_box);
+//		var hbox=new HBox(false,5);
+//		hbox.add(label_box);
+//		hbox.add(entry_box);
 
-		dialog.vbox.add(hbox);
-		dialog.show_all();
-		if (dialog.run()==ResponseType.OK)
-		{
-			set_name(name_entry.get_text());
-			set_author(author_entry.get_text());
-			set_date(date_entry.get_text());
-		}
-		dialog.destroy();
-	}
+//		dialog.vbox.add(hbox);
+//		dialog.show_all();
+//		if (dialog.run()==ResponseType.OK)
+//		{
+//			set_name(name_entry.get_text());
+//			set_author(author_entry.get_text());
+//			set_date(date_entry.get_text());
+//		}
+//		dialog.destroy();
+//	}
+
 //======================================================================
 	public void set_name(string name){_name_label.set_text(_("Name:")+" "+name+"  ");}
 	public string get_name(){return get_info_item(_name_label);	}
@@ -509,10 +535,12 @@ public class Gnonogram_view : Gtk.Window
 //======================================================================
 	public void state_has_changed(GameState gs)
 	{ //stdout.printf("Viewer state changed\n");
-		_check_tool.sensitive=(gs==GameState.SOLVING);
-		_checkerrorsmenuitem.sensitive=_check_tool.sensitive;
-		_showsolutionmenuitem.sensitive=_check_tool.sensitive;
-		_showworkingmenuitem.sensitive=!_check_tool.sensitive;
+		bool solving=(gs==GameState.SOLVING);
+		//_check_tool.sensitive=solving;
+		//_checkerrorsmenuitem.sensitive=solving;
+		_showsolutionmenuitem.sensitive=solving;
+		_showworkingmenuitem.sensitive=!solving;
+		_restart_tool.sensitive=solving;
 
 		if (gs==GameState.SETTING)
 		{
@@ -521,7 +549,10 @@ public class Gnonogram_view : Gtk.Window
 			_hide_tool.show_all();
 			_hide_tool.set_active(false);
 			_gridmenuitem.set_active(false);
-		}else
+			set_undo_sensitive(false);
+			set_redo_sensitive(false);
+		}
+		else
 		{
 			_hide_tool.set_tooltip_text(_("Reveal the solution"));
 			_hide_tool.set_icon_widget(reveal_icon);
@@ -530,5 +561,23 @@ public class Gnonogram_view : Gtk.Window
 			_gridmenuitem.set_active(true);
 		}
 	}
-
+//======================================================================
+	public void set_undo_sensitive(bool sensitive)
+	{
+		_undomenuitem.sensitive=sensitive;
+		_undo_tool.sensitive=sensitive;
+		_check_tool.sensitive=sensitive;
+		_checkerrorsmenuitem.sensitive=sensitive;
+	}
+	public void set_redo_sensitive(bool sensitive)
+	{
+		_redomenuitem.sensitive=sensitive;
+		_redo_tool.sensitive=sensitive;
+	}
+//======================================================================
+	private void restart_game()
+	{
+		set_undo_sensitive(false);
+		set_redo_sensitive(false);
+	}
 }

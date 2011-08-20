@@ -188,6 +188,7 @@ namespace Utils
 		string[] result = {};
 		for (int i=0; i<sa.length; i++)
 		{
+			if (sa[i]==null) continue;
 			string s=sa[i].strip();
 			if (s=="") continue;
 			result+=s;
@@ -393,11 +394,29 @@ namespace Utils
 	//*****************************************************************************
 	public int[] block_array_from_clue(string s)
 	{
+		//stdout.printf(@"Block array from clue $s \n");
+
 		string[] clues=remove_blank_lines(s.split_set(", "));
+
+		if(clues.length==0) clues={"0"};
 		int[] blocks=new int[clues.length];
+
 //		for (int i=0;i<clues.length;i++) blocks[i]=int.parse(clues[i]);
 		for (int i=0;i<clues.length;i++) blocks[i]=clues[i].to_int();
+
 		return blocks;
+	}
+
+	public string clue_from_block_array(int[] b)
+	{
+		StringBuilder sb=new StringBuilder("");
+		foreach(int block in b)
+		{
+			sb.append(block.to_string());
+			sb.append(Resource.BLOCKSEPARATOR);
+		}
+		sb.truncate(sb.len -1);
+		return sb.str;
 	}
 
 	public int blockextent_from_clue(string s)

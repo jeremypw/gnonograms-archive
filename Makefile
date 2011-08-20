@@ -45,6 +45,8 @@ LOCAL_LANG_DIR=locale
 SYSTEM_LANG_DIR=$(DESTDIR)$(PREFIX)/share/locale
 
 SRC_FILES = \
+	Circular_buffer.vala \
+	Game_editor.vala \
 	Config.vala \
 	Gnonogram_cellgrid.vala \
 	Gnonogram_controller.vala \
