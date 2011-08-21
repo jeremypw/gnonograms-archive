@@ -61,7 +61,7 @@
 	private bool _debug;
 	public string message;
 
-	private const int MAXCYCLES=15;
+	private const int MAXCYCLES=100;
 	private const int FORWARDS=1;
 	private const int BACKWARDS=-1;
 //

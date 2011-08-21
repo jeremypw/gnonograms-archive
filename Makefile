@@ -20,7 +20,7 @@
 # * 	Jeremy Wootten <jeremwootten@gmail.com>
 PROGRAM = gnonograms
 
-VERSION = 0.8.0
+VERSION = 0.9.0
 GETTEXT_PACKAGE = $(PROGRAM)
 BUILD_ROOT = 1
 

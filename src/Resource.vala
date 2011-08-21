@@ -43,6 +43,7 @@ namespace Resource
 	public const string DEFAULTGAMENAME = "New game";
 	public const string GAMEFILEEXTENSION=".gno";
 	public const string POSITIONFILENAME="currentposition";
+	//Built in icon filenames
 	public const string RANDOMICONFILENAME="dice.png";
 	public const string PEEKICONFILENAME="errorcheck.png";
 	public const string RESIZEICONFILENAME="resize.png";
@@ -50,6 +51,7 @@ namespace Resource
 	public const string HIDEICONFILENAME="eyes-open.png";
 	public const string REVEALICONFILENAME="eyes-closed.png";
 	public const string MISSINGICONFILENAME="";
+	//Icon theme names
 	public const string SOLVEICONTHEMENAME="computer";
 	public const string PEEKICONTHEMENAME="";
 	public const string RANDOMICONTHEMENAME="";
@@ -66,8 +68,8 @@ namespace Resource
 	public static int MAXUNDO = 100; //max moves that can be undone
 
 //Appearance related parameters
-	public static double FONTBASESIZE=24;
-	public static double FONTSCALEFACTOR=0.6;
+	public static double FONTBASESIZE=22;
+	public static double FONTSCALEFACTOR=0.8;
 	public static double MINFONTSIZE=6.0;
 	public static double MAXFONTSIZE=48.0;
 	public static string font_desc;
@@ -233,7 +235,7 @@ namespace Resource
 		}
 		catch (GLib.Error e)
 		{
-			stdout.printf("Failed to load theme icon %s\n",icon_name);
+			//stdout.printf("Failed to load theme icon %s\n",icon_name);
 		}
 		return icon;
 	}
@@ -247,7 +249,7 @@ namespace Resource
 		}
 		catch (GLib.Error e)
 		{
-			stdout.printf("Failed to load app icon %s\n",icon_filename);
+			//stdout.printf("Failed to load app icon %s\n",icon_filename);
 		}
 		return icon;
 	}

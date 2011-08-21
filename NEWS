@@ -1,3 +1,25 @@
+Gnonograms version 0.9.0
+************************
+New features:
+* Undo and redo last 100 moves
+* Game editor dialog -
+	Enter name, author, date
+	Enter row and column clues
+	Clues validated
+
+
+
+21/Aug/2012	Implemented undo-redo feature
+			Implemented game editor dialog
+			Small UI changes and bug fixes
+			Version increased to 0.9.0 to reflect new features
+
+14/Aug/2011	Small UI changes
+
+13/Aug/2011	More new icons
+			Removed non-GPL games and classified into folders by difficulty
+			Removed Mallard manual
+
 10/Jul/2011	Replaced some icons of unknown origin with own design SVG icons (CC)
 				Implemented icon theming infra-structure (but only default hicolor icons currently provided, apart from stock Gtk icons)
 

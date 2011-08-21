@@ -10,7 +10,7 @@
 
 	Put the tarball in a directory for which you have read/write and execute rights.
 
-	Extract the files from the tar.gz file - this creates a gnonograms-0.8.0 directory.
+	Extract the files from the tar.gz file - this creates a gnonograms-x.x.x directory.
 
 	Open a terminal in this directory
 
