@@ -218,13 +218,6 @@ cleantemps:
 	rm -f $(VALA_STAMP)
 	rm -f $(LANG_STAMP)
 
-debian: $(DIST_FILES)
-####################
-	mkdir -p $(PROGRAM)-$(VERSION)
-	cp --parents $(DIST_FILES) $(PROGRAM)-$(VERSION)
-	tar --gzip -cvf $(ORIG_TAR_GZ) $(PROGRAM)-$(VERSION)
-	cp --parents -r debian $(PROGRAM)-$(VERSION)
-
 
 dist: $(DIST_FILES)
 ###################

@@ -924,7 +924,8 @@ public class Gnonogram_controller
 	private int generate_difficult_game(int grade)
 	{
 		int tries=0, passes=1;
-		while (passes>0 && tries<=Resource.MAXTRIES)
+		//takes longer to generate a difficult game so try fewer times.
+		while (passes>0 && tries<=Resource.MAXTRIES/10)
 		{
 			tries++;
 			passes=generate_game(grade);
