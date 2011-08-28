@@ -97,8 +97,11 @@ do
         --define)           variables="${variables}USER_VALAFLAGS+=--define=$value\n"
                             ;;
 
-		  --novala)				 variables="${variables}NO_VALA=1\n"
-									 ;;
+		--novala)			variables="${variables}NO_VALA=1\n"
+							;;
+
+		--nogconf)			variables="${variables}NO_GCONF=1\n"
+							;;
 
         --disable-desktop-update)         variables="${variables}DISABLE_DESKTOP_UPDATE=1\n"
                                           ;;

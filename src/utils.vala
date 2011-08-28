@@ -52,9 +52,9 @@ namespace Utils
 		return fn;
 	}
 //**********************************************************************
-	public static string get_filename(FileChooserAction action, string dialogname, string[] filternames, string[] filters, string? start_path=null)
+	public static string get_filename(FileChooserAction action, string dialogname, string[]? filternames, string[]? filters, string? start_path=null)
 	{
-		assert(filternames.length==filters.length);
+		if (filternames!=null) assert(filternames.length==filters.length);
 		string button="Error";
 		switch (action)
 		{
@@ -66,6 +66,10 @@ namespace Utils
 			case FileChooserAction.SAVE:
 //				button=Gtk.Stock.SAVE;
 				button=Gtk.STOCK_SAVE;
+				break;
+			case FileChooserAction.SELECT_FOLDER:
+//				button=Gtk.Stock.APPLY;
+				button=Gtk.STOCK_APPLY;
 				break;
 			default :
 				break;
@@ -79,37 +83,38 @@ namespace Utils
 			button, Gtk.ResponseType.ACCEPT,
 			null);
 
-		for (int i=0; i<filternames.length; i++)
+		if (filternames!=null)
 		{
-			var fc=new Gtk.FileFilter();
-			fc.set_name(filternames[i]);
-			fc.add_pattern(filters[i]);
-			dialog.add_filter(fc);
+			for (int i=0; i<filternames.length; i++)
+			{
+				var fc=new Gtk.FileFilter();
+				fc.set_name(filternames[i]);
+				fc.add_pattern(filters[i]);
+				dialog.add_filter(fc);
+			}
 		}
-
-		string temp_working_dir=null;
 
 		if (start_path!=null)
 		{
 			var start=File.new_for_path(start_path);
 			if (start.query_file_type(FileQueryInfoFlags.NONE,null)==FileType.DIRECTORY)
 			{
-				temp_working_dir=Environment.get_current_dir();
 				Environment.set_current_dir(start_path);
 			}
 		}
 
 		var response = dialog.run();
 		string fn="";
-		if (response!=ResponseType.CANCEL){
+		stdout.printf(@"Utils get filename.  response $(response)\n");
+		string current_folder=dialog.get_current_folder();
+		stdout.printf(@"Utils get filename current folder $(current_folder)\n");
+
+		if (response==ResponseType.ACCEPT){
 			fn=dialog.get_filename();
 		}
+		stdout.printf("Utils get filename.  Selected %s\n",fn);
 		dialog.destroy();
 
-		if (temp_working_dir!=null) {
-			temp_working_dir=Environment.get_current_dir();
-			Environment.set_current_dir(temp_working_dir);
-		}
 		return fn;
 	}
 	//*****************************************************************************
@@ -155,7 +160,8 @@ namespace Utils
 	}
 	//*****************************************************************************
 	public static  int show_dlg(string msg, Gtk.MessageType type, Gtk.ButtonsType buttons)
-	{
+	{stdout.printf("Show dlg\n");
+
 		var dialog=new Gtk.MessageDialog(
 			null,
 			Gtk.DialogFlags.MODAL,
@@ -163,9 +169,11 @@ namespace Utils
 			buttons,
 			"%s",msg);
 
+		stdout.printf("Created dlg\n");
 		int response=dialog.run();
 		dialog.destroy();
 		return response;
+
 	}
 	//*****************************************************************************
 	public static void show_info_dialog(string msg)
@@ -176,6 +184,11 @@ namespace Utils
 	public static void show_warning_dialog(string msg)
 	{
 		show_dlg(msg,Gtk.MessageType.WARNING,Gtk.ButtonsType.CLOSE);
+	}
+	//***************************************************************************
+	public static void show_error_dialog(string msg)
+	{
+		show_dlg(msg,Gtk.MessageType.ERROR,Gtk.ButtonsType.CLOSE);
 	}
 	//*****************************************************************************
 	public static bool show_confirm_dialog(string msg)

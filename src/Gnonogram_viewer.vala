@@ -47,6 +47,7 @@ public class Gnonogram_view : Gtk.Window
 //	public signal void debugmode(bool debug);
 	public signal void advancedmode(bool advanced);
 	public signal void difficultmode(bool difficult);
+	public signal void resetall();
 	public signal void undoredo(bool direction);
 	public signal void editgame();
 
@@ -57,6 +58,7 @@ public class Gnonogram_view : Gtk.Window
 	private Gtk.ToolButton _undo_tool;
 	private Gtk.ToolButton _redo_tool;
 	private Gtk.ToolButton _restart_tool;
+	private Gtk.ToolButton _resize_tool;
 	public Gtk.Toolbar _toolbar;
 	private Gtk.CheckMenuItem _gridmenuitem;
 	private Gtk.MenuItem _checkerrorsmenuitem;
@@ -64,7 +66,9 @@ public class Gnonogram_view : Gtk.Window
 	private Gtk.MenuItem _showworkingmenuitem;
 	private Gtk.MenuItem _undomenuitem;
 	private Gtk.MenuItem _redomenuitem;
-	private Gtk.MenuItem grademenuitem;
+	private Gtk.MenuItem _grademenuitem;
+	private Gtk.MenuItem _resizemenuitem;
+	private Gtk.MenuItem _defaultsmenuitem;
 	private Label _name_label;
 	private Label _author_label;
 	private Label _date_label;
@@ -199,10 +203,19 @@ public class Gnonogram_view : Gtk.Window
 			settingssubmenu.add(colormenuitem);
 			var fontmenuitem=new MenuItem.with_mnemonic(_("_Font ..."));
 			settingssubmenu.add(fontmenuitem);
-			var resizemenuitem=new MenuItem.with_mnemonic(_("_Resize ..."));
-			settingssubmenu.add(resizemenuitem);
-			grademenuitem=new MenuItem.with_mnemonic(_("_Difficulty ..."));
-			settingssubmenu.add(grademenuitem);
+			_resizemenuitem=new MenuItem.with_mnemonic(_("_Resize ..."));
+			settingssubmenu.add(_resizemenuitem);
+			_grademenuitem=new MenuItem.with_mnemonic(_("_Difficulty ..."));
+			settingssubmenu.add(_grademenuitem);
+			var gamedirmenuitem=new MenuItem.with_mnemonic(_("_Puzzle folder"));
+			settingssubmenu.add(gamedirmenuitem);
+			var gamesdirsubmenu=new Menu();
+				var defaultgamedirmenuitem=new MenuItem.with_mnemonic(_("Default"));
+				var customgamedirmenuitem=new MenuItem.with_mnemonic(_("Custom ..."));
+				gamesdirsubmenu.add(defaultgamedirmenuitem);
+				gamesdirsubmenu.add(customgamedirmenuitem);
+			gamedirmenuitem.set_submenu(gamesdirsubmenu);
+
 			settingssubmenu.add(new SeparatorMenuItem());
 //			var debugmenuitem=new CheckMenuItem.with_mnemonic("D_ebug");
 //			debugmenuitem.set_active(false);
@@ -214,6 +227,11 @@ public class Gnonogram_view : Gtk.Window
 			var difficultmenuitem=new CheckMenuItem.with_mnemonic(_("_Generate difficult games"));
 			difficultmenuitem.set_active(false);
 			settingssubmenu.add(difficultmenuitem);
+
+			settingssubmenu.add(new SeparatorMenuItem());
+
+			_defaultsmenuitem=new MenuItem.with_mnemonic("_Reset all to default");
+			settingssubmenu.add(_defaultsmenuitem);
 
 		var viewsubmenu=new Menu();
 		viewmenuitem.set_submenu(viewsubmenu);
@@ -250,13 +268,16 @@ public class Gnonogram_view : Gtk.Window
 
 		colormenuitem.activate.connect(()=>{setcolors();});
 		fontmenuitem.activate.connect(()=>{setfont();});
-		resizemenuitem.activate.connect(()=>{resizegame();});
-		grademenuitem.activate.connect(getdifficulty);
+		_resizemenuitem.activate.connect(()=>{resizegame();});
+		_grademenuitem.activate.connect(set_difficulty);
+		customgamedirmenuitem.activate.connect(Resource.set_custom_game_dir);
+		defaultgamedirmenuitem.activate.connect(Resource.set_default_game_dir);
 		infomenuitem.activate.connect(()=>{editgame();});
 
 //		debugmenuitem.activate.connect(()=>{debugmode(debugmenuitem.active);});
 		advancedmenuitem.activate.connect(()=>{advancedmode(advancedmenuitem.active);});
 		difficultmenuitem.activate.connect(()=>{difficultmode(difficultmenuitem.active);});
+		_defaultsmenuitem.activate.connect(()=>{advancedmenuitem.set_active(true); difficultmenuitem.set_active(false);resetall();});
 
 		toolbarmenuitem.activate.connect(toggle_toolbar);
 		_gridmenuitem.activate.connect(()=>{togglegrid(_gridmenuitem.active);});
@@ -331,9 +352,9 @@ public class Gnonogram_view : Gtk.Window
 		_toolbar.add(new SeparatorToolItem());
 
 		var resize_icon=new Gtk.Image.from_pixbuf(Resource.get_icon(Resource.IconID.RESIZE));
-		var resize_tool=new ToolButton(resize_icon,_("Resize"));
-		resize_tool.set_tooltip_text(_("Change dimensions of the game grid"));
-		_toolbar.add(resize_tool);
+		_resize_tool=new ToolButton(resize_icon,_("Resize"));
+		_resize_tool.set_tooltip_text(_("Change dimensions of the game grid"));
+		_toolbar.add(_resize_tool);
 
 //		var zoom_in_tool=new ToolButton.from_stock(Gtk.Stock.ZOOM_IN);
 		var zoom_in_tool=new ToolButton.from_stock(Gtk.STOCK_ZOOM_IN);
@@ -366,13 +387,13 @@ public class Gnonogram_view : Gtk.Window
 		_grade_spin.value_changed.connect((sb)=>{setdifficulty(sb.get_value());});
 		grade_tool.create_menu_proxy.connect(()=>{
 			var grademenuitem2=new MenuItem.with_mnemonic(_("_Difficulty"));
-			grademenuitem2.activate.connect(getdifficulty);
+			grademenuitem2.activate.connect(set_difficulty);
 			grade_tool.set_proxy_menu_item(_("Difficulty"), grademenuitem2);
 			return true;
 			}
 		);
 
-		resize_tool.clicked.connect(()=>{resizegame();});
+		_resize_tool.clicked.connect(()=>{resizegame();});
 		zoom_in_tool.clicked.connect(()=>{changefont(true);});
 		zoom_out_tool.clicked.connect(()=>{changefont(false);});
 
@@ -389,7 +410,7 @@ public class Gnonogram_view : Gtk.Window
 		_toolbar.visible=((Gtk.CheckMenuItem)cmi).active;
 	}
 //======================================================================
-	private void getdifficulty()
+	private void set_difficulty()
 	{
 		var win=new Gtk.Window(Gtk.WindowType.TOPLEVEL);
 		win.set_decorated(false);
@@ -551,6 +572,9 @@ public class Gnonogram_view : Gtk.Window
 			_gridmenuitem.set_active(false);
 			set_undo_sensitive(false);
 			set_redo_sensitive(false);
+			_defaultsmenuitem.sensitive=true;
+			_resizemenuitem.sensitive=true;
+			_resize_tool.sensitive=true;
 		}
 		else
 		{
@@ -559,6 +583,9 @@ public class Gnonogram_view : Gtk.Window
 			_hide_tool.show_all();
 			_hide_tool.set_active(true);
 			_gridmenuitem.set_active(true);
+			_defaultsmenuitem.sensitive=false;
+			_resizemenuitem.sensitive=false;
+			_resize_tool.sensitive=false;
 		}
 	}
 //======================================================================
@@ -580,4 +607,5 @@ public class Gnonogram_view : Gtk.Window
 		set_undo_sensitive(false);
 		set_redo_sensitive(false);
 	}
+
 }

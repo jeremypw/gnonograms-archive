@@ -31,7 +31,7 @@ INSTALL_DATA = install -m 644
 
 # defaults that may be overridden by configure.mk
 PREFIX=/usr
-#SCHEMA_FILE_DIR=/etc/gconf/schemas
+SCHEMA_FILE_DIR=/etc/gconf/schemas
 BUILD_RELEASE=1
 
 -include configure.mk
@@ -47,7 +47,6 @@ SYSTEM_LANG_DIR=$(DESTDIR)$(PREFIX)/share/locale
 SRC_FILES = \
 	Circular_buffer.vala \
 	Game_editor.vala \
-	Config.vala \
 	Gnonogram_cellgrid.vala \
 	Gnonogram_controller.vala \
 	Gnonogram_filereader.vala \
@@ -62,6 +61,13 @@ SRC_FILES = \
 	My2DCellArray.vala \
 	Resource.vala \
 	utils.vala
+
+ifndef NO_GCONF
+	SRC_FILES+= GConf_config.vala
+else
+	SRC_FILES+= Gnonogram_config.vala
+	SRC_FILES+= Gnonogram_conf_client.vala
+endif
 
 RESOURCE_FILES = \
 	icons/*.png \
@@ -99,8 +105,11 @@ EXT_PKGS = \
    gio-2.0 \
    glib-2.0 \
    pango \
-   cairo \
-   gconf-2.0 \
+   cairo
+
+ifndef NO_GCONF
+	EXT_PKGS+= gconf-2.0
+endif
 
 EXT_PKG_VERSIONS = \
    gtk+-2.0 >= 2.20.0 \
@@ -277,7 +286,7 @@ install:
 	mkdir -p $(DESTDIR)$(PREFIX)/share/icons/hicolor/48x48/apps
 	$(INSTALL_DATA) icons/gnonograms48.png $(DESTDIR)$(PREFIX)/share/icons/hicolor/48x48/apps/gnonograms.png
 
-	mkdir -p $(DESTDIR)$(PREFIX)/share/icons/hicolor/48x48/mimetypes
+	mkdir -p $(DESTDIR)$(PREFIX)/t	share/icons/hicolor/48x48/mimetypes
 	$(INSTALL_DATA) icons/gnonogram-puzzle.png $(DESTDIR)$(PREFIX)/share/icons/hicolor/48x48/mimetypes/application-x-gnonogram-puzzle.png
 
 	mkdir -p $(DESTDIR)$(PREFIX)/share/icons/hicolor/scalable/apps
@@ -299,6 +308,14 @@ ifndef DISABLE_DESKTOP_UPDATE
 	-update-desktop-database || :
 endif
 
+ifndef NO_GCONF
+ifndef DISABLE_SCHEMAS_INSTALL
+	GCONF_CONFIG_SOURCE=`gconftool-2 --get-default-source` gconftool-2 --makefile-install-rule misc/gnonograms.schemas
+else
+	mkdir -p $(DESTDIR)$(SCHEMA_FILE_DIR)
+	$(INSTALL_DATA) misc/gnonograms.schemas $(DESTDIR)$(SCHEMA_FILE_DIR)
+endif
+endif
 
 uninstall:
 ##########
@@ -319,6 +336,14 @@ uninstall:
 ifndef DISABLE_DESKTOP_UPDATE
 	update-mime-database $(DESTDIR)$(PREFIX)/share/mime || :
 	update-desktop-database || :
+endif
+
+ifndef NO_GCONF
+ifndef DISABLE_SCHEMAS_INSTALL
+	GCONF_CONFIG_SOURCE=`gconftool-2 --get-default-source` gconftool-2 --makefile-uninstall-rule misc/gnonograms.schemas
+else
+	rmdir -f $(DESTDIR)$(SCHEMA_FILE_DIR)/gnonograms.schemas
+endif
 endif
 
 	$(foreach lang,$(SUPPORTED_LANGUAGES),`rm -f $(SYSTEM_LANG_DIR)/$(lang)/LC_MESSAGES/gnonograms.mo`)

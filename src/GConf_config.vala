@@ -22,10 +22,16 @@
 
 
 public class Config {
-	private const string PATHS_CONF="/apps/gnonogram/preferences/paths/";
-	private const string UI_CONF="/apps/gnonogram/preferences/ui/";
+	private const string PATHS_CONF="/apps/gnonograms/preferences/paths/";
+	private const string UI_CONF="/apps/gnonograms/preferences/ui/";
 	private static Config instance=null;
 	private GConf.Client client;
+
+	public static Config get_instance() {
+		if (instance==null) instance=new Config();
+		assert(instance!=null);
+		return instance;
+	}
 
 	private Config() {
 		assert(instance==null);
@@ -39,10 +45,7 @@ public class Config {
     private void report_set_error(string path, Error err) {
         Utils.show_warning_dialog(_("Unable to set GConf value")+@" $path: $(err.message)");
     }
-	public static Config get_instance() {
-		if (instance==null) instance=new Config();
-		return instance;
-	}
+
 
 /**	private bool get_bool(string path, bool def) {
        try {
@@ -151,7 +154,7 @@ public class Config {
 
 	public double get_difficulty()
 	{
-		return (double)get_int(UI_CONF+"difficulty",5);
+		return (double)get_int(UI_CONF+"difficulty",Resource.DEFAULT_DIFFICULTY);
 	}
 
 	public void set_difficulty(double difficulty) {
@@ -166,8 +169,8 @@ public class Config {
 
 	public void get_dimensions(out int r, out int c)
 	{
-		r=get_int(UI_CONF+"rows",10);
-		c=get_int(UI_CONF+"cols",10);
+		r=get_int(UI_CONF+"rows",Resource.DEFAULT_ROWS);
+		c=get_int(UI_CONF+"cols",Resource.DEFAULT_COLS);
 	}
 
 	public void set_colors()

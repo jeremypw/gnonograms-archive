@@ -1,3 +1,10 @@
+28/Aug/2011	Infra-structure for optional alternative conventional config file instead of GConf
+			Menu items for default settings
+			Clear buttons on color selection dialog
+			Last used puzzle directory now persists
+			GConf schema files installed/uninstalled by make file (unless NO_GCONF or DISABLE_SCHEMAS_INSTALL option)
+
+
 Gnonograms version 0.9.0
 ************************
 New features:
@@ -9,7 +16,7 @@ New features:
 
 
 
-21/Aug/2012	Implemented undo-redo feature
+21/Aug/2011	Implemented undo-redo feature
 			Implemented game editor dialog
 			Small UI changes and bug fixes
 			Version increased to 0.9.0 to reflect new features

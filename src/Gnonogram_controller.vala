@@ -118,7 +118,7 @@ public class Gnonogram_controller
 		_gnonogram_view.editgame.connect(this.edit_game);
 
 		_gnonogram_view.setcolors.connect(()=>{Resource.set_colors(); redraw_all();});
-		_gnonogram_view.setfont.connect(()=>{Resource.set_font(); _rowbox.change_font_height(false);_colbox.change_font_height(false);});
+		_gnonogram_view.setfont.connect(()=>{Resource.set_custom_font(); _rowbox.change_font_height(false);_colbox.change_font_height(false);});
 		_gnonogram_view.resizegame.connect(this.change_size);
 		_gnonogram_view.key_press_event.connect(this.key_pressed);
 		_gnonogram_view.key_release_event.connect(this.key_released);
@@ -128,6 +128,7 @@ public class Gnonogram_controller
 //		_gnonogram_view.debugmode.connect((debug)=>{_debug=debug;});
 		_gnonogram_view.advancedmode.connect((advanced)=>{_advanced=advanced;});
 		_gnonogram_view.difficultmode.connect((difficult)=>{_difficult=difficult;});
+		_gnonogram_view.resetall.connect(this.reset_all_to_default);
 		_gnonogram_view.set_grade_spin_value((double)_grade);
 
 		_cellgrid.cursor_moved.connect(this.grid_cursor_moved);
@@ -160,6 +161,15 @@ public class Gnonogram_controller
 		_history.initialise_pointers();
 	}
 //======================================================================
+	private void reset_all_to_default()
+	{
+		Resource.reset_all();
+		resize(10,10);
+		_gnonogram_view.set_grade_spin_value((double)Resource.DEFAULT_DIFFICULTY);
+
+	}
+//======================================================================
+
 	private void change_size()
 	{
 		int r,c;
@@ -585,8 +595,9 @@ public class Gnonogram_controller
 	}
 //=========================================================================
 	public void load_game(string fname="")
-	{
+	{stdout.printf("load_game fname %s\n",fname);
 		var reader = new Gnonogram_filereader(Gnonogram_FileType.GAME, fname);
+		stdout.printf("load_game reader fname %s\n",reader.filename);
 		if (reader.filename=="") return;
 		new_game();
 		if (load_common(reader))
@@ -1017,6 +1028,7 @@ public class Gnonogram_controller
 		config_instance.set_difficulty(_gnonogram_view.get_grade_spin_value());
 		config_instance.set_dimensions(_rows, _cols);
 		config_instance.set_colors();
+		config_instance.set_game_dir(Resource.game_dir);
 //		Decided to remove this to prevent overwriting a manually saved position without warning. Perhaps make a settings option?
 //		save_position();
 	}

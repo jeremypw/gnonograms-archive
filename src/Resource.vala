@@ -23,6 +23,7 @@
 
 using Gtk;
 using Gdk;
+using GLib;
 
 // Defined by configure and make
 extern const string _PREFIX;
@@ -59,6 +60,7 @@ namespace Resource
 	public const string HIDEICONTHEMENAME="hide";
 	public const string REVEALICONTHEMENAME="reveal";
 	public const string MISSINGICONTHEMENAME="image-missing";
+	public const string DEFAULT_FONT="Ariel";
 
 //Performace/capability related parameters
 	public static int MAXROWSIZE = 100; // max number rows
@@ -66,6 +68,7 @@ namespace Resource
 	public static int MAXGRADE = 10; //max grade level
 	public static int MAXTRIES = 100; //max attempts to generate solvable game
 	public static int MAXUNDO = 100; //max moves that can be undone
+	public static int DEFAULT_DIFFICULTY = 5;
 
 //Appearance related parameters
 	public static double FONTBASESIZE=22;
@@ -76,7 +79,13 @@ namespace Resource
 	public static double CELLOFFSET_NOGRID=0.0;
 	public static double CELLOFFSET_WITHGRID=2.0;
 	public static double[] MINORGRIDDASH;
+	public static int DEFAULT_ROWS=10;
+	public static int DEFAULT_COLS=10;
 	public static Gdk.Color[,] colors;
+	public static Gdk.Color default_filled_setting;
+	public static Gdk.Color default_empty_setting;
+	public static Gdk.Color default_filled_solving;
+	public static Gdk.Color default_empty_solving;
 	public const string BLOCKSEPARATOR=",";
 
 //File location related parameters
@@ -84,9 +93,10 @@ namespace Resource
 	public static string resource_dir;
 	public static string locale_dir;
 	public static string game_dir;
+	public static string user_config_dir;
 	public static string game_name;
 	public static string icon_dir;
-	public static string mallard_manual_dir;
+//	public static string mallard_manual_dir;
 	public static string html_manual_dir;
 	public static string prefix;
 	public static bool installed;
@@ -101,8 +111,8 @@ namespace Resource
 		stdout.printf("gettext package is %s \n",APP_GETTEXT_PACKAGE);
 
 		icon_theme=Gtk.IconTheme.get_default();
-
 		stdout.printf("Icon theme is %s\n",icon_theme.get_example_icon_name());
+
 		File exec_file =File.new_for_path(Environment.find_program_in_path(arg0));
 		exec_dir=exec_file.get_parent().get_path();
 		stdout.printf("Exec_dir is %s \n",exec_dir);
@@ -117,34 +127,30 @@ namespace Resource
 		stdout.printf("Locale_dir is %s \n",locale_dir);
 
 		icon_dir=resource_dir+"/icons";
-		mallard_manual_dir=resource_dir+"/mallard";
+//		mallard_manual_dir=resource_dir+"/mallard";
 		html_manual_dir=resource_dir+"/html";
 
-		game_dir=(Config.get_instance()).get_game_dir(resource_dir+"/games");
+		user_config_dir=Environment.get_user_config_dir();
 
+//		Always start off in default directory?
+//		game_dir=resource_dir+"/games";
+//		(Config.get_instance()).set_game_dir(game_dir);
+
+		game_dir=(Config.get_instance()).get_game_dir(resource_dir+"/games");
 		game_name=(Config.get_instance()).get_game_name(DEFAULTGAMENAME);
 
 		colors = new Gdk.Color[2,4];
-
-		int setting =(int)GameState.SETTING;
-		Gdk.Color.parse("GREY",out colors[setting,(int)CellState.UNKNOWN]);
-		Gdk.Color.parse("WHITE", out colors[setting,(int)CellState.EMPTY]);
-		Gdk.Color.parse("BLACK", out colors[setting,(int)CellState.FILLED]);
-		Gdk.Color.parse("RED", out colors[setting,(int)CellState.ERROR]);
-
-		int solving =(int)GameState.SOLVING;
-		Gdk.Color.parse("GREY",out colors[solving,(int)CellState.UNKNOWN]);
-		Gdk.Color.parse("YELLOW", out colors[solving,(int)CellState.EMPTY]);
-		Gdk.Color.parse("BLUE", out colors[solving,(int)CellState.FILLED]);
-		Gdk.Color.parse("RED", out colors[solving,(int)CellState.ERROR]);
+		set_default_colors();
 
 		string [] config_colors=Config.get_instance().get_colors();
+		int setting =(int)GameState.SETTING;
+		int solving =(int)GameState.SOLVING;
 		Gdk.Color.parse(config_colors[0], out colors[setting,(int)CellState.EMPTY]);
 		Gdk.Color.parse(config_colors[1], out colors[setting,(int)CellState.FILLED]);
 		Gdk.Color.parse(config_colors[2], out colors[solving,(int)CellState.EMPTY]);
 		Gdk.Color.parse(config_colors[3], out colors[solving,(int)CellState.FILLED]);
 
-		font_desc="Ariel";
+		font_desc=DEFAULT_FONT;
 		MINORGRIDDASH={0.5, 3.0};
 
 	}
@@ -157,6 +163,34 @@ namespace Resource
 	public static string get_langpack_dir()
 	{
 		return locale_dir;
+	}
+
+	public void reset_all()
+	{
+		set_default_colors();
+		set_default_font();
+		set_default_game_dir();
+
+	}
+
+	private static void set_default_colors()
+	{
+		//Default colors - may be replaced from config file.
+		int setting =(int)GameState.SETTING;
+		Gdk.Color.parse("GREY",out colors[setting,(int)CellState.UNKNOWN]);
+		Gdk.Color.parse("WHITE", out colors[setting,(int)CellState.EMPTY]);
+		default_empty_setting=colors[setting,(int)CellState.EMPTY];
+		Gdk.Color.parse("BLACK", out colors[setting,(int)CellState.FILLED]);
+		default_filled_setting=colors[setting,(int)CellState.FILLED];
+		Gdk.Color.parse("RED", out colors[setting,(int)CellState.ERROR]);
+
+		int solving =(int)GameState.SOLVING;
+		Gdk.Color.parse("GREY",out colors[solving,(int)CellState.UNKNOWN]);
+		Gdk.Color.parse("YELLOW", out colors[solving,(int)CellState.EMPTY]);
+		default_empty_solving=colors[solving,(int)CellState.EMPTY];
+		Gdk.Color.parse("BLUE", out colors[solving,(int)CellState.FILLED]);
+		default_filled_solving=colors[solving,(int)CellState.FILLED];
+		Gdk.Color.parse("RED", out colors[solving,(int)CellState.ERROR]);
 	}
 
 	public static void set_colors()
@@ -195,9 +229,30 @@ namespace Resource
 		button_box.add(filled_solving);
 		button_box.add(empty_solving);
 
+
+		var reset_filled_setting=new Gtk.ToolButton.from_stock(Gtk.STOCK_CLEAR);
+		reset_filled_setting.tooltip_text=_("Reset to default color");
+		reset_filled_setting.clicked.connect(()=>{filled_setting.set_color(default_filled_setting);});
+		var reset_empty_setting=new Gtk.ToolButton.from_stock(Gtk.STOCK_CLEAR);
+		reset_empty_setting.tooltip_text=_("Reset to default color");
+		reset_empty_setting.clicked.connect(()=>{empty_setting.set_color(default_empty_setting);});
+		var reset_filled_solving=new Gtk.ToolButton.from_stock(Gtk.STOCK_CLEAR);
+		reset_filled_solving.tooltip_text=_("Reset to default color");
+		reset_filled_solving.clicked.connect(()=>{filled_solving.set_color(default_filled_solving);});
+		var reset_empty_solving=new Gtk.ToolButton.from_stock(Gtk.STOCK_CLEAR);
+		reset_empty_solving.tooltip_text=_("Reset to default color");
+		reset_empty_solving.clicked.connect(()=>{empty_solving.set_color(default_empty_solving);});
+
+		var reset_button_box=new VBox(false,5);
+		reset_button_box.add(reset_filled_setting);
+		reset_button_box.add(reset_empty_setting);
+		reset_button_box.add(reset_filled_solving);
+		reset_button_box.add(reset_empty_solving);
+
 		var hbox=new HBox(false,5);
 		hbox.add(label_box);
 		hbox.add(button_box);
+		hbox.add(reset_button_box);
 
 		dialog.vbox.add(hbox);
 		dialog.show_all();
@@ -211,20 +266,34 @@ namespace Resource
 		dialog.destroy();
 	}
 
-	public void set_font()
+	public static void set_custom_font()
 	{
 		var dialog = new FontSelectionDialog("Select font used for the clues");
 		if (dialog.run()!=ResponseType.CANCEL)	font_desc=dialog.get_font_name();
 		dialog.destroy();
 	}
+	public static void set_default_font()
+	{
+		font_desc=DEFAULT_FONT;
+	}
+	public static void set_custom_game_dir()
+	{
+		string new_dir=Utils.get_filename(FileChooserAction.SELECT_FOLDER,"Choose folder for saving puzzles",null,null,Resource.game_dir);
+		stdout.printf("set_game_dir received folder %s\n",new_dir);
+		if (new_dir!="") Resource.game_dir=new_dir;
+	}
+	public static void set_default_game_dir()
+	{
+		game_dir=resource_dir+"/games";
+	}
 
-	public void get_icon_theme()
+	public static void get_icon_theme()
 	{
 		icon_theme=Gtk.IconTheme.get_default();
 //		stdout.printf("Icon theme is %s\n",icon_theme.get_example_icon_name());
 	}
 
-	public Gdk.Pixbuf? get_theme_icon(string icon_name)
+	public static Gdk.Pixbuf? get_theme_icon(string icon_name)
 	{
 		Gdk.Pixbuf icon = null;
 //		if (!icon_theme.has_icon(icon_name)) icon_name="image-missing";
@@ -240,7 +309,7 @@ namespace Resource
 		return icon;
 	}
 
-	public Gdk.Pixbuf? get_app_icon(string icon_filename)
+	public static Gdk.Pixbuf? get_app_icon(string icon_filename)
 	{
 		Gdk.Pixbuf icon = null;
 		try
@@ -254,7 +323,7 @@ namespace Resource
 		return icon;
 	}
 
-	public Gdk.Pixbuf? get_icon(Resource.IconID id)
+	public static Gdk.Pixbuf? get_icon(Resource.IconID id)
 	{
 		Gdk.Pixbuf icon=null;
 		string icon_filename, icon_themename;

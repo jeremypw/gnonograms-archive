@@ -23,7 +23,7 @@ using GLib;
 
 public class Gnonogram_filereader {
 
-	public string filename;
+	public string filename="";
 	public int rows=0;
 	public int cols=0;
 	public string[] row_clues;
@@ -51,7 +51,7 @@ public class Gnonogram_filereader {
 	private string[] picto_grid_data;
 //=========================================================================
 	public Gnonogram_filereader(Gnonogram_FileType type, string fname="")
-	{
+	{stdout.printf("Filereader ... fname=%s\n",fname);
 		if (type==Gnonogram_FileType.GAME)
 		{
 			if(fname=="")	ask_filename();
@@ -78,6 +78,7 @@ public class Gnonogram_filereader {
 			{"*"+Resource.GAMEFILEEXTENSION, "*.pattern"},
 			Resource.game_dir
 			);
+			if (filename!="") Resource.game_dir=Path.get_dirname(filename);
 	}
 //=========================================================================
 	public bool open_datainputstream()
