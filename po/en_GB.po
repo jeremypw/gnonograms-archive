@@ -9,159 +9,139 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gnonograms-0.1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-07-16 15:45+0100\n"
+"POT-Creation-Date: 2011-09-04 15:23+0100\n"
 "PO-Revision-Date: 2011-02-05 18:39+0000\n"
 "Last-Translator: JEREMY WOOTTEN <jeremywootten@gmail.com>\n"
 "Language-Team: British English <LL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../src/Gnonogram_controller.vala:92 ../src/Gnonogram_viewer.vala:406
-msgid "Gnonograms"
+#: ../src/Gnonogram_controller.vala:446 ../src/Gnonogram_viewer.vala:92
+#: ../src/Gnonogram_viewer.vala:338
+msgid "New puzzle"
 msgstr ""
 
-#: ../src/Gnonogram_controller.vala:276
+#: ../src/Gnonogram_controller.vala:466
 msgid "Timer paused"
 msgstr ""
 
-#: ../src/Gnonogram_controller.vala:378 ../src/Gnonogram_viewer.vala:264
-msgid "New game"
+#: ../src/Gnonogram_controller.vala:475
+msgid "Name and save this puzzle"
 msgstr ""
 
-#: ../src/Gnonogram_controller.vala:400
-msgid "Name and save this game"
+#: ../src/Gnonogram_controller.vala:476 ../src/Gnonogram_filereader.vala:77
+msgid "Gnonogram puzzles"
 msgstr ""
 
-#: ../src/Gnonogram_controller.vala:401 ../src/Gnonogram_filereader.vala:77
-msgid "Gnonogram games"
-msgstr ""
-
-#: ../src/Gnonogram_controller.vala:412 ../src/Gnonogram_controller.vala:432
+#: ../src/Gnonogram_controller.vala:490 ../src/Gnonogram_controller.vala:511
 #, c-format
 msgid "Saved as '%s'"
 msgstr ""
 
-#: ../src/Gnonogram_controller.vala:420
-msgid "Name and save as  pictogame"
+#: ../src/Gnonogram_controller.vala:498
+msgid "Name and save as  picto puzzle"
 msgstr ""
 
-#: ../src/Gnonogram_controller.vala:421 ../src/Gnonogram_filereader.vala:77
-msgid "Picto games"
+#: ../src/Gnonogram_controller.vala:499 ../src/Gnonogram_filereader.vala:77
+msgid "Picto puzzles"
 msgstr ""
 
-#: ../src/Gnonogram_controller.vala:485
-msgid "An error occured creating the position file"
+#: ../src/Gnonogram_controller.vala:592
+msgid "Failed to load puzzle"
 msgstr ""
 
-#: ../src/Gnonogram_controller.vala:521
-msgid "Failed to load saved position"
+#: ../src/Gnonogram_controller.vala:629
+msgid "Could not open puzzle file"
 msgstr ""
 
-#: ../src/Gnonogram_controller.vala:536
-msgid "Working data missing"
-msgstr ""
-
-#: ../src/Gnonogram_controller.vala:553
-msgid "State data missing"
-msgstr ""
-
-#: ../src/Gnonogram_controller.vala:564
-msgid "Could not open game file"
-msgstr ""
-
-#: ../src/Gnonogram_controller.vala:569
+#: ../src/Gnonogram_controller.vala:634
 msgid "File format incorrect"
 msgstr ""
 
-#: ../src/Gnonogram_controller.vala:579
+#: ../src/Gnonogram_controller.vala:640
 msgid "Dimensions too large"
 msgstr ""
 
-#: ../src/Gnonogram_controller.vala:588
+#: ../src/Gnonogram_controller.vala:648
 msgid "Dimensions data missing"
 msgstr ""
 
-#: ../src/Gnonogram_controller.vala:612
-msgid "Clues contradictory"
+#: ../src/Gnonogram_controller.vala:671
+msgid "Puzzle not easily soluble by computer"
 msgstr ""
 
-#: ../src/Gnonogram_controller.vala:617
-msgid "Game not soluble by computer"
-msgstr ""
-
-#: ../src/Gnonogram_controller.vala:622
+#: ../src/Gnonogram_controller.vala:675
 msgid "Clues and solution both missing"
 msgstr ""
 
-#: ../src/Gnonogram_controller.vala:652
+#: ../src/Gnonogram_controller.vala:705
 #, c-format
 msgid "Time taken is %d hours, %d minutes, %8.3f seconds"
 msgstr ""
 
-#: ../src/Gnonogram_controller.vala:658
+#: ../src/Gnonogram_controller.vala:710
 msgid "No errors"
 msgstr ""
 
-#: ../src/Gnonogram_controller.vala:662
+#: ../src/Gnonogram_controller.vala:713
 #, c-format
 msgid "There are %d incorrect cells"
 msgstr ""
 
-#: ../src/Gnonogram_controller.vala:668
+#: ../src/Gnonogram_controller.vala:718
 msgid "No solution available"
 msgstr ""
 
-#: ../src/Gnonogram_controller.vala:685
-msgid "Invalid - no solution"
-msgstr ""
-
-#: ../src/Gnonogram_controller.vala:689
+#: ../src/Gnonogram_controller.vala:736
 msgid "Failed to solve or no unique solution"
 msgstr ""
 
-#: ../src/Gnonogram_controller.vala:693
+#: ../src/Gnonogram_controller.vala:740
 #, c-format
 msgid "Solved in %8.3f seconds"
 msgstr ""
 
-#: ../src/Gnonogram_controller.vala:801
+#: ../src/Gnonogram_controller.vala:842
 msgid "Difficult random"
 msgstr ""
 
-#: ../src/Gnonogram_controller.vala:801
+#: ../src/Gnonogram_controller.vala:842
 msgid "Simple random"
 msgstr ""
 
-#: ../src/Gnonogram_controller.vala:803
+#: ../src/Gnonogram_controller.vala:844
 msgid "Computer"
 msgstr ""
 
-#: ../src/Gnonogram_controller.vala:812
+#: ../src/Gnonogram_controller.vala:852
 msgid "Error occurred in solver"
 msgstr ""
 
-#: ../src/Gnonogram_controller.vala:814
+#: ../src/Gnonogram_controller.vala:854
 msgid "Error in solver"
 msgstr ""
 
-#: ../src/Config.vala:36
+#: ../src/Gnonogram_controller.vala:979
+msgid "Clues contradictory"
+msgstr ""
+
+#: ../src/GConf_config.vala:43
+#, c-format
 msgid "Unable to get GConf value"
 msgstr ""
 
-#: ../src/Config.vala:39
+#: ../src/GConf_config.vala:46
+#, c-format
 msgid "Unable to set GConf value"
-msgstr ""
-
-#: ../src/Config.vala:123
-msgid "Path given does not exist or is not a directory"
 msgstr ""
 
 #: ../src/Gnonogram_label.vala:67
 msgid "Freedom="
 msgstr ""
 
-#: ../src/Gnonogram_model.vala:126
+#: ../src/Gnonogram_model.vala:135
 msgid "Error - wrong number of columns"
 msgstr ""
 
@@ -179,305 +159,357 @@ msgstr ""
 msgid "Keep trying?"
 msgstr ""
 
-#: ../src/Gnonogram_viewer.vala:78
-msgid "New Game"
-msgstr ""
-
-#: ../src/Gnonogram_viewer.vala:81 ../src/Gnonogram_viewer.vala:515
-#: ../src/Gnonogram_viewer.vala:517 ../src/Gnonogram_filereader.vala:122
+#: ../src/Gnonogram_viewer.vala:95 ../src/Gnonogram_viewer.vala:575
+#: ../src/Gnonogram_viewer.vala:577 ../src/Gnonogram_filereader.vala:123
 msgid "Unknown"
 msgstr ""
 
-#: ../src/Gnonogram_viewer.vala:121
-msgid "_File"
-msgstr ""
-
-#: ../src/Gnonogram_viewer.vala:122
-msgid "_Game"
-msgstr ""
-
-#: ../src/Gnonogram_viewer.vala:123
-msgid "_Settings"
-msgstr ""
-
-#: ../src/Gnonogram_viewer.vala:124
-msgid "_View"
-msgstr ""
-
-#: ../src/Gnonogram_viewer.vala:125
-msgid "_Help"
-msgstr ""
-
-#: ../src/Gnonogram_viewer.vala:135
-msgid "_New"
-msgstr ""
-
-#: ../src/Gnonogram_viewer.vala:138
-msgid "_Load"
+#: ../src/Gnonogram_viewer.vala:129 ../src/Gnonogram_viewer.vala:476
+#: additional_strings:1
+msgid "Gnonograms"
 msgstr ""
 
 #: ../src/Gnonogram_viewer.vala:140
-msgid "_Save"
+msgid "_File"
 msgstr ""
 
-#: ../src/Gnonogram_viewer.vala:142
-msgid "_Save as Pictogame"
-msgstr ""
-
-#: ../src/Gnonogram_viewer.vala:145
-msgid "_Quit"
-msgstr ""
-
-#: ../src/Gnonogram_viewer.vala:150 ../src/Gnonogram_viewer.vala:157
+#: ../src/Gnonogram_viewer.vala:141
 msgid "_Puzzle"
 msgstr ""
 
-#: ../src/Gnonogram_viewer.vala:152 ../src/Gnonogram_viewer.vala:159
-msgid "_Unfinished"
+#: ../src/Gnonogram_viewer.vala:142
+msgid "_Settings"
 msgstr ""
 
-#: ../src/Gnonogram_viewer.vala:164
-msgid "_Show solution"
+#: ../src/Gnonogram_viewer.vala:143
+msgid "_View"
 msgstr ""
 
-#: ../src/Gnonogram_viewer.vala:166
-msgid "Show _Working"
+#: ../src/Gnonogram_viewer.vala:144
+msgid "_Help"
 msgstr ""
 
-#: ../src/Gnonogram_viewer.vala:168
-msgid "Show _Incorrect cells"
-msgstr ""
-
-#: ../src/Gnonogram_viewer.vala:171
-msgid "_Restart"
-msgstr ""
-
-#: ../src/Gnonogram_viewer.vala:174
-msgid "_Let computer solve it"
-msgstr ""
-
-#: ../src/Gnonogram_viewer.vala:176
-msgid "_Computer generated puzzle"
-msgstr ""
-
-#: ../src/Gnonogram_viewer.vala:179
-msgid "_Edit game description"
-msgstr ""
-
-#: ../src/Gnonogram_viewer.vala:185
-msgid "_Colors ..."
-msgstr ""
-
-#: ../src/Gnonogram_viewer.vala:187
-msgid "_Font ..."
+#: ../src/Gnonogram_viewer.vala:161
+msgid "_Save as Picto puzzle"
 msgstr ""
 
 #: ../src/Gnonogram_viewer.vala:189
-msgid "_Resize ..."
+msgid "_Show solution"
 msgstr ""
 
 #: ../src/Gnonogram_viewer.vala:191
+msgid "Show _Working"
+msgstr ""
+
+#: ../src/Gnonogram_viewer.vala:193
+msgid "Show _Incorrect cells"
+msgstr ""
+
+#: ../src/Gnonogram_viewer.vala:197
+msgid "_Restart"
+msgstr ""
+
+#: ../src/Gnonogram_viewer.vala:199
+msgid "_Pause"
+msgstr ""
+
+#: ../src/Gnonogram_viewer.vala:203
+msgid "_Let computer solve it"
+msgstr ""
+
+#: ../src/Gnonogram_viewer.vala:205
+msgid "_Computer generated puzzle"
+msgstr ""
+
+#: ../src/Gnonogram_viewer.vala:208
+msgid "_Edit puzzle"
+msgstr ""
+
+#: ../src/Gnonogram_viewer.vala:213
+msgid "_Colors ..."
+msgstr ""
+
+#: ../src/Gnonogram_viewer.vala:215
+msgid "_Font ..."
+msgstr ""
+
+#: ../src/Gnonogram_viewer.vala:217
+msgid "_Resize ..."
+msgstr ""
+
+#: ../src/Gnonogram_viewer.vala:219
 msgid "_Difficulty ..."
+msgstr ""
+
+#: ../src/Gnonogram_viewer.vala:221
+msgid "_Puzzle folder"
+msgstr ""
+
+#: ../src/Gnonogram_viewer.vala:224
+msgid "Default"
+msgstr ""
+
+#: ../src/Gnonogram_viewer.vala:225
+msgid "Custom ..."
 msgstr ""
 
 #. var debugmenuitem=new CheckMenuItem.with_mnemonic("D_ebug");
 #. debugmenuitem.set_active(false);
 #. debugmenuitem.set_sensitive(true); //for development only
 #. settingssubmenu.add(debugmenuitem);
-#: ../src/Gnonogram_viewer.vala:198
+#: ../src/Gnonogram_viewer.vala:235
 msgid "_Use advanced solver"
 msgstr ""
 
-#: ../src/Gnonogram_viewer.vala:201
-msgid "_Generate difficult games"
+#: ../src/Gnonogram_viewer.vala:238
+msgid "_Generate difficult puzzles"
 msgstr ""
 
-#: ../src/Gnonogram_viewer.vala:207
+#: ../src/Gnonogram_viewer.vala:244
+msgid "_Reset all to default"
+msgstr ""
+
+#: ../src/Gnonogram_viewer.vala:249
 msgid "_Toolbar"
 msgstr ""
 
-#: ../src/Gnonogram_viewer.vala:210
+#: ../src/Gnonogram_viewer.vala:252
 msgid "_Grid"
 msgstr ""
 
-#: ../src/Gnonogram_viewer.vala:216
+#: ../src/Gnonogram_viewer.vala:263
+msgid "Contents"
+msgstr ""
+
+#: ../src/Gnonogram_viewer.vala:265
 msgid "About"
 msgstr ""
 
-#: ../src/Gnonogram_viewer.vala:218
-msgid "Manual"
+#: ../src/Gnonogram_viewer.vala:343
+msgid "Load puzzle"
 msgstr ""
 
-#: ../src/Gnonogram_viewer.vala:220
-msgid "Html Manual"
+#: ../src/Gnonogram_viewer.vala:348
+msgid "Save puzzle"
 msgstr ""
 
-#: ../src/Gnonogram_viewer.vala:269
-msgid "Load game"
+#: ../src/Gnonogram_viewer.vala:354
+msgid "Undo last move"
 msgstr ""
 
-#: ../src/Gnonogram_viewer.vala:274
-msgid "Save game"
+#: ../src/Gnonogram_viewer.vala:358
+msgid "Redo last undone move"
 msgstr ""
 
-#: ../src/Gnonogram_viewer.vala:290
-msgid "Check"
-msgstr ""
-
-#: ../src/Gnonogram_viewer.vala:291
-msgid "Show any incorrect cells"
-msgstr ""
-
-#: ../src/Gnonogram_viewer.vala:296
+#: ../src/Gnonogram_viewer.vala:362
 msgid "Start this puzzle again"
 msgstr ""
 
-#: ../src/Gnonogram_viewer.vala:303
+#: ../src/Gnonogram_viewer.vala:372 ../src/Gnonogram_viewer.vala:607
+msgid "Hide the solution and start solving"
+msgstr ""
+
+#: ../src/Gnonogram_viewer.vala:377
+msgid "Check"
+msgstr ""
+
+#: ../src/Gnonogram_viewer.vala:378
+msgid "Show any incorrect cells"
+msgstr ""
+
+#: ../src/Gnonogram_viewer.vala:382
 msgid "Solve"
 msgstr ""
 
-#: ../src/Gnonogram_viewer.vala:304
+#: ../src/Gnonogram_viewer.vala:383
 msgid "Solve by computer"
 msgstr ""
 
-#: ../src/Gnonogram_viewer.vala:311
+#: ../src/Gnonogram_viewer.vala:388
 msgid "Random"
 msgstr ""
 
-#: ../src/Gnonogram_viewer.vala:312
-msgid "Generate a random game"
+#: ../src/Gnonogram_viewer.vala:389
+msgid "Generate a random puzzle"
 msgstr ""
 
-#: ../src/Gnonogram_viewer.vala:319 ../src/Gnonogram_viewer.vala:387
-msgid "Set the difficulty of generated games"
-msgstr ""
-
-#: ../src/Gnonogram_viewer.vala:326
+#: ../src/Gnonogram_viewer.vala:395
 msgid "Resize"
 msgstr ""
 
-#: ../src/Gnonogram_viewer.vala:327
-msgid "Change dimensions of the game grid"
+#: ../src/Gnonogram_viewer.vala:396
+msgid "Change dimensions of the puzzle grid"
 msgstr ""
 
-#: ../src/Gnonogram_viewer.vala:332
+#: ../src/Gnonogram_viewer.vala:400
 msgid "Increase font size"
 msgstr ""
 
-#: ../src/Gnonogram_viewer.vala:337
+#: ../src/Gnonogram_viewer.vala:405
 msgid "Decrease font size"
 msgstr ""
 
-#: ../src/Gnonogram_viewer.vala:351
+#: ../src/Gnonogram_viewer.vala:410 ../src/Gnonogram_viewer.vala:457
+msgid "Set the difficulty of generated puzzles"
+msgstr ""
+
+#: ../src/Gnonogram_viewer.vala:428
 msgid "_Difficulty"
 msgstr ""
 
-#: ../src/Gnonogram_viewer.vala:353
+#: ../src/Gnonogram_viewer.vala:430
 msgid "Difficulty"
 msgstr ""
 
-#: ../src/Gnonogram_viewer.vala:408
+#: ../src/Gnonogram_viewer.vala:478 additional_strings:1
 msgid "Design and solve Nonogram puzzles"
 msgstr ""
 
-#: ../src/Gnonogram_viewer.vala:412
+#: ../src/Gnonogram_viewer.vala:482
 msgid "About Gnonograms"
 msgstr ""
 
-#: ../src/Gnonogram_viewer.vala:450 ../src/utils.vala:42
-#: ../src/Resource.vala:162
-msgid "Ok"
-msgstr ""
-
-#: ../src/Gnonogram_viewer.vala:451 ../src/utils.vala:43
-#: ../src/Resource.vala:163
-msgid "Cancel"
-msgstr ""
-
-#: ../src/Gnonogram_viewer.vala:454
-msgid "Name of puzzle"
-msgstr ""
-
-#: ../src/Gnonogram_viewer.vala:455
-msgid "Designed by"
-msgstr ""
-
-#: ../src/Gnonogram_viewer.vala:456
-msgid "Date designed"
-msgstr ""
-
 #. ======================================================================
-#: ../src/Gnonogram_viewer.vala:493
+#. replaced by Game_Editor class
+#. private void editdescription()
+#. {
+#. var dialog = new Gtk.Dialog.with_buttons (
+#. null,
+#. null,
+#. Gtk.DialogFlags.MODAL|Gtk.DialogFlags.DESTROY_WITH_PARENT,
+#. _("Ok"), Gtk.ResponseType.OK,
+#. _("Cancel"), Gtk.ResponseType.CANCEL
+#. );
+#. var name_label=new Gtk.Label(_("Name of puzzle"));
+#. var author_label=new Gtk.Label(_("Designed by"));
+#. var date_label=new Gtk.Label(_("Date designed"));
+#. var label_box=new VBox(false,5);
+#. label_box.add(name_label);
+#. label_box.add(author_label);
+#. label_box.add(date_label);
+#. var name_entry = new Gtk.Entry();
+#. name_entry.set_max_length(32);
+#. name_entry.set_text(get_name());
+#. var author_entry = new Gtk.Entry();
+#. author_entry.set_max_length(32);
+#. author_entry.set_text(get_author());
+#. var date_entry = new Gtk.Entry();
+#. date_entry.set_max_length(16);
+#. date_entry.set_text(get_date());
+#. var entry_box=new VBox(false,5);
+#. entry_box.add(name_entry);
+#. entry_box.add(author_entry);
+#. entry_box.add(date_entry);
+#. var hbox=new HBox(false,5);
+#. hbox.add(label_box);
+#. hbox.add(entry_box);
+#. dialog.vbox.add(hbox);
+#. dialog.show_all();
+#. if (dialog.run()==ResponseType.OK)
+#. {
+#. set_name(name_entry.get_text());
+#. set_author(author_entry.get_text());
+#. set_date(date_entry.get_text());
+#. }
+#. dialog.destroy();
+#. }
+#. ======================================================================
+#: ../src/Gnonogram_viewer.vala:553
 msgid "Name:"
 msgstr ""
 
 #. ======================================================================
-#: ../src/Gnonogram_viewer.vala:496
+#: ../src/Gnonogram_viewer.vala:556
 msgid "By:"
 msgstr ""
 
 #. ======================================================================
-#: ../src/Gnonogram_viewer.vala:499
+#: ../src/Gnonogram_viewer.vala:559
 msgid "Date:"
 msgstr ""
 
 #. stdout.printf("set_score_label %s\n",score);
-#: ../src/Gnonogram_viewer.vala:504
+#: ../src/Gnonogram_viewer.vala:564
 msgid "Score:"
 msgstr ""
 
-#: ../src/Gnonogram_viewer.vala:523
+#: ../src/Gnonogram_viewer.vala:583
 msgid "Size: "
 msgstr ""
 
-#: ../src/Gnonogram_viewer.vala:545
-msgid "Hide the solution and start solving"
-msgstr ""
-
-#: ../src/Gnonogram_viewer.vala:552
+#: ../src/Gnonogram_viewer.vala:624
 msgid "Reveal the solution"
 msgstr ""
 
 #: ../src/Gnonogram_filereader.vala:76
-msgid "Choose a game"
+msgid "Choose a puzzle"
 msgstr ""
 
-#: ../src/Gnonogram_filereader.vala:184
+#: ../src/Gnonogram_filereader.vala:185
 msgid "Wrong number of dimensions"
 msgstr ""
 
-#: ../src/utils.vala:118
+#: ../src/utils.vala:42 ../src/Resource.vala:203
+msgid "Ok"
+msgstr ""
+
+#: ../src/utils.vala:43 ../src/Resource.vala:204
+msgid "Cancel"
+msgstr ""
+
+#: ../src/utils.vala:123
 msgid "Adjust Size"
 msgstr ""
 
-#: ../src/utils.vala:130
+#: ../src/utils.vala:135
 msgid "Rows"
 msgstr ""
 
-#: ../src/utils.vala:134
+#: ../src/utils.vala:139
 msgid "Columns"
 msgstr ""
 
-#: ../src/Resource.vala:166 ../src/Resource.vala:178
+#: ../src/Resource.vala:207 ../src/Resource.vala:219
 #, fuzzy
 msgid "Color of filled cell when setting"
 msgstr "Colour of filled cell"
 
-#: ../src/Resource.vala:167 ../src/Resource.vala:180
+#: ../src/Resource.vala:208 ../src/Resource.vala:221
 #, fuzzy
 msgid "Color of empty cell when setting"
 msgstr "Colour of empty cell"
 
-#: ../src/Resource.vala:168 ../src/Resource.vala:182
+#: ../src/Resource.vala:209 ../src/Resource.vala:223
 #, fuzzy
 msgid "Color of filled cell when solving"
 msgstr "Colour of filled cell"
 
-#: ../src/Resource.vala:169 ../src/Resource.vala:184
+#: ../src/Resource.vala:210 ../src/Resource.vala:225
 #, fuzzy
 msgid "Color of empty cell when solving"
 msgstr "Colour of empty cell"
 
+#: ../src/Resource.vala:235 ../src/Resource.vala:238 ../src/Resource.vala:241
+#: ../src/Resource.vala:244
+msgid "Reset to default color"
+msgstr ""
+
+#: ../src/Game_editor.vala:66
+msgid "Name of puzzle"
+msgstr ""
+
+#: ../src/Game_editor.vala:77
+msgid "Designed by"
+msgstr ""
+
+#: ../src/Game_editor.vala:88
+msgid "Date designed"
+msgstr ""
+
+#: ../src/Gnonogram_config.vala:104
+msgid "Path given does not exist or is not a directory"
+msgstr ""
+
 #: additional_strings:1
-msgid "Logic Game"
+msgid "Logic game"
 msgstr ""

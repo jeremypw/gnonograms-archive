@@ -73,8 +73,8 @@ public class Gnonogram_filereader {
 	{
 			filename=Utils.get_filename(
 			Gtk.FileChooserAction.OPEN,
-			_("Choose a game"),
-			{_("Gnonogram games"), _("Picto games")},
+			_("Choose a puzzle"),
+			{_("Gnonogram puzzles"), _("Picto puzzles")},
 			{"*"+Resource.GAMEFILEEXTENSION, "*.pattern"},
 			Resource.game_dir
 			);

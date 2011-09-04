@@ -37,6 +37,7 @@ public class Gnonogram_view : Gtk.Window
 	public signal void revealgame();
 	public signal void checkerrors();
 	public signal void restartgame();
+	public signal void pausegame();
 	public signal void randomgame();
 	public signal void setcolors();
 	public signal void setfont();
@@ -69,6 +70,8 @@ public class Gnonogram_view : Gtk.Window
 	private Gtk.MenuItem _grademenuitem;
 	private Gtk.MenuItem _resizemenuitem;
 	private Gtk.MenuItem _defaultsmenuitem;
+	private Gtk.MenuItem pausemenuitem;
+
 	private Label _name_label;
 	private Label _author_label;
 	private Label _date_label;
@@ -76,6 +79,7 @@ public class Gnonogram_view : Gtk.Window
 	private Label _score_label;
 	private Gtk.Image hide_icon;
 	private Gtk.Image reveal_icon;
+	private Gtk.AccelGroup accel_group;
 
 	public Gnonogram_view(Gnonogram_LabelBox rb, Gnonogram_LabelBox cb, Gnonogram_CellGrid dg, Gnonogram_controller controller)
 	{	_controller=controller; //seems to be necessary to get signals to work.  Not sure why.
@@ -85,7 +89,7 @@ public class Gnonogram_view : Gtk.Window
 		var info_frame=new Frame(null);
 		var info_box = new VBox(false,0);
 		_name_label= new Label("");
-		set_name(_("New Game"));
+		set_name(_("New puzzle"));
 		_name_label.set_alignment((float)0.0,(float)0.5);
 		_author_label = new Label("");
 		set_author(_("Unknown"));
@@ -129,9 +133,12 @@ public class Gnonogram_view : Gtk.Window
 //======================================================================
 	private MenuBar create_viewer_menubar()
 	{
+		accel_group=new Gtk.AccelGroup();
+		this.add_accel_group(accel_group);
+
 		var menubar = new MenuBar();
 		var filemenuitem = new MenuItem.with_mnemonic(_("_File"));
-		var gamemenuitem = new MenuItem.with_mnemonic(_("_Game"));
+		var gamemenuitem = new MenuItem.with_mnemonic(_("_Puzzle"));
 		var settingsmenuitem = new MenuItem.with_mnemonic(_("_Settings"));
 		var viewmenuitem = new MenuItem.with_mnemonic(_("_View"));
 		var helpmenuitem = new MenuItem.with_mnemonic(_("_Help"));
@@ -144,17 +151,17 @@ public class Gnonogram_view : Gtk.Window
 
 		var filesubmenu = new Menu();
 		filemenuitem.set_submenu(filesubmenu);
-			var newmenuitem = new MenuItem.with_mnemonic(_("_New"));
+			var newmenuitem = new ImageMenuItem.from_stock(Gtk.STOCK_NEW,accel_group);
 			filesubmenu.add(newmenuitem);
 			filesubmenu.add(new SeparatorMenuItem());
-			var loadmenuitem = new MenuItem.with_mnemonic(_("_Load"));
+			var loadmenuitem = new ImageMenuItem.from_stock(Gtk.STOCK_OPEN,accel_group);
 			filesubmenu.add(loadmenuitem);
-			var savemenuitem = new MenuItem.with_mnemonic(_("_Save"));
+			var savemenuitem = new ImageMenuItem.from_stock(Gtk.STOCK_SAVE,accel_group);
 			filesubmenu.add(savemenuitem);
-			var savepictomenuitem = new MenuItem.with_mnemonic(_("_Save as Pictogame"));
+			var savepictomenuitem = new MenuItem.with_mnemonic(_("_Save as Picto puzzle"));
 			filesubmenu.add(savepictomenuitem);
 			filesubmenu.add(new SeparatorMenuItem());
-			var quitmenuitem=new MenuItem.with_mnemonic(_("_Quit"));
+			var quitmenuitem=new ImageMenuItem.from_stock(Gtk.STOCK_QUIT, accel_group);
 			filesubmenu.add(quitmenuitem);
 
 //			var loadsubmenu = new Menu();
@@ -173,10 +180,10 @@ public class Gnonogram_view : Gtk.Window
 
 		var gamesubmenu=new Menu();
 		gamemenuitem.set_submenu(gamesubmenu);
-			_undomenuitem=new MenuItem.with_mnemonic(_("_Undo"));
+			_undomenuitem=new ImageMenuItem.from_stock(Gtk.STOCK_UNDO,accel_group);
 			_undomenuitem.sensitive=false;
 			gamesubmenu.add(_undomenuitem);
-			_redomenuitem=new MenuItem.with_mnemonic(_("_Redo"));
+			_redomenuitem=new ImageMenuItem.from_stock(Gtk.STOCK_REDO,accel_group);
 			_redomenuitem.sensitive=false;
 			gamesubmenu.add(_redomenuitem);
 			_showsolutionmenuitem=new MenuItem.with_mnemonic(_("_Show solution"));
@@ -186,15 +193,19 @@ public class Gnonogram_view : Gtk.Window
 			_checkerrorsmenuitem=new MenuItem.with_mnemonic(_("Show _Incorrect cells"));
 			gamesubmenu.add(_checkerrorsmenuitem);
 			_checkerrorsmenuitem.set_sensitive(false);
+			gamesubmenu.add(new SeparatorMenuItem());
 			var restartmenuitem=new MenuItem.with_mnemonic(_("_Restart"));
 			gamesubmenu.add(restartmenuitem);
+			pausemenuitem=new MenuItem.with_mnemonic(_("_Pause"));
+			gamesubmenu.add(pausemenuitem);
+
 			gamesubmenu.add(new SeparatorMenuItem());
 			var computersolvemenuitem=new MenuItem.with_mnemonic(_("_Let computer solve it"));
 			gamesubmenu.add(computersolvemenuitem);
 			var computergeneratemenuitem=new MenuItem.with_mnemonic(_("_Computer generated puzzle"));
 			gamesubmenu.add(computergeneratemenuitem);
 			gamesubmenu.add(new SeparatorMenuItem());
-			var infomenuitem=new MenuItem.with_mnemonic(_("_Edit game"));
+			var infomenuitem=new MenuItem.with_mnemonic(_("_Edit puzzle"));
 			gamesubmenu.add(infomenuitem);
 
 		var settingssubmenu=new Menu();
@@ -224,13 +235,13 @@ public class Gnonogram_view : Gtk.Window
 			var advancedmenuitem=new CheckMenuItem.with_mnemonic(_("_Use advanced solver"));
 			advancedmenuitem.set_active(true);
 			settingssubmenu.add(advancedmenuitem);
-			var difficultmenuitem=new CheckMenuItem.with_mnemonic(_("_Generate difficult games"));
+			var difficultmenuitem=new CheckMenuItem.with_mnemonic(_("_Generate difficult puzzles"));
 			difficultmenuitem.set_active(false);
 			settingssubmenu.add(difficultmenuitem);
 
 			settingssubmenu.add(new SeparatorMenuItem());
 
-			_defaultsmenuitem=new MenuItem.with_mnemonic("_Reset all to default");
+			_defaultsmenuitem=new MenuItem.with_mnemonic(_("_Reset all to default"));
 			settingssubmenu.add(_defaultsmenuitem);
 
 		var viewsubmenu=new Menu();
@@ -241,34 +252,52 @@ public class Gnonogram_view : Gtk.Window
 			_gridmenuitem=new CheckMenuItem.with_mnemonic(_("_Grid"));
 			viewsubmenu.add(_gridmenuitem);
 			_gridmenuitem.set_active(false);
+			viewsubmenu.add(new SeparatorMenuItem());
+			var zoominmenuitem=new ImageMenuItem.from_stock(Gtk.STOCK_ZOOM_IN,accel_group);
+			viewsubmenu.add(zoominmenuitem);
+			var zoomoutmenuitem=new ImageMenuItem.from_stock(Gtk.STOCK_ZOOM_OUT,accel_group);
+			viewsubmenu.add(zoomoutmenuitem);
 
 		var helpsubmenu=new Menu();
 		helpmenuitem.set_submenu(helpsubmenu);
+			var htmlmanualmenuitem=new MenuItem.with_mnemonic(_("Contents"));
+			helpsubmenu.add(htmlmanualmenuitem);
 			var aboutmenuitem=new MenuItem.with_mnemonic(_("About"));
 			helpsubmenu.add(aboutmenuitem);
-			var htmlmanualmenuitem=new MenuItem.with_mnemonic(_("Manual"));
-			helpsubmenu.add(htmlmanualmenuitem);
+
 
 		newmenuitem.activate.connect(()=>{newgame();});
-//		loadpuzzlemenuitem.activate.connect(()=>{loadgame("");});
+		newmenuitem.add_accelerator("activate",accel_group,keyval_from_name("n"),Gdk.ModifierType.CONTROL_MASK, Gtk.AccelFlags.VISIBLE);
 		loadmenuitem.activate.connect(()=>{loadgame("");});
-
-//		savepuzzlemenuitem.activate.connect(()=>{savegame();});
+		loadmenuitem.add_accelerator("activate",accel_group,keyval_from_name("o"),Gdk.ModifierType.CONTROL_MASK, Gtk.AccelFlags.VISIBLE);
 		savemenuitem.activate.connect(()=>{savegame();});
+		savemenuitem.add_accelerator("activate",accel_group,keyval_from_name("s"),Gdk.ModifierType.CONTROL_MASK, Gtk.AccelFlags.VISIBLE);
 
 		savepictomenuitem.activate.connect(()=>{savepictogame();});
-//		loadpositionmenuitem.activate.connect(()=>{loadposition();});
-//		savepositionmenuitem.activate.connect(()=>{saveposition();});
+
 		quitmenuitem.activate.connect(()=>{quitgamesignal();});
+		quitmenuitem.add_accelerator("activate",accel_group,keyval_from_name("q"),Gdk.ModifierType.CONTROL_MASK, Gtk.AccelFlags.VISIBLE);
 
 		_undomenuitem.activate.connect(()=>{undoredo(true);});
+		_undomenuitem.add_accelerator("activate",accel_group,keyval_from_name("z"),Gdk.ModifierType.CONTROL_MASK, Gtk.AccelFlags.VISIBLE);
+
 		_redomenuitem.activate.connect(()=>{undoredo(false);});
+		_redomenuitem.add_accelerator("activate",accel_group,keyval_from_name("y"),Gdk.ModifierType.CONTROL_MASK, Gtk.AccelFlags.VISIBLE);
+
 		_showsolutionmenuitem.activate.connect(()=>{revealgame();});
+		_showsolutionmenuitem.add_accelerator("activate",accel_group,keyval_from_name("s"),Gdk.ModifierType.SHIFT_MASK, Gtk.AccelFlags.VISIBLE);
 		_showworkingmenuitem.activate.connect(()=>{hidegame();});
+		_showworkingmenuitem.add_accelerator("activate",accel_group,keyval_from_name("w"),Gdk.ModifierType.SHIFT_MASK, Gtk.AccelFlags.VISIBLE);
 		_checkerrorsmenuitem.activate.connect(()=>{checkerrors();});
+		_checkerrorsmenuitem.add_accelerator("activate",accel_group,keyval_from_name("i"),Gdk.ModifierType.SHIFT_MASK, Gtk.AccelFlags.VISIBLE);
 		restartmenuitem.activate.connect(()=>{restartgame();});
+		restartmenuitem.add_accelerator("activate",accel_group,keyval_from_name("r"),Gdk.ModifierType.SHIFT_MASK, Gtk.AccelFlags.VISIBLE);
+		pausemenuitem.activate.connect(()=>{pausegame();});
+		pausemenuitem.add_accelerator("activate",accel_group,keyval_from_name("p"),Gdk.ModifierType.SHIFT_MASK, Gtk.AccelFlags.VISIBLE);
 		computersolvemenuitem.activate.connect(()=>{solvegame();});
+		computersolvemenuitem.add_accelerator("activate",accel_group,keyval_from_name("c"),Gdk.ModifierType.SHIFT_MASK, Gtk.AccelFlags.VISIBLE);
 		computergeneratemenuitem.activate.connect(()=>{randomgame();});
+		computergeneratemenuitem.add_accelerator("activate",accel_group,keyval_from_name("g"),Gdk.ModifierType.SHIFT_MASK, Gtk.AccelFlags.VISIBLE);
 
 		colormenuitem.activate.connect(()=>{setcolors();});
 		fontmenuitem.activate.connect(()=>{setfont();});
@@ -277,6 +306,7 @@ public class Gnonogram_view : Gtk.Window
 		customgamedirmenuitem.activate.connect(Resource.set_custom_game_dir);
 		defaultgamedirmenuitem.activate.connect(Resource.set_default_game_dir);
 		infomenuitem.activate.connect(()=>{editgame();});
+		infomenuitem.add_accelerator("activate",accel_group,keyval_from_name("e"),Gdk.ModifierType.SHIFT_MASK, Gtk.AccelFlags.VISIBLE);
 
 //		debugmenuitem.activate.connect(()=>{debugmode(debugmenuitem.active);});
 		advancedmenuitem.activate.connect(()=>{advancedmode(advancedmenuitem.active);});
@@ -286,9 +316,15 @@ public class Gnonogram_view : Gtk.Window
 		toolbarmenuitem.activate.connect(toggle_toolbar);
 		_gridmenuitem.activate.connect(()=>{togglegrid(_gridmenuitem.active);});
 
+		zoominmenuitem.activate.connect(()=>{changefont(true);});
+		zoominmenuitem.add_accelerator("activate",accel_group,keyval_from_name("plus"),Gdk.ModifierType.CONTROL_MASK, Gtk.AccelFlags.VISIBLE);
+		zoominmenuitem.add_accelerator("activate",accel_group,keyval_from_name("equal"),Gdk.ModifierType.CONTROL_MASK, Gtk.AccelFlags.VISIBLE);
+		zoomoutmenuitem.activate.connect(()=>{changefont(false);});
+		zoomoutmenuitem.add_accelerator("activate",accel_group,keyval_from_name("minus"),Gdk.ModifierType.CONTROL_MASK, Gtk.AccelFlags.VISIBLE);
+
 		aboutmenuitem.activate.connect(show_about);
 		htmlmanualmenuitem.activate.connect(show_html_manual);
-
+		htmlmanualmenuitem.add_accelerator("activate",accel_group,keyval_from_name("F1"),(Gdk.ModifierType)0, Gtk.AccelFlags.VISIBLE);
 		return menubar;
 	}
 //======================================================================
@@ -299,17 +335,17 @@ public class Gnonogram_view : Gtk.Window
 
 //		var new_tool=new ToolButton.from_stock(Gtk.Stock.CLEAR);
 		var new_tool=new ToolButton.from_stock(Gtk.STOCK_CLEAR);
-		new_tool.set_tooltip_text(_("New game"));
+		new_tool.set_tooltip_text(_("New puzzle"));
 		_toolbar.add(new_tool);
 
 //		var load_tool=new ToolButton.from_stock(Gtk.Stock.OPEN);
 		var load_tool=new ToolButton.from_stock(Gtk.STOCK_OPEN);
-		load_tool.set_tooltip_text(_("Load game"));
+		load_tool.set_tooltip_text(_("Load puzzle"));
 		_toolbar.add(load_tool);
 
 //		var save_as_tool=new ToolButton.from_stock(Gtk.Stock.SAVE_AS);
 		var save_as_tool=new ToolButton.from_stock(Gtk.STOCK_SAVE_AS);
-		save_as_tool.set_tooltip_text(_("Save game"));
+		save_as_tool.set_tooltip_text(_("Save puzzle"));
 		_toolbar.add(save_as_tool);
 
 		_toolbar.add(new SeparatorToolItem());
@@ -350,17 +386,16 @@ public class Gnonogram_view : Gtk.Window
 		var random_icon=new Gtk.Image.from_pixbuf(Resource.get_icon(Resource.IconID.RANDOM));
 
 		var random_tool=new ToolButton(random_icon,_("Random"));
-		random_tool.set_tooltip_text(_("Generate a random game"));
+		random_tool.set_tooltip_text(_("Generate a random puzzle"));
 		_toolbar.add(random_tool);
 
 		_toolbar.add(new SeparatorToolItem());
 
 		var resize_icon=new Gtk.Image.from_pixbuf(Resource.get_icon(Resource.IconID.RESIZE));
 		_resize_tool=new ToolButton(resize_icon,_("Resize"));
-		_resize_tool.set_tooltip_text(_("Change dimensions of the game grid"));
+		_resize_tool.set_tooltip_text(_("Change dimensions of the puzzle grid"));
 		_toolbar.add(_resize_tool);
 
-//		var zoom_in_tool=new ToolButton.from_stock(Gtk.Stock.ZOOM_IN);
 		var zoom_in_tool=new ToolButton.from_stock(Gtk.STOCK_ZOOM_IN);
 		zoom_in_tool.set_tooltip_text(_("Increase font size"));
 		_toolbar.add(zoom_in_tool);
@@ -372,7 +407,7 @@ public class Gnonogram_view : Gtk.Window
 
 		var grade_tool=new ToolItem();
 		_grade_spin=new SpinButton.with_range(1,Resource.MAXGRADE,1);
-		_grade_spin.set_tooltip_text(_("Set the difficulty of generated games"));
+		_grade_spin.set_tooltip_text(_("Set the difficulty of generated puzzles"));
 		_grade_spin.set_can_focus(false);
 		grade_tool.add(_grade_spin);
 		_toolbar.add(grade_tool);
@@ -419,7 +454,7 @@ public class Gnonogram_view : Gtk.Window
 		var win=new Gtk.Window(Gtk.WindowType.TOPLEVEL);
 		win.set_decorated(false);
 		var grade_spin2=new SpinButton.with_range(1,10,1);
-		grade_spin2.set_tooltip_text(_("Set the difficulty of generated games"));
+		grade_spin2.set_tooltip_text(_("Set the difficulty of generated puzzles"));
 		grade_spin2.set_can_focus(false);
 		grade_spin2.set_value(_grade_spin.get_value());
 		win.add(grade_spin2);
@@ -581,6 +616,8 @@ public class Gnonogram_view : Gtk.Window
 			_resize_tool.sensitive=true;
 			_check_tool.sensitive=false;
 			_checkerrorsmenuitem.sensitive=false;
+			pausemenuitem.sensitive=false;
+
 		}
 		else
 		{
@@ -594,6 +631,7 @@ public class Gnonogram_view : Gtk.Window
 			_resize_tool.sensitive=false;
 			_check_tool.sensitive=true;
 			_checkerrorsmenuitem.sensitive=true;
+			pausemenuitem.sensitive=true;
 		}
 	}
 //======================================================================

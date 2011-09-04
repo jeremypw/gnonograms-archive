@@ -41,7 +41,7 @@ namespace Resource
 			REVEAL
 	}
 	public const string APP_GETTEXT_PACKAGE = GETTEXT_PACKAGE;
-	public const string DEFAULTGAMENAME = "New game";
+	public const string DEFAULTGAMENAME = "New puzzle";
 	public const string GAMEFILEEXTENSION=".gno";
 	public const string POSITIONFILENAME="currentposition";
 	//Built in icon filenames

@@ -4,164 +4,147 @@
 # This file is distributed under the same license as the Gnonograms package.
 # JEREMY WOOTTEN <jeremywootten@gmail.com>, 2010.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: Gnonograms-0.1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-07-16 15:45+0100\n"
-"PO-Revision-Date: 2011-07-16 16:01+0100\n"
-"Last-Translator: HIROKO WOOTTEN <hirokowootten@gmail.com>\n"
+"POT-Creation-Date: 2011-09-04 15:23+0100\n"
+"PO-Revision-Date: 2011-09-04 15:25+0100\n"
+"Last-Translator: Jeremy Wootten <jeremywootten@gmail.com>\n"
 "Language-Team: JAPANESE <jp@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../src/Gnonogram_controller.vala:92 ../src/Gnonogram_viewer.vala:406
-msgid "Gnonograms"
-msgstr "Gnonogramsお絵かきパズル"
+#: ../src/Gnonogram_controller.vala:446
+#: ../src/Gnonogram_viewer.vala:92
+#: ../src/Gnonogram_viewer.vala:338
+msgid "New puzzle"
+msgstr "新しいパズル"
 
-#: ../src/Gnonogram_controller.vala:276
+#: ../src/Gnonogram_controller.vala:466
 msgid "Timer paused"
 msgstr "タイマーが一時停止され"
 
-#: ../src/Gnonogram_controller.vala:378 ../src/Gnonogram_viewer.vala:264
-msgid "New game"
-msgstr "新しいパズル"
+#: ../src/Gnonogram_controller.vala:475
+msgid "Name and save this puzzle"
+msgstr "パズルに名前を付け、それを保存する"
 
-#: ../src/Gnonogram_controller.vala:400
-msgid "Name and save this game"
-msgstr "名前を付けて、このパズルを保存する"
-
-#: ../src/Gnonogram_controller.vala:401 ../src/Gnonogram_filereader.vala:77
-msgid "Gnonogram games"
+#: ../src/Gnonogram_controller.vala:476
+#: ../src/Gnonogram_filereader.vala:77
+msgid "Gnonogram puzzles"
 msgstr "Gnonogramお絵かきパズル"
 
-#: ../src/Gnonogram_controller.vala:412 ../src/Gnonogram_controller.vala:432
+#: ../src/Gnonogram_controller.vala:490
+#: ../src/Gnonogram_controller.vala:511
 #, c-format
 msgid "Saved as '%s'"
 msgstr "「%s」として保存した"
 
-#: ../src/Gnonogram_controller.vala:420
-msgid "Name and save as  pictogame"
-msgstr "名前を付けて、このパズルをPictoパゼルトとして保存する"
+#: ../src/Gnonogram_controller.vala:498
+msgid "Name and save as  picto puzzle"
+msgstr "\"ピクトのパズル\"として保存してパズルに名前を付けます"
 
-#: ../src/Gnonogram_controller.vala:421 ../src/Gnonogram_filereader.vala:77
-msgid "Picto games"
-msgstr "Pictoパズル"
+#: ../src/Gnonogram_controller.vala:499
+#: ../src/Gnonogram_filereader.vala:77
+msgid "Picto puzzles"
+msgstr "ピクトパズル"
 
-#: ../src/Gnonogram_controller.vala:485
-msgid "An error occured creating the position file"
-msgstr "ゲームの状態を保存中にエラーが発生しました"
+#: ../src/Gnonogram_controller.vala:592
+msgid "Failed to load puzzle"
+msgstr "読み込み中にエラーが発生"
 
-#: ../src/Gnonogram_controller.vala:521
-msgid "Failed to load saved position"
-msgstr "読込み中にエッラー発生"
-
-#: ../src/Gnonogram_controller.vala:536
-msgid "Working data missing"
-msgstr "欠落したデータ（「ワーキング」）"
-
-#: ../src/Gnonogram_controller.vala:553
-msgid "State data missing"
-msgstr "欠落したデータ（「ステート」）"
-
-#: ../src/Gnonogram_controller.vala:564
-msgid "Could not open game file"
+#: ../src/Gnonogram_controller.vala:629
+msgid "Could not open puzzle file"
 msgstr "パズルのファイルを開けませんでした"
 
-#: ../src/Gnonogram_controller.vala:569
+#: ../src/Gnonogram_controller.vala:634
 msgid "File format incorrect"
 msgstr "不正なファイル形式"
 
-#: ../src/Gnonogram_controller.vala:579
+#: ../src/Gnonogram_controller.vala:640
 msgid "Dimensions too large"
 msgstr "寸法が大きすぎる"
 
-#: ../src/Gnonogram_controller.vala:588
+#: ../src/Gnonogram_controller.vala:648
 msgid "Dimensions data missing"
 msgstr "データ欠落（寸法）"
 
-#: ../src/Gnonogram_controller.vala:612
-msgid "Clues contradictory"
-msgstr "矛盾する手がかり"
-
-#: ../src/Gnonogram_controller.vala:617
-msgid "Game not soluble by computer"
+#: ../src/Gnonogram_controller.vala:671
+msgid "Puzzle not easily soluble by computer"
 msgstr "コンピュータは、パズルを解くことができない"
 
-#: ../src/Gnonogram_controller.vala:622
+#: ../src/Gnonogram_controller.vala:675
 msgid "Clues and solution both missing"
 msgstr "両方の手がかりと解決策が欠けている"
 
-#: ../src/Gnonogram_controller.vala:652
+#: ../src/Gnonogram_controller.vala:705
 #, c-format
 msgid "Time taken is %d hours, %d minutes, %8.3f seconds"
 msgstr "%d時間、%d分、%8.3f秒を経過"
 
-#: ../src/Gnonogram_controller.vala:658
+#: ../src/Gnonogram_controller.vala:710
 msgid "No errors"
 msgstr "エラーなし"
 
-#: ../src/Gnonogram_controller.vala:662
+#: ../src/Gnonogram_controller.vala:713
 #, c-format
 msgid "There are %d incorrect cells"
 msgstr "%d 間違ったセルがあります。"
 
-#: ../src/Gnonogram_controller.vala:668
+#: ../src/Gnonogram_controller.vala:718
 msgid "No solution available"
 msgstr "解決策がない"
 
-#: ../src/Gnonogram_controller.vala:685
-msgid "Invalid - no solution"
-msgstr "解決策がない"
-
-#: ../src/Gnonogram_controller.vala:689
+#: ../src/Gnonogram_controller.vala:736
 msgid "Failed to solve or no unique solution"
 msgstr "解決に失敗又は複数の解決策"
 
-#: ../src/Gnonogram_controller.vala:693
+#: ../src/Gnonogram_controller.vala:740
 #, c-format
 msgid "Solved in %8.3f seconds"
 msgstr "%8.3f 秒後に解決"
 
-#: ../src/Gnonogram_controller.vala:801
+#: ../src/Gnonogram_controller.vala:842
 msgid "Difficult random"
 msgstr "難しい、ランドム"
 
-#: ../src/Gnonogram_controller.vala:801
+#: ../src/Gnonogram_controller.vala:842
 msgid "Simple random"
 msgstr "簡単な、ランドム"
 
-#: ../src/Gnonogram_controller.vala:803
+#: ../src/Gnonogram_controller.vala:844
 msgid "Computer"
 msgstr "コンピューター"
 
-#: ../src/Gnonogram_controller.vala:812
+#: ../src/Gnonogram_controller.vala:852
 msgid "Error occurred in solver"
 msgstr "パズルを解く中にエラーが発生しました"
 
-#: ../src/Gnonogram_controller.vala:814
+#: ../src/Gnonogram_controller.vala:854
 msgid "Error in solver"
 msgstr "パズルを解決中にエラーが発生しました"
 
-#: ../src/Config.vala:36
+#: ../src/Gnonogram_controller.vala:979
+msgid "Clues contradictory"
+msgstr "矛盾する手がかり"
+
+#: ../src/GConf_config.vala:43
+#, c-format
 msgid "Unable to get GConf value"
 msgstr "GConfのから値を取得できません。"
 
-#: ../src/Config.vala:39
+#: ../src/GConf_config.vala:46
+#, c-format
 msgid "Unable to set GConf value"
 msgstr "GConfに値を設定できません"
-
-#: ../src/Config.vala:123
-msgid "Path given does not exist or is not a directory"
-msgstr "指定されたパスは存在しないか、ディレクトリではありません"
 
 #: ../src/Gnonogram_label.vala:67
 msgid "Freedom="
 msgstr "自由の度 ="
 
-#: ../src/Gnonogram_model.vala:126
+#: ../src/Gnonogram_model.vala:135
 msgid "Error - wrong number of columns"
 msgstr "ファイルエラー-列が少なすぎます"
 
@@ -181,304 +164,421 @@ msgstr "これは長い時間がかかっている！"
 msgid "Keep trying?"
 msgstr "挑戦し続ける？"
 
-#: ../src/Gnonogram_viewer.vala:78
-msgid "New Game"
-msgstr "新しいパズル"
-
-#: ../src/Gnonogram_viewer.vala:81 ../src/Gnonogram_viewer.vala:515
-#: ../src/Gnonogram_viewer.vala:517 ../src/Gnonogram_filereader.vala:122
+#: ../src/Gnonogram_viewer.vala:95
+#: ../src/Gnonogram_viewer.vala:575
+#: ../src/Gnonogram_viewer.vala:577
+#: ../src/Gnonogram_filereader.vala:123
 msgid "Unknown"
 msgstr "不明"
 
-#: ../src/Gnonogram_viewer.vala:121
+#: ../src/Gnonogram_viewer.vala:129
+#: ../src/Gnonogram_viewer.vala:476
+#: additional_strings:1
+msgid "Gnonograms"
+msgstr "Gnonogramsお絵かきパズル"
+
+#: ../src/Gnonogram_viewer.vala:140
 msgid "_File"
 msgstr "ファイル"
 
-#: ../src/Gnonogram_viewer.vala:122
-msgid "_Game"
-msgstr "パズル"
+#: ../src/Gnonogram_viewer.vala:141
+msgid "_Puzzle"
+msgstr "パズルフ"
 
-#: ../src/Gnonogram_viewer.vala:123
+#: ../src/Gnonogram_viewer.vala:142
 msgid "_Settings"
 msgstr "設定"
 
-#: ../src/Gnonogram_viewer.vala:124
+#: ../src/Gnonogram_viewer.vala:143
 msgid "_View"
 msgstr "表示"
 
-#: ../src/Gnonogram_viewer.vala:125
+#: ../src/Gnonogram_viewer.vala:144
 msgid "_Help"
 msgstr "ヘルプ"
 
-#: ../src/Gnonogram_viewer.vala:135
-msgid "_New"
-msgstr "新規"
+#: ../src/Gnonogram_viewer.vala:161
+msgid "_Save as Picto puzzle"
+msgstr "\"ピクトパズル\"として保存"
 
-#: ../src/Gnonogram_viewer.vala:138
-msgid "_Load"
-msgstr "ロードする"
-
-#: ../src/Gnonogram_viewer.vala:140
-msgid "_Save"
-msgstr "保存"
-
-#: ../src/Gnonogram_viewer.vala:142
-msgid "_Save as Pictogame"
-msgstr "Pictoパゼルトとして保存"
-
-#: ../src/Gnonogram_viewer.vala:145
-msgid "_Quit"
-msgstr "終了"
-
-#: ../src/Gnonogram_viewer.vala:150 ../src/Gnonogram_viewer.vala:157
-msgid "_Puzzle"
-msgstr "パズル"
-
-#: ../src/Gnonogram_viewer.vala:152 ../src/Gnonogram_viewer.vala:159
-msgid "_Unfinished"
-msgstr "未完成"
-
-#: ../src/Gnonogram_viewer.vala:164
+#: ../src/Gnonogram_viewer.vala:189
 msgid "_Show solution"
 msgstr "回答表示"
 
-#: ../src/Gnonogram_viewer.vala:166
+#: ../src/Gnonogram_viewer.vala:191
 msgid "Show _Working"
 msgstr "作業表示"
 
-#: ../src/Gnonogram_viewer.vala:168
+#: ../src/Gnonogram_viewer.vala:193
 msgid "Show _Incorrect cells"
 msgstr "間違ったセルを表示する"
 
-#: ../src/Gnonogram_viewer.vala:171
+#: ../src/Gnonogram_viewer.vala:197
 msgid "_Restart"
 msgstr "再出発"
 
-#: ../src/Gnonogram_viewer.vala:174
+#: ../src/Gnonogram_viewer.vala:199
+msgid "_Pause"
+msgstr "一時停止"
+
+#: ../src/Gnonogram_viewer.vala:203
 msgid "_Let computer solve it"
 msgstr "コンピュータが解決"
 
-#: ../src/Gnonogram_viewer.vala:176
+#: ../src/Gnonogram_viewer.vala:205
 msgid "_Computer generated puzzle"
 msgstr "コンピュータがパズルを作成"
 
-#: ../src/Gnonogram_viewer.vala:179
-msgid "_Edit game description"
-msgstr "ゲームの説明を編集する"
+#: ../src/Gnonogram_viewer.vala:208
+msgid "_Edit puzzle"
+msgstr "パズルを編集"
 
-#: ../src/Gnonogram_viewer.vala:185
+#: ../src/Gnonogram_viewer.vala:213
 msgid "_Colors ..."
 msgstr "色"
 
-#: ../src/Gnonogram_viewer.vala:187
+#: ../src/Gnonogram_viewer.vala:215
 msgid "_Font ..."
 msgstr "字体"
 
-#: ../src/Gnonogram_viewer.vala:189
+#: ../src/Gnonogram_viewer.vala:217
 msgid "_Resize ..."
 msgstr "サイズ変更"
 
-#: ../src/Gnonogram_viewer.vala:191
+#: ../src/Gnonogram_viewer.vala:219
 msgid "_Difficulty ..."
 msgstr "難易度"
+
+#: ../src/Gnonogram_viewer.vala:221
+msgid "_Puzzle folder"
+msgstr "パズルフォルダ"
+
+#: ../src/Gnonogram_viewer.vala:224
+msgid "Default"
+msgstr "デフォルト"
+
+#: ../src/Gnonogram_viewer.vala:225
+msgid "Custom ..."
+msgstr "カスタム ..."
 
 #. var debugmenuitem=new CheckMenuItem.with_mnemonic("D_ebug");
 #. debugmenuitem.set_active(false);
 #. debugmenuitem.set_sensitive(true); //for development only
 #. settingssubmenu.add(debugmenuitem);
-#: ../src/Gnonogram_viewer.vala:198
+#: ../src/Gnonogram_viewer.vala:235
 msgid "_Use advanced solver"
 msgstr "高度なソルバー"
 
-#: ../src/Gnonogram_viewer.vala:201
-msgid "_Generate difficult games"
-msgstr "難しいパズル"
+#: ../src/Gnonogram_viewer.vala:238
+msgid "_Generate difficult puzzles"
+msgstr "難しいパズルを生成する"
 
-#: ../src/Gnonogram_viewer.vala:207
+#: ../src/Gnonogram_viewer.vala:244
+msgid "_Reset all to default"
+msgstr "すべてデフォルトにリセット"
+
+#: ../src/Gnonogram_viewer.vala:249
 msgid "_Toolbar"
 msgstr "ツールバー"
 
-#: ../src/Gnonogram_viewer.vala:210
+#: ../src/Gnonogram_viewer.vala:252
 msgid "_Grid"
 msgstr "グリッド"
 
-#: ../src/Gnonogram_viewer.vala:216
+#: ../src/Gnonogram_viewer.vala:263
+msgid "Contents"
+msgstr "目次"
+
+#: ../src/Gnonogram_viewer.vala:265
 msgid "About"
 msgstr "情報"
 
-#: ../src/Gnonogram_viewer.vala:218
-msgid "Manual"
-msgstr "命令書"
+#: ../src/Gnonogram_viewer.vala:343
+msgid "Load puzzle"
+msgstr "パズルをロード"
 
-#: ../src/Gnonogram_viewer.vala:220
-msgid "Html Manual"
-msgstr "HTML命令書"
+#: ../src/Gnonogram_viewer.vala:348
+msgid "Save puzzle"
+msgstr "パズルを保存する"
 
-#: ../src/Gnonogram_viewer.vala:269
-msgid "Load game"
-msgstr "ロードパズル"
+#: ../src/Gnonogram_viewer.vala:354
+msgid "Undo last move"
+msgstr "最後の動きを元に戻す"
 
-#: ../src/Gnonogram_viewer.vala:274
-msgid "Save game"
-msgstr "パズルを保存"
+#: ../src/Gnonogram_viewer.vala:358
+msgid "Redo last undone move"
+msgstr "最後の移動をやり直す"
 
-#: ../src/Gnonogram_viewer.vala:290
-msgid "Check"
-msgstr "確認"
-
-#: ../src/Gnonogram_viewer.vala:291
-msgid "Show any incorrect cells"
-msgstr "間違ったセルを表示する"
-
-#: ../src/Gnonogram_viewer.vala:296
+#: ../src/Gnonogram_viewer.vala:362
 msgid "Start this puzzle again"
 msgstr "このパズル再開"
 
-#: ../src/Gnonogram_viewer.vala:303
+#: ../src/Gnonogram_viewer.vala:372
+#: ../src/Gnonogram_viewer.vala:607
+msgid "Hide the solution and start solving"
+msgstr "答えを隠しパズルを解く"
+
+#: ../src/Gnonogram_viewer.vala:377
+msgid "Check"
+msgstr "確認"
+
+#: ../src/Gnonogram_viewer.vala:378
+msgid "Show any incorrect cells"
+msgstr "間違ったセルを表示する"
+
+#: ../src/Gnonogram_viewer.vala:382
 msgid "Solve"
 msgstr "解決する"
 
-#: ../src/Gnonogram_viewer.vala:304
+#: ../src/Gnonogram_viewer.vala:383
 msgid "Solve by computer"
 msgstr "コンピュータによって解決する"
 
-#: ../src/Gnonogram_viewer.vala:311
+#: ../src/Gnonogram_viewer.vala:388
 msgid "Random"
 msgstr "ランダムパズル"
 
-#: ../src/Gnonogram_viewer.vala:312
-msgid "Generate a random game"
+#: ../src/Gnonogram_viewer.vala:389
+msgid "Generate a random puzzle"
 msgstr "乱数を生成するパズル"
 
-#: ../src/Gnonogram_viewer.vala:319 ../src/Gnonogram_viewer.vala:387
-msgid "Set the difficulty of generated games"
-msgstr "難易度の設定"
-
-#: ../src/Gnonogram_viewer.vala:326
+#: ../src/Gnonogram_viewer.vala:395
 msgid "Resize"
 msgstr "サイズ変更"
 
-#: ../src/Gnonogram_viewer.vala:327
-msgid "Change dimensions of the game grid"
-msgstr "パズルの変更寸法"
+#: ../src/Gnonogram_viewer.vala:396
+msgid "Change dimensions of the puzzle grid"
+msgstr "パズルのグリッドの大きさを変更する"
 
-#: ../src/Gnonogram_viewer.vala:332
+#: ../src/Gnonogram_viewer.vala:400
 msgid "Increase font size"
 msgstr "字体拡大"
 
-#: ../src/Gnonogram_viewer.vala:337
+#: ../src/Gnonogram_viewer.vala:405
 msgid "Decrease font size"
 msgstr "字体縮小"
 
-#: ../src/Gnonogram_viewer.vala:351
+#: ../src/Gnonogram_viewer.vala:410
+#: ../src/Gnonogram_viewer.vala:457
+msgid "Set the difficulty of generated puzzles"
+msgstr "難易度の設定"
+
+#: ../src/Gnonogram_viewer.vala:428
 msgid "_Difficulty"
 msgstr "難易度"
 
-#: ../src/Gnonogram_viewer.vala:353
+#: ../src/Gnonogram_viewer.vala:430
 msgid "Difficulty"
 msgstr "難易度"
 
-#: ../src/Gnonogram_viewer.vala:408
+#: ../src/Gnonogram_viewer.vala:478
+#: additional_strings:1
 msgid "Design and solve Nonogram puzzles"
-msgstr "お絵かきパズルの設計と解決"
+msgstr "お絵かきパズルを設計すると解決する"
 
-#: ../src/Gnonogram_viewer.vala:412
+#: ../src/Gnonogram_viewer.vala:482
 msgid "About Gnonograms"
 msgstr "Gnonogramsについて"
 
-#: ../src/Gnonogram_viewer.vala:450 ../src/utils.vala:42
-#: ../src/Resource.vala:162
-msgid "Ok"
-msgstr "良し"
-
-#: ../src/Gnonogram_viewer.vala:451 ../src/utils.vala:43
-#: ../src/Resource.vala:163
-msgid "Cancel"
-msgstr "キャンセル"
-
-#: ../src/Gnonogram_viewer.vala:454
-msgid "Name of puzzle"
-msgstr "パズルの名前"
-
-#: ../src/Gnonogram_viewer.vala:455
-msgid "Designed by"
-msgstr "設計者"
-
-#: ../src/Gnonogram_viewer.vala:456
-msgid "Date designed"
-msgstr "日付"
-
 #. ======================================================================
-#: ../src/Gnonogram_viewer.vala:493
+#. replaced by Game_Editor class
+#. private void editdescription()
+#. {
+#. var dialog = new Gtk.Dialog.with_buttons (
+#. null,
+#. null,
+#. Gtk.DialogFlags.MODAL|Gtk.DialogFlags.DESTROY_WITH_PARENT,
+#. _("Ok"), Gtk.ResponseType.OK,
+#. _("Cancel"), Gtk.ResponseType.CANCEL
+#. );
+#. var name_label=new Gtk.Label(_("Name of puzzle"));
+#. var author_label=new Gtk.Label(_("Designed by"));
+#. var date_label=new Gtk.Label(_("Date designed"));
+#. var label_box=new VBox(false,5);
+#. label_box.add(name_label);
+#. label_box.add(author_label);
+#. label_box.add(date_label);
+#. var name_entry = new Gtk.Entry();
+#. name_entry.set_max_length(32);
+#. name_entry.set_text(get_name());
+#. var author_entry = new Gtk.Entry();
+#. author_entry.set_max_length(32);
+#. author_entry.set_text(get_author());
+#. var date_entry = new Gtk.Entry();
+#. date_entry.set_max_length(16);
+#. date_entry.set_text(get_date());
+#. var entry_box=new VBox(false,5);
+#. entry_box.add(name_entry);
+#. entry_box.add(author_entry);
+#. entry_box.add(date_entry);
+#. var hbox=new HBox(false,5);
+#. hbox.add(label_box);
+#. hbox.add(entry_box);
+#. dialog.vbox.add(hbox);
+#. dialog.show_all();
+#. if (dialog.run()==ResponseType.OK)
+#. {
+#. set_name(name_entry.get_text());
+#. set_author(author_entry.get_text());
+#. set_date(date_entry.get_text());
+#. }
+#. dialog.destroy();
+#. }
+#. ======================================================================
+#: ../src/Gnonogram_viewer.vala:553
 msgid "Name:"
 msgstr "名称:"
 
 #. ======================================================================
-#: ../src/Gnonogram_viewer.vala:496
+#: ../src/Gnonogram_viewer.vala:556
 msgid "By:"
 msgstr "設計者:"
 
 #. ======================================================================
-#: ../src/Gnonogram_viewer.vala:499
+#: ../src/Gnonogram_viewer.vala:559
 msgid "Date:"
 msgstr "日付:"
 
 #. stdout.printf("set_score_label %s\n",score);
-#: ../src/Gnonogram_viewer.vala:504
+#: ../src/Gnonogram_viewer.vala:564
 msgid "Score:"
 msgstr "スコア:"
 
-#: ../src/Gnonogram_viewer.vala:523
+#: ../src/Gnonogram_viewer.vala:583
 msgid "Size: "
 msgstr "寸法:    "
 
-#: ../src/Gnonogram_viewer.vala:545
-msgid "Hide the solution and start solving"
-msgstr "答えを隠しパズルを解く"
-
-#: ../src/Gnonogram_viewer.vala:552
+#: ../src/Gnonogram_viewer.vala:624
 msgid "Reveal the solution"
 msgstr "解決策を明らかに"
 
 #: ../src/Gnonogram_filereader.vala:76
-msgid "Choose a game"
+msgid "Choose a puzzle"
 msgstr "パズルを選択"
 
-#: ../src/Gnonogram_filereader.vala:184
+#: ../src/Gnonogram_filereader.vala:185
 msgid "Wrong number of dimensions"
 msgstr "次元の数が間違っています"
 
-#: ../src/utils.vala:118
+#: ../src/utils.vala:42
+#: ../src/Resource.vala:203
+msgid "Ok"
+msgstr "良し"
+
+#: ../src/utils.vala:43
+#: ../src/Resource.vala:204
+msgid "Cancel"
+msgstr "キャンセル"
+
+#: ../src/utils.vala:123
 msgid "Adjust Size"
 msgstr "サイズを調整"
 
-#: ../src/utils.vala:130
+#: ../src/utils.vala:135
 msgid "Rows"
 msgstr "行"
 
-#: ../src/utils.vala:134
+#: ../src/utils.vala:139
 msgid "Columns"
 msgstr "列"
 
-#: ../src/Resource.vala:166 ../src/Resource.vala:178
+#: ../src/Resource.vala:207
+#: ../src/Resource.vala:219
 msgid "Color of filled cell when setting"
 msgstr "充填セルの色設定するとき"
 
-#: ../src/Resource.vala:167 ../src/Resource.vala:180
+#: ../src/Resource.vala:208
+#: ../src/Resource.vala:221
 msgid "Color of empty cell when setting"
 msgstr "空のセルの色を設定するとき"
 
-#: ../src/Resource.vala:168 ../src/Resource.vala:182
+#: ../src/Resource.vala:209
+#: ../src/Resource.vala:223
 msgid "Color of filled cell when solving"
 msgstr "充填セルの色解決する際に"
 
-#: ../src/Resource.vala:169 ../src/Resource.vala:184
+#: ../src/Resource.vala:210
+#: ../src/Resource.vala:225
 msgid "Color of empty cell when solving"
 msgstr "空のセルの色を解決する際に"
 
+#: ../src/Resource.vala:235
+#: ../src/Resource.vala:238
+#: ../src/Resource.vala:241
+#: ../src/Resource.vala:244
+msgid "Reset to default color"
+msgstr "デフォルトの色にリセット"
+
+#: ../src/Game_editor.vala:66
+msgid "Name of puzzle"
+msgstr "パズルの名前"
+
+#: ../src/Game_editor.vala:77
+msgid "Designed by"
+msgstr "設計者"
+
+#: ../src/Game_editor.vala:88
+msgid "Date designed"
+msgstr "日付"
+
+#: ../src/Gnonogram_config.vala:104
+msgid "Path given does not exist or is not a directory"
+msgstr "指定されたパスは存在しないか、ディレクトリではありません"
+
 #: additional_strings:1
-msgid "Logic Game"
+msgid "Logic game"
 msgstr "論理ゲーム"
+
+#~ msgid "New game"
+#~ msgstr "新しいパズル"
+
+#~ msgid "New Game"
+#~ msgstr "新しいパズル"
+
+#~ msgid "_Game"
+#~ msgstr "パズル"
+
+#~ msgid "_New"
+#~ msgstr "新規"
+
+#~ msgid "_Load"
+#~ msgstr "ロードする"
+
+#~ msgid "_Save"
+#~ msgstr "保存"
+
+#~ msgid "_Quit"
+#~ msgstr "終了"
+
+#~ msgid "Manual"
+#~ msgstr "命令書"
+
+#~ msgid "Load game"
+#~ msgstr "ロードパズル"
+
+#~ msgid "Save game"
+#~ msgstr "パズルを保存"
+
+#~ msgid "An error occured creating the position file"
+#~ msgstr "ゲームの状態を保存中にエラーが発生しました"
+
+#~ msgid "Working data missing"
+#~ msgstr "欠落したデータ（「ワーキング」）"
+
+#~ msgid "State data missing"
+#~ msgstr "欠落したデータ（「ステート」）"
+
+#~ msgid "Invalid - no solution"
+#~ msgstr "解決策がない"
+
+#~ msgid "_Unfinished"
+#~ msgstr "未完成"
+
+#~ msgid "_Edit game description"
+#~ msgstr "ゲームの説明を編集する"
+
+#~ msgid "Html Manual"
+#~ msgstr "HTML命令書"
 
 #~ msgid "Thinking ...."
 #~ msgstr "考慮中"

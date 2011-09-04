@@ -34,15 +34,14 @@ configure_help() {
 
     printf "\t--build=DIR\t\tBuild secondary files in DIR.\n"
 
-    printf "\t--debug | --release\tBuild executable for debugging or release.\n"
-    printf "\t\t\t\t[--release]\n"
-
     printf "\t--prefix=PREFIX\t\tPrepend PREFIX to program installation paths.\n"
     printf "\t\t\t\t[/usr]\n"
 
     printf "\t--define=SYMBOL\t\tDefine a symbol for the Vala compiler.\n"
 
     printf "\t--novala\t\tCompile from C source only\n"
+
+    printf "\t--nogconf\t\tDo not use GConf to store settings\n"
 
     printf "\t--disable-desktop-update\n"
     printf "\t\t\t\tDisable desktop, mime and icon database update.\n"

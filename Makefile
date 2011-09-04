@@ -31,7 +31,7 @@ INSTALL_DATA = install -m 644
 
 # defaults that may be overridden by configure.mk
 PREFIX=/usr
-SCHEMA_FILE_DIR=/etc/gconf/schemas
+#SCHEMA_FILE_DIR=/etc/gconf/schemas
 BUILD_RELEASE=1
 
 -include configure.mk
@@ -251,11 +251,9 @@ install:
 #######
 	cp misc/gnonograms.desktop.head misc/gnonograms.desktop
 	$(foreach lang,$(SUPPORTED_LANGUAGES), \
-		TEXTDOMAINDIR=locale; \
-		LANGUAGE=$(lang); \
-		echo Name[$(lang)]=`gettext --domain=gnonograms $(DESKTOP_APPLICATION_NAME)` >>  misc/gnonograms.desktop ; \
-		echo GenericName[$(lang)]=`gettext --domain=gnonograms $(DESKTOP_APPLICATION_CLASS)` >>  misc/gnonograms.desktop ; \
-		echo Comment[$(lang)]=`gettext --domain=gnonograms $(DESKTOP_APPLICATION_COMMENT)` >> misc/gnonograms.desktop;)
+		echo Name[$(lang)]=`TEXTDOMAINDIR=locale LANGUAGE=$(lang) gettext --domain=gnonograms $(DESKTOP_APPLICATION_NAME)` >>  misc/gnonograms.desktop ; \
+		echo GenericName[$(lang)]=`TEXTDOMAINDIR=locale LANGUAGE=$(lang) gettext --domain=gnonograms $(DESKTOP_APPLICATION_CLASS)` >>  misc/gnonograms.desktop ; \
+		echo Comment[$(lang)]=`TEXTDOMAINDIR=locale LANGUAGE=$(lang) gettext --domain=gnonograms $(DESKTOP_APPLICATION_COMMENT)` >> misc/gnonograms.desktop;)
 
 	touch $(LANG_STAMP)
 
@@ -308,14 +306,14 @@ ifndef DISABLE_DESKTOP_UPDATE
 	-update-desktop-database || :
 endif
 
-ifndef NO_GCONF
-ifndef DISABLE_SCHEMAS_INSTALL
-	GCONF_CONFIG_SOURCE=`gconftool-2 --get-default-source` gconftool-2 --makefile-install-rule misc/gnonograms.schemas
-else
-	mkdir -p $(DESTDIR)$(SCHEMA_FILE_DIR)
-	$(INSTALL_DATA) misc/gnonograms.schemas $(DESTDIR)$(SCHEMA_FILE_DIR)
-endif
-endif
+#ifndef NO_GCONF
+#ifndef DISABLE_SCHEMAS_INSTALL
+#	GCONF_CONFIG_SOURCE=`gconftool-2 --get-default-source` gconftool-2 --makefile-install-rule misc/gnonograms.schemas
+#else
+#	mkdir -p $(DESTDIR)$(SCHEMA_FILE_DIR)
+#	$(INSTALL_DATA) misc/gnonograms.schemas $(DESTDIR)$(SCHEMA_FILE_DIR)
+#endif
+#endif
 
 uninstall:
 ##########
@@ -338,13 +336,13 @@ ifndef DISABLE_DESKTOP_UPDATE
 	update-desktop-database || :
 endif
 
-ifndef NO_GCONF
-ifndef DISABLE_SCHEMAS_INSTALL
-	GCONF_CONFIG_SOURCE=`gconftool-2 --get-default-source` gconftool-2 --makefile-uninstall-rule misc/gnonograms.schemas
-else
-	rmdir -f $(DESTDIR)$(SCHEMA_FILE_DIR)/gnonograms.schemas
-endif
-endif
+#ifndef NO_GCONF
+#ifndef DISABLE_SCHEMAS_INSTALL
+#	GCONF_CONFIG_SOURCE=`gconftool-2 --get-default-source` gconftool-2 --makefile-uninstall-rule misc/gnonograms.schemas
+#else
+#	rmdir -f $(DESTDIR)$(SCHEMA_FILE_DIR)/gnonograms.schemas
+#endif
+#endif
 
 	$(foreach lang,$(SUPPORTED_LANGUAGES),`rm -f $(SYSTEM_LANG_DIR)/$(lang)/LC_MESSAGES/gnonograms.mo`)
 

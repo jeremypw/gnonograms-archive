@@ -2,7 +2,7 @@
 ../src/My2DCellArray.vala
 ../src/Gnonogram_cellgrid.vala
 ../src/Gnonogram_controller.vala
-../src/Config.vala
+../src/GConf_config.vala
 ../src/Gnonogram_labelbox.vala
 ../src/Gnonogram_label.vala
 ../src/Gnonogram_model.vala
@@ -12,3 +12,7 @@
 ../src/Gnonogram_filereader.vala
 ../src/utils.vala
 ../src/Resource.vala
+../src/Game_editor.vala
+../src/Gnonogram_conf_client.vala
+../src/Gnonogram_config.vala
+

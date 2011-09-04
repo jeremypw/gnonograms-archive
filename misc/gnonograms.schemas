@@ -97,8 +97,8 @@
         </schema>
 
         <schema>
-            <key>/schemas/apps/gnonograms/preferences/preferences/game_name</key>
-            <applyto>/apps/gnonograms/preferences/preferences/game_name</applyto>
+            <key>/schemas/apps/gnonograms/preferences/paths/game_name</key>
+            <applyto>/apps/gnonograms/preferences/paths/game_name</applyto>
             <type>string</type>
             <owner>gnonograms</owner>
             <default>New game</default>
@@ -111,8 +111,8 @@
         </schema>
 
         <schema>
-            <key>/schemas/apps/gnonograms/preferences/preferences/game_dir</key>
-            <applyto>/apps/gnonograms/preferences/preferences/game_dir</applyto>
+            <key>/schemas/apps/gnonograms/preferences/paths/game_dir</key>
+            <applyto>/apps/gnonograms/preferences/paths/game_dir</applyto>
             <type>string</type>
             <owner>gnonograms</owner>
             <default>NULL</default>

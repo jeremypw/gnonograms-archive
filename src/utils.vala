@@ -112,7 +112,7 @@ namespace Utils
 		if (response==ResponseType.ACCEPT){
 			fn=dialog.get_filename();
 		}
-		stdout.printf("Utils get filename.  Selected %s\n",fn);
+//		stdout.printf("Utils get filename.  Selected %s\n",fn);
 		dialog.destroy();
 
 		return fn;

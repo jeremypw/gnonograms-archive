@@ -124,7 +124,7 @@ public class Config {
 			return set_string(PATHS_CONF+"game_dir", path);
 		}else
 		{
-			Utils.show_warning_dialog(_("Path given does not exist or is not a directory"));
+			stdout.printf("GConf - Path given does not exist or is not a directory\n");
 			return false;
 		}
 	}

@@ -110,6 +110,7 @@ public class Gnonogram_controller
 		_gnonogram_view.hidegame.connect(this.start_solving);
 		_gnonogram_view.revealgame.connect(this.reveal_solution);
 		_gnonogram_view.checkerrors.connect(this.peek_game);
+		_gnonogram_view.pausegame.connect(this.pause_game);
 		_gnonogram_view.restartgame.connect(this.restart_game);
 		_gnonogram_view.randomgame.connect(this.random_game);
 		_gnonogram_view.solvegame.connect(this.viewer_solve_game);
@@ -293,32 +294,30 @@ public class Gnonogram_controller
 					make_move(_current_cell);
 					_is_button_down=true;
 					break;
-			case "P":  //TODO make configurable
-			case "p":
-					_timer.stop();
-					Utils.show_info_dialog(_("Timer paused"));
-					_timer.continue();
-					_is_button_down=false;
-					break;
-			case "EQUAL":
-					change_font_size(true);
-					break;
-			case "MINUS":
-					change_font_size(false);
-					break;
-			case "Z": //TODO make configurable
-			case "z":
-					if(e.state==Gdk.ModifierType.CONTROL_MASK) undoredo(true);
-					break;
-			case "Y": //TODO make configurable
-			case "y":
-					if(e.state==Gdk.ModifierType.CONTROL_MASK) undoredo(false);
-					break;
+//			case "P":  //TODO make configurable
+//			case "p":
+//					pause_game();
+//					break;
+//			case "EQUAL":
+//					change_font_size(true);
+//					break;
+//			case "MINUS":
+//					change_font_size(false);
+//					break;
+			//USE ACCEL_GROUP
+//			case "Z": //TODO make configurable
+//			case "z":
+//					if(e.state==Gdk.ModifierType.CONTROL_MASK) undoredo(true);
+//					break;
+//			case "Y": //TODO make configurable
+//			case "y":
+//					if(e.state==Gdk.ModifierType.CONTROL_MASK) undoredo(false);
+//					break;
 			default:
 					break;
 		}
 
-		return true;
+		return false;
 	}
 //======================================================================
 	private bool key_released(Gdk.EventKey e){
@@ -444,7 +443,7 @@ public class Gnonogram_controller
 		_model.clear();
 		_have_solution=true;
 		update_labels_from_model();
-		_gnonogram_view.set_name(_("New game"));
+		_gnonogram_view.set_name(_("New puzzle"));
 		_gnonogram_view.set_author(" ");
 		_gnonogram_view.set_date(" ");
 		_gnonogram_view.set_score_label("  ");
@@ -461,17 +460,25 @@ public class Gnonogram_controller
 		_timer.start();
 	}
 //======================================================================
+	public void pause_game(){
+	//stdout.printf("Pause game\n");
+		_timer.stop();
+		Utils.show_info_dialog(_("Timer paused"));
+		_timer.continue();
+		_is_button_down=false;
+	}
+//======================================================================
 	public void save_game(){
 		string filename;
 		filename=Utils.get_filename(
 			Gtk.FileChooserAction.SAVE,
-			_("Name and save this game"),
-			{_("Gnonogram games")},
+			_("Name and save this puzzle"),
+			{_("Gnonogram puzzles")},
 			{"*"+Resource.GAMEFILEEXTENSION},
 			Resource.game_dir
 			);
 
-		if (filename==null) return; //message?
+		if (filename=="") return; //message?
 		if (filename.length>3 && filename[-4:filename.length]!=Resource.GAMEFILEEXTENSION){
 			filename = filename+Resource.GAMEFILEEXTENSION;
 		}
@@ -488,13 +495,13 @@ public class Gnonogram_controller
 		string filename;
 		filename=Utils.get_filename(
 			Gtk.FileChooserAction.SAVE,
-			_("Name and save as  pictogame"),
-			{_("Picto games")},
+			_("Name and save as  picto puzzle"),
+			{_("Picto puzzles")},
 			{"*.pattern"},
 			Resource.game_dir
 			);
 
-		if (filename==null) return; //message?
+		if (filename=="") return; //message?
 		if (filename.length<9||filename[-8:filename.length]!=".pattern"){
 			 filename = filename+".pattern";
 		}
@@ -619,7 +626,7 @@ public class Gnonogram_controller
 		_have_solution=false;
 
 		if (!reader.open_datainputstream())	{
-			Utils.show_warning_dialog(_("Could not open game file"));
+			Utils.show_warning_dialog(_("Could not open puzzle file"));
 			return false;
 		}
 
@@ -661,7 +668,7 @@ public class Gnonogram_controller
 				return false;
 			}
 			else {
-				Utils.show_info_dialog(_("Game not easily soluble by computer"));
+				Utils.show_info_dialog(_("Puzzle not easily soluble by computer"));
 			}
 		}
 		else {

@@ -1,3 +1,14 @@
+04/Sep/2011	Conventional config file option complete
+			Saving puzzle now always saves working position as well - associated menu entries modified.
+			Menu item to pause clock
+			Menu item to zoom in and out
+			Use 'puzzle' instead of 'game' consistently in prompts
+			Added accelerator keys to menu items
+			Makefile now correctly adds translations to .desktop file
+			GConf schema files discontinued - do not uninstall properly
+			Fixed clue highlighting bug
+
+
 28/Aug/2011	Infra-structure for optional alternative conventional config file instead of GConf
 			Menu items for default settings
 			Clear buttons on color selection dialog
