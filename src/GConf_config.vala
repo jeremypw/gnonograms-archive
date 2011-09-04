@@ -40,10 +40,10 @@ public class Config {
 	}
 
     private void report_get_error(string path, Error err) {
-        Utils.show_warning_dialog(_("Unable to get GConf value")+@" $path: $(err.message)");
+        stdout.printf(_("Unable to get GConf value")+@" $path: $(err.message)");
     }
     private void report_set_error(string path, Error err) {
-        Utils.show_warning_dialog(_("Unable to set GConf value")+@" $path: $(err.message)");
+        stdout.printf(_("Unable to set GConf value")+@" $path: $(err.message)");
     }
 
 
@@ -182,7 +182,7 @@ public class Config {
 
 	}
 
-		public string[] get_colors()
+	public string[] get_colors()
 	{
 		string set_empty=get_string(UI_CONF+"setting_empty",Resource.colors[(int) GameState.SETTING, (int) CellState.EMPTY].to_string());
 		string set_filled=get_string(UI_CONF+"setting_filled",Resource.colors[(int) GameState.SETTING, (int) CellState.FILLED].to_string());
@@ -191,5 +191,15 @@ public class Config {
 
 		return {set_empty,set_filled,solve_empty,solve_filled};
 
+	}
+
+	public void set_font(string font_descr)
+	{
+		set_string(UI_CONF+"font_description",font_descr);
+	}
+
+	public string get_font()
+	{
+		return get_string(UI_CONF+"font_description",Resource.DEFAULT_FONT);
 	}
 }

@@ -136,13 +136,14 @@ namespace Resource
 //		game_dir=resource_dir+"/games";
 //		(Config.get_instance()).set_game_dir(game_dir);
 
-		game_dir=(Config.get_instance()).get_game_dir(resource_dir+"/games");
-		game_name=(Config.get_instance()).get_game_name(DEFAULTGAMENAME);
+		var config_instance=Config.get_instance();
+		game_dir=config_instance.get_game_dir(resource_dir+"/games");
+		game_name=config_instance.get_game_name(DEFAULTGAMENAME);
 
 		colors = new Gdk.Color[2,4];
 		set_default_colors();
 
-		string [] config_colors=Config.get_instance().get_colors();
+		string [] config_colors=config_instance.get_colors();
 		int setting =(int)GameState.SETTING;
 		int solving =(int)GameState.SOLVING;
 		Gdk.Color.parse(config_colors[0], out colors[setting,(int)CellState.EMPTY]);
@@ -150,7 +151,7 @@ namespace Resource
 		Gdk.Color.parse(config_colors[2], out colors[solving,(int)CellState.EMPTY]);
 		Gdk.Color.parse(config_colors[3], out colors[solving,(int)CellState.FILLED]);
 
-		font_desc=DEFAULT_FONT;
+		font_desc=config_instance.get_font();
 		MINORGRIDDASH={0.5, 3.0};
 
 	}

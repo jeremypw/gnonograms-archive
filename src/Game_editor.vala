@@ -189,7 +189,12 @@ public class Game_Editor : Gtk.Dialog
 			{
 				valid=true;
 				//cleanup format of clue by passing through block array
-				entry.set_text(Utils.clue_from_block_array(Utils.block_array_from_clue(copy)));
+				int[] tmp_array;
+				tmp_array=Utils.block_array_from_clue(copy);
+				string tmp_string;
+				tmp_string=Utils.clue_from_block_array(tmp_array);
+				entry.set_text(tmp_string);
+				//entry.set_text(Utils.clue_from_block_array(Utils.block_array_from_clue(copy)));
 			}
 		}
 		if (!valid)

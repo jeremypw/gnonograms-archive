@@ -29,8 +29,8 @@ public class Gnonogram_view : Gtk.Window
 	public signal void savegame();
 	public signal void savepictogame();
 	public signal void loadgame(string fname);
-	public signal void saveposition();
-	public signal void loadposition();
+//	public signal void saveposition();
+//	public signal void loadposition();
 	public signal void quitgamesignal();
 	public signal void newgame();
 	public signal void hidegame();
@@ -157,19 +157,19 @@ public class Gnonogram_view : Gtk.Window
 			var quitmenuitem=new MenuItem.with_mnemonic(_("_Quit"));
 			filesubmenu.add(quitmenuitem);
 
-			var loadsubmenu = new Menu();
-			loadmenuitem.set_submenu(loadsubmenu);
-				var loadpuzzlemenuitem=new MenuItem.with_mnemonic(_("_Puzzle"));
-				loadsubmenu.add(loadpuzzlemenuitem);
-				var loadpositionmenuitem=new MenuItem.with_mnemonic(_("_Unfinished"));
-				loadsubmenu.add(loadpositionmenuitem);
+//			var loadsubmenu = new Menu();
+//			loadmenuitem.set_submenu(loadsubmenu);
+//				var loadpuzzlemenuitem=new MenuItem.with_mnemonic(_("_Puzzle"));
+//				loadsubmenu.add(loadpuzzlemenuitem);
+//				var loadpositionmenuitem=new MenuItem.with_mnemonic(_("_Unfinished"));
+//				loadsubmenu.add(loadpositionmenuitem);
 
-			var savesubmenu = new Menu();
-			savemenuitem.set_submenu(savesubmenu);
-				var savepuzzlemenuitem=new MenuItem.with_mnemonic(_("_Puzzle"));
-				savesubmenu.add(savepuzzlemenuitem);
-				var savepositionmenuitem=new MenuItem.with_mnemonic(_("_Unfinished"));
-				savesubmenu.add(savepositionmenuitem);
+//			var savesubmenu = new Menu();
+//			savemenuitem.set_submenu(savesubmenu);
+//				var savepuzzlemenuitem=new MenuItem.with_mnemonic(_("_Puzzle"));
+//				savesubmenu.add(savepuzzlemenuitem);
+//				var savepositionmenuitem=new MenuItem.with_mnemonic(_("_Unfinished"));
+//				savesubmenu.add(savepositionmenuitem);
 
 		var gamesubmenu=new Menu();
 		gamemenuitem.set_submenu(gamesubmenu);
@@ -250,11 +250,15 @@ public class Gnonogram_view : Gtk.Window
 			helpsubmenu.add(htmlmanualmenuitem);
 
 		newmenuitem.activate.connect(()=>{newgame();});
-		loadpuzzlemenuitem.activate.connect(()=>{loadgame("");});
-		savepuzzlemenuitem.activate.connect(()=>{savegame();});
+//		loadpuzzlemenuitem.activate.connect(()=>{loadgame("");});
+		loadmenuitem.activate.connect(()=>{loadgame("");});
+
+//		savepuzzlemenuitem.activate.connect(()=>{savegame();});
+		savemenuitem.activate.connect(()=>{savegame();});
+
 		savepictomenuitem.activate.connect(()=>{savepictogame();});
-		loadpositionmenuitem.activate.connect(()=>{loadposition();});
-		savepositionmenuitem.activate.connect(()=>{saveposition();});
+//		loadpositionmenuitem.activate.connect(()=>{loadposition();});
+//		savepositionmenuitem.activate.connect(()=>{saveposition();});
 		quitmenuitem.activate.connect(()=>{quitgamesignal();});
 
 		_undomenuitem.activate.connect(()=>{undoredo(true);});
@@ -539,7 +543,7 @@ public class Gnonogram_view : Gtk.Window
 		return info;
 	}
 //======================================================================
-	public void set_size(int r, int c)
+	public void set_size_label(int r, int c)
 	{
 		_size_label.set_text(_("Size: ")+r.to_string()+"X"+c.to_string()+"  ");
 	}
@@ -575,6 +579,8 @@ public class Gnonogram_view : Gtk.Window
 			_defaultsmenuitem.sensitive=true;
 			_resizemenuitem.sensitive=true;
 			_resize_tool.sensitive=true;
+			_check_tool.sensitive=false;
+			_checkerrorsmenuitem.sensitive=false;
 		}
 		else
 		{
@@ -586,6 +592,8 @@ public class Gnonogram_view : Gtk.Window
 			_defaultsmenuitem.sensitive=false;
 			_resizemenuitem.sensitive=false;
 			_resize_tool.sensitive=false;
+			_check_tool.sensitive=true;
+			_checkerrorsmenuitem.sensitive=true;
 		}
 	}
 //======================================================================
@@ -593,8 +601,6 @@ public class Gnonogram_view : Gtk.Window
 	{
 		_undomenuitem.sensitive=sensitive;
 		_undo_tool.sensitive=sensitive;
-		_check_tool.sensitive=sensitive;
-		_checkerrorsmenuitem.sensitive=sensitive;
 	}
 	public void set_redo_sensitive(bool sensitive)
 	{

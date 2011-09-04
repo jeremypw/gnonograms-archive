@@ -22,88 +22,194 @@
 //This class stands in for GConf client, using conventional text file in user config directory instead.
 //Provides same interface so rest of program unchanged
 //ONly implements parts of GConf needed for Gnonograms
+using GLib;
 
-public class Gnonogram_conf_client {
+	public class Gnonogram_conf_client {
+	private string[] headings;
+	private string[] bodies;
+	private string[] keys;
+	private string[] values;
+	private File conf_file;
 
-	public Gnonogram_conf_client(string conf_dir)
-	{stdout.printf("Gnonogram_conf_client dir %s\n",conf_dir);
+	public bool valid;
+
+	public Gnonogram_conf_client()
+	{//stdout.printf("Gnonogram_conf_client\n");
 		//Open config file in conf_dir
-		//Create new file if does not exist
-		//Read in headers and bodies?
+		valid=false;
+		try
+		{
+			var conf_dir=File.new_for_path(Environment.get_user_config_dir()+"/gnonograms");
+			if (!conf_dir.query_exists(null)||!(conf_dir.query_file_type(FileQueryInfoFlags.NONE,null)==FileType.DIRECTORY))
+			{
+				conf_dir.make_directory(null);
+				if (conf_dir.query_exists(null))
+				{//stdout.printf("Created gnonograms directory\n");
+				}
+				else
+				{
+					stdout.printf("Failed to create gnonograms directory\n");
+					return;
+				}
+			}
+			conf_file=conf_dir.get_child("gnonograms.conf");
+			if (!conf_file.query_exists(null))
+			{
+				conf_file.create(FileCreateFlags.NONE);
+				if (conf_file.query_exists(null))
+				{//stdout.printf("Created gnonograms config file\n");
+				}
+				else
+				{
+					stdout.printf("Failed to create gnonograms config file\n");
+					return;
+				}
+			}
+			var stream=new DataInputStream(conf_file.read());
+			if (stream==null)
+			{
+				stdout.printf("Failed to open config file for reading\n");
+				return;
+			}
+			else
+			{
+				if (!parse_gnonogram_config_file(stream)) return;
+			}
+		}
+		catch (Error e)
+		{
+			stdout.printf("GLib Error %s\n",e.message);
+			valid=false;
+			return;
+		}
+		valid=true;
 	}
-
-	public string? @get(string path)
-	{stdout.printf("Gnonogram_conf_client get path %s\n",path);
-	//Takes a GConf path and extracts header and key
-	//Checks whether exists, if not returns null
-	// If exists returns value as string
-		string header, key;
-		if (parse_path(path, out header, out key))
+//=====================================================================
+	public string? get_value(string header, string key)
+	{//stdout.printf("get_value header %s  key %s\n",header,key);
+		if (this.valid)
 		{
-			stdout.printf("Header %s,  Key %s\n",header, key);
-			//return "Value string";  TODO implement extraction of value string from config file
+			string k=header.strip()+"."+key.strip();
+			//stdout.printf("Looking for %s\n",k);
+			for (int i=0;i<keys.length;i++)
+			{	//stdout.printf("Looking at key %d: %s\n",i,keys[i]);
+				if (keys[i]==k)
+				{
+					//stdout.printf("Found it\n");
+					return values[i];
+				}
+			}
 		}
-		else
-		{
-
-		}
+		//stdout.printf("Not Found \n");
 		return null;
-
 	}
+//=====================================================================
+	public void set_value(string header, string key, string svalue)
+	{//stdout.printf("set_value header %s  key %s value %s\n",header,key,svalue);
+		if (this.valid)
+		{
+			string k=header.strip()+"."+key.strip();
+			//stdout.printf("Looking for %s\n",k);
+			for (int i=0;i<keys.length;i++)
+			{//stdout.printf("Looking at key %d: %s\n",i,keys[i]);
+				if (keys[i]==k)
+				{
+					//stdout.printf("Found it -replacing with %s\n",svalue);
+					values[i]=svalue.strip();
+					return;
+				}
+			}
+			//stdout.printf("Not found - adding key and value\n");
+			keys+=k;
+			values+=svalue.strip();
+			//stdout.printf("Looking for header %s\n", header);
+			bool found=false;
+			for (int i=0; i<headings.length;i++)
+			{
+				//stdout.printf("Looking at header %d: %s\n",i,headings[i]);
+				if (headings[i]==header)
+				{
+					//stdout.printf("Found it\n");
+					found=true;break;
+				}
+			}
+			if (!found)
+			{
+				//stdout.printf("Not found adding header\n");
+				headings+=header;
+			}
+		}
+	}
+//=====================================================================
+	private bool parse_gnonogram_config_file(DataInputStream stream)
+	{//stdout.printf("parse config file \n");
+		size_t headerlength, bodylength;
+		string h;
+		string b;
+		int count=-1;
+		try
+		{
+			stream.read_until("[", out headerlength, null);
+			while (true)
+			{
+				h= stream.read_until("]", out headerlength, null);
+				b= stream.read_until("[", out bodylength, null);
+				if (headerlength==0) break;
+				headings+=h; bodies+=b;
+				count++;
+				stdout.printf("Header %d %s\n",count,headings[count]);
+				stdout.printf("Body %d %s\n",count, bodies[count]);
+			}
+		}
+		catch (Error e) {stdout.printf("GLib error"+e.message+"\n");return false;}
 
-	public bool set_int(string path, int val)
-	{stdout.printf("Gnonogram_conf_client set int path %s val %d\n",path,val);
-		//Creates header and key from path if do not exist
-		//associates value with key
-		//return true for success else throws error
+		return parse_gnonogram_config_headings_and_bodies();
+	}
+//=====================================================================
+	private bool parse_gnonogram_config_headings_and_bodies()
+	{//stdout.printf("parse config file headings and bodies \n");
+		int n=headings.length;
+		for (int i=0;i<n;i++)
+		{
+			string heading=headings[i];
+			if (heading==null) continue;
+			extract_key_values(heading,bodies[i]);
+		}
 		return true;
 	}
-	public bool set_string(string path, string val)
-	{stdout.printf("Gnonogram_conf_client set string path %s val %s\n",path,val);
-		//Creates header and key from path if do not exist
-		//associates value with key
-		//return true for success else throws error
-		return false;
-	}
-	public bool set_boolean(string path, bool val)
-	{stdout.printf("Gnonogram_conf_client set bool path %s, val %s\n",path,val.to_string());
-		//Creates header and key from path if do not exist
-		//associates value with key
-		//return true for success else throws error
-		return true;
-	}
-	public int get_int(string path)
-	{stdout.printf("Gnonogram_conf_client get int path %s\n",path);
-		//Creates header and key from path if do not exist
-		//associates value with key
-		return 0;
-	}
-	public string get_string(string path)
-	{stdout.printf("Gnonogram_conf_client get string path %s\n",path);
-		//Creates header and key from path if do not exist
-		//associates value with key
-		return "";
-	}
-	public bool get_boolean(string path)
-	{stdout.printf("Gnonogram_conf_client get bool path %s\n",path);
-		//Creates header and key from path if do not exist
-		//associates value with key
-		return false;
+
+	private void extract_key_values(string heading, string body)
+	{//stdout.printf("extract key values \n");
+		string[] key_values=Utils.remove_blank_lines(body.split("\n"));
+		for (int i=0;i<key_values.length;i++)
+		{
+			string[] kv = key_values[i].split("=");
+			keys+=heading+"."+kv[0].strip();
+			values+=kv[1].strip();
+		}
 	}
 
-	private bool parse_path(string path, out string header, out string key)
-	{stdout.printf("Gnonogram_conf_client parse path path %s\n",path);
-		string [] nodes=path.split("/");
-		int no_nodes=nodes.length;
-		stdout.printf("number of nodes %d\n",no_nodes);
-
-		if (no_nodes<4) return false;
-
-		if (((nodes[no_nodes-4].up())!="GNONOGRAM") || ((nodes[no_nodes-3].up())!="PREFERENCES")) return false;
-		header=nodes[no_nodes-2].up();
-		key=nodes[no_nodes-1].up();
-		stdout.printf("Header %s, Key %s\n",header,key);
-		return true;
+	public void write_config_file()
+	{//stdout.printf("write config file \n");
+		try
+		{
+			conf_file.delete();
+			var dos=new DataOutputStream(conf_file.create (FileCreateFlags.REPLACE_DESTINATION));
+			for (int i=0;i<headings.length;i++)
+			{
+				string h=headings[i];
+				dos.put_string("["+h+"]\n");
+				for (int j=0;j<keys.length;j++)
+				{
+					string[] k= keys[j].split(".");
+					if (k[0]==h)
+					{
+						dos.put_string(k[1]+"="+values[j]+"\n");
+					}
+				}
+			}
+			//stdout.printf("File written\n");
+		}
+		catch (Error e) {stdout.printf("Glib Error %s\n",e.message);}
 	}
-
 }
