@@ -157,8 +157,6 @@ using GLib;
 				if (headerlength==0) break;
 				headings+=h; bodies+=b;
 				count++;
-				stdout.printf("Header %d %s\n",count,headings[count]);
-				stdout.printf("Body %d %s\n",count, bodies[count]);
 			}
 		}
 		catch (Error e) {stdout.printf("GLib error"+e.message+"\n");return false;}

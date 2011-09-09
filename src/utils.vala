@@ -160,7 +160,7 @@ namespace Utils
 	}
 	//*****************************************************************************
 	public static  int show_dlg(string msg, Gtk.MessageType type, Gtk.ButtonsType buttons)
-	{stdout.printf("Show dlg\n");
+	{//stdout.printf("Show dlg\n");
 
 		var dialog=new Gtk.MessageDialog(
 			null,
@@ -169,7 +169,6 @@ namespace Utils
 			buttons,
 			"%s",msg);
 
-		stdout.printf("Created dlg\n");
 		int response=dialog.run();
 		dialog.destroy();
 		return response;
@@ -315,6 +314,7 @@ namespace Utils
 		}
 		return sb.str;
 	}
+//*****************************************************************************
 	private string int2hex(int i)
 	{
 		if (i<=9) return i.to_string();
@@ -323,7 +323,7 @@ namespace Utils
 		string[] l={"A","B","C","D","E","F"};
 		return l[i];
 	}
-	//*****************************************************************************
+//*****************************************************************************
 	public string convert_html(string? html)
 	{
 		if (html==null) return "";

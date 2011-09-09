@@ -30,7 +30,7 @@ public class Config {
 	{
 		if (instance==null) instance=new Config();
 		assert(instance!=null);
-		stdout.printf("Instance created\n");
+		//stdout.printf("Instance created\n");
 		return instance;
 	}
 //=====================================================================
@@ -41,8 +41,7 @@ public class Config {
 		assert(instance==null);
 		client=new Gnonogram_conf_client();
 		assert(client!=null);
-		if (client.valid) stdout.printf("Valid client created\n");
-		else stdout.printf("Client is not valid\n");
+		if (!client.valid) stdout.printf("Client is not valid\n");
 	}
 
 	private int get_int(string header, string key, int def)
@@ -79,13 +78,19 @@ public class Config {
 
 	private string? get_value_string(string header, string key)
 	{
-		string? svalue = client.get_value(header, key);
+		string svalue;
+		if (client.valid) svalue = client.get_value(header, key);
+		else svalue=null;
+
 		return svalue;
 	}
 	private void set_value_string(string header, string key, string svalue)
 	{
-		client.set_value(header, key, svalue);
-		client.write_config_file();
+		if (client.valid)
+		{
+			client.set_value(header, key, svalue);
+			client.write_config_file();
+		}
 	}
 //====================================================================
 //PUBLIC METHODS - maintain for compatability with the GConf version
@@ -153,7 +158,7 @@ public class Config {
 	}
 
 	public void set_colors()
-	{stdout.printf("Config set colors\n");
+	{//stdout.printf("Config set colors\n");
 		set_string(UI_HEADER, "setting_empty",Resource.colors[(int) GameState.SETTING, (int) CellState.EMPTY].to_string());
 		set_string(UI_HEADER, "setting_filled",Resource.colors[(int) GameState.SETTING, (int) CellState.FILLED].to_string());
 		set_string(UI_HEADER, "solving_empty",Resource.colors[(int) GameState.SOLVING, (int) CellState.EMPTY].to_string());
@@ -162,7 +167,7 @@ public class Config {
 	}
 
 		public string[] get_colors()
-	{stdout.printf("Config get colors\n");
+	{//stdout.printf("Config get colors\n");
 		string set_empty=get_string(UI_HEADER, "setting_empty",Resource.colors[(int) GameState.SETTING, (int) CellState.EMPTY].to_string());
 		string set_filled=get_string(UI_HEADER, "setting_filled",Resource.colors[(int) GameState.SETTING, (int) CellState.FILLED].to_string());
 		string solve_empty=get_string(UI_HEADER, "solving_empty",Resource.colors[(int) GameState.SOLVING, (int) CellState.EMPTY].to_string());

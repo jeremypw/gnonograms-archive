@@ -31,7 +31,6 @@ INSTALL_DATA = install -m 644
 
 # defaults that may be overridden by configure.mk
 PREFIX=/usr
-#SCHEMA_FILE_DIR=/etc/gconf/schemas
 BUILD_RELEASE=1
 
 -include configure.mk
@@ -64,20 +63,19 @@ SRC_FILES = \
 
 ifndef NO_GCONF
 	SRC_FILES+= GConf_config.vala
+	UNUSED_SRC_FILES = \
+		Gnonogram_config.vala \
+		Gnonogram_conf_client.vala
 else
 	SRC_FILES+= Gnonogram_config.vala
 	SRC_FILES+= Gnonogram_conf_client.vala
+	UNUSED_SRC_FILES = GConf_config.vala
 endif
 
 RESOURCE_FILES = \
 	icons/*.png \
 	icons/*.svg \
-	games/easy/*.gno \
-	games/moderately\ easy/*.gno \
-	games/moderately\ hard/*.gno \
-	games/hard/*.gno \
-	games/very\ hard/*.gno \
-	games/almost\ impossible/*.gno \
+	games/*/*.gno \
 	html/*.html \
 	html/*.png \
 	html/media/*.png \
@@ -128,6 +126,7 @@ DESKTOP_APPLICATION_CLASS="Logic game"
 TEMPORARY_DESKTOP_FILES = misc/gnonograms.desktop
 EXPANDED_PO_FILES = $(foreach po,$(SUPPORTED_LANGUAGES),po/$(po).po)
 EXPANDED_SRC_FILES = $(foreach src,$(SRC_FILES),src/$(src))
+EXPANDED_UNUSED_SRC_FILES = $(foreach src,$(UNUSED_SRC_FILES),src/$(src))
 EXPANDED_C_FILES = $(foreach src,$(SRC_FILES),$(BUILD_DIR)/$(src:.vala=.c))
 EXPANDED_SAVE_TEMPS_FILES = $(foreach src,$(SRC_FILES),$(BUILD_DIR)/$(src:.vala=.vala.c))
 EXPANDED_OBJ_FILES = $(foreach src,$(SRC_FILES),$(BUILD_DIR)/$(src:.vala=.o))
@@ -136,7 +135,8 @@ VALA_STAMP = $(BUILD_DIR)/.stamp
 LANG_STAMP = $(LOCAL_LANG_DIR)/.langstamp
 
 DIST_FILES = Makefile configure minver
-DIST_FILES+= $(TEXT_FILES) $(EXPANDED_PO_FILES) $(EXPANDED_SRC_FILES)
+DIST_FILES+= $(TEXT_FILES) $(EXPANDED_PO_FILES)
+DIST_FILES+= $(EXPANDED_SRC_FILES) $(EXPANDED_UNUSED_SRC_FILES)
 DIST_FILES+= $(RESOURCE_FILES)
 
 DIST_TAR_GZ = $(PROGRAM)-$(VERSION).tar.gz
@@ -306,15 +306,6 @@ ifndef DISABLE_DESKTOP_UPDATE
 	-update-desktop-database || :
 endif
 
-#ifndef NO_GCONF
-#ifndef DISABLE_SCHEMAS_INSTALL
-#	GCONF_CONFIG_SOURCE=`gconftool-2 --get-default-source` gconftool-2 --makefile-install-rule misc/gnonograms.schemas
-#else
-#	mkdir -p $(DESTDIR)$(SCHEMA_FILE_DIR)
-#	$(INSTALL_DATA) misc/gnonograms.schemas $(DESTDIR)$(SCHEMA_FILE_DIR)
-#endif
-#endif
-
 uninstall:
 ##########
 	rm -f $(DESTDIR)$(PREFIX)/games/$(PROGRAM)
@@ -335,14 +326,6 @@ ifndef DISABLE_DESKTOP_UPDATE
 	update-mime-database $(DESTDIR)$(PREFIX)/share/mime || :
 	update-desktop-database || :
 endif
-
-#ifndef NO_GCONF
-#ifndef DISABLE_SCHEMAS_INSTALL
-#	GCONF_CONFIG_SOURCE=`gconftool-2 --get-default-source` gconftool-2 --makefile-uninstall-rule misc/gnonograms.schemas
-#else
-#	rmdir -f $(DESTDIR)$(SCHEMA_FILE_DIR)/gnonograms.schemas
-#endif
-#endif
 
 	$(foreach lang,$(SUPPORTED_LANGUAGES),`rm -f $(SYSTEM_LANG_DIR)/$(lang)/LC_MESSAGES/gnonograms.mo`)
 

@@ -1,3 +1,9 @@
+09/Sep/2011	Removed all non-GPL puzzles in preparation for Debian packaging
+			(other puzzles to be put in separate package)
+			Amended Makefile so that all src files included in tarball regardless of |Gconf/No GConf configuration.
+			Removed schema files
+
+
 04/Sep/2011	Conventional config file option complete
 			Saving puzzle now always saves working position as well - associated menu entries modified.
 			Menu item to pause clock
