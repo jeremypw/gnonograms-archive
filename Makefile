@@ -81,6 +81,8 @@ RESOURCE_FILES = \
 	html/*.html \
 	html/*.png \
 	html/figures/*.png \
+	help/C/*.page \
+	help/C/figures/*.png \
 	misc/gnonograms.desktop.head \
 	misc/x-gnonogram-puzzle.xml \
 	po/gnonograms.pot \

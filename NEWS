@@ -1,3 +1,6 @@
+18/Sep/2011 Added Gnome help files (Mallard) files
+			Modified Makefile and configure to install them
+
 17/Sep/2011	Updated manual
 			Separate setting of save and load puzzle directories
 			Default save puzzle directory changed to user's home directory
