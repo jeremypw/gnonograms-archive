@@ -37,9 +37,9 @@ configure_help() {
     printf "\t--prefix=PREFIX\t\tPrepend PREFIX to program installation paths.\n"
     printf "\t\t\t\t[/usr]\n"
 
-    printf "\t--define=SYMBOL\t\tDefine a symbol for the Vala compiler.\n"
-
     printf "\t--novala\t\tCompile from C source only\n"
+
+    printf "\t--nognome\t\tDisable all Gnome integration\n"
 
     printf "\t--nogconf\t\tDo not use GConf to store settings\n"
 
@@ -90,16 +90,10 @@ do
                             variables="${variables}BUILD_DIR=$value\n"
                             ;;
 
-        --debug)            variables="${variables}BUILD_RELEASE=\nBUILD_DEBUG=1\n"
-                            ;;
-
-        --release)          variables="${variables}BUILD_DEBUG=\nBUILD_RELEASE=1\n"
-                            ;;
-
-        --define)           variables="${variables}USER_VALAFLAGS+=--define=$value\n"
-                            ;;
-
 		--novala)			variables="${variables}NO_VALA=1\n"
+							;;
+
+		--nognome)			variables="${variables}NO_GCONF=1\nDISABLE_DESKTOP_UPDATE=1\nDISABLE_GNOME_DOC_INSTALL=1"
 							;;
 
 		--nogconf)			variables="${variables}NO_GCONF=1\n"

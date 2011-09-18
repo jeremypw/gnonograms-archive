@@ -137,7 +137,16 @@ DIST_FILES+= $(TEXT_FILES) $(EXPANDED_PO_FILES)
 DIST_FILES+= $(EXPANDED_SRC_FILES) $(EXPANDED_UNUSED_SRC_FILES)
 DIST_FILES+= $(RESOURCE_FILES)
 
+BIN_FILES = gnonograms
+BIN_FILES+= html/*.*
+BIN_FILES+= html/figures/*.*
+BIN_FILES+= icons/*.*
+BIN_FILES+= locale/*/*/*.*
+BIN_FILES+= games/*.*
+BIN_FILES+= $(TEXT_FILES)
+
 DIST_TAR_GZ = $(PROGRAM)-$(VERSION).tar.gz
+BIN_TAR_GZ = $(PROGRAM)-$(VERSION)-bin.tar.gz
 ORIG_TAR_GZ = $(PROGRAM)_$(VERSION).orig.tar.gz
 DIST_WITH_C_TAR_GZ = $(PROGRAM)-$(VERSION)c.tar.gz
 
@@ -164,12 +173,12 @@ $(PROGRAM): $(EXPANDED_OBJ_FILES) $(RESOURCES) $(LANG_STAMP)
 	$(CC) $(EXPANDED_OBJ_FILES) $(CFLAGS) $(RESOURCES) $(VALA_LDFLAGS) -o $@
 
 $(EXPANDED_OBJ_FILES): %.o: %.c $(CONFIG_IN) Makefile
-####################################################
+#####################################################
 	$(CC) -c $(VALA_CFLAGS) $(CFLAGS) -o $@ $<
 
 # Do not remove hard tab or at symbol; necessary for dependencies to complete.
 $(EXPANDED_C_FILES): $(VALA_STAMP)
-########################
+###################################
 	@
 
 $(LANG_STAMP): $(EXPANDED_PO_FILES)
@@ -205,7 +214,7 @@ endif
 endif
 
 clean:
-####
+######
 	rm -f $(EXPANDED_C_FILES)
 	rm -f $(EXPANDED_SAVE_TEMPS_FILES)
 	rm -f $(EXPANDED_OBJ_FILES)
@@ -217,7 +226,7 @@ clean:
 	rm -f $(TEMPORARY_DESKTOP_FILES)
 
 cleantemps:
-#######
+###########
 	rm -f $(EXPANDED_C_FILES)
 	rm -f $(EXPANDED_SAVE_TEMPS_FILES)
 	rm -f $(EXPANDED_OBJ_FILES)
@@ -225,12 +234,19 @@ cleantemps:
 	rm -f $(LANG_STAMP)
 
 
-dist: $(DIST_FILES)
-###################
+dist: $(PROGRAM) $(DIST_FILES)
+###############################
 	mkdir -p $(PROGRAM)-$(VERSION)
 	cp --parents $(DIST_FILES) $(PROGRAM)-$(VERSION)
 	tar --gzip -cvf $(DIST_TAR_GZ) $(PROGRAM)-$(VERSION)
 	rm -rf $(PROGRAM)-$(VERSION)
+
+bin: $(BIN_FILES)
+###################
+	mkdir -p $(PROGRAM)-$(VERSION)-bin
+	cp --parents $(BIN_FILES) $(PROGRAM)-$(VERSION)-bin
+	tar --gzip -cvf $(BIN_TAR_GZ) $(PROGRAM)-$(VERSION)-bin
+	rm -rf $(PROGRAM)-$(VERSION)-bin
 
 dist_with_c: $(DIST_FILES)
 ##########################

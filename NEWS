@@ -1,5 +1,8 @@
 18/Sep/2011 Added Gnome help files (Mallard) files
 			Modified Makefile and configure to install them
+			Include target to build binary archive
+			Include configure option to turn off all Gnome desktop integration on install
+			Removed unused configure options
 
 17/Sep/2011	Updated manual
 			Separate setting of save and load puzzle directories
