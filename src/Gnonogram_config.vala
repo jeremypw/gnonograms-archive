@@ -51,7 +51,17 @@ public class Config {
 				set_value_string(header,key,def.to_string());
                 return def;
             }
-            return (get_value_string(header, key)).to_int();
+            return int.parse(get_value_string(header, key));
+	}
+
+	private bool get_bool(string header, string key, bool def)
+	{
+            if (get_value_string(header,key) == null)
+            {
+				set_value_string(header,key,def.to_string());
+                return def;
+            }
+            return bool.parse(get_value_string(header, key));
 	}
 
 	private string get_string(string header, string key, string def)
@@ -66,14 +76,16 @@ public class Config {
 
 	private bool set_int(string header, string key, int ivalue)
 	{
-           set_value_string(header, key, ivalue.to_string());
-           return true;
+           return set_value_string(header, key, ivalue.to_string());
+	}
+	private bool set_bool(string header, string key, bool bvalue)
+	{
+           return set_value_string(header, key, bvalue.to_string());
 	}
 
 	private bool set_string(string header, string key, string svalue)
 	{
-           set_value_string(header, key, svalue);
-           return true;
+           return set_value_string(header, key, svalue);
 	}
 
 	private string? get_value_string(string header, string key)
@@ -84,45 +96,58 @@ public class Config {
 
 		return svalue;
 	}
-	private void set_value_string(string header, string key, string svalue)
+	private bool set_value_string(string header, string key, string svalue)
 	{
-		if (client.valid)
-		{
+		if (client.valid){
 			client.set_value(header, key, svalue);
 			client.write_config_file();
+			return true;
+		}
+		else return false;
+	}
+	private bool set_dir(string key, string path)
+	{
+		File dir=File.new_for_path(path);
+		if (dir.query_exists(null) && dir.query_file_type(0,null)==FileType.DIRECTORY)	{
+			return set_string(PATHS_HEADER, key, path);
+		}
+		else {
+			Utils.show_warning_dialog(_("Path %s does not exist or is not a directory").printf(path));
+			return false;
+		}
+	}
+	private string get_dir(string key,string defaultdir)
+	{
+		string data_path=get_string(PATHS_HEADER,key,defaultdir);
+		File dir = File.new_for_path(data_path);
+		if (dir.query_exists(null) && dir.query_file_type(0,null)==FileType.DIRECTORY){
+			return data_path;
+		}
+		else{
+			return defaultdir;
 		}
 	}
 //====================================================================
 //PUBLIC METHODS - maintain for compatability with the GConf version
 //=====================================================================
 
-	public bool set_game_dir(string path)
+	public bool set_save_game_dir(string path)
 	{
-		File game_dir=File.new_for_path(path);
-
-		if (game_dir.query_exists(null) && game_dir.query_file_type(0,null)==FileType.DIRECTORY)
-		{
-			return set_string(PATHS_HEADER, "game_dir", path);
-		}
-		else
-		{
-			Utils.show_warning_dialog(_("Path given does not exist or is not a directory"));
-			return false;
-		}
+		return set_dir("save_game_dir",path);
+	}
+	public bool set_load_game_dir(string path)
+	{
+		return set_dir("load_game_dir",path);
 	}
 
-	public string get_game_dir(string defaultdir)
+
+	public string get_save_game_dir(string defaultdir)
 	{
-		string data_path=get_string(PATHS_HEADER,"game_dir",defaultdir);
-		File game_dir = File.new_for_path(data_path);
-		if (game_dir.query_exists(null) && game_dir.query_file_type(0,null)==FileType.DIRECTORY)
-		{
-			return data_path;
-		}
-		else
-		{
-			return defaultdir;
-		}
+		return get_dir("save_game_dir", defaultdir);
+	}
+	public string get_load_game_dir(string defaultdir)
+	{
+		return get_dir("load_game_dir", defaultdir);
 	}
 
  	public bool set_game_name(string name)
@@ -184,5 +209,38 @@ public class Config {
 	public string get_font()
 	{
 		return get_string(UI_HEADER,"font description",Resource.DEFAULT_FONT);
+	}
+
+	public void set_use_advanced_solver(bool use)
+	{
+		set_bool(UI_HEADER,"use advanced solver",use);
+	}
+	public bool get_use_advanced_solver()
+	{
+		return get_bool(UI_HEADER,"use advanced solver",true);
+	}
+	public void set_generate_advanced_puzzles(bool generate)
+	{
+		set_bool(UI_HEADER,"generate advanced puzzles",generate);
+	}
+	public bool get_generate_advanced_puzzles()
+	{
+		return get_bool(UI_HEADER,"generate advanced puzzles",false);
+	}
+	public void set_show_grid(bool show)
+	{
+		set_bool(UI_HEADER,"show grid",show);
+	}
+	public bool get_show_grid()
+	{
+		return get_bool(UI_HEADER,"show grid",false);
+	}
+	public void set_toolbar_visible(bool visible)
+	{
+		set_bool(UI_HEADER,"toolbar visible",visible);
+	}
+	public bool get_toolbar_visible()
+	{
+		return get_bool(UI_HEADER,"toolbar visible",true);
 	}
 }

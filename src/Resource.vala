@@ -92,11 +92,11 @@ namespace Resource
 	public static string exec_dir;
 	public static string resource_dir;
 	public static string locale_dir;
-	public static string game_dir;
+	public static string load_game_dir;
+	public static string save_game_dir;
 	public static string user_config_dir;
 	public static string game_name;
 	public static string icon_dir;
-//	public static string mallard_manual_dir;
 	public static string html_manual_dir;
 	public static string prefix;
 	public static bool installed;
@@ -127,33 +127,26 @@ namespace Resource
 		stdout.printf("Locale_dir is %s \n",locale_dir);
 
 		icon_dir=resource_dir+"/icons";
-//		mallard_manual_dir=resource_dir+"/mallard";
+
 		html_manual_dir=resource_dir+"/html";
 
 		user_config_dir=Environment.get_user_config_dir();
 
-//		Always start off in default directory?
-//		game_dir=resource_dir+"/games";
-//		(Config.get_instance()).set_game_dir(game_dir);
-
 		var config_instance=Config.get_instance();
-		game_dir=config_instance.get_game_dir(resource_dir+"/games");
+		save_game_dir=config_instance.get_save_game_dir(Environment.get_home_dir());
 		game_name=config_instance.get_game_name(DEFAULTGAMENAME);
 
 		colors = new Gdk.Color[2,4];
 		set_default_colors();
 
-		string [] config_colors=config_instance.get_colors();
-		int setting =(int)GameState.SETTING;
-		int solving =(int)GameState.SOLVING;
-		Gdk.Color.parse(config_colors[0], out colors[setting,(int)CellState.EMPTY]);
-		Gdk.Color.parse(config_colors[1], out colors[setting,(int)CellState.FILLED]);
-		Gdk.Color.parse(config_colors[2], out colors[solving,(int)CellState.EMPTY]);
-		Gdk.Color.parse(config_colors[3], out colors[solving,(int)CellState.FILLED]);
-
-		font_desc=config_instance.get_font();
 		MINORGRIDDASH={0.5, 3.0};
+	}
 
+	public static void load_config(Config config_instance)
+	{
+		Resource.get_colors(config_instance);
+		Resource.get_game_dir(config_instance);
+		Resource.get_font(config_instance);
 	}
 
 	private static bool is_installed (string exec_dir)
@@ -171,7 +164,6 @@ namespace Resource
 		set_default_colors();
 		set_default_font();
 		set_default_game_dir();
-
 	}
 
 	private static void set_default_colors()
@@ -231,16 +223,16 @@ namespace Resource
 		button_box.add(empty_solving);
 
 
-		var reset_filled_setting=new Gtk.ToolButton.from_stock(Gtk.STOCK_CLEAR);
+		var reset_filled_setting=new Gtk.ToolButton.from_stock(Gtk.Stock.CLEAR);
 		reset_filled_setting.tooltip_text=_("Reset to default color");
 		reset_filled_setting.clicked.connect(()=>{filled_setting.set_color(default_filled_setting);});
-		var reset_empty_setting=new Gtk.ToolButton.from_stock(Gtk.STOCK_CLEAR);
+		var reset_empty_setting=new Gtk.ToolButton.from_stock(Gtk.Stock.CLEAR);
 		reset_empty_setting.tooltip_text=_("Reset to default color");
 		reset_empty_setting.clicked.connect(()=>{empty_setting.set_color(default_empty_setting);});
-		var reset_filled_solving=new Gtk.ToolButton.from_stock(Gtk.STOCK_CLEAR);
+		var reset_filled_solving=new Gtk.ToolButton.from_stock(Gtk.Stock.CLEAR);
 		reset_filled_solving.tooltip_text=_("Reset to default color");
 		reset_filled_solving.clicked.connect(()=>{filled_solving.set_color(default_filled_solving);});
-		var reset_empty_solving=new Gtk.ToolButton.from_stock(Gtk.STOCK_CLEAR);
+		var reset_empty_solving=new Gtk.ToolButton.from_stock(Gtk.Stock.CLEAR);
 		reset_empty_solving.tooltip_text=_("Reset to default color");
 		reset_empty_solving.clicked.connect(()=>{empty_solving.set_color(default_empty_solving);});
 
@@ -267,6 +259,17 @@ namespace Resource
 		dialog.destroy();
 	}
 
+	public static void get_colors(Config config_instance)
+	{
+		string [] config_colors=config_instance.get_colors();
+		int setting =(int)GameState.SETTING;
+		int solving =(int)GameState.SOLVING;
+		Gdk.Color.parse(config_colors[0], out colors[setting,(int)CellState.EMPTY]);
+		Gdk.Color.parse(config_colors[1], out colors[setting,(int)CellState.FILLED]);
+		Gdk.Color.parse(config_colors[2], out colors[solving,(int)CellState.EMPTY]);
+		Gdk.Color.parse(config_colors[3], out colors[solving,(int)CellState.FILLED]);
+	}
+
 	public static void set_custom_font()
 	{
 		var dialog = new FontSelectionDialog("Select font used for the clues");
@@ -277,15 +280,28 @@ namespace Resource
 	{
 		font_desc=DEFAULT_FONT;
 	}
+	public static void get_font(Config config_instance)
+	{
+		font_desc=config_instance.get_font();;
+	}
 	public static void set_custom_game_dir()
 	{
-		string new_dir=Utils.get_filename(FileChooserAction.SELECT_FOLDER,"Choose folder for saving puzzles",null,null,Resource.game_dir);
-		stdout.printf("set_game_dir received folder %s\n",new_dir);
-		if (new_dir!="") Resource.game_dir=new_dir;
+		string new_dir=Utils.get_filename(FileChooserAction.SELECT_FOLDER,"Choose folder for saving and loading puzzles",null,null,Resource.save_game_dir);
+//		stdout.printf("set_game_dir received folder %s\n",new_dir);
+		if (new_dir!="") {
+			Resource.save_game_dir=new_dir;
+			Resource.load_game_dir=new_dir;
+		}
 	}
 	public static void set_default_game_dir()
 	{
-		game_dir=resource_dir+"/games";
+		Resource.load_game_dir=resource_dir+"/games";
+		Resource.save_game_dir=Environment.get_home_dir();
+	}
+	public static void get_game_dir(Config config_instance)
+	{
+		Resource.load_game_dir=config_instance.get_load_game_dir(resource_dir+"/games");
+		Resource.save_game_dir=config_instance.get_save_game_dir(Environment.get_home_dir());
 	}
 
 	public static void get_icon_theme()

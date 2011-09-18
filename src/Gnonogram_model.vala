@@ -36,6 +36,30 @@
 	_rand_gen = new Rand();
 	}
 //======================================================================
+	public void clear_errors()
+	{
+		CellState cs;
+		for (int r=0;r<_rows; r++)
+		{
+			for (int c=0;c<_cols;c++)
+			{
+				cs=_working_data.get_data_from_rc(r,c);
+				if (cs==CellState.ERROR_EMPTY||cs==CellState.ERROR_FILLED)
+				{
+					if (cs==CellState.ERROR_EMPTY)
+					{
+						_working_data.set_data_from_rc(r,c,CellState.EMPTY);
+					}
+					else if (cs==CellState.ERROR_FILLED)
+					{
+						_working_data.set_data_from_rc(r,c,CellState.FILLED);
+
+					}
+				}
+			}
+		}
+	}
+//======================================================================
 	public int count_errors()
 	{
 		CellState cs;

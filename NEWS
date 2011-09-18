@@ -1,8 +1,21 @@
+17/Sep/2011	Updated manual
+			Separate setting of save and load puzzle directories
+			Default save puzzle directory changed to user's home directory
+			Remember advanced solver, difficult game, show grid, show toolbar settings
+			Added more menu accelerators
+			Incorrect cells only shown while dialog open.
+			Changed proxy menu so that it works in Unity
+			Increased minimum valac version to 0.12
+			Version -> 0.9.1
+
+11/Sep/2011	Removed "moderately hard" and "almost impossible" puzzle directories
+			Corrected errors in Makefile install and uninstall targets.
+			Install in usr/games for Debian
+
 09/Sep/2011	Removed all non-GPL puzzles in preparation for Debian packaging
 			(other puzzles to be put in separate package)
 			Amended Makefile so that all src files included in tarball regardless of |Gconf/No GConf configuration.
 			Removed schema files
-
 
 04/Sep/2011	Conventional config file option complete
 			Saving puzzle now always saves working position as well - associated menu entries modified.

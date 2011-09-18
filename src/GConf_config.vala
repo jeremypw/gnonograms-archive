@@ -47,7 +47,7 @@ public class Config {
     }
 
 
-/**	private bool get_bool(string path, bool def) {
+	private bool get_bool(string path, bool def) {
        try {
             if (client.get(path) == null) {
 				client.set_bool(path,def);
@@ -69,7 +69,7 @@ public class Config {
             return false;
         }
 	}
-**/
+
 	private int get_int(string path, int def) {
        try {
             if (client.get(path) == null) {
@@ -114,33 +114,52 @@ public class Config {
             return false;
         }
 	}
-
-	public bool set_game_dir(string path)
+	private bool set_dir(string key, string path)
 	{
-		File game_dir=File.new_for_path(path);
-
-		if (game_dir.query_exists(null) && game_dir.query_file_type(0,null)==FileType.DIRECTORY)
-		{
-			return set_string(PATHS_CONF+"game_dir", path);
-		}else
-		{
-			stdout.printf("GConf - Path given does not exist or is not a directory\n");
+		File dir=File.new_for_path(path);
+		if (dir.query_exists(null) && dir.query_file_type(0,null)==FileType.DIRECTORY)	{
+			return set_string(key, path);
+		}
+		else {
+			Utils.show_warning_dialog(_("Path %s does not exist or is not a directory").printf(path));
 			return false;
 		}
 	}
-
-	public string get_game_dir(string defaultdir)
+	private string get_dir(string key,string defaultdir)
 	{
-		string data_path=get_string(PATHS_CONF+"game_dir",defaultdir);
-		File game_dir = File.new_for_path(data_path);
-		if (game_dir.query_exists(null) && game_dir.query_file_type(0,null)==FileType.DIRECTORY)
-		{
+		string data_path=get_string(key,defaultdir);
+		File dir = File.new_for_path(data_path);
+		if (dir.query_exists(null) && dir.query_file_type(0,null)==FileType.DIRECTORY){
 			return data_path;
-		}else
-		{
+		}
+		else{
 			return defaultdir;
 		}
 	}
+
+//====================================================================
+//PUBLIC METHODS - maintain compatability with the Gnonogram_conf version
+//=====================================================================
+
+	public bool set_save_game_dir(string path)
+	{
+		return set_dir(PATHS_CONF+"save_game_dir",path);
+	}
+	public bool set_load_game_dir(string path)
+	{
+		return set_dir(PATHS_CONF+"load_game_dir",path);
+	}
+
+
+	public string get_save_game_dir(string defaultdir)
+	{
+		return get_dir(PATHS_CONF+"save_game_dir", defaultdir);
+	}
+	public string get_load_game_dir(string defaultdir)
+	{
+		return get_dir(PATHS_CONF+"load_game_dir", defaultdir);
+	}
+
 
  	public bool set_game_name(string name)
  	{
@@ -201,5 +220,37 @@ public class Config {
 	public string get_font()
 	{
 		return get_string(UI_CONF+"font_description",Resource.DEFAULT_FONT);
+	}
+	public void set_use_advanced_solver(bool use)
+	{
+		set_bool(UI_CONF+"use_advanced_solver",use);
+	}
+	public bool get_use_advanced_solver()
+	{
+		return get_bool(UI_CONF+"use_advanced_solver",true);
+	}
+	public void set_generate_advanced_puzzles(bool generate)
+	{
+		set_bool(UI_CONF+"generate_advanced_puzzles",generate);
+	}
+	public bool get_generate_advanced_puzzles()
+	{
+		return get_bool(UI_CONF+"generate_advanced_puzzles",false);
+	}
+	public void set_show_grid(bool show)
+	{
+		set_bool(UI_CONF+"show_grid",show);
+	}
+	public bool get_show_grid()
+	{
+		return get_bool(UI_CONF+"show_grid",false);
+	}
+	public void set_toolbar_visible(bool visible)
+	{
+		set_bool(UI_CONF+"toolbar_visible",visible);
+	}
+	public bool get_toolbar_visible()
+	{
+		return get_bool(UI_CONF+"toolbar_visible",true);
 	}
 }

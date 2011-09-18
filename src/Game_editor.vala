@@ -151,7 +151,8 @@ public class Game_Editor : Gtk.Dialog
 		col_page=notebook.append_page(win,l);
 
 		this.vbox.pack_start(notebook,true,true,3);
-		this.add_buttons(Gtk.STOCK_OK, Gtk.ResponseType.OK, Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL);
+		this.add_buttons(Gtk.Stock.OK, Gtk.ResponseType.OK, Gtk.Stock.CANCEL, Gtk.ResponseType.CANCEL);
+//		this.add_buttons(Gtk.STOCK_OK, Gtk.ResponseType.OK, Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL);
 	}
 
 	public string get_rowclue(int index){return _row_clues[index].get_text();}

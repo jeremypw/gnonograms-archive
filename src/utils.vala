@@ -60,16 +60,16 @@ namespace Utils
 		{
 			case FileChooserAction.OPEN:
 //				button=Gtk.Stock.OPEN;
-				button=Gtk.STOCK_OPEN;
+				button=Gtk.Stock.OPEN;
 				break;
 
 			case FileChooserAction.SAVE:
 //				button=Gtk.Stock.SAVE;
-				button=Gtk.STOCK_SAVE;
+				button=Gtk.Stock.SAVE;
 				break;
 			case FileChooserAction.SELECT_FOLDER:
 //				button=Gtk.Stock.APPLY;
-				button=Gtk.STOCK_APPLY;
+				button=Gtk.Stock.APPLY;
 				break;
 			default :
 				break;
@@ -79,7 +79,7 @@ namespace Utils
 			null,
 			action,
 //			Gtk.Stock.CANCEL, Gtk.ResponseType.CANCEL,
-			Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+			Gtk.Stock.CANCEL, Gtk.ResponseType.CANCEL,
 			button, Gtk.ResponseType.ACCEPT,
 			null);
 
@@ -105,9 +105,9 @@ namespace Utils
 
 		var response = dialog.run();
 		string fn="";
-		stdout.printf(@"Utils get filename.  response $(response)\n");
-		string current_folder=dialog.get_current_folder();
-		stdout.printf(@"Utils get filename current folder $(current_folder)\n");
+//		stdout.printf(@"Utils get filename.  response $(response)\n");
+//		string current_folder=dialog.get_current_folder();
+//		stdout.printf(@"Utils get filename current folder $(current_folder)\n");
 
 		if (response==ResponseType.ACCEPT){
 			fn=dialog.get_filename();
@@ -123,11 +123,11 @@ namespace Utils
 		var dialog=new Gtk.Dialog.with_buttons(_("Adjust Size"),
 			null,
 			Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
-//			Gtk.Stock.OK,
-			Gtk.STOCK_OK,
+			Gtk.Stock.OK,
+//			Gtk.STOCK_OK,
 			Gtk.ResponseType.OK,
-//			Gtk.Stock.CANCEL,
-			Gtk.STOCK_CANCEL,
+			Gtk.Stock.CANCEL,
+//			Gtk.STOCK_CANCEL,
 			Gtk.ResponseType.CANCEL
 			);
 		var hbox=new Gtk.HBox(true,6);
@@ -231,8 +231,8 @@ namespace Utils
 	{
 		CellState[] cs ={};
 		string[] data=remove_blank_lines(s.split_set(", "));
-//		for (int i=0; i<data.length; i++) cs+=(CellState)(int.parse(data[i]));
-		for (int i=0; i<data.length; i++) cs+=(CellState)(data[i].to_int());
+		for (int i=0; i<data.length; i++) cs+=(CellState)(int.parse(data[i]));
+//		for (int i=0; i<data.length; i++) cs+=(CellState)(data[i].to_int());
 		return cs;
 	}
 	//*****************************************************************************
@@ -337,8 +337,8 @@ namespace Utils
 			{
 				var sb=new StringBuilder("");
 				for (int i=0; i<s.length;i++)
-//				{	int u=int.parse(s[i]);
-				{	int u=s[i].to_int();
+				{	int u=int.parse(s[i]);
+//				{	int u=s[i].to_int();
 					if (u>31 && u<65535)
 					{
 						sb.append_unichar((unichar)u);
@@ -414,8 +414,8 @@ namespace Utils
 		if(clues.length==0) clues={"0"};
 		int[] blocks=new int[clues.length];
 
-//		for (int i=0;i<clues.length;i++) blocks[i]=int.parse(clues[i]);
-		for (int i=0;i<clues.length;i++) blocks[i]=clues[i].to_int();
+		for (int i=0;i<clues.length;i++) blocks[i]=int.parse(clues[i]);
+//		for (int i=0;i<clues.length;i++) blocks[i]=clues[i].to_int();
 
 		return blocks;
 	}

@@ -3,59 +3,73 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Game Menu and Toolbar icons</title>
 <link rel="stylesheet" type="text/css" href="C.css">
-<script type="text/javascript" language="javascript" src="jquery.js"></script><script type="text/javascript" language="javascript" src="jquery.syntax.js"></script><script type="text/javascript" src="yelp.js"></script>
+<script type="text/javascript" language="javascript" src="jquery.js"></script><script type="text/javascript" language="javascript" src="jquery.syntax.js"></script><script type="text/javascript" language="javascript">jQuery(document).ready( function () { jQuery.syntax({root: '', blockLayout: 'plain'}, function (options, html, container) { html.attr('class', container.attr('class')); return html; }); });</script><script type="text/javascript" src="yelp.js"></script>
 </head>
 <body>
 <div class="header"></div>
 <div class="body">
 <div class="hgroup"><h1 class="title">Game Menu and Toolbar icons</h1></div>
 <div class="contents">
-<div class="media media-image"><div class="inner"><img src="media/Gamemenu.png" height="165" width="187" alt=""></div></div>
-<div class="media media-image"><div class="inner"><img src="media/Gametoolbar.png" alt=""></div></div>
+<div class="media media-image"><div class="inner"><img src="figures/Gamemenu.png" height="165" width="187" alt=""></div></div>
+<div class="media media-image"><div class="inner"><img src="figures/Gametoolbar.png" alt=""></div></div>
 <div class="synopsis"><div class="inner">
 <div class="title title-synopsis"><h2><span class="title">Summary</span></h2></div>
 <div class="desc">The game menu provides the following functions</div>
 <div class="contents">
-<div class="code"><pre class="contents ">Switch to design mode*
-Switch to solving mode*
-Check the working grid for errors*
-Clear the working grid and restart solving*
-Let the computer solve the puzzle (if it can)*
-Let the computer generate a random pattern puzzle*
+<p class="p">In design mode:</p>
+<div class="code"><pre class="contents ">Switch to solving mode*
 Change the description of the puzzle.
+Let the computer generate a random pattern puzzle*
+		</pre></div>
+<p class="p">In solving mode</p>
+<div class="code"><pre class="contents ">Switch to design mode*
+Check the working grid for errors*
+Pause the timer
+Undo the last move*
+Redo the last undone move*
+Clear the solving grid and restart solving*
+Let the computer solve the puzzle (if it can)*
 		</pre></div>
 <div class="note"><div class="inner"><div class="contents"><p class="p">*These functions are also provided by the tool bar</p></div></div></div>
 </div>
 </div></div>
 <div class="list"><ul class="list">
 <li class="list">
-<p class="p"><span class=" gui"><span class=" em">Show solution. ==</span><span class="media media-image"><img src="media/Design-Solve.png" height="24" width="24" alt=""></span></span></p>
-<p class="p">Show the puzzle solution and enter "design" mode. Inactive when in "design" mode</p>
+<p class="p"><span class=" gui"><span class=" em">Switch design/solving mode (Shift-S||Shift-W)...</span><span class="media media-image"><img src="figures/Design-Solve-inactive.png" height="24" width="24" alt=""></span>||<span class="media media-image"><img src="figures/Design-Solve-active.png" height="24" width="24" alt=""></span></span></p>
+<p class="p">Switch between showing the design grid and the working grid. A timer starts as soon as the program switches to solving mode.</p>
 </li>
 <li class="list">
-<p class="p"><span class=" gui"><span class=" em">Show working. ==</span><span class="media media-image"><img src="media/Design-Solve.png" height="24" width="24" alt=""></span></span></p>
-<p class="p">Hide the puzzle solution and enter "working" mode. Inactive when in "working" mode</p>
+<p class="p"><span class=" gui"><span class=" em">Edit game description (Shift-E)...</span></span></p>
+<p class="p">Allows you to enter or change the name of the puzzle shown in the puzzle information panel.  Maximum name length is 32 characters.  This is not necessarily the same as the name of the file in which the game is stored.  You will have to save the puzzle () for the change to persist.</p>
 </li>
 <li class="list">
-<p class="p"><span class=" gui"><span class=" em">Show incorrect cells. ==</span><span class="media media-image"><img src="media/Check.png" height="24" width="24" alt=""></span></span></p>
-<p class="p">Compare the working grid with the solution and colour incorrectly completed cells red. Inactive when in "design" mode</p>
-</li>
-<li class="list">
-<p class="p"><span class=" gui"><span class=" em">Restart. ==</span><span class="media media-image"><img src="media/Restart.png" height="24" width="24" alt=""></span></span></p>
-<p class="p">Set all the cells in the "working" grid to unknown and stay in "working" mode. Inactive when in "design" mode</p>
-</li>
-<li class="list">
-<p class="p"><span class=" gui"><span class=" em">Let the computer solve it. ==</span><span class="media media-image"><img src="media/Computer-solve.png" height="24" width="24" alt=""></span></span></p>
-<p class="p">Run the computer solver on the clues and display the solution (or partial solution) in the "working grid". Enters "working" mode</p>
-</li>
-<li class="list">
-<p class="p"><span class=" gui"><span class=" em">Computer generated puzzle. ==</span><span class="media media-image"><img src="media/Random-game.png" height="24" width="24" alt=""></span></span></p>
-<p class="p">Generate a random pattern in the solution grid and enter "working" mode. By default, the pattern generated is guaranteed to have a unique solution that can be found by simple logic looking at one row or column at a time.  Higher <span class=" var">difficulty</span> settings give patterns with fewer filled cells and shorter blocks that are harder to solve.  If the <span class=" gui"><span class=" em">Generate difficult games</span></span> item on the Settings menu is checked then the patterns generated may be ambiguous or require more advanced logic involving two or more rows or columns at a time. This may take some time for larger grids.</p>
+<p class="p"><span class=" gui"><span class=" em">Computer generated puzzle (Shift-G)...</span><span class="media media-image"><img src="figures/Random-game.png" height="24" width="24" alt=""></span></span></p>
+<p class="p">Generate a random pattern in the design grid and enter "working" mode. By default, the pattern generated is guaranteed to have a unique solution that can be found by simple logic looking at one row or column at a time.  Higher <span class=" var">difficulty</span> settings give patterns with fewer filled cells and shorter blocks that are harder to solve.  If the <span class=" gui"><span class=" em">Generate difficult games</span></span> item on the Settings menu is checked then the patterns generated may be ambiguous or require more advanced logic involving two or more rows or columns at a time. These may take some time to generate for larger grids.</p>
 <p class="p"> An approximate measure of difficulty ("Score:") is given in the game information panel .</p>
 </li>
 <li class="list">
-<p class="p"><span class=" gui"><span class=" em">Edit game description</span></span></p>
-<p class="p">Allows you to enter or change the name of the puzzle shown in the puzzle information panel.  Maximum name length is 32 characters.  This is not necessarily the same as the name of the file in which the game is stored.  You will have to save the puzzle () for the change to persist.</p>
+<p class="p"><span class=" gui"><span class=" em">Show incorrect cells(Shift-I)...</span><span class="media media-image"><img src="figures/Check.png" height="24" width="24" alt=""></span></span></p>
+<p class="p">Compare the working grid with the solution and outline incorrectly completed cells in red. Also shows time taken so far.</p>
+</li>
+<li class="list">
+<p class="p"><span class=" gui"><span class=" em">Pause the timer(Shift-P)...</span></span></p>
+<p class="p">Pause the timer. Selecting this option again or pressing Ctrl-P restarts the timer.</p>
+</li>
+<li class="list">
+<p class="p"><span class=" gui"><span class=" em">Undo(Ctrl-Z)...</span><span class="media media-image"><img src="figures/Undo.png" height="24" width="24" alt=""></span></span></p>
+<p class="p">Undo the last move.  Sets the last cell changed to its previous state</p>
+</li>
+<li class="list">
+<p class="p"><span class=" gui"><span class=" em">Redo(Ctrl-Y)...</span><span class="media media-image"><img src="figures/Redo.png" height="24" width="24" alt=""></span></span></p>
+<p class="p">Redo the last undone move.</p>
+</li>
+<li class="list">
+<p class="p"><span class=" gui"><span class=" em">Restart(Shift-R)...</span><span class="media media-image"><img src="figures/Restart.png" height="24" width="24" alt=""></span></span></p>
+<p class="p">Set all the cells in the "working" grid to unknown and stay in "working" mode. Resets the timer to zero. </p>
+</li>
+<li class="list">
+<p class="p"><span class=" gui"><span class=" em">Let the computer solve it(Shift-C)...</span><span class="media media-image"><img src="figures/Computer-solve.png" height="24" width="24" alt=""></span></span></p>
+<p class="p">Run the computer solver on the clues and display the solution (or partial solution) in the "working grid".</p>
 </li>
 </ul></div>
 </div>

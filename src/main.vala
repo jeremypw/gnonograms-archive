@@ -35,10 +35,10 @@ public enum CellState {
 	ERROR_FILLED
 	}
 
-public enum Gnonogram_FileType {
-	GAME,
-	POSITION
-}
+//public enum Gnonogram_FileType {
+//	GAME,
+//	POSITION
+//}
 
 public struct Cell {
 		public int row;

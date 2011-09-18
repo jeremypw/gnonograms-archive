@@ -18,14 +18,14 @@
 # *
 # *  Author:
 # * 	Jeremy Wootten <jeremwootten@gmail.com>
-PROGRAM = gnonograms
+PROGRAM=gnonograms
 
-VERSION = 0.9.0
-GETTEXT_PACKAGE = $(PROGRAM)
-BUILD_ROOT = 1
+VERSION=0.9.1
+GETTEXT_PACKAGE=$(PROGRAM)
+BUILD_ROOT=1
 
-VALAC = valac
-MIN_VALAC_VERSION = 0.7.10
+VALAC=valac
+MIN_VALAC_VERSION = 0.12.0
 INSTALL_PROGRAM = install
 INSTALL_DATA = install -m 644
 
@@ -38,6 +38,7 @@ BUILD_RELEASE=1
 VALAFLAGS = -g --enable-checking $(USER_VALAFLAGS)
 
 DEFINES=_PREFIX='"$(PREFIX)"' _VERSION='"$(VERSION)"' GETTEXT_PACKAGE='"$(GETTEXT_PACKAGE)"' _LANG_SUPPORT_DIR='"$(SYSTEM_LANG_DIR)"'
+
 
 SUPPORTED_LANGUAGES=en_GB ja_JP
 LOCAL_LANG_DIR=locale
@@ -75,10 +76,11 @@ endif
 RESOURCE_FILES = \
 	icons/*.png \
 	icons/*.svg \
+	icons/*.xpm \
 	games/*/*.gno \
 	html/*.html \
 	html/*.png \
-	html/media/*.png \
+	html/figures/*.png \
 	misc/gnonograms.desktop.head \
 	misc/x-gnonogram-puzzle.xml \
 	po/gnonograms.pot \
@@ -100,19 +102,13 @@ TEXT_FILES = \
 EXT_PKGS = \
    gdk-2.0 \
    gtk+-2.0 \
-   gio-2.0 \
-   glib-2.0 \
-   pango \
-   cairo
 
 ifndef NO_GCONF
 	EXT_PKGS+= gconf-2.0
 endif
 
 EXT_PKG_VERSIONS = \
-   gtk+-2.0 >= 2.20.0 \
-	cairo >= 1.8.0 \
-	pango >= 1.28.0
+	gtk+-2.0 >= 2.20.0 \
 
 PKGS = $(EXT_PKGS) $(LOCAL_PKGS)
 
@@ -202,7 +198,6 @@ endif
 	$(VALAC) --ccode --directory=$(BUILD_DIR) --basedir=src $(VALAFLAGS) \
 	$(foreach pkg,$(PKGS),--pkg=$(pkg)) \
 	$(foreach def,$(DEFINES),-X -D$(def)) \
-	$(VALA_DEFINES) \
 	$(EXPANDED_SRC_FILES)
 	touch $@
 endif
@@ -257,6 +252,7 @@ install:
 
 	touch $(LANG_STAMP)
 
+	mkdir -p $(DESTDIR)$(PREFIX)/games
 	$(INSTALL_PROGRAM) $(PROGRAM) $(DESTDIR)$(PREFIX)/games
 
 	mkdir -p $(DESTDIR)$(PREFIX)/share/gnonograms/icons
@@ -267,28 +263,27 @@ install:
 	$(INSTALL_DATA) games/easy/* $(DESTDIR)$(PREFIX)/share/gnonograms/games/easy
 	mkdir -p $(DESTDIR)$(PREFIX)/share/gnonograms/games/moderately\ easy
 	$(INSTALL_DATA) games/moderately\ easy/* $(DESTDIR)$(PREFIX)/share/gnonograms/games/moderately\ easy
-	mkdir -p $(DESTDIR)$(PREFIX)/share/gnonograms/games/moderately\ hard
-	$(INSTALL_DATA) games/moderately\ hard/* $(DESTDIR)$(PREFIX)/share/gnonograms/games/moderately\ hard
 	mkdir -p $(DESTDIR)$(PREFIX)/share/gnonograms/games/hard
 	$(INSTALL_DATA) games/hard/* $(DESTDIR)$(PREFIX)/share/gnonograms/games/hard
 	mkdir -p $(DESTDIR)$(PREFIX)/share/gnonograms/games/very\ hard
 	$(INSTALL_DATA) games/very\ hard/* $(DESTDIR)$(PREFIX)/share/gnonograms/games/very\ hard
-	mkdir -p $(DESTDIR)$(PREFIX)/share/gnonograms/games/almost\ impossible
-	$(INSTALL_DATA) games/almost\ impossible/* $(DESTDIR)$(PREFIX)/share/gnonograms/games/almost\ impossible
 
 	mkdir -p $(DESTDIR)$(PREFIX)/share/gnonograms/html
-	mkdir -p $(DESTDIR)$(PREFIX)/share/gnonograms/html/media
+	mkdir -p $(DESTDIR)$(PREFIX)/share/gnonograms/html/figures
 	$(INSTALL_DATA) html/*.* $(DESTDIR)$(PREFIX)/share/gnonograms/html
-	$(INSTALL_DATA) html/media/*.* $(DESTDIR)$(PREFIX)/share/gnonograms/html/media
+	$(INSTALL_DATA) html/figures/*.* $(DESTDIR)$(PREFIX)/share/gnonograms/html/figures
 
 	mkdir -p $(DESTDIR)$(PREFIX)/share/icons/hicolor/48x48/apps
 	$(INSTALL_DATA) icons/gnonograms48.png $(DESTDIR)$(PREFIX)/share/icons/hicolor/48x48/apps/gnonograms.png
 
-	mkdir -p $(DESTDIR)$(PREFIX)/t	share/icons/hicolor/48x48/mimetypes
+	mkdir -p $(DESTDIR)$(PREFIX)/share/icons/hicolor/48x48/mimetypes
 	$(INSTALL_DATA) icons/gnonogram-puzzle.png $(DESTDIR)$(PREFIX)/share/icons/hicolor/48x48/mimetypes/application-x-gnonogram-puzzle.png
 
 	mkdir -p $(DESTDIR)$(PREFIX)/share/icons/hicolor/scalable/apps
 	$(INSTALL_DATA) icons/gnonograms.svg $(DESTDIR)$(PREFIX)/share/icons/hicolor/scalable/apps/gnonograms.svg
+
+	mkdir -p $(DESTDIR)$(PREFIX)/share/pixmaps
+	$(INSTALL_DATA) icons/gnonograms32.xpm $(DESTDIR)$(PREFIX)/share/pixmaps
 
 	$(foreach lang,$(SUPPORTED_LANGUAGES),`mkdir -p $(SYSTEM_LANG_DIR)/$(lang)/LC_MESSAGES ; \
         $(INSTALL_DATA) $(LOCAL_LANG_DIR)/$(lang)/LC_MESSAGES/gnonograms.mo \
@@ -310,7 +305,7 @@ uninstall:
 ##########
 	rm -f $(DESTDIR)$(PREFIX)/games/$(PROGRAM)
 	rm -fr $(DESTDIR)$(PREFIX)/share/gnonograms
-	rm -fr $(DESTDIR)$(PREFIX)/share/gnonograms/html/media
+	rm -fr $(DESTDIR)$(PREFIX)/share/gnonograms/html/figures
 	rm -fr $(DESTDIR)$(PREFIX)/share/gnonograms/html
 
 	rm -fr $(DESTDIR)$(PREFIX)/share/icons/hicolor/scalable/apps/gnonograms.png
