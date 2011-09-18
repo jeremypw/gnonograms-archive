@@ -46,6 +46,9 @@ configure_help() {
     printf "\t--disable-desktop-update\n"
     printf "\t\t\t\tDisable desktop, mime and icon database update.\n"
 
+    printf "\t--disable-gnome-doc-install\n"
+    printf "\t\t\t\tDisable installation of gnome help files\n"
+
     printf "\n"
 }
 
@@ -103,6 +106,9 @@ do
 							;;
 
         --disable-desktop-update)         variables="${variables}DISABLE_DESKTOP_UPDATE=1\n"
+                                          ;;
+
+        --disable-gnome-doc-install)         variables="${variables}DISABLE_GNOME_DOC_INSTALL=1\n"
                                           ;;
 
 

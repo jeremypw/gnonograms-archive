@@ -1,0 +1,47 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      type="topic"
+      id="filemenu">
+	<title>File Menu and Toolbar icons</title>
+	<media type="image" mime="image/png" width="320" height="153" src="figures/Filemenu.png"/>
+	<media type="image" mime="image/png" src="figures/Filetoolbar.png"/>
+	<synopsis>
+		<title>Summary</title>
+		<desc>The file menu provides the following functions</desc>
+		<code>
+Create a new puzzle design*
+Load puzzle designs from storage media (including unfinished working if present)*
+Save puzzle designs to storage media in .gno format (including unfinished working if present)*
+Save puzzle designs to storage media in "Picto" .pattern format (does not include any unfinished working)
+Quit the program.
+		</code>
+		<note><p>*These functions are also provided by the tool bar</p></note>
+	</synopsis>
+	<list>
+		<item><title>New (Ctrl N)<media type="image" mime="image/png" width="24" height="24" src="figures/New.png"/></title>
+			<p>Empty the current design grid and enter "design" mode</p>
+		</item>
+		<item>
+			<title>Open(Ctrl O)<media type="image" mime="image/png" width="24" height="24" src="figures/Load.png"/></title>
+					<p>Shows a file selection dialogue with the puzzles in the current game directory.  By default gnonogram game files are shown but the filter can be changed to Picto games.</p>
+					<p>The puzzle will be displayed in "solving" mode.  If the puzzle was partially solved when saved then the partial solution will be displayed.</p>
+					<note style="tip">
+						<p>If the directory is changed then that becomes the default game directory.</p>
+					</note>
+		</item>
+		<item>
+			<title>Save (Ctrl S)<media type="image" mime="image/png" width="24" height="24" src="figures/Save.png"/></title>
+					<p>Shows a file <gui>Save As</gui> dialogue in the current game directory.  The puzzle is saved in Gnonogram format, which includes the state of the working grid if the puzzle is saved while the solution is incomplete.  Use the separate menu option to save in Picto format. If the directory is changed then that becomes the default game directory.</p>
+					<note style="tip">
+						<p>If the directory is changed then that becomes the default game directory.</p>
+					</note>
+		</item>
+		<item>
+			<title>Save as Picto game.</title>
+			<p>Shows a file <gui><em>Save As</em></gui> dialogue in the current game directory.  The puzzle is saved in Picto format.  If the directory is changed then that becomes the default game directory.</p>
+		</item>
+		<item>
+			<title>Quit (Ctrl Q).</title>
+			<p>Saves the current configuration settings (difficulty, dimensions, colours) and closes the program.  Closing the window has the same effect.</p>
+		</item>
+	</list>
+</page>

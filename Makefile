@@ -301,6 +301,13 @@ ifndef DISABLE_DESKTOP_UPDATE
 	-update-desktop-database || :
 endif
 
+ifndef DISABLE_GNOME_DOC_INSTALL
+	mkdir -p $(DESTDIR)$(PREFIX)/share/gnome/help/gnonograms/C
+	$(INSTALL_DATA) help/C/*.page $(DESTDIR)$(PREFIX)/share/gnome/help/gnonograms/C
+	mkdir -p $(DESTDIR)$(PREFIX)/share/gnome/help/gnonograms/C/figures
+	$(INSTALL_DATA) help/C/figures/*.png $(DESTDIR)$(PREFIX)/share/gnome/help/gnonograms/C/figures
+endif
+
 uninstall:
 ##########
 	rm -f $(DESTDIR)$(PREFIX)/games/$(PROGRAM)
@@ -320,6 +327,9 @@ uninstall:
 ifndef DISABLE_DESKTOP_UPDATE
 	update-mime-database $(DESTDIR)$(PREFIX)/share/mime || :
 	update-desktop-database || :
+endif
+ifndef DISABLE_HELP_INSTALL
+	rm -rf $(DESTDIR)$(PREFIX)/share/gnome/help/gnonograms
 endif
 
 	$(foreach lang,$(SUPPORTED_LANGUAGES),`rm -f $(SYSTEM_LANG_DIR)/$(lang)/LC_MESSAGES/gnonograms.mo`)
