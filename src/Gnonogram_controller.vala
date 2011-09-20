@@ -83,6 +83,10 @@ public class Gnonogram_controller
 	{
 		_rowbox = new Gnonogram_LabelBox(_rows, _cols, false);
 		_colbox = new Gnonogram_LabelBox(_cols, _rows, true);
+		set_default_fontheight(_rows, _cols);
+		_rowbox.set_all_to_zero();
+		_colbox.set_all_to_zero();
+
 		_cellgrid = new Gnonogram_CellGrid(_rows,_cols);
 		_gnonogram_view = new Gnonogram_view(_rowbox, _colbox, _cellgrid, this);
 
@@ -188,6 +192,7 @@ public class Gnonogram_controller
 		if (r>Resource.MAXROWSIZE||c>Resource.MAXCOLSIZE) return;
 		if (r==_rows && c==_cols) return;
 		resize_view(r,c);
+		set_default_fontheight(r,c);
 		_solver.set_dimensions(r,c);
 		_model.set_dimensions(r,c);
 		_rows=r; _cols=c;
@@ -197,6 +202,18 @@ public class Gnonogram_controller
 		_rowbox.resize(r, c);
 		_colbox.resize(c, r);
 		_cellgrid.resize(r,c);
+	}
+
+	private void set_default_fontheight(int r, int c)
+	{
+		double maxrowfontheight, maxcolfontheight, deffontheight;
+
+		maxrowfontheight=(double)((285-c)/r);
+		maxcolfontheight=(double)((550-r)/c);
+		deffontheight=double.min(maxrowfontheight,maxcolfontheight);
+		_rowbox.set_font_height(deffontheight);
+		_colbox.set_font_height(deffontheight);
+
 	}
 //======================================================================
 	private void gridlines_toggled(bool active){

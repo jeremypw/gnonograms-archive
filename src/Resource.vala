@@ -71,9 +71,9 @@ namespace Resource
 	public static int DEFAULT_DIFFICULTY = 5;
 
 //Appearance related parameters
-	public static double FONTBASESIZE=22;
-	public static double FONTSCALEFACTOR=0.8;
-	public static double MINFONTSIZE=6.0;
+//	public static double FONTBASESIZE=22;
+//	public static double FONTSCALEFACTOR=0.8;
+	public static double MINFONTSIZE=4.0;
 	public static double MAXFONTSIZE=48.0;
 	public static string font_desc;
 	public static double CELLOFFSET_NOGRID=0.0;

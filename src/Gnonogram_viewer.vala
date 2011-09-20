@@ -463,6 +463,8 @@ public class Gnonogram_view : Gtk.Window
 		win.set_position(WindowPosition.MOUSE);
 		win.show_all();
 	}
+
+
 //======================================================================
 	private void show_about()
 	{

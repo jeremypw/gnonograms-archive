@@ -234,15 +234,15 @@ cleantemps:
 	rm -f $(LANG_STAMP)
 
 
-dist: $(PROGRAM) $(DIST_FILES)
-###############################
+dist: $(DIST_FILES)
+###################
 	mkdir -p $(PROGRAM)-$(VERSION)
 	cp --parents $(DIST_FILES) $(PROGRAM)-$(VERSION)
 	tar --gzip -cvf $(DIST_TAR_GZ) $(PROGRAM)-$(VERSION)
 	rm -rf $(PROGRAM)-$(VERSION)
 
-bin: $(BIN_FILES)
-###################
+bin: $(PROGRAM) $(BIN_FILES)
+############################
 	mkdir -p $(PROGRAM)-$(VERSION)-bin
 	cp --parents $(BIN_FILES) $(PROGRAM)-$(VERSION)-bin
 	tar --gzip -cvf $(BIN_TAR_GZ) $(PROGRAM)-$(VERSION)-bin

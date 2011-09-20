@@ -52,7 +52,7 @@ public class Gnonogram_LabelBox : Frame {
 			Gnonogram_label l=new Gnonogram_label("", is_col);
 			_labels[i]=l;
 		}
-		_size=0;
+		_size=0; //ensures 'size' no labels are added to box
 		resize(size, other_size);
 		add(_box);
 	}
@@ -79,9 +79,9 @@ public class Gnonogram_LabelBox : Frame {
 			if (_size!=new_size) stdout.printf("Error adding or removing labels");
 		}
 		_other_size=other_size;
-		set_default_fontheight(_size, _other_size);
-		set_attribs(_fontheight);
-		set_all_to_zero();
+//		set_default_fontheight(_size, _other_size);
+//		set_attribs(_fontheight);
+//		set_all_to_zero();
 	}
 //======================================================================
 	private void remove_label()
@@ -94,6 +94,14 @@ public class Gnonogram_LabelBox : Frame {
 	{
 		if (increase) _fontheight+=1.0;
 		else _fontheight-=1.0;
+		set_attribs(_fontheight);
+		for (int i=0; i<_size;i++) update_label(i,get_label_text(i));
+	}
+//======================================================================
+//EXPERIMENTAL
+	public void set_font_height(double fontheight)
+	{
+		_fontheight=fontheight.clamp(Resource.MINFONTSIZE, Resource.MAXFONTSIZE);
 		set_attribs(_fontheight);
 		for (int i=0; i<_size;i++) update_label(i,get_label_text(i));
 	}
@@ -140,14 +148,14 @@ public class Gnonogram_LabelBox : Frame {
 		_attribend="</span>";
 	}
 //======================================================================
-	private void set_default_fontheight(int size, int other_size)
-	{
-		if(_is_column)_fontheight=Resource.FONTBASESIZE-(double)(other_size-15)*Resource.FONTSCALEFACTOR;
-		else _fontheight=Resource.FONTBASESIZE-(double)(size-15)*Resource.FONTSCALEFACTOR;
-		_fontheight=_fontheight.clamp(Resource.MINFONTSIZE, Resource.MAXFONTSIZE);
-	}
+//	private void set_default_fontheight(int size, int other_size)
+//	{Moved to controller, different algorithm
+//		if(_is_column)_fontheight=Resource.FONTBASESIZE-(double)(other_size-15)*Resource.FONTSCALEFACTOR;
+//		else _fontheight=Resource.FONTBASESIZE-(double)(size-15)*Resource.FONTSCALEFACTOR;
+//		_fontheight=_fontheight.clamp(Resource.MINFONTSIZE, Resource.MAXFONTSIZE);
+//	}
 //======================================================================
-	private void set_all_to_zero()
+	public void set_all_to_zero()
 	{
 		for(int l=0;l<_size;l++) update_label(l,"0");
 	}
