@@ -1,5 +1,7 @@
+
 Gnonograms version 0.9.2
 **************************
+22/Sep/2011	Fixed timer bug
 20/Sep/2011	Fixed auto size bug (failure for extremely asymmetric grid)
 
 18/Sep/2011 Added Gnome help files (Mallard) files

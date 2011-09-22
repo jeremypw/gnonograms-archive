@@ -78,7 +78,6 @@ public class Gnonogram_controller
 		}
 	}
 //======================================================================
-
 	private void create_view()
 	{
 		_rowbox = new Gnonogram_LabelBox(_rows, _cols, false);
@@ -677,12 +676,14 @@ public class Gnonogram_controller
 //======================================================================
 	public void start_solving(){
 		//stdout.printf("Start solving\n");
+		_timer.start();
 		if(_state==GameState.SOLVING) redraw_all();
 		else change_state(GameState.SOLVING);
 	}
 //======================================================================
 	public void reveal_solution() {
 		//stdout.printf("Reveal solution\n");
+		_timer.stop();
 		if(_state==GameState.SETTING) redraw_all();
 		change_state(GameState.SETTING);
 	}
