@@ -1,6 +1,10 @@
 
 Gnonograms version 0.9.2
 **************************
+24/Sep/2011	Fixed redo-undo bug
+			Extra validation of game and config files
+			Detect unsaved changes and prompt user on exit
+			Removed some redundant code
 22/Sep/2011	Fixed timer bug
 20/Sep/2011	Fixed auto size bug (failure for extremely asymmetric grid)
 

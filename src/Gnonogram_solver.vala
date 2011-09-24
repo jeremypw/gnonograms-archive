@@ -45,8 +45,8 @@
 //=========================================================================
 	public Gnonogram_solver(bool testing=false, bool debug=false, bool test_column=false, int test_idx=-1) {
 
-		_grid=new My2DCellArray(Resource.MAXROWSIZE, Resource.MAXCOLSIZE);
-		_regions=new Gnonogram_region[Resource.MAXROWSIZE+Resource.MAXCOLSIZE];
+		_grid=new My2DCellArray(Resource.MAXSIZE, Resource.MAXSIZE);
+		_regions=new Gnonogram_region[Resource.MAXSIZE+Resource.MAXSIZE];
 
 		for (int i=0;i<_regions.length;i++) _regions[i]=new Gnonogram_region(_grid);
 		_rows = 10; _cols = 10; //default values

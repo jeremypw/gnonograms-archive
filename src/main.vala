@@ -71,6 +71,10 @@ public struct Cell {
 			return c;
 		}
 
+		public string to_string() {
+			return @"Row $(this.row), Col $(this.col),  State $(this.state)";
+		}
+
 
 	}
 

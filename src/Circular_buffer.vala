@@ -87,4 +87,13 @@ public class Circular_move_buffer {
 		//stdout.printf(@"after next_data: nbr_items=$_nbr_items, offset=$_offset, pointer=$_pointer, start=$_start, end=$_end\n");
 		return data;
 	}
+
+	public bool no_more_previous_data()
+	{
+		return _offset==_nbr_items;
+	}
+	public bool no_more_next_data()
+	{
+		return _offset==0;
+	}
 }

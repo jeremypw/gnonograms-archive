@@ -29,9 +29,9 @@
 
 	public Gnonogram_model() {
 	_rows = 10; _cols = 10; //default values
-	_solution_data=new My2DCellArray(Resource.MAXROWSIZE,Resource.MAXCOLSIZE,CellState.EMPTY);
-	_working_data=new My2DCellArray(Resource.MAXROWSIZE,Resource.MAXCOLSIZE,CellState.UNKNOWN);
-	_arr = new CellState[Resource.MAXCOLSIZE];
+	_solution_data=new My2DCellArray(Resource.MAXSIZE,Resource.MAXSIZE,CellState.EMPTY);
+	_working_data=new My2DCellArray(Resource.MAXSIZE,Resource.MAXSIZE,CellState.UNKNOWN);
+	_arr = new CellState[Resource.MAXSIZE];
 	_display_data = _solution_data;
 	_rand_gen = new Rand();
 	}

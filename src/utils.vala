@@ -133,11 +133,11 @@ namespace Utils
 		var hbox=new Gtk.HBox(true,6);
 
 		var row_label=new Gtk.Label(_("Rows"));
-		var row_spin=new Gtk.SpinButton.with_range(1,Resource.MAXROWSIZE,5);
+		var row_spin=new Gtk.SpinButton.with_range(1,Resource.MAXSIZE,5);
 		row_spin.set_value((double)currentr);
 
 		var col_label=new Gtk.Label(_("Columns"));
-		var col_spin=new Gtk.SpinButton.with_range(1,Resource.MAXCOLSIZE,5);
+		var col_spin=new Gtk.SpinButton.with_range(1,Resource.MAXSIZE,5);
 		col_spin.set_value((double)currentc);
 
 		hbox.add(row_label); hbox.add(row_spin);
@@ -231,7 +231,7 @@ namespace Utils
 	{
 		CellState[] cs ={};
 		string[] data=remove_blank_lines(s.split_set(", "));
-		for (int i=0; i<data.length; i++) cs+=(CellState)(int.parse(data[i]));
+		for (int i=0; i<data.length; i++) cs+=(CellState)(int.parse(data[i]).clamp(0,6));
 //		for (int i=0; i<data.length; i++) cs+=(CellState)(data[i].to_int());
 		return cs;
 	}

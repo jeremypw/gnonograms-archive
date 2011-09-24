@@ -69,7 +69,7 @@
 	public Gnonogram_region (My2DCellArray grid)
 	{
 		_grid=grid;
-		int maxlength=int.max(Resource.MAXCOLSIZE,Resource.MAXROWSIZE);
+		int maxlength=int.max(Resource.MAXSIZE,Resource.MAXSIZE);
 		_status=new CellState[maxlength]; _status_store=new CellState[maxlength];
 		_temp_status=new CellState[maxlength];
 

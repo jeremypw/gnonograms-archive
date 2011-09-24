@@ -84,6 +84,8 @@ public class Gnonogram_view : Gtk.Window
 	private Gtk.Image reveal_icon;
 	private Gtk.AccelGroup accel_group;
 
+	private bool _inhibit=false;
+
 	public Gnonogram_view(Gnonogram_LabelBox rb, Gnonogram_LabelBox cb, Gnonogram_CellGrid dg, Gnonogram_controller controller)
 	{	_controller=controller; //seems to be necessary to get signals to work.  Not sure why.
 
@@ -433,6 +435,9 @@ public class Gnonogram_view : Gtk.Window
 //======================================================================
 	private void toggle_execute()
 	{
+		//prevent signal being emitted unnecessarily
+		if (_inhibit) return;
+
 		if (_hide_tool.active) hidegame();
 		else revealgame();
 	}
@@ -548,20 +553,21 @@ public class Gnonogram_view : Gtk.Window
 	}
 //======================================================================
 	public void state_has_changed(GameState gs)
-	{ //stdout.printf("Viewer state changed\n");
+	{ //stdout.printf(@"Viewer state changed $gs\n");
+		_inhibit=true;
 		bool solving=(gs==GameState.SOLVING);
 		_showsolutionmenuitem.sensitive=solving;
 		_showworkingmenuitem.sensitive=!solving;
 		_restart_tool.sensitive=solving;
 		_restartmenuitem.sensitive=solving;
-		_hide_tool.set_active(solving);
-
 		_defaultsmenuitem.sensitive=!solving;
 		_resizemenuitem.sensitive=!solving;
 		_resize_tool.sensitive=!solving;
 		_check_tool.sensitive=solving;
 		_checkerrorsmenuitem.sensitive=solving;
 		_pausemenuitem.sensitive=solving;
+
+		_hide_tool.set_active(solving);
 
 		if (gs==GameState.SETTING)
 		{
@@ -577,6 +583,7 @@ public class Gnonogram_view : Gtk.Window
 			_hide_tool.set_icon_widget(reveal_icon);
 			_hide_tool.show_all();
 		}
+		_inhibit=false;
 	}
 //======================================================================
 	public void set_undo_sensitive(bool sensitive)

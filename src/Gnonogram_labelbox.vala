@@ -39,12 +39,12 @@ public class Gnonogram_LabelBox : Frame {
 		if (_is_column)
 		{
 			 _box = new HBox(true,0) as Container;
-			 _labels=new Gnonogram_label[Resource.MAXCOLSIZE];
+			 _labels=new Gnonogram_label[Resource.MAXSIZE];
 		}
 		else
 		{
 			_box = new VBox(true,0) as Container;
-			_labels=new Gnonogram_label[Resource.MAXROWSIZE];
+			_labels=new Gnonogram_label[Resource.MAXSIZE];
 		}
 
 		for (var i=0;i<_labels.length;i++)
