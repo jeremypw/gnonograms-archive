@@ -98,7 +98,6 @@ public class Gnonogram_LabelBox : Frame {
 		for (int i=0; i<_size;i++) update_label(i,get_label_text(i));
 	}
 //======================================================================
-//EXPERIMENTAL
 	public void set_font_height(double fontheight)
 	{
 		_fontheight=fontheight.clamp(Resource.MINFONTSIZE, Resource.MAXFONTSIZE);

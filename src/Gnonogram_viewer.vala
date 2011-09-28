@@ -317,7 +317,7 @@ public class Gnonogram_view : Gtk.Window
 		zoomoutmenuitem.add_accelerator("activate",accel_group,keyval_from_name("minus"),Gdk.ModifierType.CONTROL_MASK, Gtk.AccelFlags.VISIBLE);
 
 		aboutmenuitem.activate.connect(show_about);
-		htmlmanualmenuitem.activate.connect(show_html_manual);
+		htmlmanualmenuitem.activate.connect(show_manual);
 		htmlmanualmenuitem.add_accelerator("activate",accel_group,keyval_from_name("F1"),(Gdk.ModifierType)0, Gtk.AccelFlags.VISIBLE);
 		return menubar;
 	}
@@ -328,33 +328,27 @@ public class Gnonogram_view : Gtk.Window
 		_toolbar.set_style(Gtk.ToolbarStyle.ICONS);
 
 		var new_tool=new ToolButton.from_stock(Gtk.Stock.CLEAR);
-//		var new_tool=new ToolButton.from_stock(Gtk.STOCK_CLEAR);
 		new_tool.set_tooltip_text(_("New puzzle"));
 		_toolbar.add(new_tool);
 
 		var load_tool=new ToolButton.from_stock(Gtk.Stock.OPEN);
-//		var load_tool=new ToolButton.from_stock(Gtk.STOCK_OPEN);
 		load_tool.set_tooltip_text(_("Load puzzle"));
 		_toolbar.add(load_tool);
 
 		var save_as_tool=new ToolButton.from_stock(Gtk.Stock.SAVE_AS);
-//		var save_as_tool=new ToolButton.from_stock(Gtk.STOCK_SAVE_AS);
 		save_as_tool.set_tooltip_text(_("Save puzzle"));
 		_toolbar.add(save_as_tool);
 
 		_toolbar.add(new SeparatorToolItem());
 
-//		_undo_tool=new ToolButton.from_stock(Gtk.STOCK_UNDO);
 		_undo_tool=new ToolButton.from_stock(Gtk.Stock.UNDO);
 		_undo_tool.set_tooltip_text(_("Undo last move"));
 		_toolbar.add(_undo_tool);
 
-//		_redo_tool=new ToolButton.from_stock(Gtk.STOCK_REDO);
 		_redo_tool=new ToolButton.from_stock(Gtk.Stock.REDO);
 		_redo_tool.set_tooltip_text(_("Redo last undone move"));
 		_toolbar.add(_redo_tool);
 		_restart_tool=new ToolButton.from_stock(Gtk.Stock.REFRESH);
-//		_restart_tool=new ToolButton.from_stock(Gtk.STOCK_REFRESH);
 		_restart_tool.set_tooltip_text(_("Start this puzzle again"));
 		_toolbar.add(_restart_tool);
 		_toolbar.add(new SeparatorToolItem());
@@ -390,13 +384,11 @@ public class Gnonogram_view : Gtk.Window
 		_resize_tool.set_tooltip_text(_("Change dimensions of the puzzle grid"));
 		_toolbar.add(_resize_tool);
 
-//		var zoom_in_tool=new ToolButton.from_stock(Gtk.STOCK_ZOOM_IN);
 		var zoom_in_tool=new ToolButton.from_stock(Gtk.Stock.ZOOM_IN);
 		zoom_in_tool.set_tooltip_text(_("Increase font size"));
 		_toolbar.add(zoom_in_tool);
 
 		var zoom_out_tool=new ToolButton.from_stock(Gtk.Stock.ZOOM_OUT);
-//		var zoom_out_tool=new ToolButton.from_stock(Gtk.STOCK_ZOOM_OUT);
 		zoom_out_tool.set_tooltip_text(_("Decrease font size"));
 		_toolbar.add(zoom_out_tool);
 
@@ -436,16 +428,10 @@ public class Gnonogram_view : Gtk.Window
 	private void toggle_execute()
 	{
 		//prevent signal being emitted unnecessarily
-		if (_inhibit) return;
-
-		if (_hide_tool.active) hidegame();
+		if (_inhibit) {}
+		else if (_hide_tool.active) hidegame();
 		else revealgame();
 	}
-//======================================================================
-//	private void toggle_toolbar(Gtk.MenuItem cmi)
-//	{
-//		_toolbar.visible=((Gtk.CheckMenuItem)cmi).active;
-//	}
 //======================================================================
 	private void set_difficulty()
 	{
@@ -455,10 +441,8 @@ public class Gnonogram_view : Gtk.Window
 		win.set_modal(true);
 		var grade_spin2=new SpinButton.with_range(1,10,1);
 		grade_spin2.set_tooltip_text(_("Set the difficulty of generated puzzles"));
-		//grade_spin2.set_can_focus(false);
 		grade_spin2.set_value(_grade_spin.get_value());
 		win.add(grade_spin2);
-//		win.leave_notify_event.connect(()=>{
 		win.delete_event.connect(()=>{
 			set_grade_spin_value(grade_spin2.get_value());
 			win.destroy();
@@ -488,15 +472,23 @@ public class Gnonogram_view : Gtk.Window
 	}
 
 //======================================================================
-	private void show_html_manual()
+	private void show_manual()
 	{
-		var manual_uri="file:///"+Resource.html_manual_dir+"/index.html";
+		string manual_uri;
+		if (Resource.use_gnome_help)
+		{
+			manual_uri="ghelp:gnonograms";
+		}
+		else
+		{
+			manual_uri="file:///"+Resource.html_manual_dir+"/index.html";
+		}
 		try	{
-			show_uri(get_screen(),manual_uri,get_current_event_time());
-		}
-		catch (GLib.Error e) {
-			Utils.show_warning_dialog(e.message);
-		}
+				show_uri(get_screen(),manual_uri,get_current_event_time());
+			}
+			catch (GLib.Error e) {
+				Utils.show_warning_dialog(e.message);
+			}
 	}
 //======================================================================
 	public void set_name(string name){_name_label.set_text(_("Name:")+" "+name+"  ");}

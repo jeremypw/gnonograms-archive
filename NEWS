@@ -1,15 +1,17 @@
 
 Gnonograms version 0.9.2
 **************************
+28/Sep/2011	Small tweaks
 24/Sep/2011	Fixed redo-undo bug
 			Extra validation of game and config files
 			Detect unsaved changes and prompt user on exit
 			Removed some redundant code
+			Autosize takes into account screen resolution
 22/Sep/2011	Fixed timer bug
 20/Sep/2011	Fixed auto size bug (failure for extremely asymmetric grid)
 
 18/Sep/2011 Added Gnome help files (Mallard) files
-			Modified Makefile and configure to install them
+			Modified Makefile and configure to install them (or not)
 			Include target to build binary archive
 			Include configure option to turn off all Gnome desktop integration on install
 			Removed unused configure options

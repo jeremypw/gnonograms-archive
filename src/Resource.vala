@@ -29,6 +29,7 @@ using GLib;
 extern const string _PREFIX;
 extern const string _VERSION;
 extern const string GETTEXT_PACKAGE;
+extern const int _GNOME_DOC;
 
 namespace Resource
 {
@@ -64,16 +65,18 @@ namespace Resource
 
 //Performace/capability related parameters
 	public static int MAXSIZE = 100; // max number rows or columns
+	public static int MINSIZE = 5;
 	public static int MAXGRADE = 10; //max grade level
 	public static int MAXTRIES = 100; //max attempts to generate solvable game
 	public static int MAXUNDO = 100; //max moves that can be undone
 	public static int DEFAULT_DIFFICULTY = 5;
 
 //Appearance related parameters
-//	public static double FONTBASESIZE=22;
-//	public static double FONTSCALEFACTOR=0.8;
-	public static double MINFONTSIZE=4.0;
-	public static double MAXFONTSIZE=48.0;
+	public static double MINFONTSIZE=3.0;
+	public static double MAXFONTSIZE=72.0;
+	public static double MAXWINDOWHEIGHT=475.0; //TODO relate to actual screen resolution
+	public static double MAXWINDOWWIDTH=700.0;  //TODO relate to actual screen resolution
+
 	public static string font_desc;
 	public static double CELLOFFSET_NOGRID=0.0;
 	public static double CELLOFFSET_WITHGRID=2.0;
@@ -99,6 +102,7 @@ namespace Resource
 	public static string html_manual_dir;
 	public static string prefix;
 	public static bool installed;
+	public static bool use_gnome_help;
 	public static int icon_size=24;
 
 	private IconTheme icon_theme;
@@ -109,25 +113,30 @@ namespace Resource
 		stdout.printf("Prefix is %s \n",prefix);
 		stdout.printf("gettext package is %s \n",APP_GETTEXT_PACKAGE);
 
-		icon_theme=Gtk.IconTheme.get_default();
-		stdout.printf("Icon theme is %s\n",icon_theme.get_example_icon_name());
-
 		File exec_file =File.new_for_path(Environment.find_program_in_path(arg0));
 		exec_dir=exec_file.get_parent().get_path();
+		string root_dir=exec_file.get_parent().get_parent().get_path();
 		stdout.printf("Exec_dir is %s \n",exec_dir);
 
 		installed=is_installed(exec_dir);
 		stdout.printf("Is installed is %s\n",installed.to_string());
 
-		resource_dir=installed ? exec_file.get_parent().get_parent().get_path()+"/share/gnonograms" : exec_dir;
+		resource_dir=installed ? root_dir+"/share/gnonograms" : exec_dir;
 		stdout.printf("Resource_dir is %s \n",resource_dir);
 
-		locale_dir=installed ? exec_file.get_parent().get_parent().get_path()+"/share/locale" : resource_dir+"/locale";
+		locale_dir=installed ? root_dir+"/share/locale" : resource_dir+"/locale";
 		stdout.printf("Locale_dir is %s \n",locale_dir);
 
 		icon_dir=resource_dir+"/icons";
 
+		use_gnome_help=(_GNOME_DOC==1);
 		html_manual_dir=resource_dir+"/html";
+		string gnome_manual_dir=installed ? root_dir+"/share/gnome/help/gnonograms/C" : resource_dir+"/help/C";
+		var dir=File.new_for_path(gnome_manual_dir);
+		if (dir.query_file_type(FileQueryInfoFlags.NONE,null)!=FileType.DIRECTORY)
+		{//fall back to html help if cannot locate gnome help directory
+			use_gnome_help=false;
+		}
 
 		user_config_dir=Environment.get_user_config_dir();
 
@@ -306,22 +315,16 @@ namespace Resource
 	public static void get_icon_theme()
 	{
 		icon_theme=Gtk.IconTheme.get_default();
-//		stdout.printf("Icon theme is %s\n",icon_theme.get_example_icon_name());
 	}
 
 	public static Gdk.Pixbuf? get_theme_icon(string icon_name)
 	{
 		Gdk.Pixbuf icon = null;
-//		if (!icon_theme.has_icon(icon_name)) icon_name="image-missing";
-//		stdout.printf("Looking up theme icon %s\n",icon_name);
 		try
 		{
 			icon=icon_theme.load_icon(icon_name,icon_size,Gtk.IconLookupFlags.NO_SVG|Gtk.IconLookupFlags.FORCE_SIZE);
 		}
-		catch (GLib.Error e)
-		{
-			//stdout.printf("Failed to load theme icon %s\n",icon_name);
-		}
+		catch (GLib.Error e){}
 		return icon;
 	}
 
@@ -386,5 +389,4 @@ namespace Resource
 		}
 		return icon;
 	}
-
 }

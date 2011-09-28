@@ -74,8 +74,6 @@ public struct Cell {
 		public string to_string() {
 			return @"Row $(this.row), Col $(this.col),  State $(this.state)";
 		}
-
-
 	}
 
 public struct Move {

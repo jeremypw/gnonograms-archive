@@ -39,15 +39,19 @@ VALAFLAGS = -g --enable-checking $(USER_VALAFLAGS)
 
 DEFINES=_PREFIX='"$(PREFIX)"' _VERSION='"$(VERSION)"' GETTEXT_PACKAGE='"$(GETTEXT_PACKAGE)"' _LANG_SUPPORT_DIR='"$(SYSTEM_LANG_DIR)"'
 
+ifndef DISABLE_GNOME_DOC_INSTALL
+	DEFINES+=_GNOME_DOC=1
+else
+	DEFINES+=_GNOME_DOC=0
+endif
 
 SUPPORTED_LANGUAGES=en_GB ja_JP
 LOCAL_LANG_DIR=locale
 SYSTEM_LANG_DIR=$(DESTDIR)$(PREFIX)/share/locale
 
-SRC_FILES = \
-	Circular_buffer.vala \
+SRC_FILES = Gnonogram_cellgrid.vala \
 	Game_editor.vala \
-	Gnonogram_cellgrid.vala \
+	Circular_buffer.vala \
 	Gnonogram_controller.vala \
 	Gnonogram_filereader.vala \
 	Gnonogram_label.vala \
@@ -205,8 +209,9 @@ endif
 endif
 
 	@ type msgfmt > /dev/null || ( echo 'msgfmt (usually found in the gettext package) is missing and is required to build gnonograms. ' ; exit 1 )
+
 	mkdir -p $(BUILD_DIR)
-	$(VALAC) --ccode --directory=$(BUILD_DIR) --basedir=src $(VALAFLAGS) \
+	$(VALAC) --ccode --directory=$(BUILD_DIR) --basedir=src --symbols=./SYMBOLS $(VALAFLAGS) \
 	$(foreach pkg,$(PKGS),--pkg=$(pkg)) \
 	$(foreach def,$(DEFINES),-X -D$(def)) \
 	$(EXPANDED_SRC_FILES)
@@ -286,11 +291,6 @@ install:
 	mkdir -p $(DESTDIR)$(PREFIX)/share/gnonograms/games/very\ hard
 	$(INSTALL_DATA) games/very\ hard/* $(DESTDIR)$(PREFIX)/share/gnonograms/games/very\ hard
 
-	mkdir -p $(DESTDIR)$(PREFIX)/share/gnonograms/html
-	mkdir -p $(DESTDIR)$(PREFIX)/share/gnonograms/html/figures
-	$(INSTALL_DATA) html/*.* $(DESTDIR)$(PREFIX)/share/gnonograms/html
-	$(INSTALL_DATA) html/figures/*.* $(DESTDIR)$(PREFIX)/share/gnonograms/html/figures
-
 	mkdir -p $(DESTDIR)$(PREFIX)/share/icons/hicolor/48x48/apps
 	$(INSTALL_DATA) icons/gnonograms48.png $(DESTDIR)$(PREFIX)/share/icons/hicolor/48x48/apps/gnonograms.png
 
@@ -319,6 +319,11 @@ ifndef DISABLE_DESKTOP_UPDATE
 	-update-desktop-database || :
 endif
 
+	mkdir -p $(DESTDIR)$(PREFIX)/share/gnonograms/html
+	mkdir -p $(DESTDIR)$(PREFIX)/share/gnonograms/html/figures
+	$(INSTALL_DATA) html/*.* $(DESTDIR)$(PREFIX)/share/gnonograms/html
+	$(INSTALL_DATA) html/figures/*.* $(DESTDIR)$(PREFIX)/share/gnonograms/html/figures
+
 ifndef DISABLE_GNOME_DOC_INSTALL
 	mkdir -p $(DESTDIR)$(PREFIX)/share/gnome/help/gnonograms/C
 	$(INSTALL_DATA) help/C/*.page $(DESTDIR)$(PREFIX)/share/gnome/help/gnonograms/C
@@ -330,8 +335,6 @@ uninstall:
 ##########
 	rm -f $(DESTDIR)$(PREFIX)/games/$(PROGRAM)
 	rm -fr $(DESTDIR)$(PREFIX)/share/gnonograms
-	rm -fr $(DESTDIR)$(PREFIX)/share/gnonograms/html/figures
-	rm -fr $(DESTDIR)$(PREFIX)/share/gnonograms/html
 
 	rm -fr $(DESTDIR)$(PREFIX)/share/icons/hicolor/scalable/apps/gnonograms.png
 	rm -fr $(DESTDIR)$(PREFIX)/share/icons/hicolor/48x48/apps/gnonograms.png
@@ -346,7 +349,7 @@ ifndef DISABLE_DESKTOP_UPDATE
 	update-mime-database $(DESTDIR)$(PREFIX)/share/mime || :
 	update-desktop-database || :
 endif
-ifndef DISABLE_HELP_INSTALL
+ifndef DISABLE_GNOME_DOC_INSTALL
 	rm -rf $(DESTDIR)$(PREFIX)/share/gnome/help/gnonograms
 endif
 

@@ -51,15 +51,20 @@ public class Gnonogram_controller
 	private int _grade;
 	private int _rows;
 	private int _cols;
+	private double screen_width;
+	private double screen_height;
 
 //======================================================================
 	public Gnonogram_controller(string game_filename)
 	{
-
 		_history=new Circular_move_buffer(Resource.MAXUNDO);
 		_timer=new Timer();
 		_model=new Gnonogram_model();
 		_solver=new Gnonogram_solver();
+
+		var scr = Gdk.Screen.get_default();
+		screen_width=0.75*((double)scr.get_width());
+		screen_height=0.75*((double)scr.get_height());
 
 		load_config();
 		create_view();
@@ -67,13 +72,15 @@ public class Gnonogram_controller
 		initialize_view();
 		initialize_menus();
 
+
 		_model.set_dimensions(_rows,_cols);
 		_solver.showsolvergrid.connect(show_solver_grid);
-		_solver.showprogress.connect((guesses)=>{_gnonogram_view.set_score_label(guesses.to_string());
-		_gnonogram_view.show_all();});
+		_solver.showprogress.connect((guesses)=>{
+			_gnonogram_view.set_score_label(guesses.to_string());
+			_gnonogram_view.show_all();
+		});
 		_solver.set_dimensions(_rows,_cols);
 
-//		_state=GameState.SOLVING;//to make sure everything gets set to setting state.
 		change_state(GameState.SETTING);
 
 		if(game_filename.length>4){
@@ -138,7 +145,7 @@ public class Gnonogram_controller
 	private void initialize_view()
 	{ //stdout.printf("Initialise view\n");
 		initialize_cursor();
-		if (_have_solution) update_labels_from_model(); //causes problem if solution not complete
+		if (_have_solution) update_labels_from_model();
 		_gnonogram_view.set_size_label(_rows,_cols);
 		initialize_history();
 		_solution_changed=false;
@@ -173,8 +180,6 @@ public class Gnonogram_controller
 		Resource.reset_all();
 		resize(Resource.DEFAULT_ROWS,Resource.DEFAULT_COLS);
 		_gnonogram_view.set_grade_spin_value((double)Resource.DEFAULT_DIFFICULTY);
-//		_gnonogram_view.set_toolbarmenuitem_active(true);
-//		_gnonogram_view.set_gridmenuitem_active(true);
 		_difficult=false;
 		_advanced=true;
 		_gridlinesvisible=true;
@@ -188,11 +193,7 @@ public class Gnonogram_controller
 	{
 		int r,c;
 		if (Utils.get_dimensions(out r,out c,_rows,_cols)){
-//			new_game();
 			resize(r,c);
-//			change_state(GameState.SETTING);
-//			initialize_view();
-//			_gnonogram_view.show_all();
 			new_game();
 		}
 	}
@@ -207,23 +208,23 @@ public class Gnonogram_controller
 		_model.set_dimensions(r,c);
 		_rows=r; _cols=c;
 	}
-
+//======================================================================
 	private void resize_view(int r, int c){
 		_rowbox.resize(r, c);
 		_colbox.resize(c, r);
 		_cellgrid.resize(r,c);
 	}
-
+//======================================================================
 	private void set_default_fontheight(int r, int c)
 	{
-		double maxrowfontheight, maxcolfontheight, deffontheight;
+		double maxrowheight, maxcolwidth, deffontheight;
 
-		maxrowfontheight=(double)((285-c)/r);
-		maxcolfontheight=(double)((550-r)/c);
-		deffontheight=double.min(maxrowfontheight,maxcolfontheight);
+		maxrowheight=screen_height/((double)(r)*1.4);
+		maxcolwidth=screen_width/((double)(c)*1.4);
+		deffontheight=double.min(maxrowheight,maxcolwidth)*0.75;
+
 		_rowbox.set_font_height(deffontheight);
 		_colbox.set_font_height(deffontheight);
-
 	}
 //======================================================================
 	private void gridlines_toggled(bool active){
@@ -610,11 +611,10 @@ public class Gnonogram_controller
 		var reader = new Gnonogram_filereader(fname);
 		if (reader.filename=="") return;
 		new_game(); //changes to setting state
-		//User feedback - expect save and load to work on current state of game
+
 		if (load_common(reader) && load_position_extra(reader))
 		{
 			if (reader.has_state && reader.state==(GameState.SETTING).to_string()){
-					//(already in SETTING state) change_state(GameState.SETTING);
 					redraw_all();
 			}
 			else{
@@ -706,15 +706,11 @@ public class Gnonogram_controller
 //======================================================================
 	public void start_solving(){
 		//stdout.printf("Start solving\n");
-//		_timer.start();
-//		if(_state==GameState.SOLVING) redraw_all();
 		change_state(GameState.SOLVING);
 	}
 //======================================================================
 	public void reveal_solution() {
 		//stdout.printf("Reveal solution\n");
-//		_timer.stop();
-//		if(_state==GameState.SETTING) redraw_all();
 		change_state(GameState.SETTING);
 	}
 //======================================================================
