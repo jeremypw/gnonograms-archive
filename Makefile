@@ -211,7 +211,7 @@ endif
 	@ type msgfmt > /dev/null || ( echo 'msgfmt (usually found in the gettext package) is missing and is required to build gnonograms. ' ; exit 1 )
 
 	mkdir -p $(BUILD_DIR)
-	$(VALAC) --ccode --directory=$(BUILD_DIR) --basedir=src --symbols=./SYMBOLS $(VALAFLAGS) \
+	$(VALAC) --ccode --directory=$(BUILD_DIR) --basedir=src $(VALAFLAGS) \
 	$(foreach pkg,$(PKGS),--pkg=$(pkg)) \
 	$(foreach def,$(DEFINES),-X -D$(def)) \
 	$(EXPANDED_SRC_FILES)
