@@ -217,7 +217,7 @@ public class Config {
 	}
 	public bool get_use_advanced_solver()
 	{
-		return get_bool(UI_HEADER,"use advanced solver",true);
+		return get_bool(UI_HEADER,"use advanced solver",Resource.DEFAULT_ADVANCEDSOLVER);
 	}
 	public void set_generate_advanced_puzzles(bool generate)
 	{
@@ -225,7 +225,7 @@ public class Config {
 	}
 	public bool get_generate_advanced_puzzles()
 	{
-		return get_bool(UI_HEADER,"generate advanced puzzles",false);
+		return get_bool(UI_HEADER,"generate advanced puzzles",Resource.DEFAULT_ADVANCEDPUZZLES);
 	}
 	public void set_show_grid(bool show)
 	{
@@ -233,7 +233,7 @@ public class Config {
 	}
 	public bool get_show_grid()
 	{
-		return get_bool(UI_HEADER,"show grid",false);
+		return get_bool(UI_HEADER,"show grid",Resource.DEFAULT_SHOWGRID);
 	}
 	public void set_toolbar_visible(bool visible)
 	{
@@ -241,6 +241,6 @@ public class Config {
 	}
 	public bool get_toolbar_visible()
 	{
-		return get_bool(UI_HEADER,"toolbar visible",true);
+		return get_bool(UI_HEADER,"toolbar visible",Resource.DEFAULT_SHOWTOOLBAR);
 	}
 }

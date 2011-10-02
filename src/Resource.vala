@@ -83,6 +83,10 @@ namespace Resource
 	public static double[] MINORGRIDDASH;
 	public static int DEFAULT_ROWS=10;
 	public static int DEFAULT_COLS=10;
+	public static bool DEFAULT_SHOWTOOLBAR=true;
+	public static bool DEFAULT_SHOWGRID=true;
+	public static bool DEFAULT_ADVANCEDPUZZLES=false;
+	public static bool DEFAULT_ADVANCEDSOLVER=true;
 	public static Gdk.Color[,] colors;
 	public static Gdk.Color default_filled_setting;
 	public static Gdk.Color default_empty_setting;

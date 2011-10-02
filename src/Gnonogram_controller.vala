@@ -644,7 +644,7 @@ public class Gnonogram_controller
 		}
 
 		if (!reader.parse_game_file()){
-			Utils.show_warning_dialog(_("File format incorrect: \n")+reader.err_msg);
+			Utils.show_warning_dialog(_("File format incorrect")+"\n"+reader.err_msg);
 			return false;
 		}
 

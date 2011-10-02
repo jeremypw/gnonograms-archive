@@ -62,6 +62,7 @@ public class Game_Editor : Gtk.Dialog
 		VBox v;
 		ScrolledWindow win;
 
+
 		v=new VBox(false,2);
 		l=new Label(_("Name of puzzle"));
 		l.set_size_request(125,-1);
@@ -190,12 +191,7 @@ public class Game_Editor : Gtk.Dialog
 			{
 				valid=true;
 				//cleanup format of clue by passing through block array
-				int[] tmp_array;
-				tmp_array=Utils.block_array_from_clue(copy);
-				string tmp_string;
-				tmp_string=Utils.clue_from_block_array(tmp_array);
-				entry.set_text(tmp_string);
-				//entry.set_text(Utils.clue_from_block_array(Utils.block_array_from_clue(copy)));
+				entry.set_text(Utils.clue_from_block_array(Utils.block_array_from_clue(copy)));
 			}
 		}
 		if (!valid)
