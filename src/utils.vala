@@ -100,6 +100,7 @@ namespace Utils
 			if (start.query_file_type(FileQueryInfoFlags.NONE,null)==FileType.DIRECTORY)
 			{
 				Environment.set_current_dir(start_path);
+				dialog.set_current_folder(start_path); //so Recently used folder not displayed
 			}
 		}
 
