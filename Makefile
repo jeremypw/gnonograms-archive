@@ -29,13 +29,18 @@ MIN_VALAC_VERSION = 0.12.0
 INSTALL_PROGRAM = install
 INSTALL_DATA = install -m 644
 
+SUPPORTED_LANGUAGES=en_GB ja_JP
+LOCAL_LANG_DIR=locale
+SYSTEM_LANG_DIR=$(DESTDIR)$(PREFIX)/share/locale
+
 # defaults that may be overridden by configure.mk
 PREFIX=/usr
 BUILD_RELEASE=1
 
 -include configure.mk
 
-VALAFLAGS = -g --enable-checking $(USER_VALAFLAGS)
+# VALAFLAGS = -g --enable-checking $(USER_VALAFLAGS)
+VALAFLAGS = $(USER_VALAFLAGS)
 
 DEFINES=_PREFIX='"$(PREFIX)"' _VERSION='"$(VERSION)"' GETTEXT_PACKAGE='"$(GETTEXT_PACKAGE)"' _LANG_SUPPORT_DIR='"$(SYSTEM_LANG_DIR)"'
 
@@ -44,10 +49,6 @@ ifndef DISABLE_GNOME_DOC_INSTALL
 else
 	DEFINES+=_GNOME_DOC=0
 endif
-
-SUPPORTED_LANGUAGES=en_GB ja_JP
-LOCAL_LANG_DIR=locale
-SYSTEM_LANG_DIR=$(DESTDIR)$(PREFIX)/share/locale
 
 SRC_FILES = Gnonogram_cellgrid.vala \
 	Game_editor.vala \
@@ -162,9 +163,9 @@ VALA_LDFLAGS = `pkg-config --libs $(EXT_PKGS)`
 # setting CFLAGS in configure.mk overrides build type
 ifndef CFLAGS
 ifdef BUILD_DEBUG
-CFLAGS = -O0 -g -pipe
+CFLAGS = -O0 -g -pipe -Wall
 else
-CFLAGS = -O2 -g -pipe -Wall
+CFLAGS = -O2 -pipe -Wl,--as-needed
 endif
 endif
 

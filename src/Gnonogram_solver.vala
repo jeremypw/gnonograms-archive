@@ -49,7 +49,7 @@
 		_regions=new Gnonogram_region[Resource.MAXSIZE+Resource.MAXSIZE];
 
 		for (int i=0;i<_regions.length;i++) _regions[i]=new Gnonogram_region(_grid);
-		_rows = 10; _cols = 10; //default values
+//		_rows = 10; _cols = 10; //set_dimensions must be called before use.
 	}
 
 //======================================================================

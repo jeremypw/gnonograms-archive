@@ -28,7 +28,7 @@
 	private Rand _rand_gen;
 
 	public Gnonogram_model() {
-	_rows = 10; _cols = 10; //default values
+	_rows = 10; _cols = 10; //Must call set dimensions before us
 	_solution_data=new My2DCellArray(Resource.MAXSIZE,Resource.MAXSIZE,CellState.EMPTY);
 	_working_data=new My2DCellArray(Resource.MAXSIZE,Resource.MAXSIZE,CellState.UNKNOWN);
 	_arr = new CellState[Resource.MAXSIZE];

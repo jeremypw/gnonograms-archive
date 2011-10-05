@@ -1,6 +1,10 @@
 
 Gnonograms version 0.9.2
 **************************
+04/Oct/2011	Fixed Vala compiler warnings
+03/Oct/2011	Fixed regression caused by incorrect file validation
+			Stopped linking of un-needed libraries by using --as-needed linker flag
+			Turned off cc warnings and debugging for default build (can be re-instated by configure flags)
 01/Oct/2011	Move all default settings into Resources file.
 28/Sep/2011	Small tweaks
 24/Sep/2011	Fixed redo-undo bug

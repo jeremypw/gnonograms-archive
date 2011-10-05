@@ -22,7 +22,20 @@
 
  public enum GameState {
 	SETTING,
-	SOLVING
+	SOLVING;
+
+	public string to_string()
+	{
+		switch (this)
+		{
+			case SETTING:
+				return "GAME_STATE_SETTING";
+			case SOLVING:
+				return "GAME_STATE_SOLVING";
+			default :
+				return "";
+		}
+	}
 }
 
 public enum CellState {
@@ -32,7 +45,30 @@ public enum CellState {
 	ERROR,
 	COMPLETED,
 	ERROR_EMPTY,
-	ERROR_FILLED
+	ERROR_FILLED;
+
+	public string to_string()
+	{
+		switch (this)
+		{
+			case UNKNOWN :
+				return "UNKNOWN";
+			case EMPTY :
+				return "EMPTY";
+			case FILLED :
+				return "FILLED";
+			case ERROR :
+				return "ERROR";
+			case COMPLETED :
+				return "COMPLETED";
+			case ERROR_EMPTY :
+				return "INCORRECTLY EMPTY";
+			case ERROR_FILLED :
+				return "INCORRECTLY FILLED";
+			default :
+				return "";
+		}
+	}
 	}
 
 //public enum Gnonogram_FileType {

@@ -238,7 +238,7 @@ public class Gnonogram_filereader {
 			string? clue=parse_gnonogram_clue(s[i],is_column);
 			if (clue==null)
 			{
-				err_msg="Invalid clue";
+				err_msg=@"Invalid clue $i Is column $is_column";
 				return false;
 			}
 			else arr+=clue;
@@ -380,7 +380,7 @@ public class Gnonogram_filereader {
 	{
 		string[] s=Utils.remove_blank_lines(line.split_set(", "));
 		int b, zero_count=0;
-		int maxblock=is_column?cols:rows;
+		int maxblock=is_column?rows:cols;
 
 		if (s==null) return null;
 		StringBuilder sb=new StringBuilder();
