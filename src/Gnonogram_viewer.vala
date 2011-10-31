@@ -29,6 +29,7 @@ public class Gnonogram_view : Gtk.Window
 	public signal void savegame();
 	public signal void savepictogame();
 	public signal void loadgame(string fname);
+	public signal void importimage();
 	public signal void quitgamesignal();
 	public signal void newgame();
 	public signal void hidegame();
@@ -59,7 +60,8 @@ public class Gnonogram_view : Gtk.Window
 	private Gtk.ToolButton _redo_tool;
 	private Gtk.ToolButton _restart_tool;
 	private Gtk.ToolButton _resize_tool;
-	public Gtk.Toolbar _toolbar;
+	private Gtk.Toolbar _toolbar;
+//	private Gtk.Table _toolbox;
 	private Gtk.CheckMenuItem _gridmenuitem;
 	private Gtk.CheckMenuItem _toolbarmenuitem;
 	private Gtk.CheckMenuItem _advancedmenuitem;
@@ -80,6 +82,7 @@ public class Gnonogram_view : Gtk.Window
 	private Label _date_label;
 	private Label _size_label;
 	private Label _score_label;
+	private Label _license_label;
 	private Gtk.Image hide_icon;
 	private Gtk.Image reveal_icon;
 	private Gtk.AccelGroup accel_group;
@@ -91,32 +94,89 @@ public class Gnonogram_view : Gtk.Window
 
 		delete_event.connect (()=>{quitgamesignal();return true;});
 
+//		Put info in upper left quadrant - moved to bottom of window.
+//		var info_frame=new Frame(null);
+//		var info_box = new VBox(false,0);
+//		_name_label= new Label("");
+//		set_name(_("New puzzle"));
+//		_name_label.set_alignment((float)0.0,(float)0.5);
+//		_author_label = new Label("");
+//		set_author(_("Unknown"));
+//		_author_label.set_alignment((float)0.0,(float)0.5);
+//		_date_label=new Label("");
+//		set_date(Utils.get_todays_date_string());
+//		_date_label.set_alignment((float)0.0,(float)0.5);
+//		_size_label=new Label("        ");
+//		_size_label.set_alignment((float)0.0,(float)0.5);
+//		_score_label=new Label("       ");
+//		_score_label.set_alignment((float)0.0,(float)0.5);
+//		info_box.add(_name_label);
+//		info_box.add(_author_label);
+//		info_box.add(_date_label);
+//		info_box.add(_size_label);
+//		info_box.add(_score_label);
+//		info_frame.add(info_box);
+
 		var info_frame=new Frame(null);
-		var info_box = new VBox(false,0);
+		var info_box = new HBox(false,0);
+
+		var name_fr=new Frame(null);
 		_name_label= new Label("");
-		set_name(_("New puzzle"));
 		_name_label.set_alignment((float)0.0,(float)0.5);
+		name_fr.add(_name_label);
+
+		var author_fr=new Frame(null);
 		_author_label = new Label("");
-		set_author(_("Unknown"));
 		_author_label.set_alignment((float)0.0,(float)0.5);
+		author_fr.add(_author_label);
+
+		var license_fr=new Frame(null);
+		_license_label = new Label("");
+		_license_label.set_alignment((float)0.0,(float)0.5);
+		license_fr.add(_license_label);
+
+		var date_fr=new Frame(null);
 		_date_label=new Label("");
-		set_date(Utils.get_todays_date_string());
 		_date_label.set_alignment((float)0.0,(float)0.5);
-		_size_label=new Label("        ");
+		date_fr.add(_date_label);
+
+		var size_fr=new Frame(null);
+		_size_label=new Label("");
 		_size_label.set_alignment((float)0.0,(float)0.5);
-		_score_label=new Label("       ");
+		size_fr.add(_size_label);
+
+		var score_fr=new Frame(null);
+		_score_label=new Label("");
 		_score_label.set_alignment((float)0.0,(float)0.5);
-		info_box.add(_name_label);
-		info_box.add(_author_label);
-		info_box.add(_date_label);
-		info_box.add(_size_label);
-		info_box.add(_score_label);
+		score_fr.add(_score_label);
+
+		info_box.add(name_fr);
+		info_box.add(author_fr);
+		info_box.add(date_fr);
+		info_box.add(license_fr);
+		info_box.add(size_fr);
+		info_box.add(score_fr);
 		info_frame.add(info_box);
 
-		var table = new Table(2,2,false);
+//		create_tool_box();
+//		var tool_frame=new Frame(null);
+//		tool_frame.add(_toolbox);
 
+		var table = new Table(2,2,false);
 		var ao = AttachOptions.FILL|AttachOptions.EXPAND;
-		table.attach(info_frame,0,1,0,1,AttachOptions.SHRINK,AttachOptions.SHRINK,0,0);
+
+//		table.attach(info_frame,0,1,0,1,AttachOptions.SHRINK,AttachOptions.SHRINK,0,0);
+//		table.attach(tool_frame,0,1,0,1,ao,ao,0,0);
+		try
+		{
+			var gnonogram_pb= new Gdk.Pixbuf.from_file_at_scale(Resource.icon_dir+"/"+Resource.LOGOFILENAME,150,150,true);
+			var gnonogram_img=new Gtk.Image.from_pixbuf(gnonogram_pb);
+			table.attach(gnonogram_img,0,1,0,1,ao,ao,0,0);
+		}
+		catch (GLib.Error e)
+		{stdout.printf("Failed to load logo\n e.message\n");}
+// TODO Decide what to use top left quadrant for
+
 		table.attach(rb,0,1,1,2,ao,ao,0,0);
 		table.attach(cb,1,2,0,1,ao,ao,0,0);
 		table.attach(dg,1,2,1,2,ao,ao,0,0);
@@ -128,7 +188,7 @@ public class Gnonogram_view : Gtk.Window
 		vbox.pack_start(create_viewer_menubar(),false,false,0);
 		vbox.pack_start(_toolbar,false,false,0);
 		vbox.pack_start(table,true,true,0);
-
+		vbox.pack_start(info_frame,true,true,0);
 		add(vbox);
 
 		this.title = _("Gnonograms");
@@ -165,6 +225,9 @@ public class Gnonogram_view : Gtk.Window
 			filesubmenu.add(savemenuitem);
 			var savepictomenuitem = new MenuItem.with_mnemonic(_("_Save as Picto puzzle"));
 			filesubmenu.add(savepictomenuitem);
+			filesubmenu.add(new SeparatorMenuItem());
+			var importmenuitem=new MenuItem.with_mnemonic(_("_Import from image"));
+			filesubmenu.add(importmenuitem);
 			filesubmenu.add(new SeparatorMenuItem());
 			var quitmenuitem=new ImageMenuItem.from_stock(Gtk.Stock.QUIT, accel_group);
 			filesubmenu.add(quitmenuitem);
@@ -265,6 +328,7 @@ public class Gnonogram_view : Gtk.Window
 		savemenuitem.add_accelerator("activate",accel_group,keyval_from_name("s"),Gdk.ModifierType.CONTROL_MASK, Gtk.AccelFlags.VISIBLE);
 
 		savepictomenuitem.activate.connect(()=>{savepictogame();});
+		importmenuitem.activate.connect(()=>{importimage();});
 
 		quitmenuitem.activate.connect(()=>{quitgamesignal();});
 		quitmenuitem.add_accelerator("activate",accel_group,keyval_from_name("q"),Gdk.ModifierType.CONTROL_MASK, Gtk.AccelFlags.VISIBLE);
@@ -322,8 +386,115 @@ public class Gnonogram_view : Gtk.Window
 		return menubar;
 	}
 //======================================================================
+//	private void create_tool_box()
+//	{
+//		_toolbox=new Gtk.Table(3,3,true);
+//		var ao = AttachOptions.FILL|AttachOptions.EXPAND;
+
+////1st row
+////		var new_tool=new ToolButton.from_stock(Gtk.Stock.CLEAR);
+////		new_tool.set_tooltip_text(_("New puzzle"));
+////		_toolbox.attach(new_tool,0,1,0,1,ao,ao,0,0);
+
+////		var load_tool=new ToolButton.from_stock(Gtk.Stock.OPEN);
+////		load_tool.set_tooltip_text(_("Load puzzle"));
+////		_toolbox.attach(new_tool,1,2,0,1,ao,ao,0,0);
+
+////		var save_as_tool=new ToolButton.from_stock(Gtk.Stock.SAVE_AS);
+////		save_as_tool.set_tooltip_text(_("Save puzzle"));
+////		_toolbox.attach(new_tool,2,3,0,1,ao,ao,0,0);
+
+
+//		var resize_icon=new Gtk.Image.from_pixbuf(Resource.get_icon(Resource.IconID.RESIZE));
+//		_resize_tool=new ToolButton(resize_icon,_("Resize"));
+//		_resize_tool.set_tooltip_text(_("Change dimensions of the puzzle grid"));
+//		_toolbox.attach(_resize_tool,0,1,0,1,ao,ao,0,0);
+
+//		var zoom_in_tool=new ToolButton.from_stock(Gtk.Stock.ZOOM_IN);
+//		zoom_in_tool.set_tooltip_text(_("Increase font size"));
+//		_toolbox.attach(zoom_in_tool,1,2,0,1,ao,ao,0,0);
+
+//		var zoom_out_tool=new ToolButton.from_stock(Gtk.Stock.ZOOM_OUT);
+//		zoom_out_tool.set_tooltip_text(_("Decrease font size"));
+//		_toolbox.attach(zoom_out_tool,2,3,0,1,ao,ao,0,0);
+
+
+//		hide_icon=new Gtk.Image.from_pixbuf(Resource.get_icon(Resource.IconID.HIDE));
+//		reveal_icon=new Gtk.Image.from_pixbuf(Resource.get_icon(Resource.IconID.REVEAL));
+//		_hide_tool=new ToggleToolButton();
+//		_hide_tool.set_label("Hide/Reveal");
+//		_hide_tool.set_icon_widget(hide_icon);
+//		_hide_tool.set_tooltip_text(_("Hide the solution and start solving"));
+//		_toolbox.attach(_hide_tool,0,1,1,2,ao,ao,0,0);
+
+//		var peek_icon=new Gtk.Image.from_pixbuf(Resource.get_icon(Resource.IconID.PEEK));
+//		_check_tool=new ToolButton(peek_icon,_("Check"));
+//		_check_tool.set_tooltip_text(_("Show any incorrect cells"));
+//		_toolbox.attach(_check_tool,1,2,1,2,ao,ao,0,0);
+
+//		var solve_icon=new Gtk.Image.from_pixbuf(Resource.get_icon(Resource.IconID.SOLVE));
+//		var solve_tool=new ToolButton(solve_icon,_("Solve"));
+//		solve_tool.set_tooltip_text(_("Solve by computer"));
+//		_toolbox.attach(solve_tool,2,3,1,2,ao,ao,0,0);
+
+////4th row
+//		var random_icon=new Gtk.Image.from_pixbuf(Resource.get_icon(Resource.IconID.RANDOM));
+//		var random_tool=new ToolButton(random_icon,_("Random"));
+//		random_tool.set_tooltip_text(_("Generate a random puzzle"));
+//		_toolbox.attach(random_tool,0,1,2,3,ao,ao,0,0);
+
+//		var grade_tool=new ToolItem();
+//		_grade_spin=new SpinButton.with_range(1,Resource.MAXGRADE,1);
+//		_grade_spin.set_tooltip_text(_("Set the difficulty of generated puzzles"));
+//		_grade_spin.set_can_focus(false);
+//		grade_tool.add(_grade_spin);
+//		_toolbox.attach(grade_tool,1,3,2,3,ao,ao,0,0);
+
+////5th row
+////		_undo_tool=new ToolButton.from_stock(Gtk.Stock.UNDO);
+////		_undo_tool.set_tooltip_text(_("Undo last move"));
+////		_toolbox.attach(_undo_tool,0,1,4,5,ao,ao,0,0);
+
+////		_redo_tool=new ToolButton.from_stock(Gtk.Stock.REDO);
+////		_redo_tool.set_tooltip_text(_("Redo last undone move"));
+////		_toolbox.attach(_redo_tool,1,2,4,5,ao,ao,0,0);
+
+////		_restart_tool=new ToolButton.from_stock(Gtk.Stock.REFRESH);
+////		_restart_tool.set_tooltip_text(_("Start this puzzle again"));
+////		_toolbox.attach(_restart_tool,2,3,4,5,ao,ao,0,0);
+
+
+
+////		new_tool.clicked.connect(()=>{newgame();});
+////		save_as_tool.clicked.connect(()=>{savegame();});
+////		_undo_tool.clicked.connect(()=>{undoredo(true);});
+////		_redo_tool.clicked.connect(()=>{undoredo(false);});
+////		load_tool.clicked.connect(()=>{loadgame("");});
+
+//		_hide_tool.toggled.connect(toggle_execute);
+//		_check_tool.clicked.connect(()=>{checkerrors();});
+//		_restart_tool.clicked.connect(()=>{this.restart_game();restartgame();});
+//		solve_tool.clicked.connect(()=>{solvegame();});
+//		random_tool.clicked.connect(()=>{randomgame();});
+//		_grade_spin.value_changed.connect((sb)=>{setdifficulty(sb.get_value());});
+//		grade_tool.create_menu_proxy.connect(()=>{
+//			var grademenuitem2=new MenuItem.with_mnemonic(_("_Difficulty"));
+//			grademenuitem2.activate.connect(set_difficulty);
+//			grade_tool.set_proxy_menu_item(_("Difficulty"), grademenuitem2);
+//			return true;
+//			}
+//		);
+
+//		_resize_tool.clicked.connect(()=>{resizegame();});
+//		zoom_in_tool.clicked.connect(()=>{changefont(true);});
+//		zoom_out_tool.clicked.connect(()=>{changefont(false);});
+
+//	}
+//======================================================================
+
 	private void create_viewer_toolbar()
 	{
+		Resource.get_icon_theme();
 		_toolbar = new Toolbar();
 		_toolbar.set_style(Gtk.ToolbarStyle.ICONS);
 
@@ -491,37 +662,36 @@ public class Gnonogram_view : Gtk.Window
 			}
 	}
 //======================================================================
-	public void set_name(string name){_name_label.set_text(_("Name:")+" "+name+"  ");}
+	public void set_name(string name){_name_label.set_text(name);}
 	public string get_name(){return get_info_item(_name_label);	}
 //======================================================================
 	public void set_author(string author){_author_label.set_text(_("By:")+" "+author+"  ");}
 	public string get_author(){return get_info_item(_author_label);}
 //======================================================================
-	public void set_date(string date){_date_label.set_text(_("Date:")+" "+date+"  ");}
+	public void set_date(string date){
+		stdout.printf("Set date\n");
+		_date_label.set_text(date);}
 	public string get_date(){return get_info_item(_date_label);	}
 //======================================================================
-	public void set_score_label(string score)
-	{//stdout.printf("set_score_label %s\n",score);
-		_score_label.set_text(_("Score:")+" "+score+"  ");
-	}
+	public void set_score(string score){_score_label.set_text(_("Score:")+" "+score+"  ");}
 	public string get_score(){return get_info_item(_score_label);	}
+//======================================================================
+	public void set_license(string license){_license_label.set_text(_("License:")+" "+license+"  ");}
+	public string get_license(){return get_info_item(_license_label);	}
 //======================================================================
 	private string get_info_item(Label l)
 	{
 		string[] s=(l.get_text()).split(":",2);
 		string info;
-		if (s.length>1)
-		{
-			info=s[1].strip();
-			if (info=="") info=_("Unknown");
-		}
-		else info=_("Unknown");
+		if (s.length>1)	info=s[1].strip(); //NB cant have ":" as part of label
+		else info=s[0].strip();
+		if (info=="") info=_("Unknown");
 		return info;
 	}
 //======================================================================
 	public void set_size_label(int r, int c)
 	{
-		_size_label.set_text(_("Size: ")+r.to_string()+"X"+c.to_string()+"  ");
+		_size_label.set_text(r.to_string()+"X"+c.to_string());
 	}
 //======================================================================
 	public void set_grade_spin_value(double d)

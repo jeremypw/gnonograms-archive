@@ -33,6 +33,7 @@ public class Gnonogram_filereader {
 	public string author="";
 	public string date="";
 	public string score="";
+	public string license="";
 	public bool in_error=false;
 	public bool has_dimensions=false;
 	public bool has_row_clues=false;
@@ -172,6 +173,8 @@ public class Gnonogram_filereader {
 					in_error=!get_gnonogram_state(bodies[i]); break;
 				case "DES" :
 					in_error=!get_game_description(bodies[i]); break;
+				case "LIC" :
+					in_error=!get_game_license(bodies[i]); break;
 				default :
 					err_msg=@"Unrecognised heading $heading ";
 					in_error=true;
@@ -373,6 +376,20 @@ public class Gnonogram_filereader {
 		if (s.length>=3) date=s[2];
 		if (s.length>=4) score=s[3];
 
+		return true;
+	}
+
+//=========================================================================
+	private bool get_game_license(string? body)
+	{  //stdout.printf("In get_description\n");
+		if (body==null)
+		{
+			err_msg="Missing license";
+			return false;
+		}
+		string[] s = Utils.remove_blank_lines(body.split("\n"));
+
+		if (s.length>=1) license=s[0];
 		return true;
 	}
 //=========================================================================

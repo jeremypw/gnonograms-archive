@@ -42,6 +42,7 @@ public class Game_Editor : Gtk.Dialog
 	Entry name_entry;
 	Entry author_entry;
 	Entry date_entry;
+	Entry license_entry;
 	int row_page;
 	int col_page;
 	int errors;
@@ -95,6 +96,17 @@ public class Game_Editor : Gtk.Dialog
 		h = new HBox(false,3);
 		h.pack_start(l,false,true,3);
 		h.pack_start(date_entry,false,true,3);
+		v.pack_start(h,false,false,3);
+
+		l=new Label(_("License"));
+		l.set_size_request(125,-1);
+		l.set_alignment((float)0.0,(float)0.5);
+		license_entry = new Gtk.Entry();
+		license_entry.set_max_length(16);
+		license_entry.set_size_request(125,-1);
+		h = new HBox(false,3);
+		h.pack_start(l,false,true,3);
+		h.pack_start(license_entry,false,true,3);
 		v.pack_start(h,false,false,3);
 
 		l=new Label("Description");
@@ -166,6 +178,8 @@ public class Game_Editor : Gtk.Dialog
 	public void set_author(string author){author_entry.set_text(author);}
 	public string get_date(){return date_entry.get_text();}
 	public void set_date(string date){date_entry.set_text(date);}
+	public string get_license(){return license_entry.get_text();}
+	public void set_license(string license){license_entry.set_text(license);}
 
 	public bool validate_clue(Gtk.Widget w, Gdk.EventFocus event)
 	{

@@ -32,6 +32,7 @@
 	public bool _is_column;
 	public bool _in_error;
 	public bool _completed;
+	private bool _debug;
 	public int _index;
 
 	private bool _completed_store;
@@ -58,7 +59,6 @@
 	private CellState[] _status;
 	private CellState[] _status_store;
 	private CellState[] _temp_status;
-	private bool _debug;
 	public string message;
 
 	private const int MAXCYCLES=100;
@@ -178,7 +178,9 @@
 		/**cycles through ploys until no further changes can be made
 		ignore single cell regions for testing purposes ...
 		* */
-		message=""; _debug=debug;
+		//stdout.printf(@"Region $_index $_is_column Solve debug $debug _debug $_debug\n");
+		message="";
+		_debug=debug;
 		if (_completed) return false;
 
 		bool made_changes=false;
@@ -210,12 +212,10 @@
 //======================================================================
 
 	private bool full_fix()
-	{	if (_debug) stdout.printf("\n\nfull_fix\n");
-
-
+	{	//if (_debug) stdout.printf("\n\nfull_fix\n");
 		//stdout.printf("Capped range audit\n");
 		if (capped_range_audit()||_in_error||tags_to_status()) {
-			//stdout.printf("Capped range audit\n");
+			//stdout.printf("Capped range audit made changes\n");
 			return true;}
 		//stdout.printf("Possibilities audit\n");
 		if (possibilities_audit()||_in_error||tags_to_status()) {
@@ -247,7 +247,7 @@
 			return true;}
 		//stdout.printf("Fix blocks in ranges\n");
 		if (fix_blocks_in_ranges()||_in_error||tags_to_status()) {
-			//stdout.printf("Fix blocks in ranges\n");
+			//stdout.printf("Fix blocks in ranges made change\n");
 			return true;}
 
 		return false;
@@ -257,7 +257,7 @@
 	private bool filled_subregion_audit() {
 //find a range of filled cells not completed and see if can be associated
 // with a unique block.
-	if(_debug) stdout.printf("Filled subregions audit\n");
+	//stdout.printf("Filled subregions audit\n");
 		bool changed=false, start_capped, end_capped;
 		int idx=0;
 		int length;
@@ -292,16 +292,27 @@
 					}
 					else
 					{//remove blocks that are smaller than length from this region and one cell either side.
+					//For the two cells adjacent to the region, add one to the minimum length
 
+						//stdout.printf(@"Removing too small blocks idx $idx lengt $length \n");
 						int start = idx==0 ? idx : idx-1;
 						int end = (idx+length ==_ncells) ? idx+length-1 : idx+length;
-						for(int i=start;i<=end;i++)
-						{
-							for (int bl=0;bl<_nblocks;bl++)
-							{
+						for (int bl=0;bl<_nblocks;bl++){
+							for(int i=start;i<=end;i++){
 								if (_tags[i,bl] && _blocks[bl]<length) _tags[i,bl]=false;
 							}
 						}
+
+//						if(start>0){
+//							for (int bl=0;bl<_nblocks;bl++){
+//								if (_tags[start,bl] && _blocks[bl]<length+1) _tags[start,bl]=false;
+//							}
+//						}
+//						if(end<_ncells){
+//							for (int bl=0;bl<_nblocks;bl++){
+//								if (_tags[end,bl] && _blocks[bl]<length+1) _tags[end,bl]=false;
+//							}
+//						}
 
 						if (start_capped || end_capped)
 						//TODO look for empty cells nearer than difference between smallest and length.
@@ -1122,7 +1133,7 @@
 //======================================================================
 	private bool set_range_owner(int owner, int start, int length, bool exclusive, bool can_be_empty)
 	{
-		if (_debug) stdout.printf(@"set range owner start=$start length=$length exclusive $exclusive, can be empty $can_be_empty\n");
+		//if (_debug) stdout.printf(@"set range owner start=$start length=$length exclusive $exclusive, can be empty $can_be_empty\n");
 		bool changed=false;
 		if (invalid_data(start,owner,length))
 		{
@@ -1172,7 +1183,7 @@
 	}
 //======================================================================
 	private bool set_cell_owner(int cell, int owner, bool exclusive, bool can_be_empty)
-	{ if (_debug) stdout.printf(@"set cell owner cell=$cell owner=$owner exclusive=$exclusive, can be empty $can_be_empty\n");
+	{ //if (_debug) stdout.printf(@"set cell owner cell=$cell owner=$owner exclusive=$exclusive, can be empty $can_be_empty\n");
 	//exclusive - cant be any other block here
 	//can be empty - self evident
 		bool changed=false;
@@ -1403,7 +1414,7 @@
 		for (int i=0; i<_ncells; i++) sb.append(((int)(_temp_status[i])).to_string());
 		sb.append("\n status now:\n");
 		for (int i=0; i<_ncells; i++) sb.append(((int)(_status[i])).to_string());
-		sb.append("Tags:\n");
+		sb.append("\nTags:\n");
 		for (int i=0; i<_ncells; i++)
 		{
 			sb.append(@"Cell $i ");
@@ -1475,7 +1486,7 @@
 //======================================================================
 	public Gnonogram_permutor? get_permutor(out int start)
 	{
-		string clue="";
+		string clue=""; start=0;
 		int[] ablocks=blocks_available();
 		for(int b=0;b<ablocks.length;b++)
 		{
@@ -1487,7 +1498,7 @@
 
 		start=_ranges[0,0];
 		var p=new Gnonogram_permutor(_ranges[0,1],clue);
-		stdout.printf(@"Permutator from $(this) start $start length $(_ranges[0,1]) blocks used $(clue)\n");
+		//stdout.printf(@"Permutator from $(this) start $start length $(_ranges[0,1]) blocks used $(clue)\n");
 		return p;
 	}
 

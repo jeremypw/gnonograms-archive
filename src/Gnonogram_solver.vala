@@ -56,7 +56,6 @@
 		public void set_dimensions(int r, int c) {
 		_rows=r;
 		_cols=c;
-		_region_count=_rows+_cols;
 	}
 //======================================================================
 	public bool initialize(string[] row_clues, string[] col_clues, My2DCellArray? start_grid)
@@ -68,12 +67,23 @@
 		}
 
 		if (start_grid==null) _grid.set_all(CellState.UNKNOWN);
-		else _grid.copy(start_grid);
+		else {_grid.copy(start_grid);}
 
-		for (int r=0; r<_rows; r++) _regions[r].initialize(r, false,_cols,row_clues[r]);
-
-		for (int c=0; c<_cols; c++) _regions[c+_rows].initialize(c,true,_rows,col_clues[c]);
-
+		//Create regions
+		//Dont create regions of length 1
+		_region_count=0;
+		if(_cols>1) {
+			for (int r=0; r<_rows; r++){
+				_regions[r].initialize(r, false,_cols,row_clues[r]);
+				_region_count++;
+			}
+		}
+		if(_rows>1){
+			for (int c=0; c<_cols; c++){
+				_regions[c+_rows].initialize(c,true,_rows,col_clues[c]);
+				_region_count++;
+			}
+		}
 		_guesses=0; _counter=0;
 		return valid();
 	}
@@ -98,16 +108,18 @@
 	{
 		int simple_result=simple_solver(debug,true); //log errors
 		if (simple_result==0 && use_advanced)
-		{
-			CellState[] grid_store= new CellState[_rows*_cols];
-			int advanced_result=advanced_solver(grid_store, debug);
-			if (advanced_result>0)
+		{	if (!debug || Utils.show_confirm_dialog("Use advanced?"))
 			{
-				if(advanced_result==9999999 && use_ultimate)
+				CellState[] grid_store= new CellState[_rows*_cols];
+				int advanced_result=advanced_solver(grid_store, debug);
+				if (advanced_result>0)
 				{
-					return ultimate_solver(grid_store, debug);
+					if(advanced_result==9999999 && use_ultimate)
+					{
+						return ultimate_solver(grid_store, debug);
+					}
+					else 	return advanced_result;
 				}
-				else 	return advanced_result;
 			}
 		}
 		else
@@ -118,7 +130,7 @@
 	}
 ////======================================================================
 	private int simple_solver(bool debug, bool log_error=false)
-	{//stdout.printf("Simple solver\n");
+	{//stdout.printf(@"Simple solver  debug $debug  region count $_region_count\n");
 		bool changed=true;
 		int pass=1;
 		while (changed && pass<30)
@@ -274,7 +286,7 @@
 	}
 //======================================================================
 	private int ultimate_solver(CellState[] grid_store, bool debug)
-	{stdout.printf("Ultimate solver\n");
+	{//stdout.printf("Ultimate solver\n");
 
 		int perm_reg=-1, max_value=9999999, advanced_result=-99, simple_result=-99;
 		int limit=GUESSES_BEFORE_ASK;

@@ -43,7 +43,7 @@ public class Gnonogram_controller
 	private bool _have_solution;
 	private bool _gridlinesvisible;
 	private bool _toolbarvisible;
-	private bool _debug=false;
+//	private bool _debug=false;
 	private bool _advanced;
 	private bool _difficult;
 	private bool _solution_changed;
@@ -76,7 +76,7 @@ public class Gnonogram_controller
 		_model.set_dimensions(_rows,_cols);
 		_solver.showsolvergrid.connect(show_solver_grid);
 		_solver.showprogress.connect((guesses)=>{
-			_gnonogram_view.set_score_label(guesses.to_string());
+			_gnonogram_view.set_score(guesses.to_string());
 			_gnonogram_view.show_all();
 		});
 		_solver.set_dimensions(_rows,_cols);
@@ -86,6 +86,7 @@ public class Gnonogram_controller
 		if(game_filename.length>4){
 			load_game(game_filename);
 		}
+		else new_game();
 	}
 //======================================================================
 	private void create_view()
@@ -108,6 +109,7 @@ public class Gnonogram_controller
 		_gnonogram_view.savegame.connect(this.save_game);
 		_gnonogram_view.savepictogame.connect(this.save_pictogame);
 		_gnonogram_view.loadgame.connect(this.load_game);
+		_gnonogram_view.importimage.connect(this.import_image);
 		_gnonogram_view.quitgamesignal.connect(()=>{quit_game();});
 		_gnonogram_view.newgame.connect(this.new_game);
 
@@ -221,7 +223,7 @@ public class Gnonogram_controller
 
 		maxrowheight=screen_height/((double)(r)*1.4);
 		maxcolwidth=screen_width/((double)(c)*1.4);
-		deffontheight=double.min(maxrowheight,maxcolwidth)*0.75;
+		deffontheight=double.min(maxrowheight,maxcolwidth)*0.7;
 
 		_rowbox.set_font_height(deffontheight);
 		_colbox.set_font_height(deffontheight);
@@ -450,9 +452,24 @@ public class Gnonogram_controller
 		if (_model.count_unsolved()==0){
 		//puzzle has been completed (possible wrongly)
 			_timer.stop(); //timer started when switched to SOLVING state
-			peek_game(); //checks whether solution is correct
+//			peek_game(); //checks whether solution is correct
+			if (!check_valid_solution()) {
+				_timer.continue();
+				Utils.show_warning_dialog("This is not a valid solution");
+			}
+			else Utils.show_info_dialog("Congratulations - you have solved the puzzle.\n\n"+get_time_taken());
 			_is_button_down=false;
 		}
+	}
+//======================================================================
+	private bool check_valid_solution(){
+		for (int r=0; r<_rows; r++){
+			if (_model.get_label_text(r,false,false)!=_rowbox.get_label_text(r)) return false;
+		}
+		for (int c=0; c<_cols; c++){
+			if (_model.get_label_text(c,true,false)!=_colbox.get_label_text(c)) return false;
+		}
+		return true;
 	}
 //======================================================================
 	private void redraw_all(){
@@ -468,14 +485,15 @@ public class Gnonogram_controller
 	public void new_game(){
 		//stdout.printf("New game\n");
 		_model.clear();
-		_have_solution=true;
 		update_labels_from_model();
 		_gnonogram_view.set_name(_("New puzzle"));
-		_gnonogram_view.set_author(" ");
-		_gnonogram_view.set_date(" ");
-		_gnonogram_view.set_score_label("  ");
+		_gnonogram_view.set_author(Environment.get_user_name());
+		_gnonogram_view.set_date(Utils.get_todays_date_string());
+		_gnonogram_view.set_license("");
+		_gnonogram_view.set_score("");
 		initialize_view();
 		change_state(GameState.SETTING);
+		_have_solution=true;
 //		redraw_all();
 //		reveal_solution();
 	}
@@ -558,6 +576,9 @@ public class Gnonogram_controller
 		f.printf("%s\n",_gnonogram_view.get_date());
 		f.printf("%s\n",_gnonogram_view.get_score());
 
+		f.printf("[License]\n");
+		f.printf("%s\n",_gnonogram_view.get_license());
+
 		f.printf("[Dimensions]\n");
 		f.printf("%d\n",_rows);
 		f.printf("%d\n",_cols);
@@ -615,7 +636,8 @@ public class Gnonogram_controller
 		if (load_common(reader) && load_position_extra(reader))
 		{
 			if (reader.has_state && reader.state==(GameState.SETTING).to_string()){
-					redraw_all();
+//				redraw_all();
+				change_state(GameState.SETTING);
 			}
 			else{
 				change_state(GameState.SOLVING);
@@ -699,10 +721,41 @@ public class Gnonogram_controller
 
 		_gnonogram_view.set_author(reader.author);
 		_gnonogram_view.set_date(reader.date);
-		_gnonogram_view.set_score_label(reader.score);
+		_gnonogram_view.set_license(reader.license);
+		_gnonogram_view.set_score(reader.score);
 
 		return true;
 	}
+
+
+	private void import_image()
+	{
+		stdout.printf("Import image");
+		new_game();
+		Img2gno image_convertor=new Img2gno();
+
+		image_convertor.show_all();
+		var response=image_convertor.run();
+
+		if (response==Gtk.ResponseType.OK)
+		{
+			int rows=image_convertor.get_rows();
+			int cols= image_convertor.get_cols();
+			stdout.printf("Rows: %d, Cols: %d \n",rows,cols);
+			resize(rows,cols);
+			_model.use_solution();
+			for (int r=0;r<_rows;r++)
+			{
+				_model.set_row_data_from_array(r,image_convertor.get_state_array(r));
+				update_labels_from_model();
+				_have_solution=true;
+			}
+		}
+		image_convertor.destroy();
+		change_state(GameState.SETTING);
+		redraw_all();
+	}
+
 //======================================================================
 	public void start_solving(){
 		//stdout.printf("Start solving\n");
@@ -716,37 +769,43 @@ public class Gnonogram_controller
 //======================================================================
 	public void peek_game() {
 		//stdout.printf("Peek game\n");
-		double seconds=_timer.elapsed();
-		int hours= ((int)seconds)/3600;
-		seconds-=((double)hours)*3600.000;
-		int minutes=((int)seconds)/60;
-		seconds-=(double)(minutes)*60.000;
-		string time_taken=("\n\n"+_("Time taken is %d hours, %d minutes, %8.3f seconds")).printf(hours, minutes, seconds);
-
 		if (_have_solution){
 			int count=_model.count_errors();
 			if (count==0){
-				Utils.show_info_dialog(_("No errors")+time_taken);
+				Utils.show_info_dialog(_("No errors\n\n")+get_time_taken());
 			}
 			else{
 				redraw_all();
-				Utils.show_info_dialog((_("There are %d incorrect cells"+time_taken)).printf(count));
+				Utils.show_info_dialog((_("Incorrect cells: %d\n\n"+get_time_taken())).printf(count));
 				_model.clear_errors();
 			}
 			redraw_all();
 		}
 		else{
-			Utils.show_info_dialog(_("No solution available"+time_taken));
+			Utils.show_info_dialog(_("No solution available\n\n"+get_time_taken()));
 		}
 	}
+
+	private string get_time_taken() {
+		double seconds=_timer.elapsed();
+		int hours= ((int)seconds)/3600;
+		seconds-=((double)hours)*3600.000;
+		int minutes=((int)seconds)/60;
+		seconds-=(double)(minutes)*60.000;
+		return (_("Time taken: %d hours, %d minutes, %8.3f seconds")).printf(hours, minutes, seconds);
+	}
+
 //======================================================================
 	private void viewer_solve_game() {
 		//stdout.printf("Viewer_solve_game\n");
 		change_state(GameState.SOLVING);
-		restart_game(); //clears any erroneous entries and also re-starts timer
+		if (_rows==1) //assume testing mode keep existing cell entries
+		{}
+		else restart_game(); //clears any erroneous entries and also re-starts timer
+
 		int passes = solve_game(true, _advanced,_advanced);
 		_timer.stop();
-		double time_taken=_timer.elapsed();
+		double secs_taken=_timer.elapsed();
 		show_solver_grid();
 		switch (passes) {
 			case -2:
@@ -757,9 +816,12 @@ public class Gnonogram_controller
 			case 0:
 				Utils.show_info_dialog(_("Failed to solve or no unique solution"));
 				break;
+			case 9999999:
+				Utils.show_info_dialog(_("Cancelled by user"));
+				break;
 			default:
-				_gnonogram_view.set_score_label(passes.to_string());
-				Utils.show_info_dialog((_("Solved in %8.3f seconds").printf(time_taken)));
+				_gnonogram_view.set_score(passes.to_string());
+				Utils.show_info_dialog((_("Solved in %8.3f seconds").printf(secs_taken)));
 
 				if (!_have_solution){
 					_have_solution=true;
@@ -781,7 +843,8 @@ public class Gnonogram_controller
 	private int solve_clues(string[] row_clues, string[] col_clues, My2DCellArray? startgrid, bool use_advanced, bool use_ultimate) {
 		int passes=0;
 		_solver.initialize(row_clues, col_clues, startgrid);
-		passes=_solver.solve_it(_debug, use_advanced, use_ultimate);
+		//assume debug mode for single row
+		passes=_solver.solve_it(_rows==1, use_advanced, use_ultimate);
 		return passes;
 	}
 //======================================================================
@@ -867,7 +930,7 @@ public class Gnonogram_controller
 			_gnonogram_view.set_name(name);
 			_gnonogram_view.set_author(_("Computer"));
 			_gnonogram_view.set_date(Utils.get_todays_date_string());
-			_gnonogram_view.set_score_label(passes.to_string());
+			_gnonogram_view.set_score(passes.to_string());
 			_model.use_working();
 			//start_solving();
 			change_state(GameState.SOLVING);
@@ -922,6 +985,7 @@ public class Gnonogram_controller
 		game_editor.set_name(_gnonogram_view.get_name());
 		game_editor.set_author(_gnonogram_view.get_author());
 		game_editor.set_date(_gnonogram_view.get_date());
+		game_editor.set_license(_gnonogram_view.get_license());
 
 		for (int i =0; i<_rows; i++) game_editor.set_rowclue(i,_rowbox.get_label_text(i));
 		for (int i =0; i<_cols; i++) game_editor.set_colclue(i,_colbox.get_label_text(i));
@@ -933,6 +997,7 @@ public class Gnonogram_controller
 			_gnonogram_view.set_name(game_editor.get_name());
 			_gnonogram_view.set_author(game_editor.get_author());
 			_gnonogram_view.set_date(game_editor.get_date());
+			_gnonogram_view.set_license(game_editor.get_license());
 
 			int[] b;
 			//Format & validate clues by passing through block array.
@@ -953,7 +1018,7 @@ public class Gnonogram_controller
 			else if (passes>0) 	{
 				_have_solution=true;
 				set_solution_from_solver();
-				_gnonogram_view.set_score_label(passes.to_string());
+				_gnonogram_view.set_score(passes.to_string());
 			}
 		}
 		game_editor.destroy();
@@ -1030,6 +1095,6 @@ public class Gnonogram_controller
 	private void invalid_clues(){
 		_model.blank_solution();
 		_have_solution=false;
-		_gnonogram_view.set_score_label("invalid");
+		_gnonogram_view.set_score("invalid");
 	}
 }

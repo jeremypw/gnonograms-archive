@@ -141,9 +141,9 @@ public static int main(string[] args)  {
 		else game_filename="";
 	}
 
-	Resource.init(args[0]);
-	Gtk.init(ref args);
 
+	Gtk.init(ref args);
+	Resource.init(args[0]);
 	Intl.bindtextdomain(package_name, Resource.locale_dir);
 	Intl.bind_textdomain_codeset(package_name, "UTF-8");
 	Intl.textdomain(package_name);

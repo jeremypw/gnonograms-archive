@@ -53,6 +53,7 @@ namespace Resource
 	public const string HIDEICONFILENAME="eyes-open.png";
 	public const string REVEALICONFILENAME="eyes-closed.png";
 	public const string MISSINGICONFILENAME="";
+	public const string LOGOFILENAME="gnonograms.svg";
 	//Icon theme names
 	public const string SOLVEICONTHEMENAME="computer";
 	public const string PEEKICONTHEMENAME="";
@@ -61,6 +62,7 @@ namespace Resource
 	public const string HIDEICONTHEMENAME="hide";
 	public const string REVEALICONTHEMENAME="reveal";
 	public const string MISSINGICONTHEMENAME="image-missing";
+
 	public const string DEFAULT_FONT="Ariel";
 
 //Performace/capability related parameters
@@ -132,6 +134,7 @@ namespace Resource
 		stdout.printf("Locale_dir is %s \n",locale_dir);
 
 		icon_dir=resource_dir+"/icons";
+//		get_icon_theme();
 
 		use_gnome_help=(_GNOME_DOC==1);
 		html_manual_dir=resource_dir+"/html";
@@ -319,6 +322,7 @@ namespace Resource
 	public static void get_icon_theme()
 	{
 		icon_theme=Gtk.IconTheme.get_default();
+		if (icon_theme==null) stdout.printf("Default Icon theme not found\n");
 	}
 
 	public static Gdk.Pixbuf? get_theme_icon(string icon_name)

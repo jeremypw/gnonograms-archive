@@ -1,3 +1,13 @@
+Gnonograms version 0.9.3
+**************************
+31/Oct/2011 Add image to puzzle converter.
+30/OCt/2011	Show logo in upper left quadrant
+			Show game information at bottom of window
+			Include license in game information, file format and game editor.
+			Fix bug in solver (Cancel by user causes loss of existing solution)
+16/Oct/2011	Changed way solution validated to recognise alternative solutions
+			Fixed "load game in setting mode" bug
+			Fixed bug in solver (Filled subregion audit - remove blocks too small)
 
 Gnonograms version 0.9.2
 **************************

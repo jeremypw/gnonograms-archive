@@ -20,7 +20,7 @@
 # * 	Jeremy Wootten <jeremwootten@gmail.com>
 PROGRAM=gnonograms
 
-VERSION=0.9.2
+VERSION=0.9.3
 GETTEXT_PACKAGE=$(PROGRAM)
 BUILD_ROOT=1
 
@@ -62,6 +62,7 @@ SRC_FILES = Gnonogram_cellgrid.vala \
 	Gnonogram_region.vala \
 	Gnonogram_solver.vala \
 	Gnonogram_viewer.vala \
+	img2gno.vala \
 	main.vala \
 	My2DCellArray.vala \
 	Resource.vala \

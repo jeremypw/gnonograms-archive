@@ -121,6 +121,7 @@ namespace Utils
 	//*****************************************************************************
 	public bool get_dimensions(out int r, out int c, int currentr=5, int currentc=5)
 	{
+		r=currentr; c=currentc;
 		var dialog=new Gtk.Dialog.with_buttons(_("Adjust Size"),
 			null,
 			Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
