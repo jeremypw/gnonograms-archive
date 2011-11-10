@@ -1,5 +1,9 @@
 Gnonograms version 0.9.3
 **************************
+06/Nov/2011	Tweak game generator
+			Tweak solver
+			Add "Builtin game directory" button to file dialog
+05/Nov/2011	Add "Trim empty edge columns/rows" function.
 31/Oct/2011 Add image to puzzle converter.
 30/OCt/2011	Show logo in upper left quadrant
 			Show game information at bottom of window

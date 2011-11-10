@@ -68,8 +68,8 @@ namespace Resource
 //Performace/capability related parameters
 	public static int MAXSIZE = 100; // max number rows or columns
 	public static int MINSIZE = 5;
-	public static int MAXGRADE = 10; //max grade level
-	public static int MAXTRIES = 100; //max attempts to generate solvable game
+	public static int MAXGRADE = 12; //max grade level
+	public static int MAXTRIES = 500; //max attempts to generate solvable game
 	public static int MAXUNDO = 100; //max moves that can be undone
 	public static int DEFAULT_DIFFICULTY = 5;
 

@@ -138,10 +138,7 @@
 			changed=false;
 			for (int i=0; i<_region_count; i++)
 			{
-				if (_regions[i]._completed)
-				{
-					continue;
-				}
+				if (_regions[i]._completed) continue;
 				if (_regions[i].solve(debug)) changed=true;
 				if (debug ||(log_error && _regions[i]._in_error))
 				{

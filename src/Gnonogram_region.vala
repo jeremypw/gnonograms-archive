@@ -666,7 +666,9 @@
 		int[,] block_end = new int[bl,2]; //range number and offset of latest end point
 
 		int nranges=count_available_ranges(false);//update _ranges with currently available ranges (can contain only unknown cells)
-		if(nranges<2) return false;
+//
+//		if(nranges<2) return false;
+//
 		//find earliest start point of each block (assuming ranges all unknown cells)
 		int rng=0, offset=0, length=0; //start at beginning of first available range
 		for (int b=0; b<bl; b++) //for each available block

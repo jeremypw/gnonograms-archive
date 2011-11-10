@@ -51,6 +51,7 @@ public class Gnonogram_view : Gtk.Window
 	public signal void resetall();
 	public signal void undoredo(bool direction);
 	public signal void editgame();
+	public signal void trimgame();
 
 	private Gnonogram_controller _controller;
 	private Gtk.SpinButton _grade_spin;
@@ -258,9 +259,13 @@ public class Gnonogram_view : Gtk.Window
 			gamesubmenu.add(computersolvemenuitem);
 			var computergeneratemenuitem=new MenuItem.with_mnemonic(_("_Computer generated puzzle"));
 			gamesubmenu.add(computergeneratemenuitem);
+
 			gamesubmenu.add(new SeparatorMenuItem());
-			var infomenuitem=new MenuItem.with_mnemonic(_("_Edit puzzle"));
-			gamesubmenu.add(infomenuitem);
+			var editmenuitem=new MenuItem.with_mnemonic(_("_Edit puzzle"));
+			gamesubmenu.add(editmenuitem);
+
+			var trimmenuitem=new MenuItem.with_mnemonic(_("_Trim blank edges"));
+			gamesubmenu.add(trimmenuitem);
 
 		var settingssubmenu=new Menu();
 		settingsmenuitem.set_submenu(settingssubmenu);
@@ -360,8 +365,9 @@ public class Gnonogram_view : Gtk.Window
 		_grademenuitem.activate.connect(set_difficulty);
 		customgamedirmenuitem.activate.connect(Resource.set_custom_game_dir);
 		defaultgamedirmenuitem.activate.connect(Resource.set_default_game_dir);
-		infomenuitem.activate.connect(()=>{editgame();});
-		infomenuitem.add_accelerator("activate",accel_group,keyval_from_name("e"),Gdk.ModifierType.SHIFT_MASK, Gtk.AccelFlags.VISIBLE);
+		editmenuitem.activate.connect(()=>{editgame();});
+		editmenuitem.add_accelerator("activate",accel_group,keyval_from_name("e"),Gdk.ModifierType.SHIFT_MASK, Gtk.AccelFlags.VISIBLE);
+		trimmenuitem.activate.connect(()=>{trimgame();});
 
 //		debugmenuitem.activate.connect(()=>{debugmode(debugmenuitem.active);});
 		_advancedmenuitem.activate.connect(()=>{advancedmode(_advancedmenuitem.active);});
@@ -669,7 +675,7 @@ public class Gnonogram_view : Gtk.Window
 	public string get_author(){return get_info_item(_author_label);}
 //======================================================================
 	public void set_date(string date){
-		stdout.printf("Set date\n");
+		//stdout.printf("Set date\n");
 		_date_label.set_text(date);}
 	public string get_date(){return get_info_item(_date_label);	}
 //======================================================================

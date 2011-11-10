@@ -198,14 +198,14 @@
 
 		for (int e=0; e<_arr.length; e++) _arr[e]=CellState.EMPTY;
 
-		int maxb=1+(int)(_cols*(1.0-grade/15.0));
+		int maxb=1+(int)(_cols*(1.0-grade/Resource.MAXGRADE));
 		for (int r=0;r<_rows;r++)
 		{
 			_solution_data.get_row(r, ref _arr);
 			fill_region(_cols, ref _arr, grade, (r-midcol).abs(), maxb, _cols);
 			_solution_data.set_row(r, _arr);
 		}
-		maxb=1+(int)(_rows*(1.0-grade/15.0));
+		maxb=1+(int)(_rows*(1.0-grade/Resource.MAXGRADE));
 		for (int c=0;c<_cols;c++)
 		{
 			_solution_data.get_col(c, ref _arr);
@@ -213,7 +213,7 @@
 			_solution_data.set_col(c, _arr);
 		}
 
-		if (grade<5) return;  //don't bother with adjustment for lower difficulty levels
+		//if (grade<5) return;  //don't bother with adjustment for lower difficulty levels
 
 		for (int r=0;r<_rows;r++)
 		{
@@ -237,7 +237,8 @@
 		//maxb is maximum size of one random block
 		//maxp is range of random number generator
 
-		if (maxb<=1) return;
+//		if (maxb<=1) return;
+		if (maxb<2) maxb=2;
 
 		int p=0; //pointer
 		int mid=size/2;
@@ -247,10 +248,12 @@
 
 		while (p<size)
 		{
-			// random length up to remaining space but not larger than maxb
-			bsize=int.min(_rand_gen.int_range(0,size-p),maxb);
 			// random choice whether to be full or empty, weighted so less likely to fill squares close to edge
 			fill=_rand_gen.int_range(0,maxp)>(baseline+(p-mid).abs());
+
+			// random length up to remaining space but not larger than maxb for filled cells or size-maxb for empty cells
+			//bsize=int.min(_rand_gen.int_range(0,size-p),maxb);
+			bsize=int.min(_rand_gen.int_range(0,size-p),fill ? maxb : size-maxb);
 
 			for (int i=0; i<bsize; i++)
 			{
@@ -279,17 +282,17 @@
 		}
 		df=s-b-bc+1;
 
-		if (df>s) //completely empty
+		if (df>s) //completely empty - fill one cell
 		{
 			arr[_rand_gen.int_range(0,s)]=CellState.FILLED;
 		}
-		else
+		else // empty cells until reach min freedom
 		{
 			int count=0;
 			while (df<mindf&&count<30)
 			{
 				count++;
-				int i=_rand_gen.int_range(0,s);
+				int i=_rand_gen.int_range(1,s-1);
 				if (arr[i]==CellState.FILLED)
 				{
 					arr[i]=CellState.EMPTY;

@@ -74,11 +74,11 @@ namespace Utils
 			default :
 				break;
 		}
+
 		var dialog=new Gtk.FileChooserDialog(
 			dialogname,
 			null,
 			action,
-//			Gtk.Stock.CANCEL, Gtk.ResponseType.CANCEL,
 			Gtk.Stock.CANCEL, Gtk.ResponseType.CANCEL,
 			button, Gtk.ResponseType.ACCEPT,
 			null);
@@ -103,17 +103,25 @@ namespace Utils
 				dialog.set_current_folder(start_path); //so Recently used folder not displayed
 			}
 		}
+		//only need access to built-in puzzle directory if loading a .gno puzzle
+		if (action==FileChooserAction.OPEN && filters!=null && filters[0]=="*.gno") dialog.add_button("Built in puzzles",Gtk.ResponseType.NONE);
 
-		var response = dialog.run();
+		int response;
+		while(true)
+		{
+			response = dialog.run();
+			if(response==Gtk.ResponseType.NONE)
+			{
+				dialog.set_current_folder(Resource.resource_dir+"/games");
+			}
+			else break;
+		}
+
 		string fn="";
-//		stdout.printf(@"Utils get filename.  response $(response)\n");
-//		string current_folder=dialog.get_current_folder();
-//		stdout.printf(@"Utils get filename current folder $(current_folder)\n");
-
 		if (response==ResponseType.ACCEPT){
 			fn=dialog.get_filename();
+			Environment.set_current_dir(dialog.get_current_folder());
 		}
-//		stdout.printf("Utils get filename.  Selected %s\n",fn);
 		dialog.destroy();
 
 		return fn;
@@ -122,6 +130,9 @@ namespace Utils
 	public bool get_dimensions(out int r, out int c, int currentr=5, int currentc=5)
 	{
 		r=currentr; c=currentc;
+		if(r<5)r=5;
+		if(c<5)c=5;
+
 		var dialog=new Gtk.Dialog.with_buttons(_("Adjust Size"),
 			null,
 			Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
@@ -133,7 +144,7 @@ namespace Utils
 		var hbox=new Gtk.HBox(true,6);
 
 		var row_label=new Gtk.Label(_("Rows"));
-		var row_spin=new Gtk.SpinButton.with_range(Resource.MINSIZE,Resource.MAXSIZE,5);
+		var row_spin=new Gtk.SpinButton.with_range(1,Resource.MAXSIZE,5);
 		row_spin.set_value((double)currentr);
 
 		var col_label=new Gtk.Label(_("Columns"));
@@ -439,10 +450,30 @@ namespace Utils
 		extent--;
 		return extent;
 	}
-	//*****************************************************************************
+//*****************************************************************************
 	public string get_todays_date_string(){
 		TimeVal t={};
 		t.get_current_time();
 		return (t.to_iso8601()).slice(0,10);
 	}
+//*****************************************************************************
+
+//	class Gnonogram_filedialog : Gtk.FileChooserDialog
+//	{
+////		public Gnonogram_filedialog(string? title, Gtk.Window? parent, Gtk.FileChooserAction action, string accept_button_text)
+////		{
+////			this.add_button("Built in games",Gtk.ResponseType.NONE);
+////			this.add_button("Cancel",Gtk.ResponseType.CANCEL);
+////			this.add_button(accept_button_text,Gtk.ResponseType.ACCEPT);
+
+////			if(title==null) stdout.printf("No title\n");
+////			else this.set_title(title);
+
+////		}
+
+//		public void add_default_game_dir_button()
+//		{
+//			this.add_button("Built in games",Gtk.ResponseType.NONE);
+//		}
+//	}
 }
