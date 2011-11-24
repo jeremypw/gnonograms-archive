@@ -18,7 +18,8 @@
  *  Author:
  * 	Jeremy Wootten <jeremwootten@gmail.com>
  */
- public class Gnonogram_model {
+ public class Gnonogram_model
+ {
 	private int _rows;
 	private int _cols;
 	private My2DCellArray _display_data;  //points to grid being displayed
@@ -27,15 +28,16 @@
 	public CellState[] _arr;
 	private Rand _rand_gen;
 
-	public Gnonogram_model() {
-	_rows = 10; _cols = 10; //Must call set dimensions before us
-	_solution_data=new My2DCellArray(Resource.MAXSIZE,Resource.MAXSIZE,CellState.EMPTY);
-	_working_data=new My2DCellArray(Resource.MAXSIZE,Resource.MAXSIZE,CellState.UNKNOWN);
-	_arr = new CellState[Resource.MAXSIZE];
-	_display_data = _solution_data;
-	_rand_gen = new Rand();
+	public Gnonogram_model()
+	{
+		_rows = 10; _cols = 10; //Must call set dimensions before use
+		_solution_data=new My2DCellArray(Resource.MAXSIZE,Resource.MAXSIZE,CellState.EMPTY);
+		_working_data=new My2DCellArray(Resource.MAXSIZE,Resource.MAXSIZE,CellState.UNKNOWN);
+		_arr = new CellState[Resource.MAXSIZE];
+		_display_data = _solution_data;
+		_rand_gen = new Rand();
 	}
-//======================================================================
+
 	public void clear_errors()
 	{
 		CellState cs;
@@ -59,7 +61,7 @@
 			}
 		}
 	}
-//======================================================================
+
 	public int count_errors()
 	{
 		CellState cs;
@@ -69,7 +71,12 @@
 			for (int c=0;c<_cols;c++)
 			{
 				cs=_working_data.get_data_from_rc(r,c);
-				if (cs==CellState.ERROR_EMPTY||cs==CellState.ERROR_FILLED||(cs!=CellState.UNKNOWN && cs!=_solution_data.get_cell(r,c).state))
+				if
+				(
+					cs==CellState.ERROR_EMPTY ||
+					cs==CellState.ERROR_FILLED ||
+					(	cs!=CellState.UNKNOWN&&cs!=_solution_data.get_cell(r,c).state)
+				)
 				{
 					if (cs==CellState.EMPTY)
 					{
@@ -86,13 +93,14 @@
 		}
 		return count;
 	}
-//======================================================================
+
 	public int count_unsolved()
 	{
 		int count=0;
 		CellState cs;
 		for (int r=0;r<_rows; r++)
-		{for (int c=0;c<_cols;c++)
+		{
+			for (int c=0;c<_cols;c++)
 			{
 				cs=_working_data.get_data_from_rc(r,c);
 				if (cs==CellState.UNKNOWN || cs==CellState.ERROR)count++;
@@ -100,58 +108,73 @@
 		}
 		return count;
 	}
-//======================================================================
+
 	public void clear()
 	{
 		blank_solution();
 		blank_working();
 	}
-//======================================================================
+
 	public void blank_solution(CellState blank=CellState.EMPTY)
 	{
 		_solution_data.set_all(CellState.EMPTY);
 	}
-//======================================================================
+
 	public void blank_working(CellState blank=CellState.UNKNOWN)
 	{
 		_working_data.set_all(CellState.UNKNOWN);
 	}
-//======================================================================
+
 	public void set_dimensions(int r, int c)
 	{
 		_rows=r;
 		_cols=c;
-		clear();
 	}
-//======================================================================
-	public void use_working() {_display_data=_working_data;}
-//======================================================================
-	public void use_solution() {_display_data=_solution_data;}
-//======================================================================
-	public string get_label_text(int idx, bool is_column, bool from_solution=true)
+
+	public void use_working()
+	{
+		_display_data=_working_data;
+	}
+
+	public void use_solution()
+	{
+		_display_data=_solution_data;
+	}
+
+	public string get_label_text(int idx,bool is_column,bool from_solution=true)
 	{
 		int length = is_column ? _rows : _cols;
-		if (from_solution)	return _solution_data.data2text(idx,length, is_column);
-		else return _working_data.data2text(idx,length, is_column);
+		if (from_solution)
+		{
+			return _solution_data.data2text(idx,length, is_column);
+		}
+		else
+		{
+			return _working_data.data2text(idx,length, is_column);
+		}
 	}
-//======================================================================
-	public Cell get_cell(int r, int c){
-		return _display_data.get_cell(r,c);}
-//======================================================================
-	public void set_data_from_cell(Cell cell){
-		_display_data.set_data_from_cell(cell);}
-//======================================================================
+
+	public Cell get_cell(int r, int c)
+	{
+		return _display_data.get_cell(r,c);
+	}
+
+	public void set_data_from_cell(Cell cell)
+	{
+		_display_data.set_data_from_cell(cell);
+	}
+
 	public CellState get_data_from_rc(int r, int c)
 	{
 		return _display_data.get_data_from_rc(r,c);
 	}
-//======================================================================
+
 	public bool set_row_data_from_string(int r, string s)
 	{
 		CellState[] cs =Utils.cellstate_array_from_string(s);
 		return set_row_data_from_array(r, cs);
 	}
-//======================================================================
+
 	public bool set_row_data_from_array(int r, CellState[] cs)
 	{
 		if (cs.length!=_cols)
@@ -162,9 +185,10 @@
 		_display_data.set_row(r, cs);
 		return true;
 	}
-//=========================================================================
+
 	public string to_string()
-	{//stdout.printf("model to string\n");
+	{
+		//stdout.printf("model to string\n");
 		StringBuilder sb= new StringBuilder();
 		CellState[] arr=new CellState[_cols];
 		for (int r=0; r<_rows; r++)
@@ -175,8 +199,10 @@
 		}
 		return sb.str;
 	}
+
 	public string to_hexstring()
-	{//stdout.printf("model to string\n");
+	{
+		//stdout.printf("model to string\n");
 		StringBuilder sb= new StringBuilder();
 		CellState[] arr=new CellState[_cols];
 		for (int r=0; r<_rows; r++)
@@ -187,7 +213,7 @@
 		}
 		return sb.str;
 	}
-//======================================================================
+
 	public void fill_random(int grade)
 	{
 		clear();
@@ -213,8 +239,6 @@
 			_solution_data.set_col(c, _arr);
 		}
 
-		//if (grade<5) return;  //don't bother with adjustment for lower difficulty levels
-
 		for (int r=0;r<_rows;r++)
 		{
 			_solution_data.get_row(r, ref _arr);
@@ -229,7 +253,7 @@
 			_solution_data.set_col(c, _arr);
 		}
 	}
-//=========================================================================
+
 	private void fill_region (int size, ref CellState[] _arr, int grade, int e, int maxb, int maxp)
 	{
 		//e is larger for rows/cols further from edge
@@ -237,22 +261,25 @@
 		//maxb is maximum size of one random block
 		//maxp is range of random number generator
 
-//		if (maxb<=1) return;
 		if (maxb<2) maxb=2;
 
 		int p=0; //pointer
 		int mid=size/2;
 		int bsize; // blocksize
-		int baseline = e+grade-10; // relates to the probability of a filled block before adjusting for distance from edge of region.
+		int baseline = e+grade-10;
+		// baseline relates to the probability of a filled block before
+		// adjusting for distance from edge of region.
 		bool fill;
 
 		while (p<size)
 		{
-			// random choice whether to be full or empty, weighted so less likely to fill squares close to edge
+			// random choice whether to be full or empty, weighted so
+			// less likely to fill squares close to edge
 			fill=_rand_gen.int_range(0,maxp)>(baseline+(p-mid).abs());
 
-			// random length up to remaining space but not larger than maxb for filled cells or size-maxb for empty cells
-			//bsize=int.min(_rand_gen.int_range(0,size-p),maxb);
+			// random length up to remaining space but not larger than
+			// maxb for filled cells or size-maxb for empty cells
+			// bsize=int.min(_rand_gen.int_range(0,size-p),maxb);
 			bsize=int.min(_rand_gen.int_range(0,size-p),fill ? maxb : size-maxb);
 
 			for (int i=0; i<bsize; i++)
@@ -265,9 +292,10 @@
 			if (fill && p<size) _arr[p]=CellState.EMPTY;
 		}
 	}
-//=========================================================================
+
 	private void adjust_region(int s, ref CellState [] arr, int mindf)
-	{	//s is size of region
+	{
+		//s is size of region
 		// mindf = minimum degrees of freedom
 		int b=0; // count of filled cells
 		int bc=0; // count of filled blocks

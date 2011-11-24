@@ -134,14 +134,14 @@ namespace Resource
 		stdout.printf("Locale_dir is %s \n",locale_dir);
 
 		icon_dir=resource_dir+"/icons";
-//		get_icon_theme();
 
 		use_gnome_help=(_GNOME_DOC==1);
 		html_manual_dir=resource_dir+"/html";
 		string gnome_manual_dir=installed ? root_dir+"/share/gnome/help/gnonograms/C" : resource_dir+"/help/C";
 		var dir=File.new_for_path(gnome_manual_dir);
 		if (dir.query_file_type(FileQueryInfoFlags.NONE,null)!=FileType.DIRECTORY)
-		{//fall back to html help if cannot locate gnome help directory
+		{
+			//fall back to html help if cannot locate gnome help directory
 			use_gnome_help=false;
 		}
 
@@ -302,8 +302,8 @@ namespace Resource
 	public static void set_custom_game_dir()
 	{
 		string new_dir=Utils.get_filename(FileChooserAction.SELECT_FOLDER,"Choose folder for saving and loading puzzles",null,null,Resource.save_game_dir);
-//		stdout.printf("set_game_dir received folder %s\n",new_dir);
-		if (new_dir!="") {
+		if (new_dir!="")
+		{
 			Resource.save_game_dir=new_dir;
 			Resource.load_game_dir=new_dir;
 		}

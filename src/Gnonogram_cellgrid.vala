@@ -29,6 +29,8 @@ public class Gnonogram_CellGrid : DrawingArea
 
 	private int _rows;
 	private int _cols;
+	private int _current_row;
+	private int _current_col;
 	private double _aw;
 	private double _ah;
 	private double _wd;
@@ -37,11 +39,16 @@ public class Gnonogram_CellGrid : DrawingArea
 	private double _cell_body_width;
 	private double _cell_body_height;
 	private Gdk.Color cr_color;
-//======================================================================
+	private Gdk.Color grid_color;
+	private Cairo.Context _cr;
+
 	public Gnonogram_CellGrid(int r, int c)
 	{
 		_rows=r;
 		_cols=c;
+
+		_current_col=-1;
+		_current_row=-1;
 
 		add_events(
 		EventMask.BUTTON_PRESS_MASK|
@@ -54,13 +61,19 @@ public class Gnonogram_CellGrid : DrawingArea
 
 		motion_notify_event.connect(pointer_moved);
 		leave_notify_event.connect(leave_grid);
+
+		Gdk.Color.parse("BLACK", out grid_color);
 	}
-//=========================================================================
-	public void resize(int r, int c) {_rows=r;_cols=c;}
-//=========================================================================
+
+	public void resize(int r, int c)
+	{
+		_rows=r;_cols=c;
+	}
+
 	public void prepare_to_redraw_cells(bool show_grid)
-	{ //stdout.printf("In prepare to redraw\n");
+	{	//stdout.printf("In prepare to redraw\n");
 		if (this.window==null) return;
+		_cr=Gdk.cairo_create(this.window);
 		_aw=(double)allocation.width;
 		_ah=(double)allocation.height;
 		_wd=(_aw-2)/(double)_cols;
@@ -74,24 +87,25 @@ public class Gnonogram_CellGrid : DrawingArea
 		}
 		else _cell_offset=Resource.CELLOFFSET_NOGRID;
 
-		//dimensions of filled part
 		_cell_body_width=_wd-_cell_offset;
 		_cell_body_height=_ht-_cell_offset;
 	}
-//=====================================================================
 
 	public void draw_cell(Cell cell, GameState gs, bool highlight=false)
-	{	//don't draw cell outside grid.
-		if (cell.row<0||cell.row>=_rows||cell.col<0||cell.col>=_cols)return;
+	{	//stdout.printf(@"draw_cell cell $cell, gamestate $gs\n");
+		_cr=Gdk.cairo_create(this.window);
+		//don't draw cell outside grid.
+		if (cell.row<0||cell.row>=_rows||cell.col<0||cell.col>=_cols)
+		{
+			return;
+		}
 
-/* coords of top left corner of filled part
-/* (excluding grid if present but including highlight line)
- */
+		/* coords of top left corner of filled part
+		/* (excluding grid if present but including highlight line)
+		 */
 		double x=cell.col*_wd +_cell_offset;
 		double y= cell.row*_ht +_cell_offset;
 		bool error=false;
-
-		var _cr=Gdk.cairo_create(this.window);
 
 		switch (cell.state)
 		{
@@ -116,7 +130,7 @@ public class Gnonogram_CellGrid : DrawingArea
 		Gdk.cairo_set_source_color(_cr, cr_color);
 		draw_cell_body(_cr, x,y, highlight, error);
 	}
-//=========================================================================
+
 	private void draw_cell_body(Cairo.Context _cr, double x, double y, bool highlight=false, bool error=false)
 	{
 		_cr.set_line_width(0.5);
@@ -139,12 +153,13 @@ public class Gnonogram_CellGrid : DrawingArea
 		}
 	}
 
-//======================================================================
+
 	private void draw_grid()
-	{//stdout.printf("In draw grid\n");
+	{	//stdout.printf("In draw grid\n");
 		double x1, x2, y1, y2;
 
-		var _cr=Gdk.cairo_create(this.window);
+		if (_cr==null) return;
+		Gdk.cairo_set_source_color(_cr, grid_color);
 		_cr.set_dash(Resource.MINORGRIDDASH,0.0);
 		_cr.set_line_width(1.0);
 
@@ -187,12 +202,15 @@ public class Gnonogram_CellGrid : DrawingArea
 			_cr.stroke();
 		}
 	}
-//======================================================================
+
 	private bool pointer_moved(Widget w, Gdk.EventMotion e)
 	{
 		int r= ((int) (e.y/_ah*_rows)).clamp(0,_rows-1);
 		int c= ((int) (e.x/_aw*_cols)).clamp(0,_cols-1);
-		cursor_moved(r,c); //signal connected to controller
+		if(c!=_current_col||r!=_current_row)//only signal when cursor changes cell
+		{
+			cursor_moved(r,c); //signal connected to controller
+		}
 		return true;
 	}
 
@@ -204,6 +222,4 @@ public class Gnonogram_CellGrid : DrawingArea
 		}
 		return true;
 	}
-//=========================================================================
-
 }

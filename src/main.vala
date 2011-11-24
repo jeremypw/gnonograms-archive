@@ -20,7 +20,8 @@
  * 	Jeremy Wootten <jeremwootten@gmail.com>
  */
 
- public enum GameState {
+public enum GameState
+{
 	SETTING,
 	SOLVING;
 
@@ -38,7 +39,8 @@
 	}
 }
 
-public enum CellState {
+public enum CellState
+{
 	UNKNOWN,
 	EMPTY,
 	FILLED,
@@ -69,14 +71,10 @@ public enum CellState {
 				return "";
 		}
 	}
-	}
+}
 
-//public enum Gnonogram_FileType {
-//	GAME,
-//	POSITION
-//}
-
-public struct Cell {
+public struct Cell
+{
 		public int row;
 		public int col;
 		public CellState state;
@@ -94,30 +92,35 @@ public struct Cell {
 			return (this.row==c.row && this.col==c.col);
 		}
 
-		public void copy(Cell b) {
+		public void copy(Cell b)
+		{
 			this.row=b.row;
 			this.col=b.col;
 			this.state=b.state;
 		}
 
-		public Cell invert() {
+		public Cell invert()
+		{
 			Cell c={this.row, this.col, CellState.UNKNOWN};
 			if (this.state==CellState.EMPTY) c.state=CellState.FILLED;
 			else c.state=CellState.EMPTY;
 			return c;
 		}
 
-		public string to_string() {
+		public string to_string()
+		{
 			return @"Row $(this.row), Col $(this.col),  State $(this.state)";
 		}
 	}
 
-public struct Move {
-	public Cell previous;
-	public Cell replacement;
-}
+	public struct Move
+	{
+		public Cell previous;
+		public Cell replacement;
+	}
 
-public enum ButtonPress {
+public enum ButtonPress
+{
 	LEFT_SINGLE,
 	LEFT_DOUBLE,
 	MIDDLE_SINGLE,
@@ -127,10 +130,10 @@ public enum ButtonPress {
 	UNDEFINED
 }
 
-//======================================================================
+Gnonogram_controller controller;
 
-public static int main(string[] args)  {
-
+public static int main(string[] args)
+{
 	string game_filename="";
 	string package_name=Resource.APP_GETTEXT_PACKAGE;
 
@@ -141,14 +144,13 @@ public static int main(string[] args)  {
 		else game_filename="";
 	}
 
-
 	Gtk.init(ref args);
 	Resource.init(args[0]);
 	Intl.bindtextdomain(package_name, Resource.locale_dir);
 	Intl.bind_textdomain_codeset(package_name, "UTF-8");
 	Intl.textdomain(package_name);
 
-	new Gnonogram_controller(game_filename);
+	controller=new Gnonogram_controller(game_filename);
 
 	Gtk.main();
 	return 0;

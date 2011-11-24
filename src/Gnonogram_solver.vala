@@ -42,22 +42,23 @@
 
 	private const int GUESSES_BEFORE_ASK=50000;
 
-//=========================================================================
-	public Gnonogram_solver(bool testing=false, bool debug=false, bool test_column=false, int test_idx=-1) {
 
+	public Gnonogram_solver(bool testing=false, bool debug=false, bool test_column=false, int test_idx=-1)
+	{
 		_grid=new My2DCellArray(Resource.MAXSIZE, Resource.MAXSIZE);
 		_regions=new Gnonogram_region[Resource.MAXSIZE+Resource.MAXSIZE];
 
 		for (int i=0;i<_regions.length;i++) _regions[i]=new Gnonogram_region(_grid);
-//		_rows = 10; _cols = 10; //set_dimensions must be called before use.
+
 	}
 
-//======================================================================
-		public void set_dimensions(int r, int c) {
+
+	public void set_dimensions(int r, int c)
+	{
 		_rows=r;
 		_cols=c;
 	}
-//======================================================================
+
 	public bool initialize(string[] row_clues, string[] col_clues, My2DCellArray? start_grid)
 	{
 		if (row_clues.length!=_rows || col_clues.length!=_cols)
@@ -87,7 +88,7 @@
 		_guesses=0; _counter=0;
 		return valid();
 	}
-//======================================================================
+
 	public bool valid()
 	{
 		foreach (Gnonogram_region r in _regions)
@@ -95,15 +96,17 @@
 
 		return true;
 	}
-//======================================================================
+
 	public string get_error()
 	{
 		for (int i=0; i<_region_count; i++)
-				{	if (_regions[i]._in_error) return _regions[i].message;}
+		{
+			if (_regions[i]._in_error) return _regions[i].message;
+		}
+
 		return "No error";
 	}
 
-//=========================================================================
 	public int solve_it(bool debug, bool use_advanced=false, bool use_ultimate)
 	{
 		int simple_result=simple_solver(debug,true); //log errors
@@ -128,13 +131,15 @@
 		}
 		return 0;
 	}
-////======================================================================
+
 	private int simple_solver(bool debug, bool log_error=false)
-	{//stdout.printf(@"Simple solver  debug $debug  region count $_region_count\n");
+	{
+		//stdout.printf(@"Simple solver  debug $debug  region count $_region_count\n");
 		bool changed=true;
 		int pass=1;
 		while (changed && pass<30)
-		{//keep cycling through regions while at least one of them is changing (up to 30 times)
+		{
+			//keep cycling through regions while at least one of them is changing (up to 30 times)
 			changed=false;
 			for (int i=0; i<_region_count; i++)
 			{
@@ -158,7 +163,7 @@
 		if (pass>30) stdout.printf("Simple solver - too many passes\n");
 		return 0;
 	}
-//======================================================================
+
 	public bool solved()
 	{
 		for (int i=0; i<_region_count; i++)
@@ -167,14 +172,15 @@
 		}
 		return true;
 	}
-//======================================================================
-	private int advanced_solver(CellState[] grid_store, bool debug)
-	//single cell guesses, depth 1 (no recursion)
-	// make a guess in each unknown cell in _turn
-	// if leads to contradiction mark opposite to guess, continue simple solve, if still no solution start again.
-	// if does not lead to solution leave unknown and choose another cell
 
-	{	//stdout.printf("Advanced solver\n");
+	private int advanced_solver(CellState[] grid_store, bool debug)
+	{
+		// stdout.printf("Advanced solver\n");
+		// single cell guesses, depth 1 (no recursion)
+		// make a guess in each unknown cell in _turn
+		// if leads to contradiction mark opposite to guess,
+		// continue simple solve, if still no solution start again.
+		// if does not lead to solution leave unknown and choose another cell
 		int simple_result=0;
 		int wraps=0;
 		bool changed=false;
@@ -202,7 +208,6 @@
 				_rdir=0; _cdir=1; _rlim=_rows; _clim=_cols; _turn=0;
 				changed=false;
 				wraps++;
-				//stdout.printf("Wrapping ... max _turns %d\n", _max_turns);
 				continue;
 			}
 			_grid.set_data_from_cell(_trial_cell);
@@ -230,10 +235,11 @@
 		if (simple_result>0) return simple_result+_guesses;
 		return 9999999;
 	}
-//======================================================================
+
 	private void save_position(CellState[] gs)
-	{ //store grid in linearised form.
-	//stdout.printf("Save position\n");
+	{
+		//store grid in linearised form.
+		//stdout.printf("Save position\n");
 		for(int r=0; r<_rows; r++)
 		{	for(int c=0; c<_cols; c++)
 			{
@@ -242,9 +248,10 @@
 		}
 		for (int i=0; i<_region_count; i++) _regions[i].save_state();
 	}
-//======================================================================
+
 	private void load_position(CellState[] gs)
-	{//stdout.printf("Load position\n");
+	{
+		//stdout.printf("Load position\n");
 		for(int r=0; r<_rows; r++)
 		{	for(int c=0; c<_cols; c++)
 			{
@@ -253,10 +260,10 @@
 		}
 		for (int i=0; i<_region_count; i++) _regions[i].restore_state();
 	}
-//======================================================================
+
 	private void make_guess()
 	{
-		//scan in spiral pattern from edges.  Critical cells most likely in this region
+		//Scan in spiral pattern from edges.  Critical cells most likely in this region
 		int r=_trial_cell.row;
 		int c=_trial_cell.col;
 
@@ -276,18 +283,18 @@
 		}
 		return;
 	}
-//======================================================================
+
 	public Cell get_cell(int r, int c)
 	{
 		return _grid.get_cell(r,c);
 	}
-//======================================================================
-	private int ultimate_solver(CellState[] grid_store, bool debug)
-	{//stdout.printf("Ultimate solver\n");
 
+	private int ultimate_solver(CellState[] grid_store, bool debug)
+	{
+		//stdout.printf("Ultimate solver\n");
 		int perm_reg=-1, max_value=9999999, advanced_result=-99, simple_result=-99;
 		int limit=GUESSES_BEFORE_ASK;
-//		int possibles=0;
+
 		load_position(grid_store); //return to last valid state
 		for (int i=0; i<_region_count; i++) _regions[i].initial_state();
 		simple_solver(false,true); //make sure region state correct
@@ -323,8 +330,7 @@
 				if (_guesses>limit)
 				{
 					if(Utils.show_confirm_dialog(_("This is taking a long time!")+"\n"+_("Keep trying?"))) limit+=GUESSES_BEFORE_ASK;
-					else	return 9999999;
-					//need something to force screen update here - can take several seconds.
+					else return 9999999;
 				}
 				guess=p.get();
 
@@ -348,7 +354,7 @@
 		}
 		return 9999999;
 	}
-//======================================================================
+
 	private int choose_permute_region(ref int max_value)
 	{
 		int best_value=-1, current_value, perm_reg=-1,edg;
@@ -372,19 +378,14 @@
 	}
 
 	private void increment_counter()
-	{//provide visual feedback
+	{
+		//provide visual feedback
 		_guesses++;	_counter++;
-		if(_counter==10)
+		if(_counter==100)
 		{
 			showprogress(_guesses); //signal to controller
-
 			Gtk.main_iteration_do(true); //process signals
-// Try to make sure screen actually updates - not sure of how to do this.
-// This helps but does not force screen update.
-
 			_counter=0;
-
 		}
 	}
 }
-

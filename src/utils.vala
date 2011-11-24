@@ -22,7 +22,6 @@
  using Gtk;
  using GLib;
 
-//*****************************************************************************
 namespace Utils
 {
 	public static string get_stripped_basename(string path, string? ext)
@@ -32,7 +31,7 @@ namespace Utils
 				bn=bn[0:-ext.length];
 			return bn;
 	}
-//**********************************************************************
+
 	public static string get_string_response(string prompt)
 	{
 		var dialog = new Gtk.Dialog.with_buttons (
@@ -51,7 +50,7 @@ namespace Utils
 		dialog.destroy();
 		return fn;
 	}
-//**********************************************************************
+
 	public static string get_filename(FileChooserAction action, string dialogname, string[]? filternames, string[]? filters, string? start_path=null)
 	{
 		if (filternames!=null) assert(filternames.length==filters.length);
@@ -59,16 +58,13 @@ namespace Utils
 		switch (action)
 		{
 			case FileChooserAction.OPEN:
-//				button=Gtk.Stock.OPEN;
 				button=Gtk.Stock.OPEN;
 				break;
 
 			case FileChooserAction.SAVE:
-//				button=Gtk.Stock.SAVE;
 				button=Gtk.Stock.SAVE;
 				break;
 			case FileChooserAction.SELECT_FOLDER:
-//				button=Gtk.Stock.APPLY;
 				button=Gtk.Stock.APPLY;
 				break;
 			default :
@@ -104,7 +100,10 @@ namespace Utils
 			}
 		}
 		//only need access to built-in puzzle directory if loading a .gno puzzle
-		if (action==FileChooserAction.OPEN && filters!=null && filters[0]=="*.gno") dialog.add_button("Built in puzzles",Gtk.ResponseType.NONE);
+		if (action==FileChooserAction.OPEN && filters!=null && filters[0]=="*.gno")
+		{
+			 dialog.add_button(_("Built in puzzles"),Gtk.ResponseType.NONE);
+		}
 
 		int response;
 		while(true)
@@ -126,7 +125,7 @@ namespace Utils
 
 		return fn;
 	}
-	//*****************************************************************************
+
 	public bool get_dimensions(out int r, out int c, int currentr=5, int currentc=5)
 	{
 		r=currentr; c=currentc;
@@ -169,10 +168,10 @@ namespace Utils
 		dialog.destroy();
 		return success;
 	}
-	//*****************************************************************************
-	public static  int show_dlg(string msg, Gtk.MessageType type, Gtk.ButtonsType buttons)
-	{//stdout.printf("Show dlg\n");
 
+	public static  int show_dlg(string msg, Gtk.MessageType type, Gtk.ButtonsType buttons)
+	{
+		//stdout.printf("Show dlg\n");
 		var dialog=new Gtk.MessageDialog(
 			null,
 			Gtk.DialogFlags.MODAL,
@@ -185,27 +184,27 @@ namespace Utils
 		return response;
 
 	}
-	//*****************************************************************************
+
 	public static void show_info_dialog(string msg)
 	{
 		show_dlg(msg,Gtk.MessageType.INFO,Gtk.ButtonsType.CLOSE);
 	}
-	//*****************************************************************************
+
 	public static void show_warning_dialog(string msg)
 	{
 		show_dlg(msg,Gtk.MessageType.WARNING,Gtk.ButtonsType.CLOSE);
 	}
-	//***************************************************************************
+
 	public static void show_error_dialog(string msg)
 	{
 		show_dlg(msg,Gtk.MessageType.ERROR,Gtk.ButtonsType.CLOSE);
 	}
-	//*****************************************************************************
+
 	public static bool show_confirm_dialog(string msg)
 	{
 		return show_dlg(msg,Gtk.MessageType.WARNING,Gtk.ButtonsType.YES_NO)==Gtk.ResponseType.YES;
 	}
-	//*****************************************************************************
+
 	public static string[] remove_blank_lines(string[] sa)
 	{
 		string[] result = {};
@@ -218,17 +217,17 @@ namespace Utils
 		}
 		return result;
 	}
-	//*****************************************************************************
-	public DataInputStream? open_datainputstream(string filename)
-	{stdout.printf(@"opening $filename\n");
 
+	public DataInputStream? open_datainputstream(string filename)
+	{
+		//stdout.printf(@"opening $filename\n");
 		DataInputStream stream;
 		var file = File.new_for_path (filename);
-	   if (!file.query_exists (null))
-	   {
+		if (!file.query_exists (null))
+		{
 		   stderr.printf ("File '%s' doesn't exist.\n", file.get_path ());
 		   return null;
-	   }
+		}
 
 		try
 		{
@@ -237,7 +236,7 @@ namespace Utils
 		catch (Error e) {Utils.show_warning_dialog(e.message); return null;}
 		return stream;
 	}
-	//*****************************************************************************
+
 	public CellState[] cellstate_array_from_string(string s)
 	{
 		CellState[] cs ={};
@@ -245,7 +244,7 @@ namespace Utils
 		for (int i=0; i<data.length; i++) cs+=(CellState)(int.parse(data[i]).clamp(0,6));
 		return cs;
 	}
-	//*****************************************************************************
+
 	public string gnonogram_string_from_hex_string(string s, int pad_to_length)
 	{
 		StringBuilder sb= new StringBuilder(""); int count=0;
@@ -305,7 +304,7 @@ namespace Utils
 
 		return sb.str;
 	}
-	//*****************************************************************************
+
 	public string hex_string_from_cellstate_array(CellState[] sa)
 	{
 		StringBuilder sb= new StringBuilder("");
@@ -324,7 +323,7 @@ namespace Utils
 		}
 		return sb.str;
 	}
-//*****************************************************************************
+
 	private string int2hex(int i)
 	{
 		if (i<=9) return i.to_string();
@@ -333,7 +332,7 @@ namespace Utils
 		string[] l={"A","B","C","D","E","F"};
 		return l[i];
 	}
-//*****************************************************************************
+
 	public string convert_html(string? html)
 	{
 		if (html==null) return "";
@@ -348,7 +347,6 @@ namespace Utils
 				var sb=new StringBuilder("");
 				for (int i=0; i<s.length;i++)
 				{	int u=int.parse(s[i]);
-//				{	int u=s[i].to_int();
 					if (u>31 && u<65535)
 					{
 						sb.append_unichar((unichar)u);
@@ -362,9 +360,10 @@ namespace Utils
 		catch (RegexError re) {show_warning_dialog(re.message); return "";}
 
 	}
-	//*****************************************************************************
+
 	public string string_from_cellstate_array(CellState[] cs)
-	{//stdout.printf("string from cell_state_array\n");
+	{
+		//stdout.printf("string from cell_state_array\n");
 		if (cs==null) return "";
 		StringBuilder sb= new StringBuilder();
 		for (int i=0; i<cs.length; i++)
@@ -374,9 +373,10 @@ namespace Utils
 		}
 		return sb.str;
 	}
-	//*****************************************************************************
+
 	public string block_string_from_cellstate_array(CellState[] cs)
-	{//stdout.printf("block string from cell_state_array length %d\n", cs.length);
+	{
+		//stdout.printf("block string from cell_state_array length %d\n", cs.length);
 		StringBuilder sb= new StringBuilder("");
 		int count=0, blocks=0;
 		bool counting=false;
@@ -414,18 +414,16 @@ namespace Utils
 
 		return sb.str;
 	}
-	//*****************************************************************************
+
 	public int[] block_array_from_clue(string s)
 	{
 		//stdout.printf(@"Block array from clue $s \n");
-
 		string[] clues=remove_blank_lines(s.split_set(", "));
 
 		if(clues.length==0) clues={"0"};
 		int[] blocks=new int[clues.length];
 
 		for (int i=0;i<clues.length;i++) blocks[i]=int.parse(clues[i]);
-//		for (int i=0;i<clues.length;i++) blocks[i]=clues[i].to_int();
 
 		return blocks;
 	}
@@ -450,30 +448,10 @@ namespace Utils
 		extent--;
 		return extent;
 	}
-//*****************************************************************************
+
 	public string get_todays_date_string(){
 		TimeVal t={};
 		t.get_current_time();
 		return (t.to_iso8601()).slice(0,10);
 	}
-//*****************************************************************************
-
-//	class Gnonogram_filedialog : Gtk.FileChooserDialog
-//	{
-////		public Gnonogram_filedialog(string? title, Gtk.Window? parent, Gtk.FileChooserAction action, string accept_button_text)
-////		{
-////			this.add_button("Built in games",Gtk.ResponseType.NONE);
-////			this.add_button("Cancel",Gtk.ResponseType.CANCEL);
-////			this.add_button(accept_button_text,Gtk.ResponseType.ACCEPT);
-
-////			if(title==null) stdout.printf("No title\n");
-////			else this.set_title(title);
-
-////		}
-
-//		public void add_default_game_dir_button()
-//		{
-//			this.add_button("Built in games",Gtk.ResponseType.NONE);
-//		}
-//	}
 }

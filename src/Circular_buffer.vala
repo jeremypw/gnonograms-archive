@@ -19,7 +19,10 @@
  * 	Jeremy Wootten <jeremwootten@gmail.com>
  */
 
-public class Circular_move_buffer {
+
+public class Circular_move_buffer
+{
+
 	private Move[] _buffer;
 	int _start;
 	int _end;
@@ -47,8 +50,6 @@ public class Circular_move_buffer {
 		if (_pointer==_size)_pointer=0;
 		if (_offset==0) //no undos done
 		{
-			//_end+=1;
-			//if (_end==_size) _end=0;
 			if (_nbr_items>_size) //buffer full -rotate end pointer
 			{
 				_start+=1; _nbr_items=_size;
@@ -59,22 +60,16 @@ public class Circular_move_buffer {
 		{
 			_nbr_items-=_offset;
 			_offset=0;
-			//_end=_pointer;
 		}
-		// _end and _pointer both point at next available slot.
-		//stdout.printf(@"new_data: nbr_items=$_nbr_items, offset=$_offset, pointer=$_pointer, start=$_start, end=$_end\n");
 	}
 
 	public Move? previous_data()
 	{
 		if (_offset==_nbr_items) return null; //used all undos
-
 		_pointer-=1;
 		if (_pointer<0) _pointer=_size-1;
-
 		_offset+=1;
 
-		//stdout.printf(@"after previous_data: nbr_items=$_nbr_items, offset=$_offset, pointer=$_pointer, start=$_start, end=$_end\n");
 		return _buffer[_pointer];
 	}
 	public Move? next_data()
@@ -84,7 +79,7 @@ public class Circular_move_buffer {
 		_pointer+=1;
 		if (_pointer==_size) _pointer=0;
 		_offset-=1;
-		//stdout.printf(@"after next_data: nbr_items=$_nbr_items, offset=$_offset, pointer=$_pointer, start=$_start, end=$_end\n");
+
 		return data;
 	}
 
@@ -92,6 +87,7 @@ public class Circular_move_buffer {
 	{
 		return _offset==_nbr_items;
 	}
+
 	public bool no_more_next_data()
 	{
 		return _offset==0;

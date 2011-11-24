@@ -19,9 +19,10 @@
  * 	Jeremy Wootten <jeremwootten@gmail.com>
  */
 
- using Gtk;
+using Gtk;
 
-public class Gnonogram_LabelBox : Frame {
+public class Gnonogram_LabelBox : Frame
+{
 	private bool _is_column; //true if contains column labels(i.e. HBox)
 	private int _size; //no of labels in box
 	private int _other_size; //possible length of label text (size of other box)
@@ -30,7 +31,7 @@ public class Gnonogram_LabelBox : Frame {
 	private string _attribstart;
 	private string _attribend;
 	private double _fontheight;
-//======================================================================
+
 	public Gnonogram_LabelBox(int size, int other_size, bool is_col)
 	{
 		_is_column=is_col;
@@ -56,9 +57,10 @@ public class Gnonogram_LabelBox : Frame {
 		resize(size, other_size);
 		add(_box);
 	}
-//======================================================================
+
 	public void resize(int new_size, int other_size)
-	{//stdout.printf("Resize label box %s\n", new_size.to_string());
+	{
+		//stdout.printf("Resize label box %s\n", new_size.to_string());
 		unhighlight_all();
 		if (new_size!=_size)
 		{
@@ -77,19 +79,17 @@ public class Gnonogram_LabelBox : Frame {
 				}
 			}
 			if (_size!=new_size) stdout.printf("Error adding or removing labels");
+			this.show_all();
 		}
 		_other_size=other_size;
-//		set_default_fontheight(_size, _other_size);
-//		set_attribs(_fontheight);
-//		set_all_to_zero();
 	}
-//======================================================================
+
 	private void remove_label()
 	{
 		GLib.List<weak Gtk.Widget> l=_box.get_children();
 		_box.remove(l.nth_data((uint)l.length()-1));
 	}
-//======================================================================
+
 	public void change_font_height(bool increase)
 	{
 		if (increase) _fontheight+=1.0;
@@ -97,36 +97,39 @@ public class Gnonogram_LabelBox : Frame {
 		set_attribs(_fontheight);
 		for (int i=0; i<_size;i++) update_label(i,get_label_text(i));
 	}
-//======================================================================
+
 	public void set_font_height(double fontheight)
 	{
 		_fontheight=fontheight.clamp(Resource.MINFONTSIZE, Resource.MAXFONTSIZE);
 		set_attribs(_fontheight);
 		for (int i=0; i<_size;i++) update_label(i,get_label_text(i));
 	}
-//======================================================================
+
 	public void highlight(int idx, bool is_highlight)
-	{//stdout.printf(@"highlight $idx $is_highlight \n");
+	{
+		//stdout.printf(@"highlight $idx $is_highlight \n");
 		if (idx>=_size||idx<0) return;
 		_labels[idx].highlight(is_highlight);
 	}
-//======================================================================
+
 	private void unhighlight_all()
-	{//stdout.printf("Unhighlight all\n");
+	{
+		//stdout.printf("Unhighlight all\n");
 		for (int i=0;i<_size;i++) {highlight(i,false);}
 	}
-//======================================================================
+
 	public void update_label(int idx, string txt)
-	{//stdout.printf("Idx %d Label txt %s\n",idx,txt);
+	{
+		//stdout.printf("Idx %d Label txt %s\n",idx,txt);
 		_labels[idx].set_markup(_attribstart,txt,_attribend);
 		_labels[idx].set_size(_other_size);
 	}
-//======================================================================
+
 	public string get_label_text(int idx)
 	{
 		return _labels[idx].get_text();
 	}
-//======================================================================
+
 	public string to_string()
 	{
 		StringBuilder sb=new StringBuilder();
@@ -139,21 +142,14 @@ public class Gnonogram_LabelBox : Frame {
 
 		return sb.str;
 	}
-//======================================================================
+
 	private void set_attribs(double fontheight)
 	{
 		 int fontsize=1024*(int)(fontheight);
 		_attribstart=@"<span font_desc='$(Resource.font_desc)' size='$fontsize'>";
 		_attribend="</span>";
 	}
-//======================================================================
-//	private void set_default_fontheight(int size, int other_size)
-//	{Moved to controller, different algorithm
-//		if(_is_column)_fontheight=Resource.FONTBASESIZE-(double)(other_size-15)*Resource.FONTSCALEFACTOR;
-//		else _fontheight=Resource.FONTBASESIZE-(double)(size-15)*Resource.FONTSCALEFACTOR;
-//		_fontheight=_fontheight.clamp(Resource.MINFONTSIZE, Resource.MAXFONTSIZE);
-//	}
-//======================================================================
+
 	public void set_all_to_zero()
 	{
 		for(int l=0;l<_size;l++) update_label(l,"0");

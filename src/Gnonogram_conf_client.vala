@@ -34,7 +34,7 @@ using GLib;
 	public bool valid;
 
 	public Gnonogram_conf_client()
-	{//stdout.printf("Gnonogram_conf_client\n");
+	{	//stdout.printf("Gnonogram_conf_client\n");
 		//Open config file in conf_dir
 		valid=false;
 		try
@@ -56,10 +56,7 @@ using GLib;
 			if (!conf_file.query_exists(null))
 			{
 				conf_file.create(FileCreateFlags.NONE);
-				if (conf_file.query_exists(null))
-				{//stdout.printf("Created gnonograms config file\n");
-				}
-				else
+				if (!conf_file.query_exists(null))
 				{
 					stdout.printf("Failed to create gnonograms config file\n");
 					return;
@@ -84,65 +81,56 @@ using GLib;
 		}
 		valid=true;
 	}
-//=====================================================================
+
 	public string? get_value(string header, string key)
-	{//stdout.printf("get_value header %s  key %s\n",header,key);
+	{	//stdout.printf("get_value header %s  key %s\n",header,key);
 		if (this.valid)
 		{
 			string k=header.strip()+"."+key.strip();
-			//stdout.printf("Looking for %s\n",k);
+
 			for (int i=0;i<keys.length;i++)
-			{	//stdout.printf("Looking at key %d: %s\n",i,keys[i]);
+			{
 				if (keys[i]==k)
 				{
-					//stdout.printf("Found it\n");
 					return values[i];
 				}
 			}
 		}
-		//stdout.printf("Not Found \n");
 		return null;
 	}
-//=====================================================================
+
 	public void set_value(string header, string key, string svalue)
-	{//stdout.printf("set_value header %s  key %s value %s\n",header,key,svalue);
+	{	//stdout.printf("set_value header %s  key %s value %s\n",header,key,svalue);
 		if (this.valid)
 		{
 			string k=header.strip()+"."+key.strip();
-			//stdout.printf("Looking for %s\n",k);
 			for (int i=0;i<keys.length;i++)
-			{//stdout.printf("Looking at key %d: %s\n",i,keys[i]);
+			{
 				if (keys[i]==k)
 				{
-					//stdout.printf("Found it -replacing with %s\n",svalue);
 					values[i]=svalue.strip();
 					return;
 				}
 			}
-			//stdout.printf("Not found - adding key and value\n");
 			keys+=k;
 			values+=svalue.strip();
-			//stdout.printf("Looking for header %s\n", header);
 			bool found=false;
 			for (int i=0; i<headings.length;i++)
 			{
-				//stdout.printf("Looking at header %d: %s\n",i,headings[i]);
 				if (headings[i]==header)
 				{
-					//stdout.printf("Found it\n");
 					found=true;break;
 				}
 			}
 			if (!found)
 			{
-				//stdout.printf("Not found adding header\n");
 				headings+=header;
 			}
 		}
 	}
-//=====================================================================
+
 	private bool parse_gnonogram_config_file(DataInputStream stream)
-	{//stdout.printf("parse config file \n");
+	{	//stdout.printf("parse config file \n");
 		size_t headerlength, bodylength;
 		string h;
 		string b;
@@ -163,9 +151,9 @@ using GLib;
 
 		return parse_gnonogram_config_headings_and_bodies();
 	}
-//=====================================================================
+
 	private bool parse_gnonogram_config_headings_and_bodies()
-	{//stdout.printf("parse config file headings and bodies \n");
+	{	//stdout.printf("parse config file headings and bodies \n");
 		int n=headings.length;
 		for (int i=0;i<n;i++)
 		{
@@ -177,7 +165,7 @@ using GLib;
 	}
 
 	private void extract_key_values(string heading, string body)
-	{//stdout.printf("extract key values \n");
+	{	//stdout.printf("extract key values \n");
 		string[] key_values=Utils.remove_blank_lines(body.split("\n"));
 		for (int i=0;i<key_values.length;i++)
 		{
@@ -188,7 +176,7 @@ using GLib;
 	}
 
 	public void write_config_file()
-	{//stdout.printf("write config file \n");
+	{	//stdout.printf("write config file \n");
 		try
 		{
 			conf_file.delete();
@@ -206,7 +194,7 @@ using GLib;
 					}
 				}
 			}
-			//stdout.printf("File written\n");
+
 		}
 		catch (Error e) {stdout.printf("Glib Error %s\n",e.message);}
 	}

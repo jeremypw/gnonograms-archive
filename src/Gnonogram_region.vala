@@ -22,12 +22,26 @@
 
  public class Gnonogram_region {
 
-/** A region consists of a one dimensional array of cells, corresponding to a row or column of the puzzle
- Associated with this are:
+/** A region consists of a one dimensional array of cells, corresponding
+ *  to a row or column of the puzzle.	Associated with this are:
+ *
 	1) A list of block lengths (clues)
-	2) A 'tag' boolean array for each cell with a flag for each block indicating whether it is still a possible owner and two extra flags - ' is completed' and ' can be empty'
-	3) A 'completed blocks' boolean array with a flag for each block indicating whether it is completed.
-	4) A status array, one per cell indicating the status of that cell as either UNKNOWN, FILLED (but not necessarily assigned to a completed block, EMPTY, or COMPLETED (assigned to a completed block).
+	2) A 'tag' boolean array for each cell with
+		* 	a flag for each block indicating whether that block is still a possible owner
+		* 	two extra flags - ' is completed' and ' can be empty'
+	3) A 'completed blocks' boolean array with
+		* 	a flag for each block indicating whether it is completed.
+	4) A status array, one per cell indicating the status of that cell as either
+		* UNKNOWN,
+		* FILLED (but not necessarily assigned to a completed block),
+		* EMPTY, or
+		* COMPLETED (assigned to a completed block).
+		*
+	Can save and restore its state - used to implement (one level)
+	* back tracking during trial and error solution ('advanced solver').
+	*
+	Can generate all possible permutations of block positions in one region
+	* Used for ('ultimate solver').
 **/
 	public bool _is_column;
 	public bool _in_error;
@@ -64,8 +78,7 @@
 	private const int MAXCYCLES=100;
 	private const int FORWARDS=1;
 	private const int BACKWARDS=-1;
-//
-//=========================================================================
+
 	public Gnonogram_region (My2DCellArray grid)
 	{
 		_grid=grid;
@@ -73,19 +86,24 @@
 		_status=new CellState[maxlength]; _status_store=new CellState[maxlength];
 		_temp_status=new CellState[maxlength];
 
-// in order that size of class is determined initialize all array variables to maximum possible size
-// get weird memory errors otherwise.
+		// in order that size of class is determined initialize all
+		//array variables to maximum possible size.
+		// Get memory errors otherwise.
 
 		int maxblocks=maxlength/2+2;
 
 		_ranges=new int[maxblocks,4+maxblocks];
 		_blocks=new int[maxblocks];
-		_completed_blocks=new bool[maxblocks]; _completed_blocks_store=new bool[maxblocks];
-		_tags=new bool[maxlength, maxblocks+2]; _tags_store=new bool[maxlength, maxblocks+2];
+
+		_completed_blocks=new bool[maxblocks];
+		_completed_blocks_store=new bool[maxblocks];
+
+		_tags=new bool[maxlength, maxblocks+2];
+		_tags_store=new bool[maxlength, maxblocks+2];
 		//two extra flags for "can be empty" and "is finished".
 
 	}
-//=========================================================================
+
 	public void initialize(int index, bool iscolumn, int ncells, string clue)
 	{
 		_index=index; 	_is_column=iscolumn;  _ncells=ncells; _clue=clue;
@@ -95,16 +113,18 @@
 		_can_be_empty_ptr=_nblocks; //flag for cell that may be empty
 		_is_finished_ptr=_nblocks+1; //flag for finished cell (filled or empty?)
 		_block_total=0;
+
 		for (int i=0;i<_nblocks;i++)
 		{
 			_blocks[i]=tmp_blocks[i];
 			_block_total=_block_total+tmp_blocks[i];
 		}
+
 		_block_extent=_block_total+_nblocks-1; //minimum space needed for blocks
 
 		initial_state();
 	}
-//=====================================================================
+
 	public void initial_state()
 	{
 		for (int i=0;i<_nblocks;i++)
@@ -127,7 +147,9 @@
 
 		_in_error=false;
 		_completed=(_ncells==1); //allows debugging of single row
+
 		if (_completed) return;
+
 		_unknown=99;
 		_filled=99;
 		_empty=-1;
@@ -152,45 +174,58 @@
 		tags_to_status();
 		put_status();
 	}
-//======================================================================
+
 	private void initial_fix()
-	{//stdout.printf(@"$(this) initial_fix\n");
-			int freedom=_ncells-_block_extent;
-			int start=0;
-			int length=0;
+	{	//finds cells that can be identified as FILLED from the start.
+		//stdout.printf(@"$(this) initial_fix\n");
+		int freedom=_ncells-_block_extent;
+		int start=0;
+		int length=0;
 
-			for (int i=0; i<_nblocks; i++)
+		for (int i=0; i<_nblocks; i++)
+		{
+			length=_blocks[i]+freedom;
+			for (int j=start; j<start+length; j++) _tags[j,i]=true;
+			if (freedom<_blocks[i])
 			{
-				length=_blocks[i]+freedom;
-				for (int j=start; j<start+length; j++) _tags[j,i]=true;
-				if (freedom<_blocks[i])
-				{
-					set_range_owner(i,start+freedom,_blocks[i]-freedom,true,false);
-				}
-				start=start+_blocks[i]+1; //leave a gap between blocks
+				set_range_owner(i,start+freedom,_blocks[i]-freedom,true,false);
 			}
+			start=start+_blocks[i]+1; //leave a gap between blocks
+		}
 
-			if (freedom==0) _completed=true;
+		if (freedom==0) _completed=true;
 	}
-//======================================================================
+
 	public bool solve(bool debug=false)
 	{
-		/**cycles through ploys until no further changes can be made
-		ignore single cell regions for testing purposes ...
+		/**if change has occurred since last visit (due to change in an intersecting
+		 * region), runs full-fix() to see whether any inferences possible.
+		 * as soon as any change is made by full_fix(), updates status of
+		 * all cells from the tags, checks for errors or completion.
+		 * Repeats until no further inferences made or MAXCYCLES exceeded.
+		 *
+		 * The advanced solver relies on the error signals to implement a "trial
+		 * and error" method of solution when straight logic fails. An error
+		 * is produced when an intersecting region makes a change incompatible
+		 * with this region.
+		 *
+			Ignores single cell regions for testing purposes ...
 		* */
-		//stdout.printf(@"Region $_index $_is_column Solve debug $debug _debug $_debug\n");
+
 		message="";
 		_debug=debug;
 		if (_completed) return false;
 
 		bool made_changes=false;
 		get_status();
-		bool still_changing=totals_changed(); //also detects whether completed and if so calls check_nblocks.
+		bool still_changing=totals_changed();
+		//also detects whether completed and if so calls check_nblocks().
 
 		if (_completed || _in_error||!still_changing) return false;
 
 		int count=0;
-		while (!_completed && count<MAXCYCLES) //count guards against infinite loops
+		while (!_completed && count<MAXCYCLES)
+		//count guards against infinite loops
 		{
 			count++;
 			still_changing=full_fix();
@@ -209,55 +244,65 @@
 
 		return made_changes;
 	}
-//======================================================================
 
 	private bool full_fix()
-	{	//if (_debug) stdout.printf("\n\nfull_fix\n");
-		//stdout.printf("Capped range audit\n");
-		if (capped_range_audit()||_in_error||tags_to_status()) {
-			//stdout.printf("Capped range audit made changes\n");
-			return true;}
-		//stdout.printf("Possibilities audit\n");
-		if (possibilities_audit()||_in_error||tags_to_status()) {
-			//stdout.printf("possibilities audit made change\n");
-			return true;}
-		//stdout.printf("Only_possibility\n");
-		if (only_possibility()||_in_error||tags_to_status()) {
-			//stdout.printf("only possibility made change\n");
-			return true;}
-		//stdout.printf("Do edge(1)\n");
-		if (do_edge(1)||_in_error||tags_to_status()) {
-			//stdout.printf("do edge forwards made change\n");
-			return true;}
-		//stdout.printf("Do edge(-1)\n");
-		if (do_edge(-1)||_in_error||tags_to_status()) {
-			//stdout.printf("do edge backwards made change\n");
-			return true;}
-		//stdout.printf("Filled subregion\n");
-		if (filled_subregion_audit()||_in_error||tags_to_status()) {
-			//stdout.printf("filled sub region made change\n");
-			return true;}
-		//stdout.printf("Fill_gaps\n"); //Redundant?
-		if (fill_gaps()||_in_error||tags_to_status()) {
-			//stdout.printf("fill gaps made change\n");
-			return true;}
-		//stdout.printf("Free cell audit\n");
-		if (free_cell_audit()||_in_error||tags_to_status()) {
-			//stdout.printf("free cell audit audit made change\n");
-			return true;}
-		//stdout.printf("Fix blocks in ranges\n");
-		if (fix_blocks_in_ranges()||_in_error||tags_to_status()) {
-			//stdout.printf("Fix blocks in ranges made change\n");
-			return true;}
+	{
+		// Tries each ploy in turn, returns as soon as a change is made
+		// or an error detected.
+
+		if (capped_range_audit()||_in_error||tags_to_status())
+		{
+			return true;
+		}
+
+		if (possibilities_audit()||_in_error||tags_to_status())
+		{
+			return true;
+		}
+
+		if (only_possibility()||_in_error||tags_to_status())
+		{
+			return true;
+		}
+
+		if (do_edge(1)||_in_error||tags_to_status())
+		{
+			return true;
+		}
+
+		if (do_edge(-1)||_in_error||tags_to_status())
+		{
+			return true;
+		}
+
+		if (filled_subregion_audit()||_in_error||tags_to_status())
+		{
+			return true;
+		}
+
+		if (fill_gaps()||_in_error||tags_to_status())
+		{
+			return true;
+		}
+
+		if (free_cell_audit()||_in_error||tags_to_status())
+		{
+			return true;
+		}
+
+		if (fix_blocks_in_ranges()||_in_error||tags_to_status())
+		{
+			return true;
+		}
 
 		return false;
 	}
 
-//======================================================================
-	private bool filled_subregion_audit() {
-//find a range of filled cells not completed and see if can be associated
-// with a unique block.
-	//stdout.printf("Filled subregions audit\n");
+	private bool filled_subregion_audit()
+	{
+		//find a range of filled cells not completed and see if can be associated
+		// with a unique block.
+
 		bool changed=false, start_capped, end_capped;
 		int idx=0;
 		int length;
@@ -265,23 +310,23 @@
 		while (idx<_ncells)
 		{//find a filled sub-region
 			start_capped=false; end_capped=false;
-			if (skip_while_not_status(CellState.FILLED,ref idx, _ncells, 1))
+			if (skip_while_not_status(CellState.FILLED,ref idx, _ncells, 1))//find first FILLED cell
 			{
 				//idx points to first filled cell or returns false
 				if (_tags[idx,_is_finished_ptr]) {idx++;continue;}//ignore if completed already
-				if(idx==0 || _status[idx-1]==CellState.EMPTY) start_capped=true;
+				if(idx==0 || _status[idx-1]==CellState.EMPTY) start_capped=true; //edge cell
 				length=count_next_state(CellState.FILLED, idx);//idx not changed
-				int lastcell=idx+length-1;
-				if (lastcell==_ncells-1 || _status[lastcell+1]==CellState.EMPTY) end_capped=true;
+				int lastcell=idx+length-1;//last filled cell in this (partial) block
+				if (lastcell==_ncells-1 || _status[lastcell+1]==CellState.EMPTY) end_capped=true; //last cell is at edge
 
-				//is this region capped?
+				//is this region fully capped?
 				if (start_capped && end_capped)
-				{// assigned block must fit exactly
+				{	// assigned block must fit exactly
 					assign_and_cap_range(idx,length);
 					changed=true;
 				}
 				else
-				{
+				{	//find largest possible owner of this (partial) block
 					int largest=find_largest_possible_in_cell(idx);
 
 					if (largest==length)
@@ -291,38 +336,42 @@
 						changed=true;
 					}
 					else
-					{//remove blocks that are smaller than length from this region and one cell either side.
-					//For the two cells adjacent to the region, add one to the minimum length
+					{	// remove blocks that are smaller than length from this region
 
-						//stdout.printf(@"Removing too small blocks idx $idx lengt $length \n");
-						int start = idx==0 ? idx : idx-1;
-						int end = (idx+length ==_ncells) ? idx+length-1 : idx+length;
-						for (int bl=0;bl<_nblocks;bl++){
-							for(int i=start;i<=end;i++){
+						int start = idx;
+						int end = idx+length-1;
+						for (int bl=0;bl<_nblocks;bl++)
+						{
+							for(int i=start;i<=end;i++)
+							{
 								if (_tags[i,bl] && _blocks[bl]<length) _tags[i,bl]=false;
 							}
 						}
 
-//						if(start>0){
-//							for (int bl=0;bl<_nblocks;bl++){
-//								if (_tags[start,bl] && _blocks[bl]<length+1) _tags[start,bl]=false;
-//							}
-//						}
-//						if(end<_ncells){
-//							for (int bl=0;bl<_nblocks;bl++){
-//								if (_tags[end,bl] && _blocks[bl]<length+1) _tags[end,bl]=false;
-//							}
-//						}
+						// For the adjacent cells (if not at edge) the minimum length
+						// of the owner is one higher.
+						if (start>0) start--;
+						{
+							for (int bl=0;bl<_nblocks;bl++)
+							{
+								if (_tags[start,bl] && _blocks[bl]<length+1) _tags[start,bl]=false;
+							}
+						}
+						if (end<_ncells-1) end++;
+						{
+							for (int bl=0;bl<_nblocks;bl++)
+							{
+								if (_tags[end,bl] && _blocks[bl]<length+1) _tags[end,bl]=false;
+							}
+						}
 
-						if (start_capped || end_capped)
-						//TODO look for empty cells nearer than difference between smallest and length.
+						if (start_capped || end_capped) //capped at one end only
 						{
 							int smallest=find_smallest_possible_in_cell(idx);
 
 							if (smallest>length)
-							{//extend filled cells
+							{	//extend filled cells away from capped end
 								int count=smallest-length;
-								//int start;
 								int direction;
 								if(end_capped) {start=idx-1;direction=BACKWARDS;}
 								else {start=idx+length;direction=FORWARDS;}
@@ -343,73 +392,95 @@
 		}
 		return changed;
 	}
-//======================================================================
+
 	private bool fill_gaps()
-	{	// Find unknown gap between filled cells and complete accordingly.
-		// Find an owned cell followed by an unknown gap
-		// Find next filled cell - if same owner complete between
+	{
+		// Find unknown gap between filled cells and complete accordingly.
 
 		bool changed=false;
 		for (int idx=0; idx<_ncells-2; idx++)
 		{
-			if (_status[idx]!=CellState.FILLED) continue;
-			if (_status[idx+1]!=CellState.UNKNOWN) continue;
+			if (_status[idx]!=CellState.FILLED) continue; //find a FILLED cell
+			if (_status[idx+1]!=CellState.UNKNOWN) continue; //is following cell empty?
+
 			if (!one_owner(idx))
-			{//see if single cell gap which can be marked empty because to fill it would create a block larger than any permissible.
-				if(_status[idx+2]!=CellState.FILLED) continue;
-				int blength=count_next_state(CellState.FILLED,idx+2, true)+count_next_state(CellState.FILLED,idx,false)+1;
+			{	// if owner ambiguous, can only deal with single cell gap
+				// see if single cell gap which can be marked empty because
+				// to fill it would create a block larger than any permissible.
+
+				if(_status[idx+2]!=CellState.FILLED) continue; //cell after that filled?
+				// we have found a one cell gap
+				// calculate total length if gap were to be FILLED.
+				int blength	=	count_next_state(CellState.FILLED,idx+2, true)
+										+	count_next_state(CellState.FILLED,idx,false)
+										+	1;
+
 				bool must_be_empty=true;
+				//look for a possible owner at least as long as combined length
 				for (int bl=0; bl<_nblocks; bl++)
 				{
-					if(_tags[idx,bl] && _blocks[bl]>=blength) {must_be_empty=false;break;}
+					if(_tags[idx,bl] && _blocks[bl]>=blength)
+					{	//possible owner found - gap could be filled
+						must_be_empty=false;
+						break;
+					}
 				}
 				//no permissible blocks large enough
-				if (must_be_empty){set_cell_empty(idx+1); changed= true;}
+				if (must_be_empty)
+				{
+					set_cell_empty(idx+1);
+					changed= true;
+				}
 			}
 			else
-			{
+			{	//only one possible owner of first FILLED cell
 				int cell1=idx; //start of gap
 				idx++;
 				//skip to end of gap
 				while (idx<_ncells-1 && _status[idx]==CellState.UNKNOWN) idx++;
 
-				if (_status[idx]!=CellState.FILLED) continue; //gap ends with empty cell
-
-				int owner;
-				if (same_owner(cell1,idx, out owner))
-				{
-					changed=set_range_owner(owner,cell1,idx-cell1+1,true,false)||changed;
+				if (_status[idx]!=CellState.FILLED)
+				{ //gap ends with empty cell - abandon this gap
+					 continue;
 				}
-				idx--;//TEST
+				else
+				{ //if start and end of gap have same owner, fill in the gap.
+					int owner;
+					if (same_owner(cell1,idx, out owner))
+					{
+						changed=set_range_owner(owner,cell1,idx-cell1+1,true,false)||changed;
+					}
+					idx--;
+				}
 			}
 		}
 		return changed;
 	}
-//======================================================================
-	private bool possibilities_audit()
-	{	//find a unique possible range for block if there is one.
-		//eliminates ranges that are too small
-		//stdout.printf("possibilities audit\n");
-		//log_state();
-		bool changed=false;
 
+	private bool possibilities_audit()
+	{
+		//find a unique possible range for block if there is one.
+		//eliminates ranges that are too small
+		bool changed=false;
 		int start,length,count;
 
 		for (int i=0;i<_nblocks;i++)
 		{
 			if (_completed_blocks[i]) continue; //skip completed block
 
-			start=0;length=0;count=0;
+			start=0;length=0;
+			count=0; //how many possible ranges for this block
 			for (int idx=0;idx<_ncells;idx++)
 			{
-				if (count>1) break; //try next block
+				if (count>1) break; //no unique range - try next block
+
 				if (!_tags[idx,i]||_tags[idx,_is_finished_ptr]) continue;
 
 				int s=idx; //first cell with block i as possible owner
 				int l=count_next_owner(i,idx); //length of contiguous cells having this block (i) as a possible owner.
 
 				if (l<_blocks[i])
-				{//cant be here
+				{	//block cannot be here
 					remove_block_from_range(i,s,l);
 				}
 				else
@@ -422,25 +493,27 @@
 			}
 
 			if (count!=1) continue; //no unique range found
-			else {//at least some cells can be assigned but
-			//this range not proved exclusive to this block;
+			else
+			{	//perhaps some cells can be assigned but
+				//this range not proved exclusive to this block;
 				changed=fix_block_in_range(i,start,length)||changed;
 			}
 		}
-		//log_state();
 		return changed;
 	}
-//=========================================================================
+
 	private void assign_and_cap_range(int start, int length)
-	{	//make list of possible blocks with right length in max_blocks[]
+	{
+		//make list of possible blocks with right length in max_blocks[]
 		//record which is first and which last (in order).
 		//always changes at least on cell status
 		//stdout.printf(@"Assign and cap start $start length $length\n");
+
 		int count=0;
 		int[] max_blocks=new int[_nblocks];
 		int first=_nblocks;
 		int last=0;
-		int end=start+length-1;  //TEST
+		int end=start+length-1;
 
 		for (int i=0;i<_nblocks;i++)
 		{
@@ -457,11 +530,11 @@
 
 		if(count==0) return; //not necessarily an error
 		if (count==1)
-		{//unique owner
+		{	//unique owner
 			set_block_complete_and_cap(max_blocks[0],start);
 		}
 		else
-		{//ambiguous owner
+		{	//ambiguous owner
 			//delete out of sequence blocks before end of range
 			for (int i=last+1;i<_nblocks;i++) //TEST
 			{
@@ -478,21 +551,21 @@
 				if (_blocks[i]==length) continue;
 				remove_block_from_range(i,start,length,1);
 			}
-
 			//for each possible mark as possible owner of subregion (not exclusive)
 			for (int i=0;i<count;i++)
 			{
 				set_range_owner(max_blocks[i],start,length,false, false);
 			}
-
 			// cap range
 			if (start>0) set_cell_empty(start-1);
 			if (start+length<_ncells) set_cell_empty(start+length);
 		}
 	}
-//======================================================================
+
 	private bool only_possibility()
-	{ //find an unfinished cell with only one possibility
+	{
+		//find an unfinished cell with only one possibility
+		//remove this block from cells out of range
 
 		bool changed=false;
 		int owner;
@@ -502,20 +575,20 @@
 		for (int i=0;i<_ncells;i++)
 		{
 			if (_tags[i,_is_finished_ptr]) continue;
-
+			// unfinsihed cell found
 			if (_status[i]==CellState.FILLED && one_owner(i))
-			{
+			{	//cell is FILLED and has only one owner
 				//find the owner
-
 				for (owner=0;owner<_nblocks;owner++)
 				{
 					if (_tags[i,owner]) break;
 				}
 
 				length=_blocks[owner];
+				//remove this block from earlier cells our of range
 				start=i-length;
 				if (start>=0) remove_block_from_cell_to_end(owner,start,-1);
-
+				//remove this block from later cells our of range
 				start=i+length;
 				if (start<_ncells) remove_block_from_cell_to_end(owner,start,+1);
 			}
@@ -523,11 +596,16 @@
 		return changed; //always false - only changes tags
 	}
 
-//======================================================================
 	private bool free_cell_audit()
 	{
-		int free_cells=count_cell_state(CellState.UNKNOWN);
+		// Compare  number of UNKNOWN cells with the number of unassigned
+		// block cells.
+		// If they are the same then mark all UNKNOWN cells as
+		// FILLED and mark all blocks COMPLETE.
+		// If there are no unassigned block cells then mark all UNKNOWN
+		// cells as EMPTY.
 
+		int free_cells=count_cell_state(CellState.UNKNOWN);
 		if (free_cells==0) return false;
 
 		int filled_cells=count_cell_state(CellState.FILLED);
@@ -535,7 +613,7 @@
 		int to_locate=_block_total-filled_cells-completed_cells;
 
 		if (free_cells==to_locate)
-		{//free_cells>0
+		{	// Set all UNKNOWN as COMPLETE
 			for (int i=0;i<_ncells;i++)
 			{
 				if (_status[i]==CellState.UNKNOWN) set_cell_complete(i);
@@ -557,10 +635,13 @@
 		return false;
 	}
 
-//======================================================================
 	private bool do_edge(int direction)
 	{
-		//1=forward -1=backward
+		// Scan forward (or backward) from an edge searching for filled cells
+		// that are nearer than length of first (or last) block.
+		// FILL cells after that to length of first (or last) block.
+		// Look for FILLED cell just out of range - edge can be moved forward
+		//	direction: 1=FORWARDS, -1=BACKWARDS
 		int idx; //pointer to current cell
 		int blocknum; //current block
 		int limit; //first out of range value of idx depending on direction
@@ -576,15 +657,16 @@
 			idx=_ncells-1; blocknum=_nblocks-1; limit=-1;
 		}
 
+		//Find an edge
 		if (!find_edge(ref idx,ref blocknum,limit,direction))	return false;
-
+		//idx points to cell on the edge
 		if (_status[idx]==CellState.FILLED)
-		{ //start of unassigned filled block
+		{ //first cell is FILLED. Can complete whole block
 				set_block_complete_and_cap(blocknum,idx,direction);
 				changed=true;
 		}
 		else
-		{// see if filled cell in range of first block and complete after that
+		{	// see if filled cell in range of first block and complete after that
 			int edge_start=idx;
 			int fill_start=-1;
 			int blength = _blocks[blocknum];
@@ -605,10 +687,12 @@
 					if (dir) idx++;
 					else idx--;
 				}
-				//idx now points to cell after earliest possible end of block
+				// idx now points to cell after earliest possible end of block
 				// if this is a filled cell then first cell in range must be empty
-				// continue until an unfilled cell found setting cells at beginning of
-				//range empty
+				// continue setting cells at beginning of range empty until
+				// an unfilled cell found. FILL cells beyond first FILLED cells.
+				// remove block from out of range of first filled cell.
+
 				while (idx!=blocklimit && _status[idx]==CellState.FILLED)
 				{
 					set_cell_owner(idx,blocknum,true,false);
@@ -620,7 +704,7 @@
 				}
 				//if a fillable cell was found then fill_start>0
 				if (fill_start>0)
-				{//delete block  than block length from where filling started
+				{//delete block more than block length from where filling started
 					idx= dir ? fill_start+blength : fill_start-blength;
 
 					if (idx>=0 && idx<_ncells) remove_block_from_cell_to_end(blocknum,idx,direction);
@@ -629,9 +713,11 @@
 		}
 		return changed;
 	}
-//=========================================================================
+
 	private bool find_edge(ref int idx,ref int blocknum, int limit, int direction)
-	{//stdout.printf(@"find edge index $idx blocknum $blocknum limit $limit\n");
+	{
+		// Edge is first FILLED or UNKNOWN cell from limit of region.
+		//stdout.printf(@"find edge index $idx blocknum $blocknum limit $limit\n");
 		bool dir=(direction==FORWARDS);
 		bool found=false;
 
@@ -640,7 +726,7 @@
 			if (_status[i]==CellState.EMPTY) continue;
 			//now pointing at first cell of filled or unknown block after edge
 			if (_tags[i,_is_finished_ptr])
-			{//skip to end of finished block
+			{	//skip to end of finished block
 				i = (dir ? i+_blocks[blocknum]-1 : i-_blocks[blocknum]+1);
 				//now pointing at last cell of filled block
 				if (dir) blocknum++;
@@ -655,8 +741,8 @@
 		}
 		return found;
 	}
-//======================================================================
-  private bool fix_blocks_in_ranges()
+
+	private bool fix_blocks_in_ranges()
 	{
 		int empty=count_cell_state(CellState.EMPTY);
 		if (_empty>=empty) return false; // no change in ranges since last time
@@ -665,22 +751,21 @@
 		int[,] block_start = new int[bl,2]; //range number and offset of earliest start point
 		int[,] block_end = new int[bl,2]; //range number and offset of latest end point
 
-		int nranges=count_available_ranges(false);//update _ranges with currently available ranges (can contain only unknown cells)
-//
-//		if(nranges<2) return false;
-//
+		//update _ranges with currently available ranges (can contain only unknown cells)
+		int nranges=count_available_ranges(false);
+
 		//find earliest start point of each block (assuming ranges all unknown cells)
 		int rng=0, offset=0, length=0; //start at beginning of first available range
 		for (int b=0; b<bl; b++) //for each available block
-		{	length=_blocks[blocks[b]]; //get its length
+		{
+			length=_blocks[blocks[b]]; //get its length
 			if (_ranges[rng,1]<(length+offset)) //cannot fit in current range
 			{
 				rng++; offset=0;//skip to start of next range
-				while (rng<nranges && _ranges[rng,1]<length){
-				rng++;} //keep skipping if too small
+				while (rng<nranges && _ranges[rng,1]<length) rng++;//keep skipping if too small
 
 				if (rng>=nranges)
-				{	//record_error("Fix blocks in ranges", "Dont fit",false);
+				{
 					return false;
 				}
 			}
@@ -691,7 +776,8 @@
 		//carry out same process in reverse to get latest end points
 		rng=nranges-1; offset=0; //start at end of last range NB offset now counts from end
 		for (int b=bl-1; b>=0; b--) //start at last block
-		{	length=_blocks[blocks[b]]; //get length
+		{
+			length=_blocks[blocks[b]]; //get length
 			if (_ranges[rng,1]<(length+offset))//doesn't fit
 			{
 				rng--; offset=0; //skip to end of previous block
@@ -699,7 +785,6 @@
 
 				if (rng<0)
 				{
-					//record_error("Reverse Fix blocks in ranges", "Dont fit",false);
 					return false;
 				}
 			}
@@ -716,7 +801,8 @@
 			int start=_ranges[rng,0];
 			if (rng==block_end[b,0]) //if starts and ends in same range
 			{
-				length=block_end[b,1]-block_start[b,1]; //'length' now used for total length of possible range for this block
+				length=block_end[b,1]-block_start[b,1];
+				//'length' now used for total length of possible range for this block
 				fix_block_in_range(blocks[b],start+offset,length);
 			}
 			//remove block from outside possible range
@@ -736,10 +822,14 @@
 		}
 		return true;
 	}
-//======================================================================
+
 	private bool capped_range_audit()
-	{//only changes tags so returns false
-		//if(_debug) stdout.printf("fix blocks in ranges\n");
+	{
+		// For each capped range (contiguous filled cells bounded on both
+		// ends by an edge or an empty cell), remove as owner all blocks
+		// of the wrong size. Check there is at least one possible owner
+		// else return an error.
+		// only changes tags so returns false
 		int start=0, length=0, idx=0;
 		int nranges=count_capped_ranges();
 		if (nranges==0) return false;
@@ -748,11 +838,13 @@
 			start=_ranges[rng,0];
 			length=_ranges[rng,1];
 			for (idx=start;idx<start+length;idx++)
-			{	int count=0;
+			{
+				int count=0;
 				for(int b=0;b<_nblocks;b++)
 				{
 					if(_tags[idx,b])
-					{count++;
+					{
+						count++;
 						if(_blocks[b]!=length)
 						{
 							_tags[idx,b]=false;
@@ -775,12 +867,12 @@
 //======================================================================
 	private bool skip_while_not_status(CellState cs, ref int idx, int limit, int direction)
 	{
-	// increments/decrements idx until cell of required state
-	// or end of range found.
-	//returns true if cell with status cs was found
-	//	bool dir=(direction>0);
-	if (direction==FORWARDS && idx>=limit)  return false;
-	else if (direction==BACKWARDS && idx<=limit) return false;
+		// increments/decrements idx until cell of required state
+		// or end of range found.
+		//returns true if cell with status cs was found
+		//	bool dir=(direction>0);
+		if (direction==FORWARDS && idx>=limit)  return false;
+		else if (direction==BACKWARDS && idx<=limit) return false;
 
 		for (int i=idx; i!=limit;i+=direction)
 		{
@@ -792,10 +884,11 @@
 		}
 		return false;
 	}
-//======================================================================
+
 	private int count_next_state(CellState cs, int idx, bool forwards=true)
 	{
-	// count how may consecutive cells of state cs starting at given index idx (inclusive of starting cell)
+		// count how may consecutive cells of state cs starting at given
+		// index idx (inclusive of starting cell)
 		int count=0;
 		if (forwards && idx>=0)
 		{
@@ -814,10 +907,11 @@
 		else {_in_error=true; message="count_next_state idx invalid\n";}
 		return count;
 	}
-//======================================================================
+
 	private int count_next_owner(int owner, int idx)
 	{
-	// count how may consecutive cells with owner possible starting at given index idx?
+		// count how may consecutive cells with owner possible starting
+		// at given index idx?
 		int count=0;
 		if (idx>=0)
 		{
@@ -831,12 +925,13 @@
 
 		return count;
 	}
-//===================================================================
-	private int count_available_ranges(bool not_empty) {
-	// determine location of ranges of unknown or unfinished filled cells
-	// and store in _ranges[,]
-	// _ranges[ ,2] indicates number of filled,
-	// _ranges[ ,3] indicates number of unknown
+
+	private int count_available_ranges(bool not_empty)
+	{
+		// determine location of ranges of unknown or unfinished filled cells
+		// and store in _ranges[,]
+		// _ranges[ ,2] indicates number of filled,
+		// _ranges[ ,3] indicates number of unknown
 		int range=0, start=0, length=0, idx=0;
 		//skip to start of first range;
 		while (idx<_ncells && _tags[idx,_is_finished_ptr]) idx++;
@@ -865,9 +960,10 @@
 		}
 		return range; //number of ranges - not last index!
 	}
-//======================================================================
+
 	private bool check_nblocks()
-	{//only called when region is completed. Checks whether number of blocks is correct
+	{
+		//only called when region is completed. Checks whether number of blocks is correct
 		int count=0, idx=0;
 		while (idx<_ncells)
 		{
@@ -883,10 +979,10 @@
 		}
 		else return true;
 	}
-//======================================================================
-	private int count_capped_ranges() {
-	// determine location of capped ranges of filled cells (not marked complete) and store in _ranges[,]
 
+	private int count_capped_ranges()
+	{
+		// determine location of capped ranges of filled cells (not marked complete) and store in _ranges[,]
 		int range=0, start=0, length=0, idx=0;
 		while (_status[idx]!=CellState.FILLED && idx<_ncells) idx++; //skip to beginning of first range
 		while (idx<_ncells)
@@ -912,16 +1008,16 @@
 		}
 		return range;
 	}
-//======================================================================
-	private int count_owners_and_empty(int cell) {
-	// how many possible owners?  Does include can be empty tag!
+
+	private int count_owners_and_empty(int cell)
+	{
+		// how many possible owners?  Does include can be empty tag!
 		int count=0;
 
 		if (invalid_data(cell)) {_in_error=true;message="count_owners_and_empty invalid data\n";}
 		else
 		{
 			for (int j=0;j<_nblocks; j++) {
-
 				if (_tags[cell,j]) count++;
 			}
 
@@ -930,8 +1026,9 @@
 		if (count==0){_in_error=true; message="count owners and empty - count is zero\n";}
 		return count;
 	}
-//======================================================================
-	private int count_cell_state(CellState cs) {
+
+	private int count_cell_state(CellState cs)
+	{
 		//how many times does state cs occur in range.
 		int count=0;
 		for (int i=0;i<_ncells; i++)
@@ -940,9 +1037,10 @@
 		}
 		return count;
 	}
-//======================================================================
-	private int[] blocks_available() {
-	//array of incomplete block indexes
+
+	private int[] blocks_available()
+	{
+		//array of incomplete block indexes
 		int[] blocks = {};
 		for (int i=0; i<_nblocks; i++)
 		{
@@ -950,11 +1048,12 @@
 		}
  		return blocks;
 	}
-//=========================================================================
-	private bool same_owner(int cell1, int cell2, out int owner) {
-	//checks if both the same single possible owner.
-	//return true if same owner
-	//if true, 'owner' is initialised
+
+	private bool same_owner(int cell1, int cell2, out int owner)
+	{
+		//checks if both the same single possible owner.
+		//return true if same owner
+		//if true, 'owner' is initialised
 		int count=0;
 		owner=0;
 
@@ -980,9 +1079,10 @@
 		}
 		return count==1;
 	}
-//======================================================================
-	private bool one_owner(int cell) {
-// if only one possible owner (if not empty) then return true
+
+	private bool one_owner(int cell)
+	{
+		// if only one possible owner (if not empty) then return true
 		int count=0;
 		for (int i=0; i<_nblocks; i++)
 		{
@@ -991,14 +1091,14 @@
 		}
 		return count==1;
 	}
-//=======================================================================
-	private bool fix_block_in_range(int block, int start, int length)//,bool exclusive)
+
+	private bool fix_block_in_range(int block, int start, int length)
 	{
-	// block must be limited to range
-	//stdout.printf(@"fix block in range: block $block start $start length $length exclusive $exclusive\n");
+		// block must be limited to range
 		bool changed=false;
 
-		if (invalid_data(start,block, length)) {
+		if (invalid_data(start,block, length))
+		{
 			_in_error=true; message="fix block in range - invalid data\n";
 		}
 		else
@@ -1006,7 +1106,11 @@
 			int block_length=_blocks[block];
 			int freedom = length-block_length;
 
-			if (freedom<0) {record_error("Fix block in range", "block longer than range",false); return false;}
+			if (freedom<0)
+			{
+				record_error("Fix block in range", "block longer than range",false);
+				return false;
+			}
 
 			if (freedom<block_length)
 			{
@@ -1020,24 +1124,23 @@
 		}
 		return changed;
 	}
-//======================================================================
+
 	private int find_largest_possible_in_cell(int cell)
 	{
-	// find the largest incomplete block possible for given cell
+		// find the largest incomplete block possible for given cell
 		int max_size=-1;
 		for (int i=0;i<_nblocks;i++)
 		{
-	//	if (_completed_blocks[i]) continue;// ignore complete block
 			if (!_tags[cell,i]) continue; // not possible
 			if (_blocks[i]<=max_size) continue; // not largest
 			max_size=_blocks[i]; //update largest
 		}
 		return max_size;
 	}
-//==============================================================
+
 	private int find_smallest_possible_in_cell(int cell)
 	{
-	// find the largest incomplete block possible for given cell
+		// find the largest incomplete block possible for given cell
 		int min_size=9999;
 		for (int i=0;i<_nblocks;i++)
 		{
@@ -1053,25 +1156,25 @@
 		}
 		return min_size;
 	}
-//======================================================================
+
 	private void remove_block_from_cell_to_end(int block, int start,int direction=1)
 	{
-	//remove block as possibility after/before start
-	//bi-directional forward=1 backward =-1
-	//if reverse direction then equivalent forward range is used
-	//only changes tags
+		//remove block as possibility after/before start
+		//bi-directional forward=1 backward =-1
+		//if reverse direction then equivalent forward range is used
+		//only changes tags
 
 		int length=direction>0 ? _ncells-start : start+1;
 		start=direction>0 ? start : 0;
 		remove_block_from_range(block,start,length);
 	}
-//======================================================================
+
 	private void remove_block_from_range(int block, int start, int length, int direction=1)
 	{
-	//remove block as possibility in given range
-	//bi-directional forward=1 backward =-1
-	//if reverse direction then equivalent forward range is used
-	//only changes tags
+		//remove block as possibility in given range
+		//bi-directional forward=1 backward =-1
+		//if reverse direction then equivalent forward range is used
+		//only changes tags
 
 		if (direction<0) start=start-length+1;
 		if (invalid_data(start,block, length))
@@ -1083,11 +1186,11 @@
 			for (int i=start; i<start+length; i++) _tags[i,block]=false;
 		}
 	}
-//======================================================================
+
 	private void set_block_complete_and_cap(int block, int start, int direction=1)
 	{
 		//returns true - always changes a cell status if not in error
-		//stdout.printf(@"set block complete and cap: block $block start $start direction $direction\n");
+
 		int length=_blocks[block];
 
 		if (direction<0) start=start-length+1;
@@ -1132,10 +1235,9 @@
 		}
 	}
 
-//======================================================================
+
 	private bool set_range_owner(int owner, int start, int length, bool exclusive, bool can_be_empty)
 	{
-		//if (_debug) stdout.printf(@"set range owner start=$start length=$length exclusive $exclusive, can be empty $can_be_empty\n");
 		bool changed=false;
 		if (invalid_data(start,owner,length))
 		{
@@ -1183,11 +1285,11 @@
 		}
 		return changed;
 	}
-//======================================================================
+
 	private bool set_cell_owner(int cell, int owner, bool exclusive, bool can_be_empty)
-	{ //if (_debug) stdout.printf(@"set cell owner cell=$cell owner=$owner exclusive=$exclusive, can be empty $can_be_empty\n");
-	//exclusive - cant be any other block here
-	//can be empty - self evident
+	{
+		//exclusive - cant be any other block here
+		//can be empty - self evident
 		bool changed=false;
 		if (invalid_data(cell,owner))
 		{
@@ -1214,7 +1316,7 @@
 		}
 		return changed;
 	}
-//======================================================================
+
 	private void set_cell_empty(int cell)
 	{
 		if (invalid_data(cell))
@@ -1226,7 +1328,8 @@
 			record_error("set_cell_empty",@"cell $cell cannot be empty");
 		}
 
-		else if (cell_filled(cell)) {
+		else if (cell_filled(cell))
+		{
 			record_error("set_cell_empty",@"cell $cell is filled");
 		}
 		else
@@ -1238,7 +1341,7 @@
 			_status[cell]=CellState.EMPTY;
 		}
 	}
-//======================================================================
+
 	private void set_cell_complete(int cell)
 	{
 		if (_status[cell]==CellState.EMPTY)
@@ -1250,24 +1353,20 @@
 		_tags[cell,_can_be_empty_ptr]=false;
 		_status[cell]=CellState.COMPLETED;
 	}
-//======================================================================
+
 	private bool invalid_data(int start, int block=0, int length=1)
 	{
 		return (start<0||start>=_ncells||length<0||start+length>_ncells||block<0||block>=_nblocks);
 	}
-//======================================================================
+
 	private bool cell_filled(int cell)
 	{
 		return (_status[cell]==CellState.FILLED||_status[cell]==CellState.COMPLETED);
 	}
-//======================================================================
+
 	private bool totals_changed()
 	{
-//has number of filled or unknown cells changed?
-//		if (_cycles==0) return true;
-//forces fullfix even if initial fix does not make changes on first visit
-// and cells have been set by intersecting ranges.
-
+		//has number of filled or unknown cells changed?
 		bool changed=false;
 		int unknown=count_cell_state(CellState.UNKNOWN);
 		int filled=count_cell_state(CellState.FILLED);
@@ -1290,11 +1389,11 @@
 
 		return changed;
 	}
-//======================================================================
-	private void get_status()
-	{//stdout.printf("get status\n");
-//transfers cell statuses from grid to internal range status array
 
+	private void get_status()
+	{
+		//stdout.printf("get status\n");
+		//transfers cell statuses from grid to internal range status array
 		_grid.get_array(_index,_is_column, ref _temp_status);
 
 		for (int i=0; i<_ncells; i++)
@@ -1332,10 +1431,11 @@
 			status_to_tags();
 		}
 	}
-//======================================================================
+
 	private void put_status(bool debug=false)
-	{//stdout.printf("put status\n");
-		if (debug) {record_error("DEBUG", "",true); }
+	{
+		//stdout.printf("put status\n");
+		if (debug) record_error("DEBUG", "",true);
 
 		for (int i=0;i<_ncells; i++)
 		{
@@ -1343,10 +1443,11 @@
 		}
 		_grid.set_array(_index, _is_column, _temp_status);
 	}
-//======================================================================
+
 	private void status_to_tags()
-	{//stdout.printf("status to tags\n");
-	//duplicates function of get_status??
+	{
+		//stdout.printf("status to tags\n");
+		//duplicates function of get_status??
 		for(int i=0;i<_ncells;i++)
 		{
 			switch (_status[i])
@@ -1371,11 +1472,11 @@
 				default : break;
 			}
 		}
-		//stdout.printf("leaving status to tags\n");
 	}
-//======================================================================
+
 	private bool tags_to_status()
-	{//stdout.printf("tags to status\n");
+	{
+		//stdout.printf("tags to status\n");
 		bool changed=false;
 		for (int i=0;i<_ncells; i++)
 		{
@@ -1389,43 +1490,48 @@
 			}
 			if(count_owners_and_empty(i)>1) continue;
 			changed=true;
-			//Either the 'can be empty' flag is set and there are no owners (ie cell is empty) or there is one owner.
-			if (_tags[i,_can_be_empty_ptr]){
-				_status[i]=CellState.EMPTY; _tags[i,_is_finished_ptr]=true;}
-			else {
-				_status[i]=CellState.FILLED;}
+			//Either the 'can be empty' flag is set and there are no owners
+			//(ie cell is empty) or there is one owner.
+			if (_tags[i,_can_be_empty_ptr])
+			{
+				_status[i]=CellState.EMPTY; _tags[i,_is_finished_ptr]=true;
+			}
+			else
+			{
+				_status[i]=CellState.FILLED;
+			}
 		}
 		return changed;
 	}
-//======================================================================
+
 	private void record_error(string method, string errmessage, bool debug=false)
 	{	//stdout.printf("record error\n");
 		if (debug)
 		{
-		StringBuilder sb =new StringBuilder("");
-		sb.append(":  ");
-		sb.append(_is_column ? "column" : "row");
-		sb.append(_index.to_string());
-		sb.append(" in method ");
-		sb.append(method);
-		sb.append("\n");
-		sb.append(errmessage);
-		sb.append("\nClue - ");
-		for(int bl=0; bl<_nblocks; bl++) sb.append(_blocks[bl].to_string()+",");
-		sb.append("\n status before:\n");
-		for (int i=0; i<_ncells; i++) sb.append(((int)(_temp_status[i])).to_string());
-		sb.append("\n status now:\n");
-		for (int i=0; i<_ncells; i++) sb.append(((int)(_status[i])).to_string());
-		sb.append("\nTags:\n");
-		for (int i=0; i<_ncells; i++)
-		{
-			sb.append(@"Cell $i ");
-			for (int j=0; j<_nblocks; j++) sb.append(_tags[i,j] ? "t" :"f");
-			sb.append(" : ");
-			for (int j=_can_be_empty_ptr; j<_can_be_empty_ptr+2; j++) sb.append(_tags[i,j] ? "t" :"f");
+			StringBuilder sb =new StringBuilder("");
+			sb.append(":  ");
+			sb.append(_is_column ? "column" : "row");
+			sb.append(_index.to_string());
+			sb.append(" in method ");
+			sb.append(method);
 			sb.append("\n");
-		}
-		message=	message+sb.str;
+			sb.append(errmessage);
+			sb.append("\nClue - ");
+			for(int bl=0; bl<_nblocks; bl++) sb.append(_blocks[bl].to_string()+",");
+			sb.append("\n status before:\n");
+			for (int i=0; i<_ncells; i++) sb.append(((int)(_temp_status[i])).to_string());
+			sb.append("\n status now:\n");
+			for (int i=0; i<_ncells; i++) sb.append(((int)(_status[i])).to_string());
+			sb.append("\nTags:\n");
+			for (int i=0; i<_ncells; i++)
+			{
+				sb.append(@"Cell $i ");
+				for (int j=0; j<_nblocks; j++) sb.append(_tags[i,j] ? "t" :"f");
+				sb.append(" : ");
+				for (int j=_can_be_empty_ptr; j<_can_be_empty_ptr+2; j++) sb.append(_tags[i,j] ? "t" :"f");
+				sb.append("\n");
+			}
+			message=	message+sb.str;
 		}
 		else
 		{
@@ -1433,6 +1539,7 @@
 			_in_error=true;
 		}
 	}
+
 	public void save_state()
 	{
 		for (int i=0;i<_ncells;i++)
@@ -1447,9 +1554,10 @@
 		_unknown_store=_unknown;
 		_empty_store=_empty;
 	}
-//======================================================================
+
 	public void restore_state()
-	{	//stdout.printf("%d restore state\n",_index);
+	{
+		//stdout.printf("%d restore state\n",_index);
 		for (int i=0;i<_ncells;i++)
 		{
 			_status[i]=_status_store[i];
@@ -1464,7 +1572,7 @@
 
 		_in_error=false; message="";
 	}
-//======================================================================
+
 	public int value_as_permute_region()
 	{
 		if (_completed) return 0;
@@ -1474,7 +1582,8 @@
 		int block_extent=0,count=0,largest=0;
 		for(int b=0;b<_nblocks;b++)
 		{
-			if(!_completed_blocks[b]) {
+			if(!_completed_blocks[b])
+			{
 				block_extent+=_blocks[b];
 				count++;
 				largest=int.max(largest,_blocks[b]);
@@ -1485,7 +1594,7 @@
 		if (count==1) pvalue=pvalue*2;
 		return pvalue;
 	}
-//======================================================================
+
 	public Gnonogram_permutor? get_permutor(out int start)
 	{
 		string clue=""; start=0;
@@ -1496,7 +1605,11 @@
 		}
 
 		//Find available range (must be only one)
-		if (count_available_ranges(false)!=1) {stdout.printf("ERROR in get permutator - more than one range\n"); return null;}
+		if (count_available_ranges(false)!=1)
+		{
+			stdout.printf("ERROR in get permutator - more than one range\n");
+			return null;
+		}
 
 		start=_ranges[0,0];
 		var p=new Gnonogram_permutor(_ranges[0,1],clue);
@@ -1511,13 +1624,4 @@
 		else colrow="Row";
 		return @"$colrow $_index ($_clue)";
 	}
-//======================================================================
-
-//	private void log_state()
-//	{	message="";
-//		record_error("LOG","",true);
-//		stdout.printf(message);
-//	}
-//======================================================================
-
 }

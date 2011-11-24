@@ -1,76 +1,81 @@
 Gnonograms version 0.9.3
 **************************
+24/Nov/2011 Release 0.9.3
+24/Nov/2011 Clean and tidy code.
+						Small changes to solver and image importer.
+						Update translations
+22/NOv/2011 Clean up code
 06/Nov/2011	Tweak game generator
-			Tweak solver
-			Add "Builtin game directory" button to file dialog
+						Tweak solver
+						Add "Built-in game directory" button to file dialog
 05/Nov/2011	Add "Trim empty edge columns/rows" function.
 31/Oct/2011 Add image to puzzle converter.
 30/OCt/2011	Show logo in upper left quadrant
-			Show game information at bottom of window
-			Include license in game information, file format and game editor.
-			Fix bug in solver (Cancel by user causes loss of existing solution)
+						Show game information at bottom of window
+						Include license in game information, file format and game editor.
+						Fix bug in solver (Cancel by user causes loss of existing solution)
 16/Oct/2011	Changed way solution validated to recognise alternative solutions
-			Fixed "load game in setting mode" bug
-			Fixed bug in solver (Filled subregion audit - remove blocks too small)
+						Fixed "load game in setting mode" bug
+						Fixed bug in solver (Filled subregion audit - remove blocks too small)
 
 Gnonograms version 0.9.2
 **************************
-04/Oct/2011	Fixed Vala compiler warnings
+04/Oct/2011	Fixed some Vala compiler warnings
 03/Oct/2011	Fixed regression caused by incorrect file validation
-			Stopped linking of un-needed libraries by using --as-needed linker flag
-			Turned off cc warnings and debugging for default build (can be re-instated by configure flags)
+						Stopped linking of un-needed libraries by using --as-needed linker flag
+						Turned off cc warnings and debugging for default build (can be re-instated by configure flags)
 01/Oct/2011	Move all default settings into Resources file.
 28/Sep/2011	Small tweaks
 24/Sep/2011	Fixed redo-undo bug
-			Extra validation of game and config files
-			Detect unsaved changes and prompt user on exit
-			Removed some redundant code
-			Autosize takes into account screen resolution
+						Extra validation of game and config files
+						Detect unsaved changes and prompt user on exit
+						Removed some redundant code
+						Autosize takes into account screen resolution
 22/Sep/2011	Fixed timer bug
 20/Sep/2011	Fixed auto size bug (failure for extremely asymmetric grid)
 
 18/Sep/2011 Added Gnome help files (Mallard) files
-			Modified Makefile and configure to install them (or not)
-			Include target to build binary archive
-			Include configure option to turn off all Gnome desktop integration on install
-			Removed unused configure options
+						Modified Makefile and configure to install them (or not)
+						Include target to build binary archive
+						Include configure option to turn off all Gnome desktop integration on install
+						Removed unused configure options
 
 Gnonograms version 0.9.1
 ************************
 17/Sep/2011	Updated manual
-			Separate setting of save and load puzzle directories
-			Default save puzzle directory changed to user's home directory
-			Remember advanced solver, difficult game, show grid, show toolbar settings
-			Added more menu accelerators
-			Incorrect cells only shown while dialog open.
-			Changed proxy menu so that it works in Unity
-			Increased minimum valac version to 0.12
+						Separate setting of save and load puzzle directories
+						Default save puzzle directory changed to user's home directory
+						Remember advanced solver, difficult game, show grid, show toolbar settings
+						Added more menu accelerators
+						Incorrect cells only shown while dialog open.
+						Changed proxy menu so that it works in Unity
+						Increased minimum valac version to 0.12
 
 11/Sep/2011	Removed "moderately hard" and "almost impossible" puzzle directories
-			Corrected errors in Makefile install and uninstall targets.
-			Install in usr/games for Debian
+						Corrected errors in Makefile install and uninstall targets.
+						Install in usr/games for Debian
 
 09/Sep/2011	Removed all non-GPL puzzles in preparation for Debian packaging
-			(other puzzles to be put in separate package)
-			Amended Makefile so that all src files included in tarball regardless of |Gconf/No GConf configuration.
-			Removed schema files
+						(other puzzles to be put in separate package)
+						Amended Makefile so that all src files included in tarball regardless of |Gconf/No GConf configuration.
+						Removed schema files
 
 04/Sep/2011	Conventional config file option complete
-			Saving puzzle now always saves working position as well - associated menu entries modified.
-			Menu item to pause clock
-			Menu item to zoom in and out
-			Use 'puzzle' instead of 'game' consistently in prompts
-			Added accelerator keys to menu items
-			Makefile now correctly adds translations to .desktop file
-			GConf schema files discontinued - do not uninstall properly
-			Fixed clue highlighting bug
+						Saving puzzle now always saves working position as well - associated menu entries modified.
+						Menu item to pause clock
+						Menu item to zoom in and out
+						Use 'puzzle' instead of 'game' consistently in prompts
+						Added accelerator keys to menu items
+						Makefile now correctly adds translations to .desktop file
+						GConf schema files discontinued - do not uninstall properly
+						Fixed clue highlighting bug
 
 
 28/Aug/2011	Infra-structure for optional alternative conventional config file instead of GConf
-			Menu items for default settings
-			Clear buttons on color selection dialog
-			Last used puzzle directory now persists
-			GConf schema files installed/uninstalled by make file (unless NO_GCONF or DISABLE_SCHEMAS_INSTALL option)
+						Menu items for default settings
+						Clear buttons on color selection dialog
+						Last used puzzle directory now persists
+						GConf schema files installed/uninstalled by make file (unless NO_GCONF or DISABLE_SCHEMAS_INSTALL option)
 
 
 Gnonograms version 0.9.0

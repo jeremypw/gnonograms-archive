@@ -109,7 +109,7 @@ public class Game_Editor : Gtk.Dialog
 		h.pack_start(license_entry,false,true,3);
 		v.pack_start(h,false,false,3);
 
-		l=new Label("Description");
+		l=new Label(_("Description"));
 		notebook.append_page(v,l);
 
 		v=new VBox(false,2);
@@ -134,7 +134,7 @@ public class Game_Editor : Gtk.Dialog
 		win.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC);
 		win.add_with_viewport(v);
 
-		l =new Label("Row clues");
+		l =new Label(_("Row clues"));
 		row_page=notebook.append_page(win,l);
 
 		v=new VBox(false,2);
@@ -160,7 +160,7 @@ public class Game_Editor : Gtk.Dialog
 		win.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC);
 		win.add_with_viewport(v);
 
-		l=new Label("Column clues");
+		l=new Label(_("Column clues"));
 		col_page=notebook.append_page(win,l);
 
 		this.vbox.pack_start(notebook,true,true,3);

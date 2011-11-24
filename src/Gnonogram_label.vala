@@ -19,12 +19,12 @@
  * 	Jeremy Wootten <jeremwootten@gmail.com>
  */
 
- using Gtk;
- using Gdk;
+using Gtk;
+using Gdk;
 
-class Gnonogram_label : Gtk.EventBox {
+class Gnonogram_label : Gtk.EventBox
+{
 	private Gtk.Label l;
-	//TODO extract attributes from label markup rather than store separately
 	private string attrib_start;
 	private string attrib_end;
 	private string clue;
@@ -67,5 +67,8 @@ class Gnonogram_label : Gtk.EventBox {
 		l.set_tooltip_markup(attrib_start+ _("Freedom=")+(size-blockextent).to_string()+attrib_end);
 	}
 
-	public string get_text() {return l.get_text();}
+	public string get_text()
+	{
+		return l.get_text();
+	}
 }

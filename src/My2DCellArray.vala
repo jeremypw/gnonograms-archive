@@ -34,11 +34,15 @@
 	}
 
 	public int rows() {return _rows;}
+
 	public int cols() {return _cols;}
 
 	public void set_data_from_cell(Cell c) {_data[c.row,c.col]=c.state;}
+
 	public void set_data_from_rc(int r, int c, CellState s) {_data[r,c]=s;}
+
 	public CellState get_data_from_rc(int r, int c) {return _data[r,c];}
+
 	public Cell get_cell(int r, int c) {return {r,c,_data[r,c]};}
 
 	public void get_row(int row, ref CellState[] sa, int start=0)
@@ -73,36 +77,14 @@
 		else set_row(idx, sa, start);
 	}
 
-// 26/03/2011 deprecated - now use get _array and use size of CellState[] sa for end - safer.
-	public void get_region(int idx, bool iscolumn, ref CellState[] sa, int start=0, int end=-1)
-	{
-		if (iscolumn) get_col(idx, ref sa, start);
-		else 	get_row(idx, ref sa, start);
-	}
-// 26/03/2011 deprecated - now use set _array and use size of CellState[] sa for end - safer.
-	public void set_region(int idx, bool iscolumn, CellState[] sa, int start=0, int end=-1)
-	{
-		if (iscolumn) set_col(idx, sa, start);
-		else set_row(idx, sa, start);
-	}
-
 	public void set_all(CellState s)
 	{
 		for (int r=0; r<_rows; r++)
 		{for (int c=0;c<_cols;c++)	_data[r,c]=s;}
 	}
 
-//	public int count_all(CellState s)
-//	{
-//		int count=0;
-//		for (int r=0; r<_rows; r++)
-//		{for (int c=0;c<_cols;c++)
-//			if(_data[r,c]==s)count++;}
-//		return count;
-//	}
-
 	public string data2text(int idx, int length, bool iscolumn)
-	{//stdout.printf("data2text\n");
+	{
 		CellState[] arr = new CellState[length];
 		this.get_array(idx, iscolumn, ref arr);
 		return Utils.block_string_from_cellstate_array(arr);

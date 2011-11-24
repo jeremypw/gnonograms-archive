@@ -47,7 +47,7 @@ public class Gnonogram_permutor
 		extent--;
 		_freedom=size-extent;
 		if (_freedom<0) stdout.printf("Invalid permutator\n");
-		else	valid=true;
+		else valid=true;
 
 	}
 
@@ -65,7 +65,8 @@ public class Gnonogram_permutor
 	}
 
 	public bool next()
-	{//stdout.printf("Next \n");
+	{
+		//stdout.printf("Next \n");
 		for(int b=n_blocks-1;b>=0;b--)
 		{
 			if (block_start[b]==range_end[b])
@@ -88,7 +89,8 @@ public class Gnonogram_permutor
 	}
 
 	private void make_perm()
-	{//stdout.printf("make_perm\n");
+	{
+		//stdout.printf("make_perm\n");
 		for (int idx=0;idx<size;idx++)
 		{
 			perm[idx]=CellState.EMPTY;
@@ -117,5 +119,4 @@ public class Gnonogram_permutor
 		}
 		return sb.str;
 	}
-
 }

@@ -51,41 +51,35 @@ public class Gnonogram_filereader {
 	private string[] headings;
 	private string[] bodies;
 	private string[] picto_grid_data;
-//=========================================================================
+
 	public Gnonogram_filereader(string fname="")
-	{//stdout.printf("Filereader ... fname=%s\n",fname);
-	//Separate POSITION filetype no longer used.
-//		if (type==Gnonogram_FileType.GAME)
-//		{
-			if(fname=="")	ask_filename();
-			else filename=fname;
+	{
+		//stdout.printf("Filereader ... fname=%s\n",fname);
+		//Separate POSITION filetype no longer used.
 
-			if (filename.has_suffix(".pattern")) is_picto_game=true;
-			else is_picto_game=false;
+		if(fname=="")	ask_filename();
+		else filename=fname;
 
-			is_game=true;
-//		}
-//		else
-//		{
-//			filename=Resource.game_dir + "/"+Resource.POSITIONFILENAME;
-//			is_game=false;
-//		}
-	}
-//=========================================================================
+		if (filename.has_suffix(".pattern")) is_picto_game=true;
+		else is_picto_game=false;
+
+		is_game=true;
+ 	}
+
 	public void ask_filename()
 	{
-			filename=Utils.get_filename(
+		filename=Utils.get_filename(
 			Gtk.FileChooserAction.OPEN,
 			_("Choose a puzzle"),
 			{_("Gnonogram puzzles"), _("Picto puzzles")},
 			{"*"+Resource.GAMEFILEEXTENSION, "*.pattern"},
 			Resource.load_game_dir
-			);
-//			if (filename!="") Resource.game_dir=Path.get_dirname(filename);
+		);
 	}
-//=========================================================================
+
 	public bool open_datainputstream()
-	{	stream= Utils.open_datainputstream(filename);
+	{
+		stream= Utils.open_datainputstream(filename);
 		if (stream==null)
 		{
 			err_msg="Cannot open file";
@@ -93,13 +87,13 @@ public class Gnonogram_filereader {
 		}
 		else return true;
 	}
-//=========================================================================
+
 	public bool parse_game_file()
 	{
 		if (is_picto_game) return parse_picto_game_file();
 		else return parse_gnonogram_game_file();
 	}
-//=========================================================================
+
 	private bool parse_gnonogram_game_file()
 	{
 		size_t headerlength, bodylength;
@@ -113,12 +107,17 @@ public class Gnonogram_filereader {
 				if (headerlength==0 || bodylength==0) break;
 			}
 		}
-		catch (Error e) {err_msg=e.message; return false;}
+		catch (Error e)
+		{
+			err_msg=e.message;
+			return false;
+		}
 		return parse_gnonogram_headings_and_bodies();
 	}
-//=========================================================================
+
 	private bool parse_picto_game_file()
-	{ //assume format of file, e.g. number and order of lines, strictly fixed
+	{
+		//assume format of file, e.g. number and order of lines, strictly fixed
 		string line; size_t length;
 		try
 		{
@@ -142,12 +141,19 @@ public class Gnonogram_filereader {
 		}
 		catch (Error e) {err_msg=e.message; return false;}
 
-		return get_game_description(bodies[0]+"\n"+bodies[1]+"\n"+bodies[2]) &&
-				get_picto_dimensions(bodies[3],true) &&
-				get_picto_dimensions(bodies[4],false) &&
-				parse_picto_grid_data();
+		if (get_game_description(bodies[0]+"\n"+bodies[1]+"\n"+bodies[2]) &&
+			get_picto_dimensions(bodies[3],true) &&
+			get_picto_dimensions(bodies[4],false) &&
+			parse_picto_grid_data())
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
 	}
-//=========================================================================
+
 	private bool parse_gnonogram_headings_and_bodies()
 	{
 		int n=headings.length;
@@ -184,9 +190,10 @@ public class Gnonogram_filereader {
 		}
 		return true;
 	}
-//=========================================================================
+
 	private bool get_gnonogram_dimensions(string? body)
-	{	//stdout.printf("In get_dimensions\n");
+	{
+		//stdout.printf("In get_dimensions\n");
 		if (body==null)
 		{
 			err_msg="No dimensions given";
@@ -205,9 +212,10 @@ public class Gnonogram_filereader {
 		has_dimensions=true;
 		return (rows>0 && cols>0);
 	}
-//=========================================================================
+
 	private bool get_picto_dimensions(string? body, bool is_column)
-	{	//stdout.printf("In get_dimensions\n");
+	{
+		//stdout.printf("In get_dimensions\n");
 		if (body==null)
 		{
 			err_msg="No dimensions given";
@@ -220,9 +228,10 @@ public class Gnonogram_filereader {
 		has_dimensions=(rows>0 && cols>0);
 		return (dim>0);
 	}
-//=========================================================================
+
 	private bool get_gnonogram_clues(string? body, bool is_column)
-	{//stdout.printf("In get_clues\n");
+	{
+		//stdout.printf("In get_clues\n");
 		string[] arr={};
 		if (body==null)
 				{
@@ -269,9 +278,10 @@ public class Gnonogram_filereader {
 		}
 		return true;
 	}
-//=========================================================================
+
 	private bool get_gnonogram_cellstate_array(string? body, bool is_solution)
-	{//stdout.printf("In get_cellstate array\n");
+	{
+		//stdout.printf("In get_cellstate array\n");
 		if (body==null)
 		{
 			err_msg="Solution or working array missing";
@@ -286,7 +296,7 @@ public class Gnonogram_filereader {
 
 		for (int i=0; i<s.length;i++)
 		{
-			//stdout.printf(@"s[$i] $(s[i])\n");
+
 			CellState[] arr = Utils.cellstate_array_from_string(s[i]);
 			if (arr.length!=cols) return false;
 			if (is_solution)
@@ -313,9 +323,10 @@ public class Gnonogram_filereader {
 		}
 		return true;
 	}
-//=========================================================================
+
 	private bool parse_picto_grid_data()
-	{//stdout.printf("In parse grid data\n");
+	{
+		//stdout.printf("In parse grid data\n");
 		if (picto_grid_data==null)
 		{
 			err_msg="Missing Picto grid data";
@@ -337,9 +348,10 @@ public class Gnonogram_filereader {
 
 		return true;
 	}
-//=========================================================================
+
 	private bool get_gnonogram_state(string? body)
-	{  //stdout.printf("In get_state\n");
+	{
+		//stdout.printf("In get_state\n");
 		if (body==null)
 		{
 			err_msg="Missing game state";
@@ -361,9 +373,10 @@ public class Gnonogram_filereader {
 
 		return true;
 	}
-//=========================================================================
+
 	private bool get_game_description(string? body)
-	{  //stdout.printf("In get_description\n");
+	{
+		//stdout.printf("In get_description\n");
 		if (body==null)
 		{
 			err_msg="Missing description";
@@ -379,9 +392,9 @@ public class Gnonogram_filereader {
 		return true;
 	}
 
-//=========================================================================
 	private bool get_game_license(string? body)
-	{  //stdout.printf("In get_description\n");
+	{
+		//stdout.printf("In get_description\n");
 		if (body==null)
 		{
 			err_msg="Missing license";
@@ -392,7 +405,7 @@ public class Gnonogram_filereader {
 		if (s.length>=1) license=s[0];
 		return true;
 	}
-//=========================================================================
+
 	private string? parse_gnonogram_clue(string line, bool is_column)
 	{
 		string[] s=Utils.remove_blank_lines(line.split_set(", "));
@@ -406,7 +419,7 @@ public class Gnonogram_filereader {
 			// ignore extraneous non-digits (allow one zero)
 			b=int.parse(s[i]);
 			if (b<0||b>maxblock) return null;
-//			b=s[i].to_int();
+
 			if (b==0 && zero_count>0) continue;
 			else zero_count++;
 

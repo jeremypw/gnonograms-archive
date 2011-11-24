@@ -30,7 +30,6 @@ public class Config {
 	{
 		if (instance==null) instance=new Config();
 		assert(instance!=null);
-		//stdout.printf("Instance created\n");
 		return instance;
 	}
 //=====================================================================
@@ -183,7 +182,7 @@ public class Config {
 	}
 
 	public void set_colors()
-	{//stdout.printf("Config set colors\n");
+	{	//stdout.printf("Config set colors\n");
 		set_string(UI_HEADER, "setting_empty",Resource.colors[(int) GameState.SETTING, (int) CellState.EMPTY].to_string());
 		set_string(UI_HEADER, "setting_filled",Resource.colors[(int) GameState.SETTING, (int) CellState.FILLED].to_string());
 		set_string(UI_HEADER, "solving_empty",Resource.colors[(int) GameState.SOLVING, (int) CellState.EMPTY].to_string());
@@ -192,7 +191,7 @@ public class Config {
 	}
 
 		public string[] get_colors()
-	{//stdout.printf("Config get colors\n");
+	{	//stdout.printf("Config get colors\n");
 		string set_empty=get_string(UI_HEADER, "setting_empty",Resource.colors[(int) GameState.SETTING, (int) CellState.EMPTY].to_string());
 		string set_filled=get_string(UI_HEADER, "setting_filled",Resource.colors[(int) GameState.SETTING, (int) CellState.FILLED].to_string());
 		string solve_empty=get_string(UI_HEADER, "solving_empty",Resource.colors[(int) GameState.SOLVING, (int) CellState.EMPTY].to_string());
