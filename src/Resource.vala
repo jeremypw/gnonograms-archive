@@ -70,6 +70,9 @@ namespace Resource
 	public static int MINSIZE = 5;
 	public static int MAXGRADE = 12; //max grade level
 	public static int MAXTRIES = 500; //max attempts to generate solvable game
+	public static int MAXADVANCEDGRADE=30;
+	public static int MINADVANCEDGRADE=15;
+
 	public static int MAXUNDO = 100; //max moves that can be undone
 	public static int DEFAULT_DIFFICULTY = 5;
 
@@ -89,6 +92,10 @@ namespace Resource
 	public static bool DEFAULT_SHOWGRID=true;
 	public static bool DEFAULT_ADVANCEDPUZZLES=false;
 	public static bool DEFAULT_ADVANCEDSOLVER=true;
+	public static bool DEFAULT_INCURTIMEPENALTY=true;
+	public static double FIXED_TIMEPENALTY=30.0;
+	public static double PER_CELL_TIMEPENALTY=10.0;
+
 	public static Gdk.Color[,] colors;
 	public static Gdk.Color default_filled_setting;
 	public static Gdk.Color default_empty_setting;

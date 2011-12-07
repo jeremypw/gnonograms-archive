@@ -20,7 +20,7 @@
 # * 	Jeremy Wootten <jeremwootten@gmail.com>
 PROGRAM=gnonograms
 
-VERSION=0.9.3
+VERSION=0.9.4
 GETTEXT_PACKAGE=$(PROGRAM)
 BUILD_ROOT=1
 
@@ -116,7 +116,7 @@ ifndef NO_GCONF
 endif
 
 EXT_PKG_VERSIONS = \
-	gtk+-2.0 >= 2.20.0 \
+	gtk+-2.0 >= 2.12.0 \
 
 PKGS = $(EXT_PKGS) $(LOCAL_PKGS)
 

@@ -242,4 +242,12 @@ public class Config {
 	{
 		return get_bool(UI_HEADER,"toolbar visible",Resource.DEFAULT_SHOWTOOLBAR);
 	}
+	public void set_incur_time_penalty(bool incur)
+	{
+		set_bool(UI_HEADER,"time penalty incurred",incur);
+	}
+	public bool get_incur_time_penalty()
+	{
+		return get_bool(UI_HEADER,"time penalty incurred",Resource.DEFAULT_INCURTIMEPENALTY);
+	}
 }

@@ -6,54 +6,96 @@
   <link type="next" xref="menus"/>
 
 </info>
-<title>5. Gnonogram Mouse/Keyboard Controls</title>
+<title>05. Gnonogram Mouse/Keyboard Controls</title>
 <p>Manipulation of the playing grid is achieved either by using the mouse (or trackpad) or by using the keyboard.</p>
 <list>
-	<item><p>Move playing grid cursor</p>
-			<p> Use the mouse (trackpad) or the keyboard cursor keys (Arrow keys).</p>
-			<p> The selected cell is marked by a rectangular coloured line and the corresponding row and column clues are highlighted.</p>
+	<item>
+		<p>Move playing grid cursor
+		</p>
+		<p> Use the mouse (trackpad) or the keyboard cursor keys (Arrow keys).
+		</p>
+		<p> The selected cell is marked by a rectangular coloured line and the corresponding row and column clues are highlighted.
+		</p>
 	</item>
-	<item><p>Mark a cell filled</p>
-		<p><key>Left click</key>  <em>or</em> <key>F</key></p>
+	<item>
+		<p>Mark a cell filled
+		</p>
+		<p><key>Left click</key>  <em>or</em> <key>F</key>
+		</p>
 	</item>
-	<item><p>Mark a cell empty</p>
-		<p><key>Right click</key>  <em>or</em> <key>E</key></p>
+	<item>
+		<p>Mark a cell empty
+		</p>
+		<p><key>Right click</key>  <em>or</em> <key>E</key>
+		</p>
 	</item>
-	<item><p>Mark a cell unknown</p>
-		<p><key>Left double click</key>  <em>or</em> <key>X</key></p>
+	<item>
+		<p>Mark a cell unknown
+		</p>
+		<p><key>Left double click</key>  <em>or</em> <key>X</key>
+		</p>
 	</item>
-	<item><p>Mark a block filled/empty/unknown</p>
+	<item>
+		<p>Mark a block filled/empty/unknown
+		</p>
 		<steps>
-		<item><p>Position cursor at one end of block </p></item>
-		<item><p>Hold down the corresponding button/key</p></item>
-		<item><p>Move cursor to end of block</p></item>
-		<item><p>Release button/key.</p></item>
+			<item><p>Position cursor at one end of block
+			</p></item>
+			<item><p>Hold down the corresponding button/key
+			</p></item>
+			<item><p>Move cursor to end of block
+			</p></item>
+			<item><p>Release button/key.
+			</p></item>
 		</steps>
 	</item>
-	<item><p>Increase/decrease font size (and thereby the size of the whole window)</p>
-		<p>Press <key>Ctrl+</key> to increase font size or <key>Ctrl-</key> to decrease it.</p>
+	<item>
+		<p>Increase/decrease font size (and thereby the size of the whole window)
+		</p>
+		<p>Press <key>Ctrl+</key> to increase font size or <key>Ctrl-</key> to decrease it. (There are also toolbar icons for this).
+		</p>
 	</item>
-	<item><p>To determine the freedom of a row or column</p>
-			<p>Hover the cursor over the clue.  A tooltip appears giving the required information. This relates to the whole row or column and is not affected by any empty or filled cells.</p>
+	<item>
+		<p>To determine the freedom of a row or column
+		</p>
+		<p>Hover the cursor over the clue.  A tooltip appears giving the required information. This relates to the whole row or column and is not affected by any empty or filled cells.
+		</p>
 	</item>
 </list>
-<p>Many of the menu/toolbar functions have accelerator keys. These are displayed in the menus:</p>
+<p>Many of the menu/toolbar functions have accelerator keys. These are displayed in the menus:
+</p>
 <list>
-	<item><p> Ctrl N - New puzzle</p></item>
-	<item><p> Ctrl O - Open (load) puzzle</p></item>
-	<item><p> Ctrl S - Save game</p></item>
-	<item><p> Ctrl Q - Quit</p></item>
-	<item><p> Ctrl Z - Undo</p></item>
-	<item><p> Ctrl Y - Redo</p></item>
-	<item><p> Ctrl + - Increase font size</p></item>
-	<item><p> Ctrl - - Decrease font size</p></item>
-	<item><p> Shift S - Show solution</p></item>
-	<item><p> Shift W - Show working</p></item>
-	<item><p> Shift I - Show incorrectly completed cells</p></item>
-	<item><p> Shift R - Restart</p></item>
-	<item><p> Shift P - Pause timer (press Close button in dialog to continue)</p></item>
-	<item><p> Shift C - Use computer solver</p></item>
-	<item><p> Shift G - Generate random pattern</p></item>
-	<item><p> Shift E - Edit puzzle information and clues</p></item>
+	<item><p> Ctrl N - New puzzle
+	</p></item>
+	<item><p> Ctrl O - Open (load) puzzle
+	</p></item>
+	<item><p> Ctrl S - Save game
+	</p></item>
+	<item><p> Ctrl Q - Quit
+	</p></item>
+	<item><p> Ctrl Z - Undo
+	</p></item>
+	<item><p> Ctrl Y - Redo
+	</p></item>
+	<item><p> Ctrl + - Increase font size
+	</p></item>
+	<item><p> Ctrl - - Decrease font size
+	</p></item>
+	<item><p> Shift S - Show solution
+	</p></item>
+	<item><p> Shift W - Show working
+	</p></item>
+	<item><p> Shift I - Show incorrectly completed cells
+	</p></item>
+	<item><p> Shift R - Restart
+	</p></item>
+	<item><p> Shift P - Pause timer (press Close button in dialog to continue)
+	</p></item>
+	<item><p> Shift C - Use computer solver
+	</p></item>
+	<item><p> Shift G - Generate random pattern
+	</p></item>
+	<item><p> Shift E - Edit puzzle information and clues
+	</p></item>
 </list>
 </page>

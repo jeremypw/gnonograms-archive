@@ -1,0 +1,56 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      type="topic"
+      id="imageconverter">
+	<info>
+		<link type="guide" xref="index"/>
+		<link type="next" xref="gameeditor"/>
+  	</info>
+
+	<title>08. Import from image</title>
+	<p>On selecting this menu option, the window shown below is opened:</p>
+	<figure>
+		<media type="image" mime="image/png" width="565" height="568" src="figures/imageconverter1.png"/>
+		<desc>Image converter tool before loading image</desc>
+	</figure>
+
+	<p>Click on the "Open image" button. A file selection dialog appears. By default PNG images are selected but you can also load BMP or SVG files.</p>
+	<p>Images must have three 8-bit colour channels, with or without an alpha channel.</p>
+	<p>Icon files are usually suitable, but photographs (JPEG) files are not.</p>
+	<p>The figure below shows the result of loading the "Gnonograms" icon.</p>
+	<figure>
+		<media type="image" mime="image/png" width="565" height="568" src="figures/imageconverter2.png"/>
+		<desc>Gnonograms icon loaded</desc>
+	</figure>
+
+	<p>Click on the "Monochrome" checkbox. The image is converted to black and white</p>
+	<figure>
+		<media type="image" mime="image/png" width="565" height="568" src="figures/imageconverter3.png"/>
+		<desc>Gnonograms icon converted to black and white</desc>
+	</figure>
+
+	<p>If required, click on the "Invert" checkbox. Black and white are interchanged.</p>
+	<p>Some images yield better puzzles  when inverted:</p>
+	<figure>
+		<media type="image" mime="image/png" width="565" height="568" src="figures/imageconverter4.png"/>
+		<desc>Gnonograms icon converted to black and white</desc>
+	</figure>
+
+	<p>Use the zoom slider to adjust the scaling</p>
+	<p>Use the threshold sliders to adjust the monochrome conversion to give the best results</p>
+	<p>The conversion process is not perfect and most images require some manual adjustment after conversion to a nonogram:
+	</p>
+	<figure>
+		<media type="image" mime="image/png" width="565" height="568" src="figures/imageconverter5.png"/>
+		<desc>Adjusted monochrome image</desc>
+	</figure>
+
+	<p>When satisfied click the "OK" button. The image is converted to a nonogram and imported into the main program.</p>
+	<p>If necessary, the puzzle can be adjusted to give a better appearance or to make it more easily soluble using the design functions in the main program.</p>
+	<p>Use the game editor (See <link type="topic" xref="gameeditor"/>) to enter the puzzle name, designer name, license and date of creation</p>
+	<p>It is recommended to run the computer solver (with or without the 'use advanced solver option') to check whether the game is soluble before saving it.  If you want to have the game load already in solving mode, then make sure it is in this mode when you save it.</p>
+
+	<figure>
+		<media type="image" mime="image/png" width="612" height="703" src="figures/imageconverter-imported.png"/>
+		<desc>Converted and imported puzzle</desc>
+	</figure>
+</page>

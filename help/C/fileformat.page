@@ -1,61 +1,69 @@
 <page xmlns="http://projectmallard.org/1.0/"
       type="topic"
       id="fileformat">
-<info>
-  <link type="guide" xref="index"/>
-  <link type="next" xref="glossary"/>
-
-</info>
-<title>8. Gnonogram file format</title>
-<synopsis>
-   <p>The Gnonogram puzzle file format is a simple text file with the extension .gno</p>
-   <p>It is sufficiently simple to allow manual creation of files using a text editor from published puzzles where only the clues are available. Clues may also be entered by using the program's game editor</p>
-   <p>There are up to five sections, each headed by a word or phrase in square brackets.</p>
-   <list>
-      <item><p>[Description]</p></item>
-      <item><p>[Dimensions]</p></item>
-      <item><p>[Row clues]</p></item>
-      <item><p>[Column clues]</p></item>
-      <item><p>[Solution]</p></item>
-   </list>
-   <p>If present, the sections must be headed exactly as indicated above.</p>
-</synopsis>
-<list>
-   <item><title>[Description]</title>
-      <p>This section is optional</p>
-      <p>It may contain up to four non-blank lines which are assigned in the following order:</p>
-      <list>
-         <item><p>The title of the game</p></item>
-         <item><p>The name of the designer</p></item>
-         <item><p>The date it was designed</p></item>
-         <item><p>A numeric indication of difficulty</p></item>
-      </list>
-      <p>Any missing lines are displayed as blank.</p>
-      <p>If the whole section is missing the filename is displayed as the description and the other information is blank.</p>
-   </item>
-   <item><title>[Dimensions]</title>
-      <p>This section is mandatory; the file will not load if it is missing</p>
-      <p>This section contains two lines which are assigned as follows:</p>
-      <list>
-         <item><p>The number of rows</p></item>
-         <item><p>The number of columns</p></item>
-      </list>
-   </item>
-   <item><title>[Row clues]</title>
-      <p>This section is optional if a solution section is present, otherwise mandatory. Either the clues sections or the solution section (or both) must be present for the file to load</p>
-      <p>This section must contain one line for every row in the puzzle</p>
-      <p>Each line must contain a series of integers separated by commas representing the clue for the corresponding row.</p>
-   </item>
-   <item><title>[Column clues]</title>
-      <p>This section is optional if a solution section is present, otherwise mandatory. Either the clues sections or the solution section ( or both) must be present for the file to load</p>
-      <p>This section must contain one line for every column in the puzzle</p>
-      <p>Each line must contain a series of integers separated by commas representing the clue for the corresponding clue.</p>
-   </item>
-   <item><title>[Solution]</title>
-      <p>This section is optional if both clue sections are present, otherwise it is mandatory. Either the clues sections or the solution section ( or both) is required for the file to load</p>
-      <p>This section must contain one line for every row in the puzzle</p>
-      <p>Each line must contain a series of integers separated by commas representing the solution for the corresponding row.</p>
-      <p>Empty cells are represented by the digit "1" and filled cells by the digit "2".</p>
-   </item>
-</list>
+	<info>
+	  <link type="guide" xref="index"/>
+	</info>
+	<title>A2. Gnonogram file format</title>
+	<synopsis>
+	   <p>The Gnonogram puzzle file format is a simple text file with the extension .gno</p>
+	   <p>It is sufficiently simple to allow manual creation of files using a text editor from published puzzles where only the clues are available. Clues may also be entered by using the program's game editor</p>
+	   <p>There are up to five sections, each headed by a word or phrase in square brackets.</p>
+	   <list>
+		  <item><p>[Description]</p></item>
+		  <item><p>[Dimensions]</p></item>
+		  <item><p>[Row clues]</p></item>
+		  <item><p>[Column clues]</p></item>
+		  <item><p>[Solution]</p></item>
+	   </list>
+	   <p>If present, the sections must be headed exactly as indicated above.</p>
+	</synopsis>
+	<list>
+	   <item><title>[Description]</title>
+		  <p>This section is optional</p>
+		  <p>It may contain up to four non-blank lines which are assigned in the following order:</p>
+		  <list>
+			 <item><p>The title of the game</p></item>
+			 <item><p>The name of the designer</p></item>
+			 <item><p>The date it was designed</p></item>
+			 <item><p>A numeric indication of difficulty</p></item>
+		  </list>
+		  <p>Any missing lines are displayed as blank.</p>
+		  <p>If the whole section is missing the filename is displayed as the description and the other information is blank.</p>
+	   </item>
+	   <item><title>[License]</title>
+		  <p>This section is not mandatory; if missing, a blank appears in the license field</p>
+		  <p>This section contains one line which should be as short as possible to avoid making the application window too large.  It will be truncated if it exceeds 50 characters.  Additional lines are ignored.</p>
+	   </item>
+	   <item><title>[Dimensions]</title>
+		  <p>This section is mandatory; the file will not load if it is missing</p>
+		  <p>This section contains two lines which are assigned as follows:</p>
+		  <list>
+			 <item><p>The number of rows</p></item>
+			 <item><p>The number of columns</p></item>
+		  </list>
+	   </item>
+	   <item><title>[Row clues]</title>
+		  <p>This section is optional if a solution section is present, otherwise mandatory. Either the clues sections or the solution section (or both) must be present for the file to load</p>
+		  <p>This section must contain one line for every row in the puzzle</p>
+		  <p>Each line must contain a series of integers separated by commas representing the clue for the corresponding row.</p>
+	   </item>
+	   <item><title>[Column clues]</title>
+		  <p>This section is optional if a solution section is present, otherwise mandatory. Either the clues sections or the solution section ( or both) must be present for the file to load</p>
+		  <p>This section must contain one line for every column in the puzzle</p>
+		  <p>Each line must contain a series of integers separated by commas representing the clue for the corresponding clue.</p>
+	   </item>
+	   <item><title>[Solution]</title>
+		  <p>This section is optional if both clue sections are present, otherwise it is mandatory. Either the clues sections or the solution section ( or both) is required for the file to load</p>
+		  <p>This section must contain one line for every row in the puzzle</p>
+		  <p>Each line must contain a series of integers separated by commas representing the solution for the corresponding row.</p>
+		  <p>Empty cells are represented by the digit "1" and filled cells by the digit "2".</p>
+	   </item>
+	   <item><title>[Working grid]</title>
+			<p>This section is created automatically when a game is saved from a later version of gnonograms.  The format is the same as for the [Solution] section. It is not required for the file to load. It allows the user to save a puzzle in the middle of solving it and return to the same position when the puzzle is reloaded.</p>
+	   </item>
+	   <item><title>[Status]</title>
+			<p>This section is created automatically when a game is saved from a later version of gnonograms. It is not required for the file to load. It records whether the puzzle should appear in 'design mode' or 'solving mode' when loaded.  If absent, the puzzle appears in 'solving' mode.</p>
+	   </item>
+	</list>
 </page>

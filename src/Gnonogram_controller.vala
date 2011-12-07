@@ -35,6 +35,7 @@ public class Gnonogram_controller
 	private Cell _previous_cell;
 	private Circular_move_buffer _history;
 	private Timer _timer;
+	private double _time_penalty;
 	private GameState _state;
 
 	private bool _is_button_down;
@@ -43,6 +44,7 @@ public class Gnonogram_controller
 	private bool _toolbarvisible;
 	private bool _advanced;
 	private bool _difficult;
+	private bool _penalty;
 	private bool _solution_changed;
 
 	private int _grade;
@@ -129,6 +131,7 @@ public class Gnonogram_controller
 
 		_gnonogram_view.advancedmode.connect((advanced)=>{_advanced=advanced;});
 		_gnonogram_view.difficultmode.connect((difficult)=>{_difficult=difficult;});
+		_gnonogram_view.penaltymode.connect((penalty)=>{_penalty=penalty;});
 		_gnonogram_view.resetall.connect(this.reset_all_to_default);
 		_gnonogram_view.set_grade_spin_value((double)_grade);
 
@@ -154,6 +157,7 @@ public class Gnonogram_controller
 	{	//stdout.printf("initialize_menus\n");
 		_gnonogram_view.set_advancedmenuitem_active(_advanced);
 		_gnonogram_view.set_difficultmenuitem_active(_difficult);
+		_gnonogram_view.set_penaltymenuitem_active(_penalty);
 		_gnonogram_view.set_gridmenuitem_active(_gridlinesvisible);
 		_gnonogram_view.set_toolbarmenuitem_active(_toolbarvisible);
 	}
@@ -178,6 +182,7 @@ public class Gnonogram_controller
 		_gnonogram_view.set_grade_spin_value((double)Resource.DEFAULT_DIFFICULTY);
 		_difficult=false;
 		_advanced=true;
+		_penalty=true;
 		_gridlinesvisible=true;
 		_toolbarvisible=true;
 		initialize_view();
@@ -519,6 +524,7 @@ public class Gnonogram_controller
 		_model.blank_working();
 		initialize_view();
 		redraw_all();
+		_timer.reset();
 		_timer.start();
 	}
 
@@ -787,6 +793,7 @@ public class Gnonogram_controller
 	{
 		//stdout.printf("Start solving\n");
 		change_state(GameState.SOLVING);
+		_time_penalty=0;
 		redraw_all();
 	}
 
@@ -802,11 +809,14 @@ public class Gnonogram_controller
 		//stdout.printf("Peek game\n");
 		if (_have_solution){
 			int count=_model.count_errors();
-			if (count==0){
+			if (count==0)
+			{
+				incur_penalty(count);
 				Utils.show_info_dialog(_("No errors\n\n")+get_time_taken());
 			}
 			else{
-				redraw_all();
+				redraw_all(); //show incorrect cells
+				incur_penalty(count);
 				Utils.show_info_dialog((_("Incorrect cells: %d\n\n"+get_time_taken())).printf(count));
 				_model.clear_errors();
 			}
@@ -817,14 +827,20 @@ public class Gnonogram_controller
 		}
 	}
 
+	private void incur_penalty(int incorrect_cells)
+	{	//stdout.printf("incurred time penalty\n");
+		_time_penalty+=Resource.FIXED_TIMEPENALTY+Resource.PER_CELL_TIMEPENALTY*incorrect_cells;
+		//stdout.printf(@"time penalty $_time_penalty\n");
+	}
+
 	private string get_time_taken()
 	{
-		double seconds=_timer.elapsed();
+		double seconds=_timer.elapsed() + _time_penalty;
 		int hours= ((int)seconds)/3600;
 		seconds-=((double)hours)*3600.000;
 		int minutes=((int)seconds)/60;
 		seconds-=(double)(minutes)*60.000;
-		return (_("Time taken: %d hours, %d minutes, %8.3f seconds")).printf(hours, minutes, seconds);
+		return (_("Time taken: %d hours, %d minutes, %8.3f seconds")).printf(hours, minutes, seconds) +"\n\n"+(_("Including %4.0f seconds time penalty")).printf(_time_penalty);
 	}
 
 
@@ -932,24 +948,42 @@ public class Gnonogram_controller
 
 	public void random_game()
 	{
-		//stdout.printf("Random game\n");
+		stdout.printf("Random game\n");
+		Utils.process_events();
+		_gnonogram_view.set_name(_("Thinking ..."));
+		_gnonogram_view.set_score("");
+		_gnonogram_view.set_author(Environment.get_host_name());
+		Utils.process_events();
+		blank_labels();
+		Utils.process_events();
 		_model.use_solution();
+		change_state(GameState.SOLVING);
+		Utils.process_events();
+		_gnonogram_view.show_all();
+		Utils.process_events();
+
 		_have_solution=true;
 		int passes=0, count=0;
 		int grade = _grade; //grade may be reduced but _grade always matches spin setting
 
 		if (_difficult) { //generate difficult games
-			while (count<100) {
+			while (count<1000) {
 				count++;
 				passes=generate_difficult_game(grade);
-				if(passes>0) {
-					if(grade<10)grade++;
+				if(passes>0)
+				{	//failed to generate difficult puzzle
+					if(grade<12)grade++;
 					continue;
 				}
+				//try to solve with advanced solver
 				passes=solve_game(false,true,false);
-				if(passes<3*_grade) continue;
-				if(passes>1000 & grade>1)grade--;
-				if(passes<1000)break;
+
+				if(passes>Resource.MINADVANCEDGRADE && passes<Resource.MAXADVANCEDGRADE)break;
+//				if(passes<Resource.MINADVANCEDGRADE) continue;
+				if(passes>Resource.MAXADVANCEDGRADE & grade>5)
+				{
+					grade--;
+				}
 			}
 		}
 		else{ //generate simple games
@@ -968,13 +1002,11 @@ public class Gnonogram_controller
 		if (passes>=0) {
 			string name= (passes>15) ? _("Difficult random") : _("Simple random");
 			_gnonogram_view.set_name(name);
-			_gnonogram_view.set_author(_("Computer"));
+//			_gnonogram_view.set_author(_("Computer"));
 			_gnonogram_view.set_date(Utils.get_todays_date_string());
 			_gnonogram_view.set_score(passes.to_string());
 
 			_model.use_working();
-
-			change_state(GameState.SOLVING);
 			redraw_all();
 		}
 		else {
@@ -1009,7 +1041,8 @@ public class Gnonogram_controller
 	{
 		int tries=0, passes=1;
 		//takes longer to generate a difficult game so try fewer times.
-		while (passes>0 && tries<=Resource.MAXTRIES/10) {
+		while (passes>0 && tries<=Resource.MAXTRIES/10)
+		{//generate a puzzle not soluble with simple solver
 			tries++;
 			passes=generate_game(grade);
 		}
@@ -1162,6 +1195,17 @@ public class Gnonogram_controller
 		//_rowbox.show_all(); _colbox.show_all();
 	}
 
+	private void blank_labels()
+	{	//stdout.printf("blank labels");
+		for (int r=0; r<_rows; r++)	{
+			_rowbox.update_label(r,"---");
+		}
+		for (int c=0; c<_cols; c++)	{
+			_colbox.update_label(c,"---");
+		}
+		//_rowbox.show_all(); _colbox.show_all();
+	}
+
 	public void quit_game()
 	{
 		//stdout.printf("In quit game\n");
@@ -1185,6 +1229,7 @@ public class Gnonogram_controller
 		config_instance.set_font(Resource.font_desc);
 		config_instance.set_use_advanced_solver(_advanced);
 		config_instance.set_generate_advanced_puzzles(_difficult);
+		config_instance.set_incur_time_penalty(_penalty);
 		config_instance.set_toolbar_visible(_gnonogram_view.get_toolbar_visible());
 		config_instance.set_show_grid(_gridlinesvisible);
 	}
@@ -1196,8 +1241,9 @@ public class Gnonogram_controller
 		Resource.load_config(config_instance);
 		config_instance.get_dimensions(out _rows, out _cols); //defaults to 10x10
 		_grade=(int)config_instance.get_difficulty(); //defaults to 5
-		_difficult=config_instance.get_use_advanced_solver(); //defaults to true
-		_advanced=config_instance.get_use_advanced_solver();
+		_difficult=config_instance.get_generate_advanced_puzzles(); //defaults to false
+		_advanced=config_instance.get_use_advanced_solver();//defaults to false
+		_penalty=config_instance.get_incur_time_penalty();//defaults to true
 		_difficult=config_instance.get_generate_advanced_puzzles();
 		_gridlinesvisible=config_instance.get_show_grid();
 		_toolbarvisible=config_instance.get_toolbar_visible();

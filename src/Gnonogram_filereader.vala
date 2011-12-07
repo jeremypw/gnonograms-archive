@@ -402,7 +402,14 @@ public class Gnonogram_filereader {
 		}
 		string[] s = Utils.remove_blank_lines(body.split("\n"));
 
-		if (s.length>=1) license=s[0];
+		if (s.length>=1)
+		{
+			if (s[0].length>50)
+			{
+				license=s[0].slice(0,50);
+			}
+			else license=s[0];
+		}
 		return true;
 	}
 

@@ -2,33 +2,39 @@
       type="topic"
       id="glossary">
 	<info>
-	  <link type="guide" xref="index"/>
-	</info>
-	<title>9. Word Meanings</title>
+		<link type="guide" xref="index"/>
+		<link type="next" xref="fileformat"/>
+  	</info>
+	<title>A1. Word Meanings</title>
 	<terms>
 		<item>
 			<title>Block</title>
-			<p>A group of contiguous (filled) cells.</p>
+			<p>A group of contiguous (filled) cells.
+			</p>
 		</item>
 
 		<item>
 			<title>Block extent</title>
-			<p>The minimum number of cells required to accomodate the blocks (with one empty space between each).</p>
+			<p>The minimum number of cells required to accomodate the blocks (with one empty space between each).
+			</p>
 		</item>
 
 		<item>
 			<title>Cell</title>
-			<p>Smallest square in the grid.  Can either be coloured as filled, empty or unknown</p>
+			<p>Smallest square in the grid.  Can either be coloured as filled, empty or unknown
+			</p>
 		</item>
 
 		<item>
 			<title>Clue</title>
-			<p>The set of numbers that indicate the pattern of filled cells in a row/column (see <link xref="howtoplay"/>)</p>
+			<p>The set of numbers that indicate the pattern of filled cells in a row/column (see <link xref="howtoplay"/>)
+			</p>
 		</item>
 
 		<item>
 			<title>Freedom</title>
-			<p>How much room for manoeuvre there is in a row/column.  The difference between the total number of cells in the row/column and the block extent.</p>
+			<p>How much room for manoeuvre there is in a row/column.  The difference between the total number of cells in the row/column and the block extent.
+			</p>
 		</item>
 
 		<item>
@@ -43,17 +49,20 @@
 
 		<item>
 			<title>Design Grid</title>
-			<p>The rectangular array of cells that holds the solution to the puzzle or on which you can draw your own puzzle</p>
+			<p>The rectangular array of cells that holds the solution to the puzzle or on which you can draw your own puzzle
+			</p>
 		</item>
 
 		<item>
 			<title>Working Grid</title>
-			<p>The rectangular array of cells that holds your working when trying to solve a puzzle</p>
+			<p>The rectangular array of cells that holds your working when trying to solve a puzzle
+			</p>
 		</item>
 
 		<item>
 			<title>Guide Grid</title>
-			<p>A grid of lines outlining the borders of the cells</p>
+			<p>A grid of lines outlining the borders of the cells
+			</p>
 		</item>
 
 	</terms>

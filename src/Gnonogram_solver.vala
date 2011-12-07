@@ -384,7 +384,7 @@
 		if(_counter==100)
 		{
 			showprogress(_guesses); //signal to controller
-			Gtk.main_iteration_do(true); //process signals
+			Utils.process_events();
 			_counter=0;
 		}
 	}

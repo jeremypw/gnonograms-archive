@@ -47,6 +47,8 @@ public class Gnonogram_view : Gtk.Window
 	public signal void changefont(bool increase);
 	public signal void advancedmode(bool advanced);
 	public signal void difficultmode(bool difficult);
+	public signal void penaltymode(bool penalty);
+
 	public signal void resetall();
 	public signal void undoredo(bool direction);
 	public signal void editgame();
@@ -64,6 +66,7 @@ public class Gnonogram_view : Gtk.Window
 	private Gtk.CheckMenuItem _toolbarmenuitem;
 	private Gtk.CheckMenuItem _advancedmenuitem;
 	private Gtk.CheckMenuItem _difficultmenuitem;
+	private Gtk.CheckMenuItem _penaltymenuitem;
 	private Gtk.MenuItem _checkerrorsmenuitem;
 	private Gtk.MenuItem _showsolutionmenuitem;
 	private Gtk.MenuItem _showworkingmenuitem;
@@ -262,6 +265,9 @@ public class Gnonogram_view : Gtk.Window
 			_difficultmenuitem=new CheckMenuItem.with_mnemonic(_("_Generate difficult puzzles"));
 			_difficultmenuitem.set_active(false);
 			settingssubmenu.add(_difficultmenuitem);
+			_penaltymenuitem=new CheckMenuItem.with_mnemonic(_("_Time penalty for checking"));
+			_penaltymenuitem.set_active(true);
+			settingssubmenu.add(_penaltymenuitem);
 
 			settingssubmenu.add(new SeparatorMenuItem());
 
@@ -336,6 +342,7 @@ public class Gnonogram_view : Gtk.Window
 
 		_advancedmenuitem.activate.connect(()=>{advancedmode(_advancedmenuitem.active);});
 		_difficultmenuitem.activate.connect(()=>{difficultmode(_difficultmenuitem.active);});
+		_penaltymenuitem.activate.connect(()=>{penaltymode(_penaltymenuitem.active);});
 		_defaultsmenuitem.activate.connect(()=>{_advancedmenuitem.set_active(true); _difficultmenuitem.set_active(false);resetall();});
 
 		_toolbarmenuitem.activate.connect(()=>{toggletoolbar(_toolbarmenuitem.active);});
@@ -508,7 +515,7 @@ public class Gnonogram_view : Gtk.Window
 	private void show_manual()
 	{
 		string manual_uri;
-		if (Resource.use_gnome_help)
+		if (Resource.installed && Resource.use_gnome_help)
 		{
 			manual_uri="ghelp:gnonograms";
 		}
@@ -631,6 +638,10 @@ public class Gnonogram_view : Gtk.Window
 	public void set_difficultmenuitem_active(bool active)
 	{
 		_difficultmenuitem.active=active;
+	}
+	public void set_penaltymenuitem_active(bool active)
+	{
+		_penaltymenuitem.active=active;
 	}
 	public void set_gridmenuitem_active(bool active)
 	{

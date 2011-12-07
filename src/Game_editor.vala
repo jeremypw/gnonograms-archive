@@ -102,7 +102,7 @@ public class Game_Editor : Gtk.Dialog
 		l.set_size_request(125,-1);
 		l.set_alignment((float)0.0,(float)0.5);
 		license_entry = new Gtk.Entry();
-		license_entry.set_max_length(16);
+		license_entry.set_max_length(50);
 		license_entry.set_size_request(125,-1);
 		h = new HBox(false,3);
 		h.pack_start(l,false,true,3);

@@ -299,4 +299,13 @@ public class Config {
 	{
 		return get_bool(UI_CONF+"toolbar_visible",true);
 	}
+
+	public void set_incur_time_penalty(bool incur)
+	{
+		set_bool(UI_CONF+"time_penalty_incurred",incur);
+	}
+	public bool get_incur_time_penalty()
+	{
+		return get_bool(UI_CONF+"time_penalty_incurred",Resource.DEFAULT_INCURTIMEPENALTY);
+	}
 }

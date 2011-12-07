@@ -57,11 +57,11 @@ class Img2gno : Gtk.Dialog
 		_scrwin.width_request=330;
 		_scrwin.height_request=330;
 		_scrwin.add_with_viewport(_img);
-		hb.pack_end(_scrwin);
+		hb.pack_end(_scrwin, true, true, 0);
 
 		var load_button=new Gtk.Button.with_label(_("Load Image"));
 		load_button.clicked.connect(load_image);
-		vb.pack_start(load_button,false);
+		vb.pack_start(load_button,false, true, 0);
 
 		var h1=new Gtk.HBox(false,2);
 		_monocheckbutton=new Gtk.CheckButton.with_label(_("Monochrome"));
@@ -76,13 +76,13 @@ class Img2gno : Gtk.Dialog
 			_thr_alpha_scale.sensitive=w.active;
 			display_image();
 		});
-		h1.pack_start(_monocheckbutton,false);
+		h1.pack_start(_monocheckbutton,false, true, 0);
 
 		_invertcheckbutton=new Gtk.CheckButton.with_label(_("Invert image"));
 		_invertcheckbutton.active=false;
 		_invertcheckbutton.toggled.connect(display_image);
 		_invertcheckbutton.sensitive=false;
-		h1.pack_start(_invertcheckbutton,false);
+		h1.pack_start(_invertcheckbutton,false, true, 0);
 		vb.pack_start(h1,true,true,2);
 
 		_zoom=new HScale.with_range(5.0,100.0,1.0);
@@ -92,7 +92,7 @@ class Img2gno : Gtk.Dialog
 		_zoom.sensitive=false;
 		var f=new Gtk.Frame(_("Zoom %"));
 		f.add(_zoom);
-		vb.pack_start(f,false);
+		vb.pack_start(f,false, true, 0);
 
 		_thr_red_scale=new HScale.with_range(0.00,1.00,0.01);
 		_thr_red_scale.update_policy=Gtk.UpdateType.DISCONTINUOUS;
@@ -101,7 +101,7 @@ class Img2gno : Gtk.Dialog
 		_thr_red_scale.sensitive=false;
 		var f1=new Gtk.Frame(_("Red Threshold %"));
 		f1.add(_thr_red_scale);
-		vb.pack_start(f1,false);
+		vb.pack_start(f1,false, true, 0);
 
 		_thr_green_scale=new HScale.with_range(0.00,1.00,0.01);
 		_thr_green_scale.update_policy=Gtk.UpdateType.DISCONTINUOUS;
@@ -110,7 +110,7 @@ class Img2gno : Gtk.Dialog
 		_thr_green_scale.sensitive=false;
 		var f2=new Gtk.Frame(_("Green Threshold"));
 		f2.add(_thr_green_scale);
-		vb.pack_start(f2,false);
+		vb.pack_start(f2,false, true, 0);
 
 		_thr_blue_scale=new HScale.with_range(0.00,1.00,0.01);
 		_thr_blue_scale.update_policy=Gtk.UpdateType.DISCONTINUOUS;
@@ -119,7 +119,7 @@ class Img2gno : Gtk.Dialog
 		_thr_blue_scale.sensitive=false;
 		var f3=new Gtk.Frame(_("Blue threshold"));
 		f3.add(_thr_blue_scale);
-		vb.pack_start(f3,false);
+		vb.pack_start(f3,false, true, 0);
 
 		_thr_alpha_scale=new HScale.with_range(0.00,1.00,0.01);
 		_thr_alpha_scale.update_policy=Gtk.UpdateType.DISCONTINUOUS;
@@ -128,7 +128,7 @@ class Img2gno : Gtk.Dialog
 		_thr_alpha_scale.sensitive=false;
 		var f4=new Gtk.Frame(_("Alpha threshold"));
 		f4.add(_thr_alpha_scale);
-		vb.pack_start(f4,false);
+		vb.pack_start(f4,false, true, 0);
 
 		var f5=new Gtk.Frame(_("Image information"));
 		var vb2=new VBox(true,2);
@@ -141,10 +141,10 @@ class Img2gno : Gtk.Dialog
 		vb2.add(_bts_label);
 		vb2.add(_channels_label);
 		f5.add(vb2);
-		vb.pack_start(f5,false);
+		vb.pack_start(f5,false, true, 0);
 
 
-		hb.pack_start(vb,false);
+		hb.pack_start(vb,false, true, 0);
 		this.vbox.pack_start(hb,true,true,3);
 		this.add_buttons(Gtk.Stock.OK, Gtk.ResponseType.OK, Gtk.Stock.CANCEL, Gtk.ResponseType.CANCEL);
 

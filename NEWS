@@ -1,5 +1,15 @@
+Gnonograms version 0.9.4
+**************************
+07/Dec/2011 Update manual
+						Check if running installed before showing help.
+04/Dec/2011 Option of time penalty for using "check for incorrect cells" tool added.
+						Tweaks to 'difficult' puzzle generator
+						Grid and labels cleared while puzzle generation in progress
+
 Gnonograms version 0.9.3
 **************************
+25/Nov/2011 Limit license field to 50 characters
+25/Nov/2011 Update the manual
 24/Nov/2011 Release 0.9.3
 24/Nov/2011 Clean and tidy code.
 						Small changes to solver and image importer.

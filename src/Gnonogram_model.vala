@@ -219,8 +219,8 @@
 		clear();
 		int midcol = _rows/2;
 		int midrow =_cols/2;
-		int mincdf = 2+(int)((_rows*grade)/(Resource.MAXGRADE*3));
-		int minrdf = 2+(int)((_cols*grade)/(Resource.MAXGRADE*3));
+		int mincdf = 2+(int)((_rows*grade)/(Resource.MAXGRADE*4));
+		int minrdf = 2+(int)((_cols*grade)/(Resource.MAXGRADE*4));
 
 		for (int e=0; e<_arr.length; e++) _arr[e]=CellState.EMPTY;
 

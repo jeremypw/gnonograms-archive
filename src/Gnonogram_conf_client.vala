@@ -55,7 +55,7 @@ using GLib;
 			conf_file=conf_dir.get_child("gnonograms.conf");
 			if (!conf_file.query_exists(null))
 			{
-				conf_file.create(FileCreateFlags.NONE);
+				conf_file.create(FileCreateFlags.NONE, null);
 				if (!conf_file.query_exists(null))
 				{
 					stdout.printf("Failed to create gnonograms config file\n");
@@ -179,8 +179,8 @@ using GLib;
 	{	//stdout.printf("write config file \n");
 		try
 		{
-			conf_file.delete();
-			var dos=new DataOutputStream(conf_file.create (FileCreateFlags.REPLACE_DESTINATION));
+			conf_file.delete(null);
+			var dos=new DataOutputStream(conf_file.create (FileCreateFlags.REPLACE_DESTINATION, null));
 			for (int i=0;i<headings.length;i++)
 			{
 				string h=headings[i];

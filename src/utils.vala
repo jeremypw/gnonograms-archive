@@ -454,4 +454,12 @@ namespace Utils
 		t.get_current_time();
 		return (t.to_iso8601()).slice(0,10);
 	}
+
+	public void process_events()
+	{
+		while (Gtk.events_pending())
+		{
+			Gtk.main_iteration_do(false);
+		}
+	}
 }
