@@ -1,7 +1,11 @@
 Gnonograms version 0.9.4
 **************************
+17/Dec/2011 Fixed bug in game editor
+						Update INSTALL, README
 07/Dec/2011 Update manual
 						Check if running installed before showing help.
+						Discontinue the --novala config option
+						Discontinue the make dist_with_c option
 04/Dec/2011 Option of time penalty for using "check for incorrect cells" tool added.
 						Tweaks to 'difficult' puzzle generator
 						Grid and labels cleared while puzzle generation in progress

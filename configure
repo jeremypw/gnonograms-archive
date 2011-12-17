@@ -40,8 +40,6 @@ configure_help() {
     printf "\t--define=SYMBOL\t\tDefine a symbol for the Vala compiler.\n"
     printf "\n\n"
 
-    printf "\t--novala\t\tCompile from C source only\n"
-
     printf "\t--nognome\t\tDisable all Gnome integration\n"
 
     printf "\t--nogconf\t\tDo not use GConf to store settings\n"
@@ -95,9 +93,6 @@ do
 
         --define)           variables="${variables}USER_VALAFLAGS+=--define=$value\n"
                             ;;
-
-		--novala)			variables="${variables}NO_VALA=1\n"
-							;;
 
 		--nognome)			variables="${variables}NO_GCONF=1\nDISABLE_DESKTOP_UPDATE=1\nDISABLE_GNOME_DOC_INSTALL=1"
 							;;

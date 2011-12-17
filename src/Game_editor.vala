@@ -192,16 +192,14 @@ public class Game_Editor : Gtk.Dialog
 		text=entry.get_text();
 		copy=text.dup();
 		copy.canon("0123456789, ",',');
-		valid=false;
 
-		if (text!=copy)	{}
-		else
+		valid=false;
+		if (text==copy)
 		{
 			int block_extent=Utils.blockextent_from_clue(copy);
 			int dimension= entry.is_column ? _row_clues.length : _col_clues.length;
 
-			if (block_extent>=dimension) {}
-			else
+			if (block_extent<=dimension)
 			{
 				valid=true;
 				//cleanup format of clue by passing through block array
@@ -210,9 +208,12 @@ public class Game_Editor : Gtk.Dialog
 		}
 		if (!valid)
 		{
-			w.set_state(Gtk.StateType.SELECTED);
-			this.errors++;
-			this.set_response_sensitive(Gtk.ResponseType.OK,false);
+			if (w.get_state()==Gtk.StateType.NORMAL)
+			{
+				w.set_state(Gtk.StateType.SELECTED);
+				this.errors++;
+				this.set_response_sensitive(Gtk.ResponseType.OK,false);
+			}
 		}
 		else
 		{
@@ -223,7 +224,6 @@ public class Game_Editor : Gtk.Dialog
 				if (errors==0) this.set_response_sensitive(Gtk.ResponseType.OK,true);
 			}
 		}
-
 		return false;
 	}
 }

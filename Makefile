@@ -84,11 +84,10 @@ RESOURCE_FILES = \
 	icons/*.svg \
 	icons/*.xpm \
 	games/*/*.gno \
-	html/*.html \
-	html/*.png \
-	html/figures/*.png \
-	help/C/*.page \
-	help/C/figures/*.png \
+	html/*.* \
+	html/figures/*.* \
+	help/C/*.* \
+	help/C/figures/*.* \
 	misc/gnonograms.desktop.head \
 	misc/x-gnonogram-puzzle.xml \
 	po/gnonograms.pot \
@@ -107,9 +106,7 @@ TEXT_FILES = \
 	README \
 	THANKS
 
-EXT_PKGS = \
-   gdk-2.0 \
-   gtk+-2.0 \
+EXT_PKGS = gtk+-2.0
 
 ifndef NO_GCONF
 	EXT_PKGS+= gconf-2.0
@@ -148,7 +145,7 @@ BIN_FILES+= html/*.*
 BIN_FILES+= html/figures/*.*
 BIN_FILES+= icons/*.*
 BIN_FILES+= locale/*/*/*.*
-BIN_FILES+= games/*.*
+BIN_FILES+= games/*/*.*
 BIN_FILES+= $(TEXT_FILES)
 
 DIST_TAR_GZ = $(PROGRAM)-$(VERSION).tar.gz
@@ -199,7 +196,6 @@ $(VALA_STAMP): $(EXPANDED_SRC_FILES) $(EXPANDED_VAPI_FILES) $(EXPANDED_SRC_HEADE
 	$(CONFIG_IN)
 #####################################################################
 
-ifndef NO_VALA
 	@ ./minver `valac --version | awk '{print $$2}'` $(MIN_VALAC_VERSION) || ( echo 'gnonograms requires Vala compiler $(MIN_VALAC_VERSION) or greater.  You are running' `valac --version` '\b.'; exit 1 )
 
 ifndef ASSUME_PKGS
@@ -218,7 +214,6 @@ endif
 	$(foreach def,$(DEFINES),-X -D$(def)) \
 	$(EXPANDED_SRC_FILES)
 	touch $@
-endif
 
 clean:
 ######
@@ -240,7 +235,6 @@ cleantemps:
 	rm -f $(VALA_STAMP)
 	rm -f $(LANG_STAMP)
 
-
 dist: $(DIST_FILES)
 ###################
 	mkdir -p $(PROGRAM)-$(VERSION)
@@ -254,14 +248,6 @@ bin: $(PROGRAM) $(BIN_FILES)
 	cp --parents $(BIN_FILES) $(PROGRAM)-$(VERSION)-bin
 	tar --gzip -cvf $(BIN_TAR_GZ) $(PROGRAM)-$(VERSION)-bin
 	rm -rf $(PROGRAM)-$(VERSION)-bin
-
-dist_with_c: $(DIST_FILES)
-##########################
-	mkdir -p $(PROGRAM)-$(VERSION)c
-	cp --parents $(DIST_FILES) $(PROGRAM)-$(VERSION)c
-	cp --parents $(EXPANDED_C_FILES) $(PROGRAM)-$(VERSION)c
-	tar --gzip -cvf $(DIST_WITH_C_TAR_GZ) $(PROGRAM)-$(VERSION)c
-	rm -rf $(PROGRAM)-$(VERSION)c
 
 distclean: clean
 ##########
