@@ -1,3 +1,9 @@
+Gnonograms version 0.9.5
+**************************
+01/Jan/2011 Allow marking of cell and undoing back to that point (Press 'm' to mark and 'l' to return to last mark).
+						Increase maximum undoes to 1000.
+						Code tidying and bug fixes
+
 Gnonograms version 0.9.4
 **************************
 21/Dec/2011 Remove superfluous files and Javascript from html generated from Mallard help files

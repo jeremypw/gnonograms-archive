@@ -297,6 +297,7 @@
 	{
 		//s is size of region
 		// mindf = minimum degrees of freedom
+		if (s<5) return;
 		int b=0; // count of filled cells
 		int bc=0; // count of filled blocks
 		int df=0; // degrees of freedom

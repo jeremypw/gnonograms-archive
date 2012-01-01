@@ -47,7 +47,8 @@ public enum CellState
 	ERROR,
 	COMPLETED,
 	ERROR_EMPTY,
-	ERROR_FILLED;
+	ERROR_FILLED,
+	UNDEFINED;
 
 	public string to_string()
 	{
@@ -68,7 +69,7 @@ public enum CellState
 			case ERROR_FILLED :
 				return "INCORRECTLY FILLED";
 			default :
-				return "";
+				return "UNDEFINED";
 		}
 	}
 }
@@ -78,14 +79,6 @@ public struct Cell
 		public int row;
 		public int col;
 		public CellState state;
-		public bool changed (int r, int c) {
-			if (r!=row || c!=col) {
-				row=r; col=c;
-				return true; }
-			else {
-				return false;
-			}
-		}
 
 		public bool same_coords(Cell c)
 		{

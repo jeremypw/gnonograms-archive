@@ -91,7 +91,7 @@ public class Gnonogram_CellGrid : DrawingArea
 		_cell_body_height=_ht-_cell_offset;
 	}
 
-	public void draw_cell(Cell cell, GameState gs, bool highlight=false)
+	public void draw_cell(Cell cell, GameState gs, bool highlight=false, bool mark=false)
 	{	//stdout.printf(@"draw_cell cell $cell, gamestate $gs\n");
 		_cr=Gdk.cairo_create(this.window);
 		//don't draw cell outside grid.
@@ -128,14 +128,23 @@ public class Gnonogram_CellGrid : DrawingArea
 		}
 
 		Gdk.cairo_set_source_color(_cr, cr_color);
-		draw_cell_body(_cr, x,y, highlight, error);
+		draw_cell_body(_cr, x,y, highlight, error, mark);
 	}
 
-	private void draw_cell_body(Cairo.Context _cr, double x, double y, bool highlight=false, bool error=false)
+	private void draw_cell_body(Cairo.Context _cr, double x, double y, bool highlight, bool error, bool mark)
 	{
 		_cr.set_line_width(0.5);
 		_cr.rectangle(x, y, _cell_body_width, _cell_body_height);
 		_cr.fill();
+
+
+		if (mark)
+		{
+			_cr.set_line_width(0.5);
+			Gdk.cairo_set_source_color(_cr, Resource.colors[0,(int) CellState.UNKNOWN]);
+			_cr.rectangle(x+_cell_body_width/4, y+_cell_body_height/4, _cell_body_width/2, _cell_body_height/2);
+			_cr.fill();
+		}
 
 		if (error)
 		{
@@ -151,6 +160,7 @@ public class Gnonogram_CellGrid : DrawingArea
 			_cr.rectangle(x+1.5, y+1.5, _cell_body_width-3, _cell_body_height-3);
 			_cr.stroke();
 		}
+
 	}
 
 

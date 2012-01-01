@@ -73,7 +73,7 @@ namespace Resource
 	public static int MAXADVANCEDGRADE=30;
 	public static int MINADVANCEDGRADE=15;
 
-	public static int MAXUNDO = 100; //max moves that can be undone
+	public static int MAXUNDO = 1000; //max moves that can be undone
 	public static int DEFAULT_DIFFICULTY = 5;
 
 //Appearance related parameters

@@ -222,7 +222,7 @@ public class Gnonogram_view : Gtk.Window
 			_checkerrorsmenuitem.set_sensitive(false);
 			gamesubmenu.add(new SeparatorMenuItem());
 			_restartmenuitem=new MenuItem.with_mnemonic(_("_Restart"));
-			gamesubmenu.add(_restartmenuitem);
+			gamesubmenu.add(new SeparatorMenuItem());
 			_pausemenuitem=new MenuItem.with_mnemonic(_("_Pause"));
 			gamesubmenu.add(_pausemenuitem);
 
@@ -302,19 +302,15 @@ public class Gnonogram_view : Gtk.Window
 		loadmenuitem.add_accelerator("activate",accel_group,keyval_from_name("o"),Gdk.ModifierType.CONTROL_MASK, Gtk.AccelFlags.VISIBLE);
 		savemenuitem.activate.connect(()=>{savegame();});
 		savemenuitem.add_accelerator("activate",accel_group,keyval_from_name("s"),Gdk.ModifierType.CONTROL_MASK, Gtk.AccelFlags.VISIBLE);
-
 		savepictomenuitem.activate.connect(()=>{savepictogame();});
 		importmenuitem.activate.connect(()=>{importimage();});
-
 		quitmenuitem.activate.connect(()=>{quitgamesignal();});
 		quitmenuitem.add_accelerator("activate",accel_group,keyval_from_name("q"),Gdk.ModifierType.CONTROL_MASK, Gtk.AccelFlags.VISIBLE);
 
 		_undomenuitem.activate.connect(()=>{undoredo(true);});
 		_undomenuitem.add_accelerator("activate",accel_group,keyval_from_name("z"),Gdk.ModifierType.CONTROL_MASK, Gtk.AccelFlags.VISIBLE);
-
 		_redomenuitem.activate.connect(()=>{undoredo(false);});
 		_redomenuitem.add_accelerator("activate",accel_group,keyval_from_name("y"),Gdk.ModifierType.CONTROL_MASK, Gtk.AccelFlags.VISIBLE);
-
 		_showsolutionmenuitem.activate.connect(()=>{revealgame();});
 		_showsolutionmenuitem.add_accelerator("activate",accel_group,keyval_from_name("s"),Gdk.ModifierType.SHIFT_MASK, Gtk.AccelFlags.VISIBLE);
 		_showworkingmenuitem.activate.connect(()=>{hidegame();});
@@ -323,6 +319,7 @@ public class Gnonogram_view : Gtk.Window
 		_checkerrorsmenuitem.add_accelerator("activate",accel_group,keyval_from_name("i"),Gdk.ModifierType.SHIFT_MASK, Gtk.AccelFlags.VISIBLE);
 		_restartmenuitem.activate.connect(()=>{restartgame();});
 		_restartmenuitem.add_accelerator("activate",accel_group,keyval_from_name("r"),Gdk.ModifierType.SHIFT_MASK, Gtk.AccelFlags.VISIBLE);
+
 		_pausemenuitem.activate.connect(()=>{pausegame();});
 		_pausemenuitem.add_accelerator("activate",accel_group,keyval_from_name("p"),Gdk.ModifierType.SHIFT_MASK, Gtk.AccelFlags.VISIBLE);
 		computersolvemenuitem.activate.connect(()=>{solvegame();});
@@ -449,7 +446,7 @@ public class Gnonogram_view : Gtk.Window
 
 		_hide_tool.toggled.connect(toggle_execute);
 		_check_tool.clicked.connect(()=>{checkerrors();});
-		_restart_tool.clicked.connect(()=>{this.restart_game();restartgame();});
+		_restart_tool.clicked.connect(()=>{restartgame();});
 		solve_tool.clicked.connect(()=>{solvegame();});
 		random_tool.clicked.connect(()=>{randomgame();});
 		_grade_spin.value_changed.connect((sb)=>{setdifficulty(sb.get_value());});
@@ -601,7 +598,8 @@ public class Gnonogram_view : Gtk.Window
 		_check_tool.sensitive=solving;
 		_checkerrorsmenuitem.sensitive=solving;
 		_pausemenuitem.sensitive=solving;
-
+		set_undo_sensitive(false);
+		set_redo_sensitive(false);
 		_hide_tool.set_active(solving);
 
 		if (gs==GameState.SETTING)
@@ -609,8 +607,6 @@ public class Gnonogram_view : Gtk.Window
 			_hide_tool.set_tooltip_text(_("Hide the solution and start solving"));
 			_hide_tool.set_icon_widget(hide_icon);
 			_hide_tool.show_all();
-			set_undo_sensitive(false);
-			set_redo_sensitive(false);
 		}
 		else
 		{
@@ -635,6 +631,7 @@ public class Gnonogram_view : Gtk.Window
 	{
 		_advancedmenuitem.active=active;
 	}
+
 	public void set_difficultmenuitem_active(bool active)
 	{
 		_difficultmenuitem.active=active;
@@ -647,15 +644,17 @@ public class Gnonogram_view : Gtk.Window
 	{
 		_gridmenuitem.active=active;
 	}
+
 	public void set_toolbarmenuitem_active(bool active)
 	{
 		_toolbarmenuitem.set_active(active);
 	}
 
-	private void restart_game()
-	{
-		set_undo_sensitive(false);
-		set_redo_sensitive(false);
-	}
+
+//	private void restart_game()
+//	{
+//		set_undo_sensitive(false);
+//		set_redo_sensitive(false);
+//	}
 
 }
