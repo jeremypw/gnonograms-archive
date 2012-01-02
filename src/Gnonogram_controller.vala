@@ -82,7 +82,7 @@ public class Gnonogram_controller
 		if(game_filename.length>4){
 			load_game(game_filename);
 		}
-		else new_game();
+		else new_game(false);
 	}
 
 	private void create_view()
@@ -107,7 +107,7 @@ public class Gnonogram_controller
 		_gnonogram_view.loadgame.connect(this.load_game);
 		_gnonogram_view.importimage.connect(this.import_image);
 		_gnonogram_view.quitgamesignal.connect(()=>{quit_game();});
-		_gnonogram_view.newgame.connect(this.new_game);
+		_gnonogram_view.newgame.connect(()=>{this.new_game(true);});
 
 		_gnonogram_view.undoredo.connect(this.undoredo);
 		_gnonogram_view.hidegame.connect(this.start_solving);
@@ -197,7 +197,7 @@ public class Gnonogram_controller
 		if (Utils.get_dimensions(out r,out c,_rows,_cols))
 		{
 			resize(r,c);
-			new_game();
+			new_game(false);
 		}
 	}
 
@@ -288,10 +288,11 @@ public class Gnonogram_controller
 
 	private bool key_pressed(Gdk.EventKey e)
 	{
-		//stdout.printf("Key pressed\n");
 		string name=(Gdk.keyval_name(e.keyval)).up();
+		stdout.printf(@"Key pressed $name\n");
 		int currentrow=_current_cell.row;
 		int currentcol=_current_cell.col;
+		if (name=="SPACE") return true; //prevent activation of toolbar items with spacebar
 		if (currentrow<0||currentcol<0||currentrow>_rows-1||currentcol>_cols-1) return false;
 		CellState cs=CellState.UNDEFINED;
 		switch (name){
@@ -329,7 +330,7 @@ public class Gnonogram_controller
 					break;
 
 			default:
-					break;
+					return false;
 		}
 		if (currentrow!=_current_cell.row || currentcol!=_current_cell.col)
 		{
@@ -345,7 +346,7 @@ public class Gnonogram_controller
 				make_move(_current_cell);
 			}
 		}
-		return false;
+		return true;
 	}
 
 	private bool key_released(Gdk.EventKey e)
@@ -578,9 +579,10 @@ public class Gnonogram_controller
 		_cellgrid.draw_cell(_model.get_cell(c.row,c.col),_state,highlight,c.same_coords(_guess_cell));
 	}
 
-	public void new_game()
+	public void new_game(bool confirm=false)
 	{
 		//stdout.printf("New game\n");
+		if(confirm && !Utils.show_confirm_dialog("New game?")) return;
 		_model.clear();
 		_have_solution=true;
 		initialize_view();
@@ -736,7 +738,7 @@ public class Gnonogram_controller
 		//stdout.printf("load_game fname %s\n",fname);
 		var reader = new Gnonogram_filereader(fname);
 		if (reader.filename=="") return;
-		new_game(); //changes to setting state
+		new_game(false); //changes to setting state
 
 		if (load_common(reader) && load_position_extra(reader))
 		{
@@ -839,7 +841,7 @@ public class Gnonogram_controller
 	private void import_image()
 	{
 		//stdout.printf("Import image");
-		new_game();
+		new_game(false);
 		Environment.set_current_dir("/usr/share/icons");
 		Img2gno image_convertor=new Img2gno();
 

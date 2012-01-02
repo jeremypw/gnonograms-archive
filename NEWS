@@ -3,6 +3,8 @@ Gnonograms version 0.9.5
 01/Jan/2011 Allow marking of cell and undoing back to that point (Press 'm' to mark and 'l' to return to last mark).
 						Increase maximum undoes to 1000.
 						Code tidying and bug fixes
+						Disable spacebar activation of toolbar items to prevent accidental new game
+						Add confirm dialog on new game.
 
 Gnonograms version 0.9.4
 **************************

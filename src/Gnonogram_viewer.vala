@@ -650,11 +650,4 @@ public class Gnonogram_view : Gtk.Window
 		_toolbarmenuitem.set_active(active);
 	}
 
-
-//	private void restart_game()
-//	{
-//		set_undo_sensitive(false);
-//		set_redo_sensitive(false);
-//	}
-
 }
