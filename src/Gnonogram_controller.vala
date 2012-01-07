@@ -260,6 +260,7 @@ public class Gnonogram_controller
 			}
 		}
 		else b = ButtonPress.LEFT_DOUBLE;
+
 		CellState cs= CellState.UNDEFINED;
 		if (b!=ButtonPress.UNDEFINED){
 			switch (b){
@@ -275,12 +276,7 @@ public class Gnonogram_controller
 				default:
 					break;
 			}
-				_is_button_down=true;
-				if (cs!=CellState.UNDEFINED && _current_cell.state!=cs)
-				{
-					_current_cell.state=cs;
-					make_move(_current_cell);
-				}
+		process_press(cs);
 		}
 		return true;
 	}
@@ -289,7 +285,7 @@ public class Gnonogram_controller
 	private bool key_pressed(Gdk.EventKey e)
 	{
 		string name=(Gdk.keyval_name(e.keyval)).up();
-		stdout.printf(@"Key pressed $name\n");
+		//stdout.printf(@"Key pressed $name\n");
 		int currentrow=_current_cell.row;
 		int currentcol=_current_cell.col;
 		if (name=="SPACE") return true; //prevent activation of toolbar items with spacebar
@@ -322,11 +318,11 @@ public class Gnonogram_controller
 					break;
 			case "M":
 			case "m":
-					if (_state==GameState.SOLVING )	mark_guess();
+					if (_state==GameState.SOLVING )	mark_cell(_current_cell);
 					break;
 			case "L":
 			case "l":
-					if (_state==GameState.SOLVING ) last_guess();
+					if (_state==GameState.SOLVING ) return_to_mark();
 					break;
 
 			default:
@@ -337,16 +333,21 @@ public class Gnonogram_controller
 			grid_cursor_moved(currentrow,currentcol);
 		}
 
+		process_press(cs);
+		return true;
+	}
+
+	private void process_press(CellState cs)
+	{
 		if(cs!=CellState.UNDEFINED)
 		{
 			_is_button_down=true;
-			if(_current_cell.state!=cs)
+			if(_current_cell.state!=cs && !_current_cell.same_coords(_guess_cell))
 			{
 				_current_cell.state=cs;
 				make_move(_current_cell);
 			}
 		}
-		return true;
 	}
 
 	private bool key_released(Gdk.EventKey e)
@@ -413,16 +414,15 @@ public class Gnonogram_controller
 		_guess_cell={-1,-1,CellState.UNKNOWN};
 	}
 
-
-	private void mark_guess()
+	private void mark_cell(Cell c)
 	{//stdout.printf("Mark guess cell "+_current_cell.to_string()+"\n");
-		Cell c=_guess_cell;
+		if (_current_cell.state==CellState.UNKNOWN) return;
+		Cell lastguess=_guess_cell;
 		set_guess_cell(_current_cell);
-		if (c.row>=0) redraw_cell(c,false);
+		if (lastguess.row>=0) redraw_cell(lastguess,false);
 		redraw_cell(_guess_cell,true);
-		//if (_current_cell.state==CellState.UNKNOWN) make_move(_current_cell);
 	}
-	private void last_guess()
+	private void return_to_mark()
 	{
 		if(_guess_cell.row<0) return;
 		Cell? c;
@@ -430,12 +430,11 @@ public class Gnonogram_controller
 		{
 			c=undo_move();
 			if (c==null) break;
-			//stdout.printf("Undo move cell "+c.to_string()+"\n");
 			if (_guess_cell.same_coords(c))	break;
 		}
 		unset_guess_cell();
 		_is_button_down=false;
-		grid_cursor_moved(c.row,c.col);
+		if (c!=null) grid_cursor_moved(c.row,c.col);
 	}
 
 	private void undoredo(bool undo)

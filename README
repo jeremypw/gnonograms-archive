@@ -11,6 +11,8 @@
 		* Automatically generate puzzles
 		* Import image file and convert to nonogram
 		* Solve puzzles manually
+		* Undo, redo moves
+		* Mark cell, return to marked position
 		* Solve puzzles by computer
 		* Save puzzles and partially completed puzzles
 		* Includes help on solving nonograms
