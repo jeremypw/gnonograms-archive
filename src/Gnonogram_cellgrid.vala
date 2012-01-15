@@ -38,9 +38,16 @@ public class Gnonogram_CellGrid : DrawingArea
 	private double _cell_offset;
 	private double _cell_body_width;
 	private double _cell_body_height;
-	private Gdk.Color cr_color;
+	//private Gdk.Color cr_color;
 	private Gdk.Color grid_color;
+	private Gdk.Color _bg_color;
 	private Cairo.Context _cr;
+	private Cairo.Pattern _filled_cell_pattern;
+	private Cairo.Pattern _empty_cell_pattern;
+	private Cairo.Pattern _unknown_cell_pattern;
+	private Cairo.Pattern cell_pattern;
+
+	private Cairo.Matrix pattern_matrix;
 
 	public Gnonogram_CellGrid(int r, int c)
 	{
@@ -63,6 +70,7 @@ public class Gnonogram_CellGrid : DrawingArea
 		leave_notify_event.connect(leave_grid);
 
 		Gdk.Color.parse("BLACK", out grid_color);
+
 	}
 
 	public void resize(int r, int c)
@@ -70,16 +78,18 @@ public class Gnonogram_CellGrid : DrawingArea
 		_rows=r;_cols=c;
 	}
 
-	public void prepare_to_redraw_cells(bool show_grid)
-	{	//stdout.printf("In prepare to redraw\n");
+	public void prepare_to_redraw_cells(GameState gs, bool show_grid)
+	{	stdout.printf(@"In prepare to redraw , game state $gs\n");
 		if (this.window==null) return;
 		_cr=Gdk.cairo_create(this.window);
+		_cr.set_antialias(Cairo.Antialias.NONE);
 		_aw=(double)allocation.width;
 		_ah=(double)allocation.height;
 		_wd=(_aw-2)/(double)_cols;
 		_ht=(_ah-2)/(double)_rows;
+//		_bg_color=style.bg[Gtk.StateType.NORMAL];
+		_bg_color=Resource.colors[gs,(int) CellState.UNKNOWN];
 		window.clear();
-
 		if (show_grid)
 		{
 			_cell_offset=Resource.CELLOFFSET_WITHGRID;
@@ -89,9 +99,33 @@ public class Gnonogram_CellGrid : DrawingArea
 
 		_cell_body_width=_wd-_cell_offset;
 		_cell_body_height=_ht-_cell_offset;
+		_filled_cell_pattern=new Cairo.Pattern.radial(_wd*0.25, _ht*0.25, 0.0, _wd*0.5, _ht*0.5, _wd*0.5);
+		_empty_cell_pattern=new Cairo.Pattern.radial(_wd*0.75, _ht*0.75, 0.0, _wd*0.5, _ht*0.5, _wd*0.5);
+		_unknown_cell_pattern=new Cairo.Pattern.rgba(0.0,0.0,0.0,0.0);
+		color_cell_pattern(_filled_cell_pattern,Resource.colors[gs,(int) CellState.FILLED]);
+		color_cell_pattern(_empty_cell_pattern,Resource.colors[gs,(int) CellState.EMPTY],true);
+
 	}
 
-	public void draw_cell(Cell cell, GameState gs, bool highlight=false, bool mark=false)
+	private void color_cell_pattern(Cairo.Pattern cp, Gdk.Color cc, bool invert=false)
+	{
+			//double end = invert ? 1.0 : 0.0;
+			double start = invert ? 0.0 : 1.0;
+			cp.add_color_stop_rgba(0.0,start,start,start,1.0);
+			add_color_stop_gdkcolor(cp,0.9,cc,1.0);
+			cp.add_color_stop_rgba(1.0,0.0,0.0,0.0,0.0);
+	}
+
+	private void add_color_stop_gdkcolor(Cairo.Pattern cp, double offset, Gdk.Color cc, double alpha=1.0)
+	{
+		double red = (double)cc.red/65535.0;
+		double green = (double)cc.green/65535.0;
+		double blue = (double)cc.blue/65535.0;
+		cp.add_color_stop_rgba(offset, red,green,blue,alpha);
+	}
+
+	public void draw_cell(Cell cell, bool highlight=false, bool mark=false)
+//	public void draw_cell(Cell cell, GameState gs, bool highlight=false, bool mark=false)
 	{	//stdout.printf(@"draw_cell cell $cell, gamestate $gs\n");
 		_cr=Gdk.cairo_create(this.window);
 		//don't draw cell outside grid.
@@ -107,34 +141,77 @@ public class Gnonogram_CellGrid : DrawingArea
 		double y= cell.row*_ht +_cell_offset;
 		bool error=false;
 
+		//erase_cell_body(_cr,x,y);
+
 		switch (cell.state)
 		{
 			case CellState.EMPTY:
-			case CellState.FILLED:
-			case CellState.ERROR:
-				cr_color=Resource.colors[gs,(int) cell.state];
-				break;
 			case CellState.ERROR_EMPTY:
-				cr_color=Resource.colors[gs,(int) CellState.EMPTY];
-				error=true;
+				cell_pattern=_empty_cell_pattern;
 				break;
+			case CellState.FILLED:
 			case CellState.ERROR_FILLED:
-				cr_color=Resource.colors[gs,(int) CellState.FILLED];
-				error=true;
+				cell_pattern=_filled_cell_pattern;
 				break;
+//			case CellState.ERROR:
+//				cr_color=Resource.colors[gs,(int) cell.state];
+//				break;
+//			case CellState.ERROR_EMPTY:
+//				cr_color=Resource.colors[gs,(int) CellState.EMPTY];
+//				error=true;
+//				break;
+//			case CellState.ERROR_FILLED:
+//				cr_color=Resource.colors[gs,(int) CellState.FILLED];
+//				error=true;
+//				break;
 			default :
-				cr_color=style.bg[Gtk.StateType.NORMAL];
+				cell_pattern=_unknown_cell_pattern;
+				//cr_color=_bg_color;
 				break;
 		}
 
-		Gdk.cairo_set_source_color(_cr, cr_color);
-		draw_cell_body(_cr, x,y, highlight, error, mark);
+//		if (cairo_source!=null) Gdk.cairo_set_source_pixbuf(_cr, cairo_source, x,y);
+//		if (cell.state!=CellState.UNKNOWN && cell_pattern!=null)
+//		{
+//			cell_pattern.add_color_stop_rgb(0.0, 1.0,1.0,1.0);
+//			cell_pattern.add_color_stop_rgb(0.3, cr_color.red,cr_color.green,cr_color.blue);
+//			cell_pattern.add_color_stop_rgb(0.9, cr_color.red,cr_color.green,cr_color.blue);
+//			cell_pattern.add_color_stop_rgba(1.0, _bg_color.red,_bg_color.green,_bg_color.blue,0.5);
+
+			pattern_matrix=Cairo.Matrix.identity();
+			pattern_matrix.translate(-x,-y);
+			cell_pattern.set_matrix(pattern_matrix);
+//			_cr.set_source(cell_pattern);
+//		}
+//		else
+//		{
+//			Gdk.cairo_set_source_color(_cr, cr_color);
+//		}
+		draw_cell_body(_cr, cell_pattern, x,y, highlight, error, mark);
 	}
 
-	private void draw_cell_body(Cairo.Context _cr, double x, double y, bool highlight, bool error, bool mark)
+	private void erase_cell_body(Cairo.Context _cr, double x, double y)
 	{
 		_cr.set_line_width(0.5);
+		Gdk.cairo_set_source_color(_cr, Resource.colors[0,(int) CellState.UNKNOWN]);
 		_cr.rectangle(x, y, _cell_body_width, _cell_body_height);
+		_cr.fill();
+	}
+
+	private void draw_cell_body(Cairo.Context _cr, Cairo.Pattern cp, double x, double y, bool highlight, bool error, bool mark)
+	{
+
+//		_cr.set_line_width(0.5);
+////		Gdk.cairo_set_source_color(_cr, Resource.colors[0,(int) CellState.UNKNOWN]);
+
+//		_cr.rectangle(x, y, _cell_body_width, _cell_body_height);
+//		_cr.set_source_rgba(0.9,0.9,0.9,1.0);
+//		_cr.fill_preserve();
+
+				this.window.clear_area((int)x,(int)y, (int)_cell_body_width, (int)_cell_body_height);
+		_cr.set_line_width(0.5);
+		_cr.rectangle(x, y, _cell_body_width, _cell_body_height);
+			_cr.set_source(cp);
 		_cr.fill();
 
 
@@ -157,7 +234,7 @@ public class Gnonogram_CellGrid : DrawingArea
 		{
 			_cr.set_line_width(2.0);
 			Gdk.cairo_set_source_color(_cr, style.bg[ Gtk.StateType.SELECTED]);
-			_cr.rectangle(x+1.5, y+1.5, _cell_body_width-3, _cell_body_height-3);
+			_cr.rectangle(x+1.5, y+1.5, _cell_body_width-3.5, _cell_body_height-3.5);
 			_cr.stroke();
 		}
 

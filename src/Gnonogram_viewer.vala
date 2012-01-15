@@ -51,6 +51,7 @@ public class Gnonogram_view : Gtk.Window
 
 	public signal void resetall();
 	public signal void undoredo(bool direction);
+	public signal void undoerrors();
 	public signal void editgame();
 	public signal void trimgame();
 
@@ -72,6 +73,7 @@ public class Gnonogram_view : Gtk.Window
 	private Gtk.MenuItem _showworkingmenuitem;
 	private Gtk.MenuItem _undomenuitem;
 	private Gtk.MenuItem _redomenuitem;
+	private Gtk.MenuItem _undoerrorsmenuitem;
 	private Gtk.MenuItem _restartmenuitem;
 	private Gtk.MenuItem _grademenuitem;
 	private Gtk.MenuItem _resizemenuitem;
@@ -80,7 +82,7 @@ public class Gnonogram_view : Gtk.Window
 	private Gtk.HBox _info_box;
 
 	private Label _name_label;
-	private Label _author_label;
+	private Label _source_label;
 	private Label _date_label;
 	private Label _size_label;
 	private Label _score_label;
@@ -103,10 +105,10 @@ public class Gnonogram_view : Gtk.Window
 		_name_label.set_alignment((float)0.0,(float)0.5);
 		name_fr.add(_name_label);
 
-		var author_fr=new Frame(null);
-		_author_label = new Label("");
-		_author_label.set_alignment((float)0.0,(float)0.5);
-		author_fr.add(_author_label);
+		var source_fr=new Frame(null);
+		_source_label = new Label("");
+		_source_label.set_alignment((float)0.0,(float)0.5);
+		source_fr.add(_source_label);
 
 		var license_fr=new Frame(null);
 		_license_label = new Label("");
@@ -129,9 +131,9 @@ public class Gnonogram_view : Gtk.Window
 		score_fr.add(_score_label);
 
 		_info_box.add(name_fr);
-		_info_box.add(author_fr);
-		_info_box.add(date_fr);
+		_info_box.add(source_fr);
 		_info_box.add(license_fr);
+		_info_box.add(date_fr);
 		_info_box.add(size_fr);
 		_info_box.add(score_fr);
 		info_frame.add(_info_box);
@@ -213,6 +215,9 @@ public class Gnonogram_view : Gtk.Window
 			_redomenuitem=new ImageMenuItem.from_stock(Gtk.Stock.REDO,accel_group);
 			_redomenuitem.sensitive=false;
 			gamesubmenu.add(_redomenuitem);
+			_undoerrorsmenuitem=new MenuItem.with_mnemonic(_("Undo all errors"));
+			_undoerrorsmenuitem.sensitive=false;
+			gamesubmenu.add(_undoerrorsmenuitem);
 			_showsolutionmenuitem=new MenuItem.with_mnemonic(_("_Show solution"));
 			gamesubmenu.add(_showsolutionmenuitem);
 			_showworkingmenuitem=new MenuItem.with_mnemonic(_("Show _Working"));
@@ -311,6 +316,7 @@ public class Gnonogram_view : Gtk.Window
 		_undomenuitem.add_accelerator("activate",accel_group,keyval_from_name("z"),Gdk.ModifierType.CONTROL_MASK, Gtk.AccelFlags.VISIBLE);
 		_redomenuitem.activate.connect(()=>{undoredo(false);});
 		_redomenuitem.add_accelerator("activate",accel_group,keyval_from_name("y"),Gdk.ModifierType.CONTROL_MASK, Gtk.AccelFlags.VISIBLE);
+		_undoerrorsmenuitem.activate.connect(()=>{undoerrors();});
 		_showsolutionmenuitem.activate.connect(()=>{revealgame();});
 		_showsolutionmenuitem.add_accelerator("activate",accel_group,keyval_from_name("s"),Gdk.ModifierType.SHIFT_MASK, Gtk.AccelFlags.VISIBLE);
 		_showworkingmenuitem.activate.connect(()=>{hidegame();});
@@ -531,8 +537,8 @@ public class Gnonogram_view : Gtk.Window
 	public void set_name(string name){_name_label.set_text(name);}
 	public string get_name(){return get_info_item(_name_label);	}
 
-	public void set_author(string author){_author_label.set_text(_("By:")+" "+author+"  ");}
-	public string get_author(){return get_info_item(_author_label);}
+	public void set_source(string source){_source_label.set_text(_("Source:")+" "+source+"  ");}
+	public string get_author(){return get_info_item(_source_label);}
 
 	public void set_date(string date){_date_label.set_text(date);}
 	public string get_date(){return get_info_item(_date_label);	}
@@ -540,7 +546,7 @@ public class Gnonogram_view : Gtk.Window
 	public void set_score(string score){_score_label.set_text(_("Score:")+" "+score+"  ");}
 	public string get_score(){return get_info_item(_score_label);	}
 
-	public void set_license(string license){_license_label.set_text(_("License:")+" "+license+"  ");}
+	public void set_license(string license){_license_label.set_text(_("(C) ")+" "+license+"  ");}
 	public string get_license(){return get_info_item(_license_label);	}
 
 	private string get_info_item(Label l)
@@ -621,6 +627,7 @@ public class Gnonogram_view : Gtk.Window
 	{
 		_undomenuitem.sensitive=sensitive;
 		_undo_tool.sensitive=sensitive;
+		_undoerrorsmenuitem.sensitive=sensitive;
 	}
 	public void set_redo_sensitive(bool sensitive)
 	{

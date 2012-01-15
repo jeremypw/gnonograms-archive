@@ -12,7 +12,9 @@
 		* Import image file and convert to nonogram
 		* Solve puzzles manually
 		* Undo, redo moves
+		* Undo to last correct position
 		* Mark cell, return to marked position
+		* Optional time penalty for checking/removing errors
 		* Solve puzzles by computer
 		* Save puzzles and partially completed puzzles
 		* Includes help on solving nonograms

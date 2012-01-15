@@ -40,14 +40,14 @@ public class Game_Editor : Gtk.Dialog
 	Clue_Entry[] _row_clues;
 	Clue_Entry[] _col_clues;
 	Entry name_entry;
-	Entry author_entry;
+	Entry source_entry;
 	Entry date_entry;
 	Entry license_entry;
 	int row_page;
 	int col_page;
 	int errors;
 
-	public Game_Editor(int rows, int cols, string name="", string author="", string date="")
+	public Game_Editor(int rows, int cols, string name="", string source="", string date="")
 	{
 
 		_row_clues=new Clue_Entry[rows];
@@ -76,18 +76,18 @@ public class Game_Editor : Gtk.Dialog
 		h.pack_start(name_entry,false,true,3);
 		v.pack_start(h,false,false,3);
 
-		l=new Label(_("Designed by"));
+		l=new Label(_("Source"));
 		l.set_size_request(125,-1);
 		l.set_alignment((float)0.0,(float)0.5);
-		author_entry = new Gtk.Entry();
-		author_entry.set_max_length(32);
-		author_entry.set_size_request(300,-1);
+		source_entry = new Gtk.Entry();
+		source_entry.set_max_length(32);
+		source_entry.set_size_request(300,-1);
 		h = new HBox(false,3);
 		h.pack_start(l,false,true,3);
-		h.pack_start(author_entry,false,true,3);
+		h.pack_start(source_entry,false,true,3);
 		v.pack_start(h,false,false,3);
 
-		l=new Label(_("Date designed"));
+		l=new Label(_("Date"));
 		l.set_size_request(125,-1);
 		l.set_alignment((float)0.0,(float)0.5);
 		date_entry = new Gtk.Entry();
@@ -174,8 +174,8 @@ public class Game_Editor : Gtk.Dialog
 	public void set_colclue(int index, string clue){_col_clues[index].set_text(clue);}
 	public string get_name(){return name_entry.get_text();}
 	public void set_name(string name){name_entry.set_text(name);}
-	public string get_author(){return author_entry.get_text();}
-	public void set_author(string author){author_entry.set_text(author);}
+	public string get_source(){return source_entry.get_text();}
+	public void set_source(string source){source_entry.set_text(source);}
 	public string get_date(){return date_entry.get_text();}
 	public void set_date(string date){date_entry.set_text(date);}
 	public string get_license(){return license_entry.get_text();}

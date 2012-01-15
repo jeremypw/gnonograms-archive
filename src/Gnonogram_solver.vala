@@ -111,7 +111,7 @@
 	{
 		int simple_result=simple_solver(debug,true); //log errors
 		if (simple_result==0 && use_advanced)
-		{	if (!debug || Utils.show_confirm_dialog("Use advanced?"))
+		{	if (!debug || Utils.show_confirm_dialog(_("Use advanced solver?")))
 			{
 				CellState[] grid_store= new CellState[_rows*_cols];
 				int advanced_result=advanced_solver(grid_store, debug);
@@ -185,10 +185,11 @@
 		int wraps=0;
 		bool changed=false;
 		int initial_maxturns=3; //stay near edges until no more changes
+		CellState initial_cellstate=CellState.FILLED;
 
 		_rdir=0; _cdir=1; _rlim=_rows; _clim=_cols;
 		_turn=0; _max_turns=initial_maxturns;
-		_trial_cell= {0,-1,CellState.FILLED};
+		_trial_cell= {0,-1,initial_cellstate};
 
 		this.save_position(grid_store);
 		while (true)
@@ -202,6 +203,12 @@
 				else if (_max_turns==initial_maxturns)
 				{
 					_max_turns=(int.min(_rows,_cols))/2+2; //ensure full coverage
+				}
+				else if(_trial_cell.state==initial_cellstate)
+				{
+					stdout.printf(@"Inverting guesses at score $_guesses\n");
+					_trial_cell=_trial_cell.invert(); //start making opposite guesses
+					_max_turns=initial_maxturns; wraps=0;
 				}
 				else break; //cant make progress
 

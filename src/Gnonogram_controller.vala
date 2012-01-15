@@ -110,6 +110,7 @@ public class Gnonogram_controller
 		_gnonogram_view.newgame.connect(()=>{this.new_game(true);});
 
 		_gnonogram_view.undoredo.connect(this.undoredo);
+		_gnonogram_view.undoerrors.connect(this.undo_to_no_errors);
 		_gnonogram_view.hidegame.connect(this.start_solving);
 		_gnonogram_view.revealgame.connect(this.reveal_solution);
 		_gnonogram_view.checkerrors.connect(this.peek_game);
@@ -445,6 +446,21 @@ public class Gnonogram_controller
 		else redo_move();
 	}
 
+	private void undo_to_no_errors()
+	{
+		int count=0;
+		while(_model.count_errors()>0)
+		{
+			undo_move();
+			count++;
+		}
+		if (_penalty)
+		{
+			incur_penalty(count);
+			Utils.show_info_dialog(_("Total time penalty now %4.0f seconds").printf(_time_penalty));
+		}
+	}
+
 	private void make_move(Cell c)
 	{
 		//stdout.printf("make_move\n");
@@ -468,22 +484,7 @@ public class Gnonogram_controller
 		update_cell(mv.previous,false);
 		_gnonogram_view.set_redo_sensitive(true);
 
-		//if (_previous_cell.same_coords(mv.previous))
-		//_previous_cell.copy(mv.previous);
-		//if (_current_cell.same_coords(mv.previous))
-		//_current_cell.copy(mv.previous);
-
 		grid_cursor_moved(mv.previous.row, mv.previous.col);
-
-//		mv=_history.previous_data();
-//		if (mv==null){
-//			_gnonogram_view.set_undo_sensitive(false);
-//			return null;
-//		}
-//
-//		redraw_cell(mv.replacement,true);
-//
-//		_history.next_data();
 
 		if (_history.no_more_previous_data())
 		{
@@ -531,22 +532,10 @@ public class Gnonogram_controller
 
 	private void check_solved()
 	{
-//		if (_model.count_unsolved()==0){
-//		//puzzle has been completed (possible wrongly)
-//			_timer.stop(); //timer started when switched to SOLVING state
-
-//			if (!check_valid_solution()) {
-//				_timer.continue();
-//				Utils.show_warning_dialog("This is not a valid solution");
-//			}
-//			else
-//			Utils.show_info_dialog("Congratulations - you have solved the puzzle.\n\n"+get_time_taken());
-//		}
 		if (_model.count_unsolved()==0 && check_valid_solution()) {
 				_timer.stop();
-				Utils.show_info_dialog("Congratulations - you have solved the puzzle.\n\n"+get_time_taken());
+				Utils.show_info_dialog(_("Congratulations - you have solved the puzzle.\n\n")+get_time_taken());
 				_is_button_down=false;
-//				initialize_cursor;
 		}
 	}
 
@@ -564,30 +553,30 @@ public class Gnonogram_controller
 	private void redraw_all()
 	{
 		//stdout.printf("Redraw all\n");
-		_cellgrid.prepare_to_redraw_cells(_gridlinesvisible);
+		_cellgrid.prepare_to_redraw_cells(_state,_gridlinesvisible);
 		for (int r=0; r<_rows; r++){
 			for (int c=0; c<_cols; c++){
-					_cellgrid.draw_cell(_model.get_cell(r,c), _state);
+					_cellgrid.draw_cell(_model.get_cell(r,c));
 			}
 		}
-		if (_guess_cell.row>=0) _cellgrid.draw_cell(_guess_cell,_state,false,true);
+		if (_guess_cell.row>=0) _cellgrid.draw_cell(_guess_cell,false,true);
 	}
 
 	private void redraw_cell(Cell c, bool highlight)
 	{ //get state of cell from model not c
-		_cellgrid.draw_cell(_model.get_cell(c.row,c.col),_state,highlight,c.same_coords(_guess_cell));
+		_cellgrid.draw_cell(_model.get_cell(c.row,c.col),highlight,c.same_coords(_guess_cell));
 	}
 
 	public void new_game(bool confirm=false)
 	{
 		//stdout.printf("New game\n");
-		if(confirm && !Utils.show_confirm_dialog("New game?")) return;
+		if(confirm && !Utils.show_confirm_dialog(_("New puzzle?"))) return;
 		_model.clear();
 		_have_solution=true;
 		initialize_view();
 		change_state(GameState.SETTING);
 		_gnonogram_view.set_name(_("New puzzle"));
-		_gnonogram_view.set_author(Environment.get_user_name());
+		_gnonogram_view.set_source(Environment.get_user_name());
 		_gnonogram_view.set_date(Utils.get_todays_date_string());
 		_gnonogram_view.set_license("");
 		_gnonogram_view.set_score("");
@@ -598,7 +587,7 @@ public class Gnonogram_controller
 	{
 		//stdout.printf("Restart game\n");
 		if (_state!=GameState.SOLVING) return;
-		if (confirm && !Utils.show_confirm_dialog("Restart solving the puzzle?")) return;
+		if (confirm && !Utils.show_confirm_dialog(_("Restart solving the puzzle?"))) return;
 		_model.blank_working();
 		_timer.reset();
 
@@ -829,7 +818,7 @@ public class Gnonogram_controller
 		if (reader.name.length>1) _gnonogram_view.set_name(reader.name);
 		else _gnonogram_view.set_name(Path.get_basename(reader.filename));
 
-		_gnonogram_view.set_author(reader.author);
+		_gnonogram_view.set_source(reader.author);
 		_gnonogram_view.set_date(reader.date);
 		_gnonogram_view.set_license(reader.license);
 		_gnonogram_view.set_score(reader.score);
@@ -888,14 +877,13 @@ public class Gnonogram_controller
 		//stdout.printf("Peek game\n");
 		if (_have_solution){
 			int count=_model.count_errors();
+			if (_penalty)	incur_penalty(count);
 			if (count==0)
 			{
-				incur_penalty(count);
 				Utils.show_info_dialog(_("No errors\n\n")+get_time_taken());
 			}
 			else{
 				redraw_all(); //show incorrect cells
-				incur_penalty(count);
 				Utils.show_info_dialog((_("Incorrect cells: %d\n\n"+get_time_taken())).printf(count));
 				_model.clear_errors();
 			}
@@ -908,7 +896,10 @@ public class Gnonogram_controller
 
 	private void incur_penalty(int incorrect_cells)
 	{	//stdout.printf("incurred time penalty\n");
-		_time_penalty+=Resource.FIXED_TIMEPENALTY+Resource.PER_CELL_TIMEPENALTY*incorrect_cells;
+		if (_penalty)
+		{
+			_time_penalty+=Resource.FIXED_TIMEPENALTY+Resource.PER_CELL_TIMEPENALTY*incorrect_cells;
+		}
 		//stdout.printf(@"time penalty $_time_penalty\n");
 	}
 
@@ -919,7 +910,9 @@ public class Gnonogram_controller
 		seconds-=((double)hours)*3600.000;
 		int minutes=((int)seconds)/60;
 		seconds-=(double)(minutes)*60.000;
-		return (_("Time taken: %d hours, %d minutes, %8.3f seconds")).printf(hours, minutes, seconds) +"\n\n"+(_("Including %4.0f seconds time penalty")).printf(_time_penalty);
+		string s=(_("Time taken: %d hours, %d minutes, %8.3f seconds")).printf(hours, minutes, seconds) +"\n\n";
+		if (_penalty) s=s+(_("Including %4.0f seconds time penalty")).printf(_time_penalty);
+		return s;
 	}
 
 
@@ -1031,7 +1024,7 @@ public class Gnonogram_controller
 		Utils.process_events();
 		_gnonogram_view.set_name(_("Thinking ..."));
 		_gnonogram_view.set_score("");
-		_gnonogram_view.set_author(Environment.get_host_name());
+		_gnonogram_view.set_source(Environment.get_host_name());
 		Utils.process_events();
 		blank_labels();
 		Utils.process_events();
@@ -1081,7 +1074,7 @@ public class Gnonogram_controller
 		if (passes>=0) {
 			string name= (passes>15) ? _("Difficult random") : _("Simple random");
 			_gnonogram_view.set_name(name);
-//			_gnonogram_view.set_author(_("Computer"));
+//			_gnonogram_view.set_source(_("Computer"));
 			_gnonogram_view.set_date(Utils.get_todays_date_string());
 			_gnonogram_view.set_score(passes.to_string());
 
@@ -1092,7 +1085,7 @@ public class Gnonogram_controller
 			Utils.show_warning_dialog(_("Error occurred in solver"));
 			stdout.printf(_solver.get_error()+"\n");
 			_gnonogram_view.set_name(_("Error in solver"));
-			_gnonogram_view.set_author("");
+			_gnonogram_view.set_source("");
 			_gnonogram_view.set_date("");
 			_model.use_solution();
 
@@ -1143,7 +1136,7 @@ public class Gnonogram_controller
 
 		var game_editor=new Game_Editor(_rows,_cols);
 		game_editor.set_name(_gnonogram_view.get_name());
-		game_editor.set_author(_gnonogram_view.get_author());
+		game_editor.set_source(_gnonogram_view.get_author());
 		game_editor.set_date(_gnonogram_view.get_date());
 		game_editor.set_license(_gnonogram_view.get_license());
 
@@ -1155,7 +1148,7 @@ public class Gnonogram_controller
 
 		if (response==Gtk.ResponseType.OK) {
 			_gnonogram_view.set_name(game_editor.get_name());
-			_gnonogram_view.set_author(game_editor.get_author());
+			_gnonogram_view.set_source(game_editor.get_source());
 			_gnonogram_view.set_date(game_editor.get_date());
 			_gnonogram_view.set_license(game_editor.get_license());
 
@@ -1242,9 +1235,8 @@ public class Gnonogram_controller
 
 		if (blank_left_edge+blank_right_edge+blank_top_edge+blank_bottom_edge>0)
 		{
-			//stdout.printf("blank top %d, blank bottom %d blank left %d blank right %d\n",blank_top_edge,blank_bottom_edge,blank_left_edge,blank_right_edge);
 			if (blank_top_edge+blank_bottom_edge>=_rows||blank_left_edge+blank_right_edge>=_cols) return; //mustnt remove everything!
-			if(Utils.show_confirm_dialog("Trim blank edges?\nWARNING - only use on a computer soluble puzzle"))
+			if(Utils.show_confirm_dialog(_("Trim blank edges?\nWARNING - only use on a computer soluble puzzle")))
 			{
 				_model.clear();
 				resize(_rows-blank_top_edge-blank_bottom_edge,_cols-blank_left_edge-blank_right_edge);
@@ -1271,7 +1263,6 @@ public class Gnonogram_controller
 		for (int c=0; c<_cols; c++)	{
 			_colbox.update_label(c,_model.get_label_text(c,true));
 		}
-		//_rowbox.show_all(); _colbox.show_all();
 	}
 
 	private void blank_labels()
@@ -1282,7 +1273,6 @@ public class Gnonogram_controller
 		for (int c=0; c<_cols; c++)	{
 			_colbox.update_label(c,"---");
 		}
-		//_rowbox.show_all(); _colbox.show_all();
 	}
 
 	public void quit_game()
@@ -1291,7 +1281,7 @@ public class Gnonogram_controller
 		save_config();
 		if (_solution_changed)
 		{
-			if (Utils.show_confirm_dialog("Save changed puzzle?")) save_game();
+			if (Utils.show_confirm_dialog(_("Save changed puzzle?"))) save_game();
 		}
 		Gtk.main_quit();
 	}

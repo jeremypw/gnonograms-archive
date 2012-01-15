@@ -161,7 +161,7 @@ namespace Resource
 		colors = new Gdk.Color[2,4];
 		set_default_colors();
 
-		MINORGRIDDASH={0.5, 3.0};
+		MINORGRIDDASH={3.0, 3.0};
 	}
 
 	public static void load_config(Config config_instance)
@@ -294,7 +294,7 @@ namespace Resource
 
 	public static void set_custom_font()
 	{
-		var dialog = new FontSelectionDialog("Select font used for the clues");
+		var dialog = new FontSelectionDialog(_("Select font used for the clues"));
 		if (dialog.run()!=ResponseType.CANCEL)	font_desc=dialog.get_font_name();
 		dialog.destroy();
 	}
@@ -308,7 +308,7 @@ namespace Resource
 	}
 	public static void set_custom_game_dir()
 	{
-		string new_dir=Utils.get_filename(FileChooserAction.SELECT_FOLDER,"Choose folder for saving and loading puzzles",null,null,Resource.save_game_dir);
+		string new_dir=Utils.get_filename(FileChooserAction.SELECT_FOLDER,_("Choose folder for saving and loading puzzles"),null,null,Resource.save_game_dir);
 		if (new_dir!="")
 		{
 			Resource.save_game_dir=new_dir;
