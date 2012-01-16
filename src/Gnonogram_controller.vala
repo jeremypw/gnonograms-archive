@@ -1310,6 +1310,7 @@ public class Gnonogram_controller
 		config_instance.set_incur_time_penalty(_penalty);
 		config_instance.set_toolbar_visible(_gnonogram_view.get_toolbar_visible());
 		config_instance.set_show_grid(_gridlinesvisible);
+		config_instance.set_patterntype(_patterntype);
 	}
 
 	private void load_config()
@@ -1325,7 +1326,8 @@ public class Gnonogram_controller
 		_difficult=config_instance.get_generate_advanced_puzzles();
 		_gridlinesvisible=config_instance.get_show_grid();
 		_toolbarvisible=config_instance.get_toolbar_visible();
-		_patterntype=CellPatternType.NONE; //TODO add to config file
+		_patterntype=config_instance.get_patterntype();
+		//_patterntype=CellPatternType.NONE; //TODO add to config file
 	}
 
 	private void change_state(GameState gs)

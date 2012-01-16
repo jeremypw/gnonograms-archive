@@ -250,4 +250,12 @@ public class Config {
 	{
 		return get_bool(UI_HEADER,"time penalty incurred",Resource.DEFAULT_INCURTIMEPENALTY);
 	}
+	public void set_patterntype(CellPatternType pt)
+	{
+		set_int(UI_HEADER,"cell pattern type",(int)pt);
+	}
+	public CellPatternType get_patterntype()
+	{
+		return (CellPatternType)get_int(UI_HEADER,"cell pattern type",0);
+	}
 }
