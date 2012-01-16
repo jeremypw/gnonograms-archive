@@ -1,6 +1,7 @@
 Gnonograms version 0.9.5
 **************************
-15/Jan/2011 Fill cells with patterns (incomplete - no choice of pattern)
+15/Jan/2011 Fill cells with patterns
+						Choose plain or circular fill pattern.
 01/Jan/2011 Allow marking of cell and undoing back to that point (Press 'm' to mark and 'l' to return to last mark).
 						Increase maximum undoes to 1000.
 						Code tidying and bug fixes

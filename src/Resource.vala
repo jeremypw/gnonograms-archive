@@ -84,7 +84,7 @@ namespace Resource
 
 	public static string font_desc;
 	public static double CELLOFFSET_NOGRID=0.0;
-	public static double CELLOFFSET_WITHGRID=2.0;
+	public static double CELLOFFSET_WITHGRID=3.0;
 	public static double[] MINORGRIDDASH;
 	public static int DEFAULT_ROWS=10;
 	public static int DEFAULT_COLS=10;

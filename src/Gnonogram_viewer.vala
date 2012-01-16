@@ -40,6 +40,9 @@ public class Gnonogram_view : Gtk.Window
 	public signal void randomgame();
 	public signal void setcolors();
 	public signal void setfont();
+
+	public signal void setpattern(CellPatternType patterntype);
+
 	public signal void setdifficulty(double grade);
 	public signal void resizegame();
 	public signal void togglegrid(bool active);
@@ -262,6 +265,14 @@ public class Gnonogram_view : Gtk.Window
 				gamesdirsubmenu.add(defaultgamedirmenuitem);
 				gamesdirsubmenu.add(customgamedirmenuitem);
 			gamedirmenuitem.set_submenu(gamesdirsubmenu);
+			var patternsmenuitem=new MenuItem.with_label(_("Cell Patterns"));
+			settingssubmenu.add(patternsmenuitem);
+				var patternssubmenu=new Menu();
+					var plainpatternmenuitem=new MenuItem.with_label(_("Plain"));
+					var radialpatternmenuitem=new MenuItem.with_label(_("Circle"));
+					patternssubmenu.add(plainpatternmenuitem);
+					patternssubmenu.add(radialpatternmenuitem);
+			patternsmenuitem.set_submenu(patternssubmenu);
 
 			settingssubmenu.add(new SeparatorMenuItem());
 			_advancedmenuitem=new CheckMenuItem.with_mnemonic(_("_Use advanced solver"));
@@ -339,6 +350,10 @@ public class Gnonogram_view : Gtk.Window
 		_grademenuitem.activate.connect(set_difficulty);
 		customgamedirmenuitem.activate.connect(Resource.set_custom_game_dir);
 		defaultgamedirmenuitem.activate.connect(Resource.set_default_game_dir);
+
+		plainpatternmenuitem.activate.connect(()=>{setpattern(CellPatternType.NONE);});
+		radialpatternmenuitem.activate.connect(()=>{setpattern(CellPatternType.RADIAL);});
+
 		editmenuitem.activate.connect(()=>{editgame();});
 		editmenuitem.add_accelerator("activate",accel_group,keyval_from_name("e"),Gdk.ModifierType.SHIFT_MASK, Gtk.AccelFlags.VISIBLE);
 		trimmenuitem.activate.connect(()=>{trimgame();});

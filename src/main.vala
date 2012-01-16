@@ -74,43 +74,11 @@ public enum CellState
 	}
 }
 
-public struct Cell
+public enum CellPatternType
 {
-		public int row;
-		public int col;
-		public CellState state;
-
-		public bool same_coords(Cell c)
-		{
-			return (this.row==c.row && this.col==c.col);
-		}
-
-		public void copy(Cell b)
-		{
-			this.row=b.row;
-			this.col=b.col;
-			this.state=b.state;
-		}
-
-		public Cell invert()
-		{
-			Cell c={this.row, this.col, CellState.UNKNOWN};
-			if (this.state==CellState.EMPTY) c.state=CellState.FILLED;
-			else c.state=CellState.EMPTY;
-			return c;
-		}
-
-		public string to_string()
-		{
-			return @"Row $(this.row), Col $(this.col),  State $(this.state)";
-		}
-	}
-
-	public struct Move
-	{
-		public Cell previous;
-		public Cell replacement;
-	}
+	NONE,
+	RADIAL
+}
 
 public enum ButtonPress
 {
@@ -122,6 +90,46 @@ public enum ButtonPress
 	RIGHT_DOUBLE,
 	UNDEFINED
 }
+
+public struct Cell
+{
+	public int row;
+	public int col;
+	public CellState state;
+
+	public bool same_coords(Cell c)
+	{
+		return (this.row==c.row && this.col==c.col);
+	}
+
+	public void copy(Cell b)
+	{
+		this.row=b.row;
+		this.col=b.col;
+		this.state=b.state;
+	}
+
+	public Cell invert()
+	{
+		Cell c={this.row, this.col, CellState.UNKNOWN};
+		if (this.state==CellState.EMPTY) c.state=CellState.FILLED;
+		else c.state=CellState.EMPTY;
+		return c;
+	}
+
+	public string to_string()
+	{
+		return @"Row $(this.row), Col $(this.col),  State $(this.state)";
+	}
+}
+
+public struct Move
+{
+	public Cell previous;
+	public Cell replacement;
+}
+
+
 
 Gnonogram_controller controller;
 

@@ -38,6 +38,7 @@ public class Gnonogram_controller
 	private Timer _timer;
 	private double _time_penalty;
 	private GameState _state;
+	private CellPatternType _patterntype;
 
 	private bool _is_button_down;
 	private bool _have_solution;
@@ -122,7 +123,15 @@ public class Gnonogram_controller
 		_gnonogram_view.trimgame.connect(this.trim_game);
 
 		_gnonogram_view.setcolors.connect(()=>{Resource.set_colors(); redraw_all();});
-		_gnonogram_view.setfont.connect(()=>{Resource.set_custom_font(); _rowbox.change_font_height(false);_colbox.change_font_height(false);});
+		_gnonogram_view.setfont.connect(()=>{
+				Resource.set_custom_font();
+				_rowbox.change_font_height(false);
+				_colbox.change_font_height(false);
+			});
+		_gnonogram_view.setpattern.connect((patterntype)=>{
+				_patterntype=patterntype;
+				redraw_all();
+			});
 		_gnonogram_view.resizegame.connect(this.change_size);
 		_gnonogram_view.key_press_event.connect(this.key_pressed);
 		_gnonogram_view.key_release_event.connect(this.key_released);
@@ -553,7 +562,7 @@ public class Gnonogram_controller
 	private void redraw_all()
 	{
 		//stdout.printf("Redraw all\n");
-		_cellgrid.prepare_to_redraw_cells(_state,_gridlinesvisible);
+		_cellgrid.prepare_to_redraw_cells(_state,_gridlinesvisible,_patterntype);
 		for (int r=0; r<_rows; r++){
 			for (int c=0; c<_cols; c++){
 					_cellgrid.draw_cell(_model.get_cell(r,c));
@@ -1316,6 +1325,7 @@ public class Gnonogram_controller
 		_difficult=config_instance.get_generate_advanced_puzzles();
 		_gridlinesvisible=config_instance.get_show_grid();
 		_toolbarvisible=config_instance.get_toolbar_visible();
+		_patterntype=CellPatternType.NONE; //TODO add to config file
 	}
 
 	private void change_state(GameState gs)
