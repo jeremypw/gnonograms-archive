@@ -36,6 +36,10 @@
 	private int _max_turns;
 	private int _guesses=0;
 	private int _counter=0;
+	private bool _testing;
+	private bool _debug;
+	private bool _test_column;
+	private int _test_idx;
 
 	public signal void showsolvergrid();
 	public signal void showprogress(int guesses);
@@ -50,8 +54,13 @@
 
 		for (int i=0;i<_regions.length;i++) _regions[i]=new Gnonogram_region(_grid);
 
+		//For development purposes only
+		_testing=testing;
+		_debug=debug;
+		_test_column=test_column;
+		_test_idx=test_idx;
+		//
 	}
-
 
 	public void set_dimensions(int r, int c)
 	{
@@ -132,6 +141,45 @@
 		return 0;
 	}
 
+	public bool get_hint()
+	{
+		//Solver must be initialised with current state of puzzle before calling.
+		int		pass=1;
+		while (pass<=30)
+		{
+			//cycle through regions until one of them is changed then returns
+			//that region index.
+			for (int i=0; i<_region_count; i++)
+			{
+				if (_regions[i]._completed) continue;
+				if (_regions[i].solve(false,true)) //run solve algorithm in hint mode
+				{
+					//stdout.printf("Changed region %d\n",i);
+					showsolvergrid();
+					return true;
+				}
+				if (_regions[i]._in_error)
+				{
+					Utils.show_warning_dialog(_("A logical error has already been made - cannot hint"));
+					return false;
+				}
+			}
+			pass++;
+		}
+		if (pass>30)
+		{
+			if (solved())
+			{
+				Utils.show_info_dialog(_("Already solved"));
+			}
+			else
+			{
+				Utils.show_info_dialog(_("Simple solver could not find hint\n"));
+			}
+		}
+		return false;
+	}
+
 	private int simple_solver(bool debug, bool log_error=false)
 	{
 		//stdout.printf(@"Simple solver  debug $debug  region count $_region_count\n");
@@ -160,7 +208,7 @@
 			}
 		}
 		if (solved()) return pass;
-		if (pass>30) stdout.printf("Simple solver - too many passes\n");
+		if (pass>30) Utils.show_warning_dialog("Simple solver - too many passes\n");
 		return 0;
 	}
 
@@ -206,7 +254,6 @@
 				}
 				else if(_trial_cell.state==initial_cellstate)
 				{
-					stdout.printf(@"Inverting guesses at score $_guesses\n");
 					_trial_cell=_trial_cell.invert(); //start making opposite guesses
 					_max_turns=initial_maxturns; wraps=0;
 				}

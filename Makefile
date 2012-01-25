@@ -244,6 +244,7 @@ dist: $(DIST_FILES)
 
 bin: $(PROGRAM) $(BIN_FILES)
 ############################
+	rm -f $(BIN_TAR_GZ)
 	mkdir -p $(PROGRAM)-$(VERSION)-bin
 	cp --parents $(BIN_FILES) $(PROGRAM)-$(VERSION)-bin
 	tar --gzip -cvf $(BIN_TAR_GZ) $(PROGRAM)-$(VERSION)-bin

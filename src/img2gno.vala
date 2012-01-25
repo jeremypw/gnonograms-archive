@@ -60,34 +60,22 @@ class Img2gno : Gtk.Dialog
 		hb.pack_end(_scrwin, true, true, 0);
 
 		var load_button=new Gtk.Button.with_label(_("Load Image"));
-		load_button.clicked.connect(load_image);
 		vb.pack_start(load_button,false, true, 0);
 
 		var h1=new Gtk.HBox(false,2);
 		_monocheckbutton=new Gtk.CheckButton.with_label(_("Monochrome"));
 		_monocheckbutton.active=false;
 		_monocheckbutton.sensitive=false;
-		_monocheckbutton.toggled.connect((w)=>{
-			_zoom.sensitive=w.active;
-			_invertcheckbutton.sensitive=w.active;
-			_thr_red_scale.sensitive=w.active;
-			_thr_green_scale.sensitive=w.active;
-			_thr_blue_scale.sensitive=w.active;
-			_thr_alpha_scale.sensitive=w.active;
-			display_image();
-		});
 		h1.pack_start(_monocheckbutton,false, true, 0);
 
 		_invertcheckbutton=new Gtk.CheckButton.with_label(_("Invert image"));
 		_invertcheckbutton.active=false;
-		_invertcheckbutton.toggled.connect(display_image);
 		_invertcheckbutton.sensitive=false;
 		h1.pack_start(_invertcheckbutton,false, true, 0);
 		vb.pack_start(h1,true,true,2);
 
 		_zoom=new HScale.with_range(5.0,100.0,1.0);
 		_zoom.update_policy=Gtk.UpdateType.CONTINUOUS;
-		_zoom.value_changed.connect(display_image);
 		_zoom.width_request=200;
 		_zoom.sensitive=false;
 		var f=new Gtk.Frame(_("Zoom %"));
@@ -96,7 +84,6 @@ class Img2gno : Gtk.Dialog
 
 		_thr_red_scale=new HScale.with_range(0.00,1.00,0.01);
 		_thr_red_scale.update_policy=Gtk.UpdateType.DISCONTINUOUS;
-		_thr_red_scale.value_changed.connect(display_image);
 		_thr_red_scale.width_request=200;
 		_thr_red_scale.sensitive=false;
 		var f1=new Gtk.Frame(_("Red Threshold %"));
@@ -105,7 +92,6 @@ class Img2gno : Gtk.Dialog
 
 		_thr_green_scale=new HScale.with_range(0.00,1.00,0.01);
 		_thr_green_scale.update_policy=Gtk.UpdateType.DISCONTINUOUS;
-		_thr_green_scale.value_changed.connect(display_image);
 		_thr_green_scale.width_request=200;
 		_thr_green_scale.sensitive=false;
 		var f2=new Gtk.Frame(_("Green Threshold"));
@@ -114,7 +100,6 @@ class Img2gno : Gtk.Dialog
 
 		_thr_blue_scale=new HScale.with_range(0.00,1.00,0.01);
 		_thr_blue_scale.update_policy=Gtk.UpdateType.DISCONTINUOUS;
-		_thr_blue_scale.value_changed.connect(display_image);
 		_thr_blue_scale.width_request=200;
 		_thr_blue_scale.sensitive=false;
 		var f3=new Gtk.Frame(_("Blue threshold"));
@@ -123,7 +108,6 @@ class Img2gno : Gtk.Dialog
 
 		_thr_alpha_scale=new HScale.with_range(0.00,1.00,0.01);
 		_thr_alpha_scale.update_policy=Gtk.UpdateType.DISCONTINUOUS;
-		_thr_alpha_scale.value_changed.connect(display_image);
 		_thr_alpha_scale.width_request=200;
 		_thr_alpha_scale.sensitive=false;
 		var f4=new Gtk.Frame(_("Alpha threshold"));
@@ -149,6 +133,24 @@ class Img2gno : Gtk.Dialog
 		this.add_buttons(Gtk.Stock.OK, Gtk.ResponseType.OK, Gtk.Stock.CANCEL, Gtk.ResponseType.CANCEL);
 
 		set_sliders_to_default_values();
+
+		load_button.clicked.connect(load_image);
+		_monocheckbutton.toggled.connect((w)=>{
+		_zoom.sensitive=w.active;
+			_invertcheckbutton.sensitive=w.active;
+			_thr_red_scale.sensitive=w.active;
+			_thr_green_scale.sensitive=w.active;
+			_thr_blue_scale.sensitive=w.active;
+			_thr_alpha_scale.sensitive=w.active;
+			display_image();
+		});
+		_invertcheckbutton.toggled.connect(display_image);
+		_zoom.value_changed.connect(display_image);
+		_thr_red_scale.value_changed.connect(display_image);
+		_thr_green_scale.value_changed.connect(display_image);
+		_thr_blue_scale.value_changed.connect(display_image);
+		_thr_alpha_scale.value_changed.connect(display_image);
+
 	}
 
 	private void set_sliders_to_default_values()
@@ -257,13 +259,19 @@ class Img2gno : Gtk.Dialog
 		{
 			return;
 		}
-		if (_pbo.bits_per_sample!=8 || _pbo.n_channels<3) return;
+		if (_pbo.bits_per_sample!=8 || _pbo.n_channels<3)
+		{
+			Utils.show_warning_dialog(_("Cannot convert this image format; need 8 bits per channel and at least 3 channels"));
+			return;
+		}
 
 		int channels=_pbo.n_channels;
 		bool has_alpha=_pbo.has_alpha;
 		int width=_pbo.width;
 		int height=_pbo.height;
 		int rowstride=_pbo.rowstride;
+
+		stdout.printf(@"Has alpha $(has_alpha)\n");
 
 		uint8 white=_invertcheckbutton.active ? 0 : 255;
 		uint8 black=255-white;
@@ -287,7 +295,7 @@ class Img2gno : Gtk.Dialog
 			for (int w=0;w<width;w++)
 			{
 				if (has_alpha) a=pix[idx+3];
-				else a=0;
+				else a=1;
 				if ((pix[idx]<thr_r||pix[idx+1]<thr_g||pix[idx+2]<thr_b) && a>thr_a)
 				{
 					pix[idx]=black;

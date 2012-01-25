@@ -196,7 +196,7 @@
 		if (freedom==0) _completed=true;
 	}
 
-	public bool solve(bool debug=false)
+	public bool solve(bool debug=false, bool hint=false)
 	{
 		/**if change has occurred since last visit (due to change in an intersecting
 		 * region), runs full-fix() to see whether any inferences possible.
@@ -216,19 +216,19 @@
 		_debug=debug;
 		if (_completed) return false;
 
-		bool made_changes=false;
 		get_status();
-		bool still_changing=totals_changed();
+		//has a change been made by another region?
+		//bool still_changing=totals_changed();
 		//also detects whether completed and if so calls check_nblocks().
 
-		if (_completed || _in_error||!still_changing) return false;
+		if (_completed || _in_error||!totals_changed()) return false;
 
-		int count=0;
+		int count=0; 	bool made_changes=false;
 		while (!_completed && count<MAXCYCLES)
 		//count guards against infinite loops
 		{
 			count++;
-			still_changing=full_fix();
+			full_fix();
 			if (_in_error) break;
 
 			tags_to_status();
@@ -237,6 +237,9 @@
 				if(_in_error) break;
 				else made_changes=true;
 			}
+			//ensures detection of all possible changes when in hint mode.
+			//Not sure why this is needed!
+			else if (hint && count<3) continue;
 			else break;
 		}
 		if ((made_changes && !_in_error)||debug) put_status(debug);
@@ -250,47 +253,47 @@
 		// Tries each ploy in turn, returns as soon as a change is made
 		// or an error detected.
 
-		if (capped_range_audit()||_in_error||tags_to_status())
+		if (capped_range_audit()||_in_error)//||tags_to_status())
 		{
 			return true;
 		}
 
-		if (possibilities_audit()||_in_error||tags_to_status())
+		if (possibilities_audit()||_in_error)//||tags_to_status())
 		{
 			return true;
 		}
 
-		if (only_possibility()||_in_error||tags_to_status())
+		if (only_possibility()||_in_error)//||tags_to_status())
 		{
 			return true;
 		}
 
-		if (do_edge(1)||_in_error||tags_to_status())
+		if (do_edge(1)||_in_error)//||tags_to_status())
 		{
 			return true;
 		}
 
-		if (do_edge(-1)||_in_error||tags_to_status())
+		if (do_edge(-1)||_in_error)//||tags_to_status())
 		{
 			return true;
 		}
 
-		if (filled_subregion_audit()||_in_error||tags_to_status())
+		if (filled_subregion_audit()||_in_error)//||tags_to_status())
 		{
 			return true;
 		}
 
-		if (fill_gaps()||_in_error||tags_to_status())
+		if (fill_gaps()||_in_error)//||tags_to_status())
 		{
 			return true;
 		}
 
-		if (free_cell_audit()||_in_error||tags_to_status())
+		if (free_cell_audit()||_in_error)//||tags_to_status())
 		{
 			return true;
 		}
 
-		if (fix_blocks_in_ranges()||_in_error||tags_to_status())
+		if (fix_blocks_in_ranges()||_in_error)//||tags_to_status())
 		{
 			return true;
 		}
@@ -1372,7 +1375,7 @@
 		int filled=count_cell_state(CellState.FILLED);
 		int completed=count_cell_state(CellState.COMPLETED);
 
-		if (_unknown!=unknown || _filled!=filled)
+		if (_unknown!=unknown)// || _filled!=filled)
 		{
 			changed=true;
 			_unknown=unknown;

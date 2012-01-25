@@ -129,8 +129,6 @@ public struct Move
 	public Cell replacement;
 }
 
-
-
 Gnonogram_controller controller;
 
 public static int main(string[] args)

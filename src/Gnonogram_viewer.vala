@@ -40,9 +40,7 @@ public class Gnonogram_view : Gtk.Window
 	public signal void randomgame();
 	public signal void setcolors();
 	public signal void setfont();
-
 	public signal void setpattern(CellPatternType patterntype);
-
 	public signal void setdifficulty(double grade);
 	public signal void resizegame();
 	public signal void togglegrid(bool active);
@@ -51,12 +49,12 @@ public class Gnonogram_view : Gtk.Window
 	public signal void advancedmode(bool advanced);
 	public signal void difficultmode(bool difficult);
 	public signal void penaltymode(bool penalty);
-
 	public signal void resetall();
 	public signal void undoredo(bool direction);
 	public signal void undoerrors();
 	public signal void editgame();
 	public signal void trimgame();
+	public signal void gethint();
 
 	private Gtk.SpinButton _grade_spin;
 	private Gtk.ToggleToolButton _hide_tool;
@@ -78,6 +76,8 @@ public class Gnonogram_view : Gtk.Window
 	private Gtk.MenuItem _redomenuitem;
 	private Gtk.MenuItem _undoerrorsmenuitem;
 	private Gtk.MenuItem _restartmenuitem;
+	private Gtk.MenuItem _hintmenuitem;
+
 	private Gtk.MenuItem _grademenuitem;
 	private Gtk.MenuItem _resizemenuitem;
 	private Gtk.MenuItem _defaultsmenuitem;
@@ -230,11 +230,13 @@ public class Gnonogram_view : Gtk.Window
 			_checkerrorsmenuitem.set_sensitive(false);
 			gamesubmenu.add(new SeparatorMenuItem());
 			_restartmenuitem=new MenuItem.with_mnemonic(_("_Restart"));
-			gamesubmenu.add(new SeparatorMenuItem());
+			gamesubmenu.add(_restartmenuitem);
 			_pausemenuitem=new MenuItem.with_mnemonic(_("_Pause"));
 			gamesubmenu.add(_pausemenuitem);
 
 			gamesubmenu.add(new SeparatorMenuItem());
+			_hintmenuitem=new MenuItem.with_mnemonic(_("_Get hint"));
+			gamesubmenu.add(_hintmenuitem);
 			var computersolvemenuitem=new MenuItem.with_mnemonic(_("_Let computer solve it"));
 			gamesubmenu.add(computersolvemenuitem);
 			var computergeneratemenuitem=new MenuItem.with_mnemonic(_("_Computer generated puzzle"));
@@ -339,6 +341,8 @@ public class Gnonogram_view : Gtk.Window
 
 		_pausemenuitem.activate.connect(()=>{pausegame();});
 		_pausemenuitem.add_accelerator("activate",accel_group,keyval_from_name("p"),Gdk.ModifierType.SHIFT_MASK, Gtk.AccelFlags.VISIBLE);
+		_hintmenuitem.activate.connect(()=>{gethint();});
+		_hintmenuitem.add_accelerator("activate",accel_group,keyval_from_name("h"),Gdk.ModifierType.SHIFT_MASK, Gtk.AccelFlags.VISIBLE);
 		computersolvemenuitem.activate.connect(()=>{solvegame();});
 		computersolvemenuitem.add_accelerator("activate",accel_group,keyval_from_name("c"),Gdk.ModifierType.SHIFT_MASK, Gtk.AccelFlags.VISIBLE);
 		computergeneratemenuitem.activate.connect(()=>{randomgame();});

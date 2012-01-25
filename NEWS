@@ -1,17 +1,21 @@
 Gnonograms version 0.9.5
 **************************
-16/Jan/2011 Save pattern choice in config file.
-15/Jan/2011 Fill cells with patterns
+25/Jan/2012	Updated translations
+21/Jan/2012 Bugfix in image import
+						Implemented hinting (hot key = Shift h)
+16/Jan/2012 Save pattern choice in config file.
+15/Jan/2012 Fill cells with patterns
 						Choose plain or circular fill pattern.
-01/Jan/2011 Allow marking of cell and undoing back to that point (Press 'm' to mark and 'l' to return to last mark).
+07/Jan/2012 Prevent marking unknown cell
+						Prevent changing marked cell
+						Undo all errors feature
+						Changed "Author" to "Source" in puzzle information.
+01/Jan/2012 Allow marking of cell and undoing back to that point (Press 'm' to mark and 'l' to return to last mark).
 						Increase maximum undoes to 1000.
 						Code tidying and bug fixes
 						Disable spacebar activation of toolbar items to prevent accidental new game
 						Add confirm dialog on new game.
-07/Jan/2011 Prevent marking unknown cell
-						Prevent changing marked cell
-						Undo all errors feature
-						Changed "Author" to "Source" in puzzle information.
+
 
 Gnonograms version 0.9.4
 **************************

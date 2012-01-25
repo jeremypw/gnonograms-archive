@@ -95,6 +95,8 @@ namespace Resource
 	public static bool DEFAULT_INCURTIMEPENALTY=true;
 	public static double FIXED_TIMEPENALTY=30.0;
 	public static double PER_CELL_TIMEPENALTY=10.0;
+	public static int HINT_CELLPENALTY=2;
+
 
 	public static Gdk.Color[,] colors;
 	public static Gdk.Color default_filled_setting;
