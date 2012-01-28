@@ -613,8 +613,8 @@ public class Gnonogram_controller
 		if (confirm && !Utils.show_confirm_dialog(_("Restart solving the puzzle?"))) return;
 		_model.blank_working();
 		_timer.reset();
-
-		change_state(GameState.SOLVING);//resets view etc
+		start_solving();
+//		change_state(GameState.SOLVING);//resets view etc
 		redraw_all();
 	}
 
@@ -1118,8 +1118,9 @@ public class Gnonogram_controller
 			_gnonogram_view.set_date(Utils.get_todays_date_string());
 			_gnonogram_view.set_score(passes.to_string());
 
-			_model.use_working();
-			redraw_all();
+			start_solving();
+//			_model.use_working();
+//			redraw_all();
 		}
 		else {
 			Utils.show_warning_dialog(_("Error occurred in solver"));

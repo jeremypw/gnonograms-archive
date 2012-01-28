@@ -1,5 +1,6 @@
 Gnonograms version 0.9.5
 **************************
+28/Jan/2012 Fix time penalty not reset bug
 26/Jan/2012 Updated manual
 25/Jan/2012	Updated translations
 21/Jan/2012 Bugfix in image import
