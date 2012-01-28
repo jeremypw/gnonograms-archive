@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Gnonograms-0.1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-01-25 20:22+0000\n"
-"PO-Revision-Date: 2012-01-25 21:11+0000\n"
+"POT-Creation-Date: 2012-01-27 19:38+0000\n"
+"PO-Revision-Date: 2012-01-28 19:19+0000\n"
 "Last-Translator: Jeremy Wootten <jeremywootten@gmail.com>\n"
 "Language-Team: JAPANESE <jp@li.org>\n"
 "Language: \n"
@@ -21,7 +21,7 @@ msgstr ""
 #: ../src/Gnonogram_controller.vala:474
 #, c-format
 msgid "Total time penalty now %4.0f seconds"
-msgstr "%4.0f秒総ペナルティ"
+msgstr "総ペナルティは%4.0f秒"
 
 #: ../src/Gnonogram_controller.vala:554
 msgid ""
@@ -54,7 +54,7 @@ msgstr "再び始める？"
 
 #: ../src/Gnonogram_controller.vala:626
 msgid "Timer paused"
-msgstr "タイマーが一時停止され"
+msgstr "タイマーが一時停止"
 
 #: ../src/Gnonogram_controller.vala:636
 msgid "Name and save this puzzle"
@@ -62,25 +62,25 @@ msgstr "パズルに名前を付け、それを保存する"
 
 #: ../src/Gnonogram_controller.vala:637 ../src/Gnonogram_filereader.vala:74
 msgid "Gnonogram puzzles"
-msgstr "Gnonogramお絵かきパズル"
+msgstr "Gnonogramパズル"
 
 #: ../src/Gnonogram_controller.vala:650 ../src/Gnonogram_controller.vala:677
 #, c-format
 msgid "Could not write to '%s'"
-msgstr "'％s'に書き込めませんでした"
+msgstr "Could not write to '%s'"
 
 #: ../src/Gnonogram_controller.vala:654 ../src/Gnonogram_controller.vala:681
 #, c-format
 msgid "Saved as '%s'"
-msgstr "「%s」として保存した"
+msgstr "'%s'として保存した"
 
 #: ../src/Gnonogram_controller.vala:663
 msgid "Name and save as  picto puzzle"
-msgstr "\"ピクトのパズル\"として保存してパズルに名前を付けます"
+msgstr "\"Picto\"パズルとして保存します。"
 
 #: ../src/Gnonogram_controller.vala:664 ../src/Gnonogram_filereader.vala:74
 msgid "Picto puzzles"
-msgstr "ピクトパズル"
+msgstr "\"Picto\"パズル"
 
 #: ../src/Gnonogram_controller.vala:765
 msgid "Failed to load puzzle"
@@ -100,7 +100,7 @@ msgstr "寸法が大きすぎる"
 
 #: ../src/Gnonogram_controller.vala:801
 msgid "Dimensions too small"
-msgstr "外形寸法が小さすぎる"
+msgstr "寸法が小さすぎる"
 
 #: ../src/Gnonogram_controller.vala:809
 msgid "Dimensions data missing"
@@ -133,7 +133,7 @@ msgid ""
 "Incorrect cells: %d\n"
 "\n"
 msgstr ""
-"誤った細胞: %d\n"
+"誤ったセル: %d\n"
 "\n"
 
 #: ../src/Gnonogram_controller.vala:916
@@ -147,12 +147,12 @@ msgstr ""
 #: ../src/Gnonogram_controller.vala:936
 #, c-format
 msgid "Time taken: %d hours, %d minutes, %8.3f seconds"
-msgstr "%d時間、%d分、%8.3f秒を経過"
+msgstr "経過時間:%d時間、%d分、%8.3f秒"
 
 #: ../src/Gnonogram_controller.vala:937
 #, c-format
 msgid "Including %4.0f seconds time penalty"
-msgstr "%4.0f秒のペナルティを含む"
+msgstr "ペナルティを含んだ時間:%4.0f秒"
 
 #: ../src/Gnonogram_controller.vala:961
 msgid "Failed to solve or no unique solution"
@@ -165,11 +165,11 @@ msgstr "ユーザによりキャンセルされました"
 #: ../src/Gnonogram_controller.vala:968
 #, c-format
 msgid "Solved in %8.3f seconds"
-msgstr "%8.3f 秒後に解決"
+msgstr "%8.3f 秒 解決"
 
 #: ../src/Gnonogram_controller.vala:1061
 msgid "Requires at least 5 rows"
-msgstr "少なくとも5行が必要です。"
+msgstr "少なくとも5横列が必要です。"
 
 #: ../src/Gnonogram_controller.vala:1065
 msgid "Thinking ..."
@@ -197,8 +197,8 @@ msgid ""
 "Trim blank edges?\n"
 "WARNING - only use on a computer soluble puzzle"
 msgstr ""
-"端で空の行や列を削除します?\n"
-"警告 - は、コンピュータがパズルを解くことができる場合にのみ使用."
+"端で空の横列や縦列を削除します?\n"
+"警告-コンピュータがパズルを解くことができる場合にのみ使用."
 
 #: ../src/Gnonogram_controller.vala:1324
 msgid "Save changed puzzle?"
@@ -217,15 +217,15 @@ msgstr "GConfに値を設定できません"
 #: ../src/GConf_config.vala:159 ../src/Gnonogram_config.vala:114
 #, c-format
 msgid "Path %s does not exist or is not a directory"
-msgstr "パス ％s は存在しないか、ディレクトリではありません"
+msgstr "パス %s は存在しないか、ディレクトリではありません"
 
 #: ../src/Gnonogram_label.vala:67
 msgid "Freedom="
-msgstr "自由の度 ="
+msgstr "自由の度合い="
 
 #: ../src/Gnonogram_model.vala:182
 msgid "Error - wrong number of columns"
-msgstr "ファイルエラー-列が少なすぎます"
+msgstr "ファイルエラー-横列の数が正しくない"
 
 #: ../src/Gnonogram_solver.vala:123
 msgid "Use advanced solver?"
@@ -233,7 +233,7 @@ msgstr "高度なソルバーを使用しますか？"
 
 #: ../src/Gnonogram_solver.vala:163
 msgid "A logical error has already been made - cannot hint"
-msgstr "あなたは既に論理的なエラーをした - いいえヒントが可能です"
+msgstr "あなたは既に論理的なエラーをした - ヒントはあげられません"
 
 #: ../src/Gnonogram_solver.vala:173
 msgid "Already solved"
@@ -262,7 +262,7 @@ msgstr "挑戦し続ける？"
 #: ../src/Gnonogram_viewer.vala:172 ../src/Gnonogram_viewer.vala:525
 #: additional_strings:1
 msgid "Gnonograms"
-msgstr "Gnonogramsお絵かきパズル"
+msgstr "Gnonogramsパズル"
 
 #: ../src/Gnonogram_viewer.vala:183
 msgid "_File"
@@ -270,7 +270,7 @@ msgstr "ファイル"
 
 #: ../src/Gnonogram_viewer.vala:184
 msgid "_Puzzle"
-msgstr "パズルフ"
+msgstr "パズル"
 
 #: ../src/Gnonogram_viewer.vala:185
 msgid "_Settings"
@@ -286,7 +286,7 @@ msgstr "ヘルプ"
 
 #: ../src/Gnonogram_viewer.vala:204
 msgid "_Save as Picto puzzle"
-msgstr "\"ピクトパズル\"として保存"
+msgstr "\"Picto\"パズルとして保存"
 
 #: ../src/Gnonogram_viewer.vala:207
 msgid "_Import from image"
@@ -334,7 +334,7 @@ msgstr "パズルを編集"
 
 #: ../src/Gnonogram_viewer.vala:249
 msgid "_Trim blank edges"
-msgstr "端で空の行や列を削除します。"
+msgstr "端でからの行や列を削除します。"
 
 #: ../src/Gnonogram_viewer.vala:254
 msgid "_Colors ..."
@@ -455,7 +455,7 @@ msgstr "ランダムパズル"
 
 #: ../src/Gnonogram_viewer.vala:441
 msgid "Generate a random puzzle"
-msgstr "乱数を生成するパズル"
+msgstr "ランダムパズルを生成する"
 
 #: ../src/Gnonogram_viewer.vala:447
 msgid "Resize"
@@ -487,7 +487,7 @@ msgstr "難易度"
 
 #: ../src/Gnonogram_viewer.vala:527 additional_strings:1
 msgid "Design and solve Nonogram puzzles"
-msgstr "お絵かきパズルを設計すると解決する"
+msgstr "\"nonogram\"パズルを設計するし解決もする"
 
 #: ../src/Gnonogram_viewer.vala:531
 msgid "About Gnonograms"
@@ -495,7 +495,7 @@ msgstr "Gnonogramsについて"
 
 #: ../src/Gnonogram_viewer.vala:559
 msgid "Source:"
-msgstr "元:"
+msgstr "ソース:"
 
 #: ../src/Gnonogram_viewer.vala:565
 msgid "Score:"
@@ -517,9 +517,81 @@ msgstr "解決策を明らかに"
 msgid "Choose a puzzle"
 msgstr "パズルを選択"
 
+#: ../src/Gnonogram_filereader.vala:85
+msgid "Cannot open file"
+msgstr "ファイルを開けられません"
+
+#: ../src/Gnonogram_filereader.vala:185
+msgid "Unrecognised heading"
+msgstr "見出しの未認識"
+
+#: ../src/Gnonogram_filereader.vala:199 ../src/Gnonogram_filereader.vala:221
+msgid "No dimensions given"
+msgstr "寸法なし"
+
 #: ../src/Gnonogram_filereader.vala:205
 msgid "Wrong number of dimensions"
 msgstr "次元の数が間違っています"
+
+#: ../src/Gnonogram_filereader.vala:238
+msgid "No clues given"
+msgstr "手がかりなし"
+
+#: ../src/Gnonogram_filereader.vala:245
+msgid "Missing clues"
+msgstr "いくつかの手がかりが欠落"
+
+#: ../src/Gnonogram_filereader.vala:253
+msgid "Invalid clue"
+msgstr "無効な手がかり"
+
+#: ../src/Gnonogram_filereader.vala:263
+msgid "Wrong number of column clues"
+msgstr "縦列の手がかりの数が正しくない"
+
+#: ../src/Gnonogram_filereader.vala:273
+msgid "Wrong number of row clues"
+msgstr "横列の手がかりの数が正しくない"
+
+#: ../src/Gnonogram_filereader.vala:287
+msgid "Solution grid or working grid missing"
+msgstr "グリッドのひとつが欠落"
+
+#: ../src/Gnonogram_filereader.vala:293
+msgid "Wrong number of rows in solution or working grid"
+msgstr "グリッドの中で横列の数が正しくない"
+
+#: ../src/Gnonogram_filereader.vala:303
+msgid "Wrong number of columns in solution or working grid"
+msgstr "グリッドの中で縦列の数が正しくない"
+
+#: ../src/Gnonogram_filereader.vala:312
+msgid "Invalid cell state"
+msgstr "不正なセルの状態"
+
+#: ../src/Gnonogram_filereader.vala:336
+msgid "Missing Picto grid data"
+msgstr "\"Picto\" グリッドデータが欠落しています"
+
+#: ../src/Gnonogram_filereader.vala:342
+msgid "Invalid Picto grid data"
+msgstr "\"Picto\"グリッドデータが無効です。"
+
+#: ../src/Gnonogram_filereader.vala:361
+msgid "Missing game state"
+msgstr "ゲームの状態が欠落しています。"
+
+#: ../src/Gnonogram_filereader.vala:367 ../src/Gnonogram_filereader.vala:374
+msgid "Invalid game state"
+msgstr "ゲームの状態が無効です。"
+
+#: ../src/Gnonogram_filereader.vala:386
+msgid "Missing description"
+msgstr "説明なし"
+
+#: ../src/Gnonogram_filereader.vala:404
+msgid "Missing license"
+msgstr "ライセンス情報が欠落しています"
 
 #: ../src/utils.vala:41 ../src/Resource.vala:219
 msgid "Ok"
@@ -539,27 +611,27 @@ msgstr "サイズを調整"
 
 #: ../src/utils.vala:145
 msgid "Rows"
-msgstr "行"
+msgstr "横列"
 
 #: ../src/utils.vala:149
 msgid "Columns"
-msgstr "列"
+msgstr "縦列"
 
 #: ../src/Resource.vala:223 ../src/Resource.vala:235
 msgid "Color of filled cell when setting"
-msgstr "充填セルの色設定するとき"
+msgstr "満たされるセルの色(設計するとき)"
 
 #: ../src/Resource.vala:224 ../src/Resource.vala:237
 msgid "Color of empty cell when setting"
-msgstr "空のセルの色を設定するとき"
+msgstr "からのセルの色(設計するとき)"
 
 #: ../src/Resource.vala:225 ../src/Resource.vala:239
 msgid "Color of filled cell when solving"
-msgstr "充填セルの色解決する際に"
+msgstr "満たされるセルの色(解決するとき)"
 
 #: ../src/Resource.vala:226 ../src/Resource.vala:241
 msgid "Color of empty cell when solving"
-msgstr "空のセルの色を解決する際に"
+msgstr "からのセルの色(解決するとき)"
 
 #: ../src/Resource.vala:251 ../src/Resource.vala:254 ../src/Resource.vala:257
 #: ../src/Resource.vala:260
@@ -580,7 +652,7 @@ msgstr "パズルの名前"
 
 #: ../src/Game_editor.vala:79
 msgid "Source"
-msgstr "元:"
+msgstr "ソース:"
 
 #: ../src/Game_editor.vala:90
 msgid "Date"
@@ -588,7 +660,7 @@ msgstr "日付:"
 
 #: ../src/Game_editor.vala:101
 msgid "License"
-msgstr "著作権"
+msgstr "ライセンス"
 
 #: ../src/Game_editor.vala:112
 msgid "Description"
@@ -596,11 +668,11 @@ msgstr "説明"
 
 #: ../src/Game_editor.vala:137
 msgid "Row clues"
-msgstr "行の手がかり"
+msgstr "横列の手がかり"
 
 #: ../src/Game_editor.vala:163
 msgid "Column clues"
-msgstr "列の手がかり"
+msgstr "縦列の手がかり"
 
 #: ../src/img2gno.vala:62
 msgid "Load Image"
@@ -608,11 +680,11 @@ msgstr "画像をロード"
 
 #: ../src/img2gno.vala:66
 msgid "Monochrome"
-msgstr "モノクロ"
+msgstr "白黒"
 
 #: ../src/img2gno.vala:71
 msgid "Invert image"
-msgstr "画像を反転"
+msgstr "色を反転"
 
 #: ../src/img2gno.vala:81
 msgid "Zoom %"
@@ -628,7 +700,7 @@ msgstr "緑のしきい値"
 
 #: ../src/img2gno.vala:105
 msgid "Blue threshold"
-msgstr "青い閾値"
+msgstr "青いのしきい値"
 
 #: ../src/img2gno.vala:113
 msgid "Alpha threshold"
@@ -660,7 +732,8 @@ msgstr "画像のロードに失敗しました"
 
 #: ../src/img2gno.vala:183
 msgid "File type not supported - use PNG, BMP or SVG"
-msgstr "このファイルタイプはサポートされていません. 使用するPNG、BMPまたはSVG"
+msgstr ""
+"このファイルタイプはサポートされていません. PNG、BMPまたはSVGを使用すること"
 
 #: ../src/img2gno.vala:191
 msgid "Select an image to convert"
@@ -670,7 +743,9 @@ msgstr "変換するイメージを選択します"
 msgid ""
 "Cannot convert this image format; need 8 bits per channel and at least 3 "
 "channels"
-msgstr "この画像形式を変換できません。"
+msgstr ""
+"この画像形式を変換できません。画像は、チャンネルあたり8ビットと少なくとも3つ"
+"のチャネルを持っている必要があります"
 
 #: ../src/img2gno.vala:349
 msgid "Height: "
@@ -793,9 +868,6 @@ msgstr "論理ゲーム"
 
 #~ msgid "Position file error - too few rows in working grid"
 #~ msgstr "ファイルエラー-少なすぎる行"
-
-#~ msgid "Invalid game file"
-#~ msgstr "不正なファイル"
 
 #~ msgid "All files"
 #~ msgstr "すべてのファイル"

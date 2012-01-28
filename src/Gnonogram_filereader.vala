@@ -82,7 +82,7 @@ public class Gnonogram_filereader {
 		stream= Utils.open_datainputstream(filename);
 		if (stream==null)
 		{
-			err_msg="Cannot open file";
+			err_msg=_("Cannot open file");
 			return false;
 		}
 		else return true;
@@ -182,7 +182,7 @@ public class Gnonogram_filereader {
 				case "LIC" :
 					in_error=!get_game_license(bodies[i]); break;
 				default :
-					err_msg=@"Unrecognised heading $heading ";
+					err_msg=_("Unrecognised heading");
 					in_error=true;
 					break;
 			}
@@ -196,7 +196,7 @@ public class Gnonogram_filereader {
 		//stdout.printf("In get_dimensions\n");
 		if (body==null)
 		{
-			err_msg="No dimensions given";
+			err_msg=_("No dimensions given");
 			return false;
 		}
 		string[] s = Utils.remove_blank_lines(body.split("\n"));
@@ -218,7 +218,7 @@ public class Gnonogram_filereader {
 		//stdout.printf("In get_dimensions\n");
 		if (body==null)
 		{
-			err_msg="No dimensions given";
+			err_msg=_("No dimensions given");
 			return false;
 		}
 		int dim = int.parse(body);
@@ -234,15 +234,15 @@ public class Gnonogram_filereader {
 		//stdout.printf("In get_clues\n");
 		string[] arr={};
 		if (body==null)
-				{
-			err_msg="No clues given";
+		{
+			err_msg=_("No clues given");
 			return false;
 		}
 		string[] s = Utils.remove_blank_lines(body.split("\n"));
 
 		if (s==null||s.length<1)
 		{
-			err_msg="Missing clues";
+			err_msg=_("Missing clues");
 			return false;
 		}
 		for (int i=0; i< s.length; i++)
@@ -250,7 +250,7 @@ public class Gnonogram_filereader {
 			string? clue=parse_gnonogram_clue(s[i],is_column);
 			if (clue==null)
 			{
-				err_msg=@"Invalid clue $i Is column $is_column";
+				err_msg=_("Invalid clue");
 				return false;
 			}
 			else arr+=clue;
@@ -260,7 +260,7 @@ public class Gnonogram_filereader {
 		{
 			if (arr.length!=cols)
 			{
-				err_msg="Wrong number of column clues";
+				err_msg=_("Wrong number of column clues");
 				return false;
 			}
 			col_clues=arr;
@@ -270,7 +270,7 @@ public class Gnonogram_filereader {
 		{
 			if (arr.length!=rows)
 			{
-				err_msg="Wrong number of row clues";
+				err_msg=_("Wrong number of row clues");
 				return false;
 			}
 			row_clues=arr;
@@ -284,13 +284,13 @@ public class Gnonogram_filereader {
 		//stdout.printf("In get_cellstate array\n");
 		if (body==null)
 		{
-			err_msg="Solution or working array missing";
+			err_msg=_("Solution grid or working grid missing");
 			return false;
 		}
 		string[] s = Utils.remove_blank_lines(body.split("\n"));
 		if (s==null||s.length!=rows)
 		{
-			err_msg="Invalid solution or working array size";
+			err_msg=_("Wrong number of rows in solution or working grid");
 			return false;
 		}
 
@@ -298,14 +298,18 @@ public class Gnonogram_filereader {
 		{
 
 			CellState[] arr = Utils.cellstate_array_from_string(s[i]);
-			if (arr.length!=cols) return false;
+			if (arr.length!=cols)
+			{
+				err_msg=_("Wrong number of columns in solution or working grid");
+				return false;
+			}
 			if (is_solution)
 			{
 				for (int c=0;c<cols;c++)
 				{
 					if(arr[c]!=CellState.EMPTY && arr[c]!=CellState.FILLED)
 					{
-						err_msg="Invalid solution cell state - only empty or filled permitted";
+						err_msg=_("Invalid cell state");
 						return false;
 					}
 				}
@@ -329,13 +333,13 @@ public class Gnonogram_filereader {
 		//stdout.printf("In parse grid data\n");
 		if (picto_grid_data==null)
 		{
-			err_msg="Missing Picto grid data";
+			err_msg=_("Missing Picto grid data");
 			return false;
 		}
 		picto_grid_data=Utils.remove_blank_lines(picto_grid_data);
 		if (picto_grid_data==null||picto_grid_data.length!=rows)
 		{
-			err_msg="Invalid Picto grid data";
+			err_msg=_("Invalid Picto grid data");
 			return false;
 		}
 		solution = new string[rows];
@@ -354,20 +358,20 @@ public class Gnonogram_filereader {
 		//stdout.printf("In get_state\n");
 		if (body==null)
 		{
-			err_msg="Missing game state";
+			err_msg=_("Missing game state");
 			return false;
 		}
 		string[] s = Utils.remove_blank_lines(body.split("\n"));
 		if (s==null||s.length!=1)
 		{
-			err_msg="Invalid game state";
+			err_msg=_("Invalid game state");
 			return false;
 		}
 		state=s[0];
 		if (state==(GameState.SETTING).to_string()||state==(GameState.SOLVING).to_string()) has_state=true;
 		else
 		{
-			err_msg="Invalid game state";
+			err_msg=_("Invalid game state");
 			return false;
 		} ;
 
@@ -379,7 +383,7 @@ public class Gnonogram_filereader {
 		//stdout.printf("In get_description\n");
 		if (body==null)
 		{
-			err_msg="Missing description";
+			err_msg=_("Missing description");
 			return false;
 		}
 		string[] s = Utils.remove_blank_lines(body.split("\n"));
@@ -397,7 +401,7 @@ public class Gnonogram_filereader {
 		//stdout.printf("In get_description\n");
 		if (body==null)
 		{
-			err_msg="Missing license";
+			err_msg=_("Missing license");
 			return false;
 		}
 		string[] s = Utils.remove_blank_lines(body.split("\n"));

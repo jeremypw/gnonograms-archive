@@ -3,7 +3,7 @@
       id="imageconverter">
 	<info>
 		<link type="guide" xref="index"/>
-		<link type="next" xref="gameeditor"/>
+		<link type="next" xref="puzzleeditor"/>
   	</info>
 
 	<title>08. Import from image</title>
@@ -46,8 +46,8 @@
 
 	<p>When satisfied click the "OK" button. The image is converted to a nonogram and imported into the main program.</p>
 	<p>If necessary, the puzzle can be adjusted to give a better appearance or to make it more easily soluble using the design functions in the main program.</p>
-	<p>Use the game editor (See <link type="topic" xref="gameeditor"/>) to enter the puzzle name, designer name, license and date of creation</p>
-	<p>It is recommended to run the computer solver (with or without the 'use advanced solver option') to check whether the game is soluble before saving it.  If you want to have the game load already in solving mode, then make sure it is in this mode when you save it.</p>
+	<p>Use the puzzle editor (See <link type="topic" xref="puzzleeditor"/>) to enter the puzzle name, designer name, license and date of creation</p>
+	<p>It is recommended to run the computer solver (with or without the 'use advanced solver option') to check whether the puzzle is soluble before saving it.  If you want to have the puzzle load already in solving mode, then make sure it is in this mode when you save it.</p>
 
 	<figure>
 		<media type="image" mime="image/png" width="612" height="703" src="figures/imageconverter-imported.png"/>

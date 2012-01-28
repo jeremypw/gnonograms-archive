@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-01-25 20:22+0000\n"
+"POT-Creation-Date: 2012-01-27 19:38+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -502,8 +502,80 @@ msgstr ""
 msgid "Choose a puzzle"
 msgstr ""
 
+#: ../src/Gnonogram_filereader.vala:85
+msgid "Cannot open file"
+msgstr ""
+
+#: ../src/Gnonogram_filereader.vala:185
+msgid "Unrecognised heading"
+msgstr ""
+
+#: ../src/Gnonogram_filereader.vala:199 ../src/Gnonogram_filereader.vala:221
+msgid "No dimensions given"
+msgstr ""
+
 #: ../src/Gnonogram_filereader.vala:205
 msgid "Wrong number of dimensions"
+msgstr ""
+
+#: ../src/Gnonogram_filereader.vala:238
+msgid "No clues given"
+msgstr ""
+
+#: ../src/Gnonogram_filereader.vala:245
+msgid "Missing clues"
+msgstr ""
+
+#: ../src/Gnonogram_filereader.vala:253
+msgid "Invalid clue"
+msgstr ""
+
+#: ../src/Gnonogram_filereader.vala:263
+msgid "Wrong number of column clues"
+msgstr ""
+
+#: ../src/Gnonogram_filereader.vala:273
+msgid "Wrong number of row clues"
+msgstr ""
+
+#: ../src/Gnonogram_filereader.vala:287
+msgid "Solution grid or working grid missing"
+msgstr ""
+
+#: ../src/Gnonogram_filereader.vala:293
+msgid "Wrong number of rows in solution or working grid"
+msgstr ""
+
+#: ../src/Gnonogram_filereader.vala:303
+msgid "Wrong number of columns in solution or working grid"
+msgstr ""
+
+#: ../src/Gnonogram_filereader.vala:312
+msgid "Invalid cell state"
+msgstr ""
+
+#: ../src/Gnonogram_filereader.vala:336
+msgid "Missing Picto grid data"
+msgstr ""
+
+#: ../src/Gnonogram_filereader.vala:342
+msgid "Invalid Picto grid data"
+msgstr ""
+
+#: ../src/Gnonogram_filereader.vala:361
+msgid "Missing game state"
+msgstr ""
+
+#: ../src/Gnonogram_filereader.vala:367 ../src/Gnonogram_filereader.vala:374
+msgid "Invalid game state"
+msgstr ""
+
+#: ../src/Gnonogram_filereader.vala:386
+msgid "Missing description"
+msgstr ""
+
+#: ../src/Gnonogram_filereader.vala:404
+msgid "Missing license"
 msgstr ""
 
 #: ../src/utils.vala:41 ../src/Resource.vala:219

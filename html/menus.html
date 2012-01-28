@@ -6,7 +6,7 @@
 </head>
 <body>
 <div class="header"><div class="trails"><div class="trail">
-<a class="trail" href="index.html" title="Gnonogram v 0.9.4 Manual"> <span class="media media-image"><img src="figures/gnonograms48.png" alt=""></span> Gnonogram v 0.9.4 Manual
+<a class="trail" href="index.html" title="Gnonogram v 0.9.5 Manual"> <span class="media media-image"><img src="figures/gnonograms48.png" alt=""></span> Gnonogram v 0.9.5 Manual
 </a> » </div></div></div>
 <div class="body">
 <div class="links nextlinks">
@@ -20,7 +20,7 @@
 <div class="title title-links"><h2><span class="title">Index</span></h2></div>
 <div class="region"><ul>
 <li class="links"><a href="menus.html#filemenu" title="File Menu and Toolbar icons">File Menu and Toolbar icons</a></li>
-<li class="links"><a href="menus.html#gamemenu" title="Game Menu and Toolbar icons">Game Menu and Toolbar icons</a></li>
+<li class="links"><a href="menus.html#puzzlemenu" title="puzzle Menu and Toolbar icons">puzzle Menu and Toolbar icons</a></li>
 <li class="links"><a href="menus.html#settingsmenu" title="Settings Menu and Toolbar icons">Settings Menu and Toolbar icons</a></li>
 <li class="links"><a href="menus.html#viewmenu" title="View menu">View menu </a></li>
 <li class="links"><a href="menus.html#helpmenu" title="Help Menu">Help Menu</a></li>
@@ -54,23 +54,23 @@ Quit the program.</pre></div>
 </li>
 <li class="list">
 <div class="title title-item"><h3><span class="title">Open(Ctrl O)<span class="media media-image"><img src="figures/Load.png" height="24" width="24" alt=""></span></span></h3></div>
-<p class="p">Shows a file selection dialogue with the puzzles in the current game directory.  By default gnonogram game files are shown but the filter can be changed to Picto games.
+<p class="p">Shows a file selection dialogue with the puzzles in the current puzzle directory.  By default gnonogram puzzle files are shown but the filter can be changed to Picto puzzles.
 						</p>
 <p class="p">The puzzle will be displayed in "solving" mode.  If the puzzle was partially solved when saved then the partial solution will be displayed.
 						</p>
-<div class="note note-tip" title="Tip"><div class="inner"><div class="region"><div class="contents"><p class="p">If the directory is changed then that becomes the default game directory.
+<div class="note note-tip" title="Tip"><div class="inner"><div class="region"><div class="contents"><p class="p">If the directory is changed then that becomes the default puzzle directory.
 							</p></div></div></div></div>
 </li>
 <li class="list">
 <div class="title title-item"><h3><span class="title">Save (Ctrl S)<span class="media media-image"><img src="figures/Save.png" height="24" width="24" alt=""></span></span></h3></div>
-<p class="p">Shows a file <span class=" gui">Save As</span> dialogue in the current game directory.  The puzzle is saved in Gnonogram format, which includes the state of the working grid if the puzzle is saved while the solution is incomplete.  Use the separate menu option to save in Picto format. If the directory is changed then that becomes the default game directory.
+<p class="p">Shows a file <span class=" gui">Save As</span> dialogue in the current puzzle directory.  The puzzle is saved in Gnonogram format, which includes the state of the working grid if the puzzle is saved while the solution is incomplete.  Use the separate menu option to save in Picto format. If the directory is changed then that becomes the default puzzle directory.
 						</p>
-<div class="note note-tip" title="Tip"><div class="inner"><div class="region"><div class="contents"><p class="p">If the directory is changed then that becomes the default game directory.
+<div class="note note-tip" title="Tip"><div class="inner"><div class="region"><div class="contents"><p class="p">If the directory is changed then that becomes the default puzzle directory.
 							</p></div></div></div></div>
 </li>
 <li class="list">
-<div class="title title-item"><h3><span class="title">Save as Picto game.</span></h3></div>
-<p class="p">Shows a file <span class=" gui"><span class=" em">Save As</span></span> dialogue in the current game directory.  The puzzle is saved in Picto format.  If the directory is changed then that becomes the default game directory.</p>
+<div class="title title-item"><h3><span class="title">Save as Picto puzzle.</span></h3></div>
+<p class="p">Shows a file <span class=" gui"><span class=" em">Save As</span></span> dialogue in the current puzzle directory.  The puzzle is saved in Picto format.  If the directory is changed then that becomes the default puzzle directory.</p>
 </li>
 <li class="list">
 <div class="title title-item"><h3><span class="title">Import from image</span></h3></div>
@@ -85,15 +85,15 @@ Quit the program.</pre></div>
 </ul></div></div></div>
 </div></div>
 </div></div>
-<div id="gamemenu" class="sect"><div class="inner">
-<div class="hgroup"><h2 class="title"><span class="title">Game Menu and Toolbar icons</span></h2></div>
+<div id="puzzlemenu" class="sect"><div class="inner">
+<div class="hgroup"><h2 class="title"><span class="title">puzzle Menu and Toolbar icons</span></h2></div>
 <div class="region"><div class="contents">
-<div class="media media-image"><div class="inner"><img src="figures/Gamemenu.png" alt=""></div></div>
-<div class="media media-image"><div class="inner"><img src="figures/Gametoolbar.png" alt=""></div></div>
+<div class="media media-image"><div class="inner"><img src="figures/puzzlemenu.png" alt=""></div></div>
+<div class="media media-image"><div class="inner"><img src="figures/puzzletoolbar.png" alt=""></div></div>
 <div class="synopsis"><div class="inner">
 <div class="title title-synopsis"><h3><span class="title">Summary</span></h3></div>
 <div class="region">
-<div class="desc">The game menu provides the following functions
+<div class="desc">The puzzle menu provides the following functions
 			</div>
 <div class="contents">
 <div class="code"><pre class="contents ">Undo the last move*
@@ -104,6 +104,7 @@ Check the working grid for errors*
 Pause the timer
 Clear the solving grid and restart solving*
 
+Get hint
 Let the computer solve the puzzle (if it can)*
 Let the computer generate a random pattern puzzle*
 
@@ -149,11 +150,17 @@ Trim any blank columns or rows from the edge of a puzzle.</pre></div>
 				</p>
 </li>
 <li class="list">
-<p class="p"><span class=" gui"><span class=" em">Computer generated puzzle (Shift-G)...</span><span class="media media-image"><img src="figures/Random-game.png" height="24" width="24" alt=""></span>
+<p class="p"><span class=" gui"><span class=" em">Get hint(Shift-H)...</span>
 				</span></p>
-<p class="p">Generate a random pattern in the design grid and enter "working" mode. By default, the pattern generated is guaranteed to have a unique solution that can be found by simple logic looking at one row or column at a time.  Higher <span class=" var">difficulty</span> settings give patterns with fewer filled cells and shorter blocks that are harder to solve.  If the <span class=" gui"><span class=" em">Generate difficult games</span></span> item on the Settings menu is checked then the patterns generated may be ambiguous or require more advanced logic involving two or more rows or columns at a time. These may take some time to generate for larger grids.
+<p class="p">The computer will complete one or more cell that can inferred directly from the current position. If you have already made a logical error or are doing a 'difficult' puzzle then no hint may be available.
 				</p>
-<p class="p"> An approximate measure of difficulty ("Score:") is given in the game information panel. Puzzles that can be solved with straightforward logic have score ranging from about 4 (elementary) to 20 (tricky).  Advanced puzzles could have scores ranging up to 50,000 or more depending on how long it takes the computer to solve them.
+</li>
+<li class="list">
+<p class="p"><span class=" gui"><span class=" em">Computer generated puzzle (Shift-G)...</span><span class="media media-image"><img src="figures/Random-puzzle.png" height="24" width="24" alt=""></span>
+				</span></p>
+<p class="p">Generate a random pattern in the design grid and enter "working" mode. By default, the pattern generated is guaranteed to have a unique solution that can be found by simple logic looking at one row or column at a time.  Higher <span class=" var">difficulty</span> settings give patterns with fewer filled cells and shorter blocks that are harder to solve.  If the <span class=" gui"><span class=" em">Generate difficult puzzles</span></span> item on the Settings menu is checked then the patterns generated may be ambiguous or require more advanced logic involving two or more rows or columns at a time. These may take some time to generate for larger grids.
+				</p>
+<p class="p"> An approximate measure of difficulty ("Score:") is given in the puzzle information panel. Puzzles that can be solved with straightforward logic have score ranging from about 4 (elementary) to 20 (tricky).  Advanced puzzles could have scores ranging up to 50,000 or more depending on how long it takes the computer to solve them.
 				</p>
 </li>
 <li class="list">
@@ -192,6 +199,7 @@ The font used for the clues
 The number of cells in each row and column*
 How difficult the computer generated puzzles are to solve*
 The location on the where puzzles are stored
+The pattern used to fill in the cells
 Whether or not the "advanced" computer solver is used
 Whether or not the the computer generates "advanced" puzzles
 Reset all options to their default setting.</pre></div>
@@ -209,7 +217,7 @@ Reset all options to their default setting.</pre></div>
 <li class="list">
 <p class="p"><span class=" gui"><span class=" em">Font ...</span><span class="media media-image"><img src="figures/Larger.png" height="24" width="24" alt=""></span>||<span class="media media-image"><img src="figures/Smaller.png" height="24" width="24" alt=""></span>
 				</span></p>
-<p class="p">The font used for the clues can be chosen.  The size of the font affects the overall size of the game window on the screen and can also be changed using the "Zoom in" and "Zoom out" functions (see View menu).
+<p class="p">The font used for the clues can be chosen.  The size of the font affects the overall size of the puzzle window on the screen and can also be changed using the "Zoom in" and "Zoom out" functions (see View menu).
 				</p>
 <p class="p">The default font is Ariel
 				</p>
@@ -223,13 +231,19 @@ Reset all options to their default setting.</pre></div>
 <li class="list">
 <p class="p"><span class=" gui"><span class=" em">Difficulty ...</span><span class="media media-image"><img src="figures/Difficulty-spin.png" height="24" width="24" alt=""></span>
 			</span></p>
-<p class="p"> The difficulty of the puzzles generated automatically by the computer can be adjusted. A higher number makes the puzzles more difficult by producing a larger number of smaller blocks.   Unless <span class=" gui">Generate advanced games</span> (see below) is ticked, the puzzles produced are guaranteed to be soluble with only one solution and can be solved by applying logic to one row or column at a time.
+<p class="p"> The difficulty of the puzzles generated automatically by the computer can be adjusted. A higher number makes the puzzles more difficult by producing a larger number of smaller blocks.   Unless <span class=" gui">Generate advanced puzzles</span> (see below) is ticked, the puzzles produced are guaranteed to be soluble with only one solution and can be solved by applying logic to one row or column at a time.
 					</p>
 </li>
 <li class="list">
 <p class="p"><span class=" gui"><span class=" em">Puzzle folder ...</span>
 				</span></p>
-<p class="p"> The puzzles supplied with the program are stored in "[installation directory]/gnonograms/games" and the is the default. However, this directory is not writable once the program is installed on the system (in "/usr/share")
+<p class="p"> The puzzles supplied with the program are stored in "[installation directory]/gnonograms/puzzles" and the is the default. However, this directory is not writable once the program is installed on the system (in "/usr/share")
+					</p>
+</li>
+<li class="list">
+<p class="p"><span class=" gui"><span class=" em">Cell Patterns</span>
+				</span></p>
+<p class="p"> The cells may be filled in using either a plain pattern or a circular pattern
 					</p>
 </li>
 <li class="list">
@@ -241,9 +255,9 @@ Reset all options to their default setting.</pre></div>
 					</p>
 </li>
 <li class="list">
-<p class="p"><span class=" em">Generate advanced game
+<p class="p"><span class=" em">Generate advanced puzzle
 				</span></p>
-<p class="p"> Unselected by default.  Normally when generating games, only the simple solver is used to check whether the random pattern is soluble. If "Generate advanced game" is selected, the advanced solver is used instead so the pattern produced may be ambiguous and/or hard to solve. It may take a significant amount of time to produce a large puzzle with this option.
+<p class="p"> Unselected by default.  Normally when generating puzzles, only the simple solver is used to check whether the random pattern is soluble. If "Generate advanced puzzle" is selected, the advanced solver is used instead so the pattern produced may be ambiguous and/or hard to solve. It may take a significant amount of time to produce a large puzzle with this option.
 					</p>
 </li>
 <li class="list">
@@ -318,7 +332,7 @@ increase and decrease the fontsize of the clues and, indirectly, the size of the
 <div class="hgroup"><h2><span class="title">Further Reading</span></h2></div>
 <div class="contents"><div class="links guidelinks"><div class="inner">
 <div class="title"><h3><span class="title">More About</span></h3></div>
-<div class="region"><ul><li class="links"><a href="index.html" title="Gnonogram v 0.9.4 Manual"> <span class="media media-image"><img src="figures/gnonograms48.png" alt=""></span> Gnonogram v 0.9.4 Manual
+<div class="region"><ul><li class="links"><a href="index.html" title="Gnonogram v 0.9.5 Manual"> <span class="media media-image"><img src="figures/gnonograms48.png" alt=""></span> Gnonogram v 0.9.5 Manual
 </a></li></ul></div>
 </div></div></div>
 </div>

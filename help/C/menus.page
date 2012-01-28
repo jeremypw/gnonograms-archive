@@ -32,27 +32,27 @@ Quit the program.
 			</item>
 			<item>
 				<title>Open(Ctrl O)<media type="image" mime="image/png" width="24" height="24" src="figures/Load.png"/></title>
-						<p>Shows a file selection dialogue with the puzzles in the current game directory.  By default gnonogram game files are shown but the filter can be changed to Picto games.
+						<p>Shows a file selection dialogue with the puzzles in the current puzzle directory.  By default gnonogram puzzle files are shown but the filter can be changed to Picto puzzles.
 						</p>
 						<p>The puzzle will be displayed in "solving" mode.  If the puzzle was partially solved when saved then the partial solution will be displayed.
 						</p>
 						<note style="tip">
-							<p>If the directory is changed then that becomes the default game directory.
+							<p>If the directory is changed then that becomes the default puzzle directory.
 							</p>
 						</note>
 			</item>
 			<item>
 				<title>Save (Ctrl S)<media type="image" mime="image/png" width="24" height="24" src="figures/Save.png"/></title>
-						<p>Shows a file <gui>Save As</gui> dialogue in the current game directory.  The puzzle is saved in Gnonogram format, which includes the state of the working grid if the puzzle is saved while the solution is incomplete.  Use the separate menu option to save in Picto format. If the directory is changed then that becomes the default game directory.
+						<p>Shows a file <gui>Save As</gui> dialogue in the current puzzle directory.  The puzzle is saved in Gnonogram format, which includes the state of the working grid if the puzzle is saved while the solution is incomplete.  Use the separate menu option to save in Picto format. If the directory is changed then that becomes the default puzzle directory.
 						</p>
 						<note style="tip">
-							<p>If the directory is changed then that becomes the default game directory.
+							<p>If the directory is changed then that becomes the default puzzle directory.
 							</p>
 						</note>
 			</item>
 			<item>
-				<title>Save as Picto game.</title>
-				<p>Shows a file <gui><em>Save As</em></gui> dialogue in the current game directory.  The puzzle is saved in Picto format.  If the directory is changed then that becomes the default game directory.</p>
+				<title>Save as Picto puzzle.</title>
+				<p>Shows a file <gui><em>Save As</em></gui> dialogue in the current puzzle directory.  The puzzle is saved in Picto format.  If the directory is changed then that becomes the default puzzle directory.</p>
 			</item>
 			<item>
 				<title>Import from image</title>
@@ -67,13 +67,13 @@ Quit the program.
 		</list>
 	</section>
 
-	<section id="gamemenu">
-		<title>Game Menu and Toolbar icons</title>
-		<media type="image" mime="image/png" src="figures/Gamemenu.png"/>
-		<media type="image" mime="image/png" src="figures/Gametoolbar.png"/>
+	<section id="puzzlemenu">
+		<title>puzzle Menu and Toolbar icons</title>
+		<media type="image" mime="image/png" src="figures/puzzlemenu.png"/>
+		<media type="image" mime="image/png" src="figures/puzzletoolbar.png"/>
 		<synopsis>
 			<title>Summary</title>
-			<desc>The game menu provides the following functions
+			<desc>The puzzle menu provides the following functions
 			</desc>
 <code>
 Undo the last move*
@@ -84,6 +84,7 @@ Check the working grid for errors*
 Pause the timer
 Clear the solving grid and restart solving*
 
+Get hint
 Let the computer solve the puzzle (if it can)*
 Let the computer generate a random pattern puzzle*
 
@@ -130,11 +131,17 @@ Trim any blank columns or rows from the edge of a puzzle.
 				</p>
 			</item>
 			<item>
-				<p><gui style="menuitem"><em>Computer generated puzzle (Shift-G)...</em><media type="image" mime="image/png" width="24" height="24" src="figures/Random-game.png"/>
+				<p><gui style="menuitem"><em>Get hint(Shift-H)...</em>
 				</gui></p>
-				<p>Generate a random pattern in the design grid and enter "working" mode. By default, the pattern generated is guaranteed to have a unique solution that can be found by simple logic looking at one row or column at a time.  Higher <var>difficulty</var> settings give patterns with fewer filled cells and shorter blocks that are harder to solve.  If the <gui style="checkbox"><em>Generate difficult games</em></gui> item on the Settings menu is checked then the patterns generated may be ambiguous or require more advanced logic involving two or more rows or columns at a time. These may take some time to generate for larger grids.
+				<p>The computer will complete one or more cell that can inferred directly from the current position. If you have already made a logical error or are doing a 'difficult' puzzle then no hint may be available.
 				</p>
-				<p> An approximate measure of difficulty ("Score:") is given in the game information panel. Puzzles that can be solved with straightforward logic have score ranging from about 4 (elementary) to 20 (tricky).  Advanced puzzles could have scores ranging up to 50,000 or more depending on how long it takes the computer to solve them.
+			</item>
+			<item>
+				<p><gui style="menuitem"><em>Computer generated puzzle (Shift-G)...</em><media type="image" mime="image/png" width="24" height="24" src="figures/Random-puzzle.png"/>
+				</gui></p>
+				<p>Generate a random pattern in the design grid and enter "working" mode. By default, the pattern generated is guaranteed to have a unique solution that can be found by simple logic looking at one row or column at a time.  Higher <var>difficulty</var> settings give patterns with fewer filled cells and shorter blocks that are harder to solve.  If the <gui style="checkbox"><em>Generate difficult puzzles</em></gui> item on the Settings menu is checked then the patterns generated may be ambiguous or require more advanced logic involving two or more rows or columns at a time. These may take some time to generate for larger grids.
+				</p>
+				<p> An approximate measure of difficulty ("Score:") is given in the puzzle information panel. Puzzles that can be solved with straightforward logic have score ranging from about 4 (elementary) to 20 (tricky).  Advanced puzzles could have scores ranging up to 50,000 or more depending on how long it takes the computer to solve them.
 				</p>
 			</item>
 			<item>
@@ -173,6 +180,7 @@ The font used for the clues
 The number of cells in each row and column*
 How difficult the computer generated puzzles are to solve*
 The location on the where puzzles are stored
+The pattern used to fill in the cells
 Whether or not the "advanced" computer solver is used
 Whether or not the the computer generates "advanced" puzzles
 Reset all options to their default setting.
@@ -191,7 +199,7 @@ Reset all options to their default setting.
 			<item>
 				<p><gui style="menuitem"><em>Font ...</em><media type="image" mime="image/png" width="24" height="24" src="figures/Larger.png"/>||<media type="image" mime="image/png" width="24" height="24" src="figures/Smaller.png"/>
 				</gui></p>
-				<p>The font used for the clues can be chosen.  The size of the font affects the overall size of the game window on the screen and can also be changed using the "Zoom in" and "Zoom out" functions (see View menu).
+				<p>The font used for the clues can be chosen.  The size of the font affects the overall size of the puzzle window on the screen and can also be changed using the "Zoom in" and "Zoom out" functions (see View menu).
 				</p>
 				<p>The default font is Ariel
 				</p>
@@ -206,14 +214,20 @@ Reset all options to their default setting.
 
 			<item><p><gui style="menuitem"><em>Difficulty ...</em><media type="image" mime="image/png" width="24" height="24" src="figures/Difficulty-spin.png"/>
 			</gui></p>
-					<p> The difficulty of the puzzles generated automatically by the computer can be adjusted. A higher number makes the puzzles more difficult by producing a larger number of smaller blocks.   Unless <gui>Generate advanced games</gui> (see below) is ticked, the puzzles produced are guaranteed to be soluble with only one solution and can be solved by applying logic to one row or column at a time.
+					<p> The difficulty of the puzzles generated automatically by the computer can be adjusted. A higher number makes the puzzles more difficult by producing a larger number of smaller blocks.   Unless <gui>Generate advanced puzzles</gui> (see below) is ticked, the puzzles produced are guaranteed to be soluble with only one solution and can be solved by applying logic to one row or column at a time.
 					</p>
 			</item>
 
 			<item>
 				<p><gui style="menuitem"><em>Puzzle folder ...</em>
 				</gui></p>
-					<p> The puzzles supplied with the program are stored in "[installation directory]/gnonograms/games" and the is the default. However, this directory is not writable once the program is installed on the system (in "/usr/share")
+					<p> The puzzles supplied with the program are stored in "[installation directory]/gnonograms/puzzles" and the is the default. However, this directory is not writable once the program is installed on the system (in "/usr/share")
+					</p>
+			</item>
+			<item>
+				<p><gui style="menuitem"><em>Cell Patterns</em>
+				</gui></p>
+					<p> The cells may be filled in using either a plain pattern or a circular pattern
 					</p>
 			</item>
 
@@ -226,9 +240,9 @@ Reset all options to their default setting.
 					</p>
 			</item>
 			<item>
-				<p><em>Generate advanced game
+				<p><em>Generate advanced puzzle
 				</em></p>
-					<p> Unselected by default.  Normally when generating games, only the simple solver is used to check whether the random pattern is soluble. If "Generate advanced game" is selected, the advanced solver is used instead so the pattern produced may be ambiguous and/or hard to solve. It may take a significant amount of time to produce a large puzzle with this option.
+					<p> Unselected by default.  Normally when generating puzzles, only the simple solver is used to check whether the random pattern is soluble. If "Generate advanced puzzle" is selected, the advanced solver is used instead so the pattern produced may be ambiguous and/or hard to solve. It may take a significant amount of time to produce a large puzzle with this option.
 					</p>
 			</item>
 			<item>

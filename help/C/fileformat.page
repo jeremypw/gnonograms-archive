@@ -7,7 +7,7 @@
 	<title>A2. Gnonogram file format</title>
 	<synopsis>
 	   <p>The Gnonogram puzzle file format is a simple text file with the extension .gno</p>
-	   <p>It is sufficiently simple to allow manual creation of files using a text editor from published puzzles where only the clues are available. Clues may also be entered by using the program's game editor</p>
+	   <p>It is sufficiently simple to allow manual creation of files using a text editor from published puzzles where only the clues are available. Clues may also be entered by using the program's puzzle editor</p>
 	   <p>There are up to five sections, each headed by a word or phrase in square brackets.</p>
 	   <list>
 		  <item><p>[Description]</p></item>
@@ -23,8 +23,8 @@
 		  <p>This section is optional</p>
 		  <p>It may contain up to four non-blank lines which are assigned in the following order:</p>
 		  <list>
-			 <item><p>The title of the game</p></item>
-			 <item><p>The name of the designer</p></item>
+			 <item><p>The title of the puzzle</p></item>
+			 <item><p>The name of the designer or another indication of the source of the puzzle</p></item>
 			 <item><p>The date it was designed</p></item>
 			 <item><p>A numeric indication of difficulty</p></item>
 		  </list>
@@ -60,10 +60,10 @@
 		  <p>Empty cells are represented by the digit "1" and filled cells by the digit "2".</p>
 	   </item>
 	   <item><title>[Working grid]</title>
-			<p>This section is created automatically when a game is saved from a later version of gnonograms.  The format is the same as for the [Solution] section. It is not required for the file to load. It allows the user to save a puzzle in the middle of solving it and return to the same position when the puzzle is reloaded.</p>
+			<p>This section is created automatically when a puzzle is saved from a later version of gnonograms.  The format is the same as for the [Solution] section. It is not required for the file to load. It allows the user to save a puzzle in the middle of solving it and return to the same position when the puzzle is reloaded.</p>
 	   </item>
 	   <item><title>[Status]</title>
-			<p>This section is created automatically when a game is saved from a later version of gnonograms. It is not required for the file to load. It records whether the puzzle should appear in 'design mode' or 'solving mode' when loaded.  If absent, the puzzle appears in 'solving' mode.</p>
+			<p>This section is created automatically when a puzzle is saved from a later version of gnonograms. It is not required for the file to load. It records whether the puzzle should appear in 'design mode' or 'solving mode' when loaded.  If absent, the puzzle appears in 'solving' mode.</p>
 	   </item>
 	</list>
 </page>

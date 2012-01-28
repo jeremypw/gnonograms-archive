@@ -1,15 +1,15 @@
 <page xmlns="http://projectmallard.org/1.0/"
       type="topic"
-      id="gameeditor">
+      id="puzzleeditor">
 	<info>
 		<link type="guide" xref="index"/>
 		<link type="next" xref="glossary"/>
   	</info>
-	<title>09. Game editor</title>
+	<title>09. puzzle editor</title>
 
-	<p>The game editor may be used to enter descriptive information concerning a game you have created yourself.  Alternatively, you can enter clues from a puzzle you have found elsewhere.
+	<p>The puzzle editor may be used to enter descriptive information concerning a puzzle you have created yourself.  Alternatively, you can enter clues from a puzzle you have found elsewhere.
 	</p>
-	<p>The game editor is started from the "Edit puzzle" option on the "Puzzle" menu.
+	<p>The puzzle editor is started from the "Edit puzzle" option on the "Puzzle" menu.
 	</p>
 	<p>On selecting this menu option, the window shown below is opened:
 	</p>
@@ -18,20 +18,20 @@
 	<list>
 		<item><title>Description</title>
 			<figure>
-				<media type="image" mime="image/png" width="452" height="542" src="figures/gameeditor1.png"/>
-				<desc>>Game editor window - description tab</desc>
+				<media type="image" mime="image/png" width="452" height="542" src="figures/puzzleeditor1.png"/>
+				<desc>>puzzle editor window - description tab</desc>
 			</figure>
 			<p>The desired name of the puzzle, the name of the designer, the date created and the type of license can be entered and edited in the labelled fields.</p>
 		</item>
 		<item><title>Row clues</title>
 			<figure>
-				<media type="image" mime="image/png" width="452" height="542" src="figures/gameeditor2.png"/>
-				<desc>Game editor window - row clues tab</desc>
+				<media type="image" mime="image/png" width="452" height="542" src="figures/puzzleeditor2.png"/>
+				<desc>puzzle editor window - row clues tab</desc>
 			</figure>
 			<p>The clue for each row can be entered and edited in the boxes provided. The clues must consist of numbers separated by commas.</p>
 			<p>On completion of each field the contents are checked to have the correct form and to not specify more filled cells than could fit in the row.  If the clue is invalid, the background of the clue is coloured and the 'OK' button disabled. The figure below illustrates some invalid clues.</p>
 			<figure>
-				<media type="image" mime="image/png" width="452" height="542" src="figures/gameeditor4.png"/>
+				<media type="image" mime="image/png" width="452" height="542" src="figures/puzzleeditor4.png"/>
 				<desc>Invalid clue formats</desc>
 			</figure>
 
@@ -43,7 +43,7 @@
 	<p>When all the information has been entered, press 'OK'. The window closes and the current puzzle is updated with the new information.</p>
 	<p>The computer then attempts to solve the puzzle to check whether the clues are consistent with each other.  If not, the word "Invalid" appears against "Score:" at the bottom of the main window.</p>
 	<figure>
-		<media type="image" mime="image/png" width="614" height="637" src="figures/gameeditor3.png"/>
-		<desc>Result of entering inconsistent clues in game editor</desc>
+		<media type="image" mime="image/png" width="614" height="637" src="figures/puzzleeditor3.png"/>
+		<desc>Result of entering inconsistent clues in puzzle editor</desc>
 	</figure>
 </page>

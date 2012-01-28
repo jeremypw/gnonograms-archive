@@ -36,6 +36,18 @@
 		</p>
 	</item>
 	<item>
+		<p>Mark a cell as an undo point (only while solving)
+		</p>
+		<p><key>M</key>
+		</p>
+	</item>
+	<item>
+		<p>Undo to last marked undo point (only while solving)
+		</p>
+		<p><key>L</key>
+		</p>
+	</item>
+	<item>
 		<p>Mark a block filled/empty/unknown
 		</p>
 		<steps>
@@ -69,7 +81,7 @@
 	</p></item>
 	<item><p> Ctrl O - Open (load) puzzle
 	</p></item>
-	<item><p> Ctrl S - Save game
+	<item><p> Ctrl S - Save puzzle
 	</p></item>
 	<item><p> Ctrl Q - Quit
 	</p></item>
@@ -90,6 +102,8 @@
 	<item><p> Shift R - Restart
 	</p></item>
 	<item><p> Shift P - Pause timer (press Close button in dialog to continue)
+	</p></item>
+	<item><p> Shift H - Get hint
 	</p></item>
 	<item><p> Shift C - Use computer solver
 	</p></item>
