@@ -79,8 +79,11 @@ namespace Resource
 //Appearance related parameters
 	public static double MINFONTSIZE=3.0;
 	public static double MAXFONTSIZE=72.0;
-	public static double MAXWINDOWHEIGHT=475.0; //TODO relate to actual screen resolution
-	public static double MAXWINDOWWIDTH=700.0;  //TODO relate to actual screen resolution
+//	public static double MAXWINDOWHEIGHT=475.0; //now uses actual screen resolution
+//	public static double MAXWINDOWWIDTH=700.0;  //now uses actual screen resolution
+//	public static int MINWINDOWHEIGHT=400;
+//	public static int MINWINDOWWIDTH=350;  //to fit toobar and status bar
+	public static int LOGOSIZE=100;
 
 	public static string font_desc;
 	public static double CELLOFFSET_NOGRID=0.0;

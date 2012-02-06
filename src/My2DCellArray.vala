@@ -80,7 +80,12 @@
 	public void set_all(CellState s)
 	{
 		for (int r=0; r<_rows; r++)
-		{for (int c=0;c<_cols;c++)	_data[r,c]=s;}
+		{
+			for (int c=0;c<_cols;c++)
+			{
+				_data[r,c]=s;
+			}
+		}
 	}
 
 	public string data2text(int idx, int length, bool iscolumn)

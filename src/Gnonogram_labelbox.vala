@@ -94,8 +94,7 @@ public class Gnonogram_LabelBox : Frame
 	{
 		if (increase) _fontheight+=1.0;
 		else _fontheight-=1.0;
-		set_attribs(_fontheight);
-		for (int i=0; i<_size;i++) update_label(i,get_label_text(i));
+		set_font_height(_fontheight);
 	}
 
 	public void set_font_height(double fontheight)

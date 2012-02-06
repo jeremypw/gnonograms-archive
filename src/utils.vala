@@ -178,7 +178,7 @@ namespace Utils
 			type,
 			buttons,
 			"%s",msg);
-
+		dialog.set_position(Gtk.WindowPosition.MOUSE);
 		int response=dialog.run();
 		dialog.destroy();
 		return response;

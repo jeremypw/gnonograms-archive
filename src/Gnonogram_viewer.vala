@@ -89,6 +89,7 @@ public class Gnonogram_view : Gtk.Window
 	private Label _date_label;
 	private Label _size_label;
 	private Label _score_label;
+	private Label _runlength_label;
 	private Label _license_label;
 	private Gtk.Image hide_icon;
 	private Gtk.Image reveal_icon;
@@ -133,20 +134,31 @@ public class Gnonogram_view : Gtk.Window
 		_score_label.set_alignment((float)0.0,(float)0.5);
 		score_fr.add(_score_label);
 
+		var runlength_fr=new Frame(null);
+		_runlength_label=new Label("      ");
+		_runlength_label.set_alignment((float)0.5,(float)0.5);
+		_runlength_label.set_width_chars(8);
+		runlength_fr.add(_runlength_label);
+
 		_info_box.add(name_fr);
 		_info_box.add(source_fr);
 		_info_box.add(license_fr);
 		_info_box.add(date_fr);
 		_info_box.add(size_fr);
 		_info_box.add(score_fr);
+		_info_box.add(runlength_fr);
 		info_frame.add(_info_box);
 
 		var table = new Table(2,2,false);
+
 		var ao = AttachOptions.FILL|AttachOptions.EXPAND;
 
 		try
 		{
-			var gnonogram_pb= new Gdk.Pixbuf.from_file_at_scale(Resource.icon_dir+"/"+Resource.LOGOFILENAME,150,150,true);
+			var gnonogram_pb= new Gdk.Pixbuf.from_file_at_scale(Resource.icon_dir+"/"+Resource.LOGOFILENAME,
+																													Resource.LOGOSIZE,
+																													Resource.LOGOSIZE,
+																													true);
 			var gnonogram_img=new Gtk.Image.from_pixbuf(gnonogram_pb);
 			table.attach(gnonogram_img,0,1,0,1,ao,ao,0,0);
 		}
@@ -564,6 +576,18 @@ public class Gnonogram_view : Gtk.Window
 
 	public void set_score(string score){_score_label.set_text(_("Score:")+" "+score+"  ");}
 	public string get_score(){return get_info_item(_score_label);	}
+
+	public void set_runlength(int hrun, int vrun)
+	{
+		if (hrun>=0)
+		{
+		_runlength_label.set_text(@"↔$(hrun) ↕$(vrun)");
+		}
+		else
+		{
+			_runlength_label.set_text("      ");
+		}
+	}
 
 	public void set_license(string license){_license_label.set_text(_("(C) ")+" "+license+"  ");}
 	public string get_license(){return get_info_item(_license_label);	}

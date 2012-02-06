@@ -55,7 +55,7 @@ public class Gnonogram_CellGrid : DrawingArea
 		_current_col=-1;
 		_current_row=-1;
 
-		add_events(
+		this.add_events(
 		EventMask.BUTTON_PRESS_MASK|
 		EventMask.BUTTON_RELEASE_MASK|
 		EventMask.POINTER_MOTION_MASK|
@@ -64,8 +64,8 @@ public class Gnonogram_CellGrid : DrawingArea
 		EventMask.LEAVE_NOTIFY_MASK
 		);
 
-		motion_notify_event.connect(pointer_moved);
-		leave_notify_event.connect(leave_grid);
+		this.motion_notify_event.connect(pointer_moved);
+		this.leave_notify_event.connect(leave_grid);
 
 		Gdk.Color.parse("BLACK", out grid_color);
 

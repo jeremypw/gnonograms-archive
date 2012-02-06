@@ -330,4 +330,30 @@
 			}
 		}
 	}
+
+	public int get_runlength_at_rc(int r, int c, bool iscolumn)
+	{
+		int size = iscolumn ? _rows : _cols;
+		int array_idx = iscolumn ? c : r;
+		int ptr = iscolumn ? r : c;
+		int count=0;
+		CellState cs;
+		var arr = new CellState[size];
+		_display_data.get_array(array_idx, iscolumn, ref arr);
+		cs=arr[ptr];
+		while (ptr>0 && arr[ptr]==cs)
+		{
+			ptr--;
+		}
+		if (arr[ptr]!=cs)
+		{
+			ptr++;
+		}
+		while (ptr<size && arr[ptr]==cs)
+		{
+			count++;
+			ptr++;
+		}
+		return count;
+	}
 }

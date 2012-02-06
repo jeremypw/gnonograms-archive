@@ -377,8 +377,8 @@ public class Gnonogram_controller
 	{
 		_rowbox.change_font_height(increase);
 		_colbox.change_font_height(increase);
-		// if making smaller, force to minimum window size for given font
-		if (!increase) _gnonogram_view.resize(100,150);
+		// if making smaller, force to minimum window size (Gtk.Window method)
+		//if (!increase) _gnonogram_view.resize(Resource.MINWINDOWWIDTH, Resource.MINWINDOWHEIGHT);
 	}
 
 	public void grid_cursor_moved(int r, int c)
@@ -388,6 +388,7 @@ public class Gnonogram_controller
 			//make sure no cell or label is highlighted
 				highlight_labels_and_cell(_previous_cell,false);
 				highlight_labels_and_cell(_current_cell,false);
+				_gnonogram_view.set_runlength(-1,-1);
 			_current_cell.row=-1;
 			return;
 		}
@@ -406,11 +407,16 @@ public class Gnonogram_controller
 			else
 			{
 				_current_cell=_model.get_cell(r,c);
-				//redraw_cell(_current_cell,true);
 			}
 
+			show_runlengths(r,c);
 			highlight_labels_and_cell(_current_cell, true);
 		}
+	}
+
+	private void show_runlengths(int r, int c)
+	{
+			_gnonogram_view.set_runlength(_model.get_runlength_at_rc(r,c,false),_model.get_runlength_at_rc(r,c,true));
 	}
 
 	private void highlight_labels_and_cell(Cell c, bool is_highlight)
@@ -484,6 +490,7 @@ public class Gnonogram_controller
 		update_cell(c,true);
 		_gnonogram_view.set_redo_sensitive(false);
 		_gnonogram_view.set_undo_sensitive(true);
+		show_runlengths(c.row,c.col);
 	}
 
 	private Cell? undo_move()
