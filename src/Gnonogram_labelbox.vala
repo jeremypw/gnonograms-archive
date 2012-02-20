@@ -146,7 +146,6 @@ public class Gnonogram_LabelBox : Frame
 	{
 		 int fontsize=1024*(int)(fontheight);
 		_attribstart=@"<span font_desc='$(Resource.font_desc)' size='$fontsize'>";
-		stdout.printf(_attribstart+"\n");
 		_attribend="</span>";
 	}
 
