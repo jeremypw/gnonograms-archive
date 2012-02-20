@@ -43,6 +43,7 @@ public class Gnonogram_controller
 
 	private string[] _row_clues;
 	private string[] _col_clues;
+	private string _game_path;
 
 	private bool _is_button_down;
 	private bool _have_solution;
@@ -59,7 +60,7 @@ public class Gnonogram_controller
 	private double screen_width;
 	private double screen_height;
 
-	public Gnonogram_controller(string game_filename)
+	public Gnonogram_controller(string game_path)
 	{
 		_history=new Circular_move_buffer(Resource.MAXUNDO);
 		_timer=new Timer();
@@ -84,8 +85,9 @@ public class Gnonogram_controller
 		});
 		_solver.set_dimensions(_rows,_cols);
 
-		if(game_filename.length>4){
-			load_game(game_filename);
+		_game_path=game_path;
+		if(game_path.length>4){
+			load_game(game_path);
 		}
 		else new_game(false);
 	}
@@ -107,7 +109,8 @@ public class Gnonogram_controller
 		catch (GLib.Error e) {stdout.printf("Icon file not loaded\n");}
 
 
-		_gnonogram_view.savegame.connect(this.save_game);
+		_gnonogram_view.savegame.connect(()=>{this.save_game(_game_path);});
+		_gnonogram_view.saveasgame.connect(()=>{this.save_game("");});
 		_gnonogram_view.savepictogame.connect(this.save_pictogame);
 		_gnonogram_view.loadgame.connect(this.load_game);
 		_gnonogram_view.importimage.connect(this.import_image);
@@ -602,13 +605,14 @@ public class Gnonogram_controller
 		//stdout.printf("New game\n");
 		if(confirm && !Utils.show_confirm_dialog(_("New puzzle?"))) return;
 		_model.clear();
+		_game_path="";
 		_have_solution=true;
 		initialize_view();
 		change_state(GameState.SETTING);
 		_gnonogram_view.set_name(_("New puzzle"));
 		_gnonogram_view.set_source(Environment.get_user_name());
 		_gnonogram_view.set_date(Utils.get_todays_date_string());
-		_gnonogram_view.set_license("");
+		_gnonogram_view.set_license("CC BY-SA");
 		_gnonogram_view.set_score("");
 		redraw_all();
 	}
@@ -635,37 +639,42 @@ public class Gnonogram_controller
 		_is_button_down=false;
 	}
 
-	public void save_game()
+	public void save_game(string gamepath)
 	{
-		string filename;
-		filename=Utils.get_filename(
+		string filepath;
+		if (gamepath.length<=4)
+		{
+			filepath=Utils.get_file_path(
 			Gtk.FileChooserAction.SAVE,
 			_("Name and save this puzzle"),
 			{_("Gnonogram puzzles")},
 			{"*"+Resource.GAMEFILEEXTENSION},
 			Resource.save_game_dir
 			);
+			if (filepath=="") return; //user cancelled
+		}
+		else filepath=gamepath;
 
-		if (filename=="") return; //user cancelled
-		if (filename.length>3 && filename[-4:filename.length]!=Resource.GAMEFILEEXTENSION){
-			filename = filename+Resource.GAMEFILEEXTENSION;
+		if (filepath.length>3 && filepath[-4:filepath.length]!=Resource.GAMEFILEEXTENSION){
+			filepath = filepath+Resource.GAMEFILEEXTENSION;
 		}
 
-		var f=FileStream.open(filename,"w");
+		var f=FileStream.open(filepath,"w");
 		if (f==null)
 		{
-			Utils.show_warning_dialog((_("Could not write to '%s'")).printf(filename));
+			Utils.show_warning_dialog((_("Could not write to '%s'")).printf(filepath));
 		}
 		else {
 			write_position_file(f);
-			Utils.show_info_dialog((_("Saved as '%s'")).printf(Path.get_basename(filename)));
+			_game_path=filepath;
+			Utils.show_info_dialog((_("Saved as '%s'")).printf(_game_path));
 		}
 	}
 
 	public void save_pictogame()
 	{
 		string filename;
-		filename=Utils.get_filename(
+		filename=Utils.get_file_path(
 			Gtk.FileChooserAction.SAVE,
 			_("Name and save as  picto puzzle"),
 			{_("Picto puzzles")},
@@ -751,11 +760,11 @@ public class Gnonogram_controller
 		if (_state==GameState.SETTING) _model.use_solution();
 	}
 
-	public void load_game(string fname="")
+	public void load_game(string game_path="")
 	{
 		//stdout.printf("load_game fname %s\n",fname);
-		var reader = new Gnonogram_filereader(fname);
-		if (reader.filename=="") return;
+		var reader = new Gnonogram_filereader(game_path);
+		if (reader.game_path=="") return;
 		new_game(false); //changes to setting state
 
 		if (load_common(reader) && load_position_extra(reader))
@@ -768,6 +777,7 @@ public class Gnonogram_controller
 			{
 				change_state(GameState.SOLVING);
 			}
+			_game_path=reader.game_path;
 		}
 		else Utils.show_warning_dialog(_("Failed to load puzzle"));
 		redraw_all();
@@ -846,7 +856,7 @@ public class Gnonogram_controller
 		}
 
 		if (reader.name.length>1) _gnonogram_view.set_name(reader.name);
-		else _gnonogram_view.set_name(Path.get_basename(reader.filename));
+		else _gnonogram_view.set_name(Path.get_basename(reader.game_path));
 
 		_gnonogram_view.set_source(reader.author);
 		_gnonogram_view.set_date(reader.date);
@@ -1121,13 +1131,11 @@ public class Gnonogram_controller
 		if (passes>=0) {
 			string name= (passes>15) ? _("Difficult random") : _("Simple random");
 			_gnonogram_view.set_name(name);
-//			_gnonogram_view.set_source(_("Computer"));
 			_gnonogram_view.set_date(Utils.get_todays_date_string());
+			_gnonogram_view.set_license("CC BY-SA");
 			_gnonogram_view.set_score(passes.to_string());
 
 			start_solving();
-//			_model.use_working();
-//			redraw_all();
 		}
 		else {
 			Utils.show_warning_dialog(_("Error occurred in solver"));
@@ -1329,7 +1337,7 @@ public class Gnonogram_controller
 		save_config();
 		if (_solution_changed)
 		{
-			if (Utils.show_confirm_dialog(_("Save changed puzzle?"))) save_game();
+			if (Utils.show_confirm_dialog(_("Save changed puzzle?"))) save_game(_game_path);
 		}
 		Gtk.main_quit();
 	}

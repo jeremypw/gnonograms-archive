@@ -188,7 +188,7 @@ class Img2gno : Gtk.Dialog
 	{
 		string[] filternames = {"PNG Image files","Bitmap Image files","SVG Image Files","All files"};
 		string[] filters={"*.png","*.bmp","*.svg","*.*"};
-		string image_filename=Utils.get_filename(FileChooserAction.OPEN,_("Select an image to convert"),filternames, filters, Environment.get_current_dir());
+		string image_filename=Utils.get_file_path(FileChooserAction.OPEN,_("Select an image to convert"),filternames, filters, Environment.get_current_dir());
 		return image_filename;
 	}
 

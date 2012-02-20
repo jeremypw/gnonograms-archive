@@ -23,7 +23,7 @@ using GLib;
 
 public class Gnonogram_filereader {
 
-	public string filename="";
+	public string game_path="";
 	public int rows=0;
 	public int cols=0;
 	public string[] row_clues;
@@ -57,18 +57,19 @@ public class Gnonogram_filereader {
 		//stdout.printf("Filereader ... fname=%s\n",fname);
 		//Separate POSITION filetype no longer used.
 
-		if(fname=="")	ask_filename();
-		else filename=fname;
+		if(fname=="")	ask_game_path();
+		else game_path=fname;
 
-		if (filename.has_suffix(".pattern")) is_picto_game=true;
+		if (game_path.has_suffix(".pattern")) is_picto_game=true;
 		else is_picto_game=false;
 
 		is_game=true;
+		stdout.printf(@"reader gamepath is $game_path\n");
  	}
 
-	public void ask_filename()
+	public void ask_game_path()
 	{
-		filename=Utils.get_filename(
+		game_path=Utils.get_file_path(
 			Gtk.FileChooserAction.OPEN,
 			_("Choose a puzzle"),
 			{_("Gnonogram puzzles"), _("Picto puzzles")},
@@ -79,7 +80,7 @@ public class Gnonogram_filereader {
 
 	public bool open_datainputstream()
 	{
-		stream= Utils.open_datainputstream(filename);
+		stream= Utils.open_datainputstream(game_path);
 		if (stream==null)
 		{
 			err_msg=_("Cannot open file");

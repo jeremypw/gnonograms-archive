@@ -51,7 +51,7 @@ namespace Utils
 		return fn;
 	}
 
-	public static string get_filename(FileChooserAction action, string dialogname, string[]? filternames, string[]? filters, string? start_path=null)
+	public static string get_file_path(FileChooserAction action, string dialogname, string[]? filternames, string[]? filters, string? start_path=null)
 	{
 		if (filternames!=null) assert(filternames.length==filters.length);
 		string button="Error";

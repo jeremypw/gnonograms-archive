@@ -27,6 +27,7 @@ public class Gnonogram_view : Gtk.Window
 {
 	public signal void solvegame();
 	public signal void savegame();
+	public signal void saveasgame();
 	public signal void savepictogame();
 	public signal void loadgame(string fname);
 	public signal void importimage();
@@ -151,7 +152,9 @@ public class Gnonogram_view : Gtk.Window
 
 		var table = new Table(2,2,false);
 
-		var ao = AttachOptions.FILL|AttachOptions.EXPAND;
+		//using AttachOptions.EXPAND causes occasional mislalignment of
+		//column labels with columns.
+		var ao = AttachOptions.FILL;//|AttachOptions.EXPAND;
 
 		try
 		{
@@ -213,6 +216,8 @@ public class Gnonogram_view : Gtk.Window
 			filesubmenu.add(loadmenuitem);
 			var savemenuitem = new ImageMenuItem.from_stock(Gtk.Stock.SAVE,accel_group);
 			filesubmenu.add(savemenuitem);
+			var saveasmenuitem = new ImageMenuItem.from_stock(Gtk.Stock.SAVE_AS,accel_group);
+			filesubmenu.add(saveasmenuitem);
 			var savepictomenuitem = new MenuItem.with_mnemonic(_("_Save as Picto puzzle"));
 			filesubmenu.add(savepictomenuitem);
 			filesubmenu.add(new SeparatorMenuItem());
@@ -332,6 +337,8 @@ public class Gnonogram_view : Gtk.Window
 		loadmenuitem.add_accelerator("activate",accel_group,keyval_from_name("o"),Gdk.ModifierType.CONTROL_MASK, Gtk.AccelFlags.VISIBLE);
 		savemenuitem.activate.connect(()=>{savegame();});
 		savemenuitem.add_accelerator("activate",accel_group,keyval_from_name("s"),Gdk.ModifierType.CONTROL_MASK, Gtk.AccelFlags.VISIBLE);
+		saveasmenuitem.activate.connect(()=>{saveasgame();});
+		saveasmenuitem.add_accelerator("activate",accel_group,keyval_from_name("s"),Gdk.ModifierType.CONTROL_MASK|Gdk.ModifierType.SHIFT_MASK, Gtk.AccelFlags.VISIBLE);
 		savepictomenuitem.activate.connect(()=>{savepictogame();});
 		importmenuitem.activate.connect(()=>{importimage();});
 		quitmenuitem.activate.connect(()=>{quitgamesignal();});
@@ -531,7 +538,6 @@ public class Gnonogram_view : Gtk.Window
 
 	private void show_about()
 	{
-		string[] authors={"Jeremy Wootten <jeremywootten@gmail.com>",null};
 		Gtk.Image _logo = new Gtk.Image.from_file(Resource.resource_dir+"/icons/gnonograms48.png");
 		show_about_dialog (null,
                        "program-name", _("Gnonograms"),
@@ -541,7 +547,9 @@ public class Gnonogram_view : Gtk.Window
                        "wrap_license",true,
                        "logo", _logo.get_pixbuf(),
                        "title", _("About Gnonograms"),
-                       "authors", authors,
+                       "authors", Resource.authors,
+                       "translator-credits",Resource.translators,
+                       "website",Resource.website,
                        null);
 	}
 
@@ -589,7 +597,7 @@ public class Gnonogram_view : Gtk.Window
 		}
 	}
 
-	public void set_license(string license){_license_label.set_text(_("(C) ")+" "+license+"  ");}
+	public void set_license(string license){_license_label.set_text(_("(C):")+" "+license+"  ");}
 	public string get_license(){return get_info_item(_license_label);	}
 
 	private string get_info_item(Label l)

@@ -29,7 +29,7 @@ MIN_VALAC_VERSION = 0.12.0
 INSTALL_PROGRAM = install
 INSTALL_DATA = install -m 644
 
-SUPPORTED_LANGUAGES=en_GB ja_JP
+SUPPORTED_LANGUAGES=en_GB ja_JP de
 LOCAL_LANG_DIR=locale
 SYSTEM_LANG_DIR=$(DESTDIR)$(PREFIX)/share/locale
 
@@ -107,13 +107,12 @@ TEXT_FILES = \
 	THANKS
 
 EXT_PKGS = gtk+-2.0
+EXT_PKG_VERSIONS = gtk+-2.0 >= 2.12.0
 
 ifndef NO_GCONF
-	EXT_PKGS+= gconf-2.0
+EXT_PKGS+= gconf-2.0
+EXT_PKG_VERSIONS+= gconf-2.0 >= 2.12.0
 endif
-
-EXT_PKG_VERSIONS = \
-	gtk+-2.0 >= 2.12.0 \
 
 PKGS = $(EXT_PKGS) $(LOCAL_PKGS)
 

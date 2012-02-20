@@ -45,6 +45,11 @@ namespace Resource
 	public const string DEFAULTGAMENAME = "New puzzle";
 	public const string GAMEFILEEXTENSION=".gno";
 	public const string POSITIONFILENAME="currentposition";
+
+	public static string[] authors;
+	public static string translators;
+	public static string website;
+
 	//Built in icon filenames
 	public const string RANDOMICONFILENAME="dice.png";
 	public const string PEEKICONFILENAME="errorcheck.png";
@@ -167,6 +172,10 @@ namespace Resource
 		set_default_colors();
 
 		MINORGRIDDASH={3.0, 3.0};
+
+		authors={"Jeremy Wootten <jeremywootten@gmail.com>",null};
+		translators=_("ja_JP\tHiroko Wootten <hirokowootten@gmail.com>\nde   \tchrysn <chrysn@fsfe.org>");
+		website="http://code.google.com/p/gnonograms/";
 	}
 
 	public static void load_config(Config config_instance)
@@ -313,7 +322,7 @@ namespace Resource
 	}
 	public static void set_custom_game_dir()
 	{
-		string new_dir=Utils.get_filename(FileChooserAction.SELECT_FOLDER,_("Choose folder for saving and loading puzzles"),null,null,Resource.save_game_dir);
+		string new_dir=Utils.get_file_path(FileChooserAction.SELECT_FOLDER,_("Choose folder for saving and loading puzzles"),null,null,Resource.save_game_dir);
 		if (new_dir!="")
 		{
 			Resource.save_game_dir=new_dir;

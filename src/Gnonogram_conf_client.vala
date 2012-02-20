@@ -170,7 +170,7 @@ using GLib;
 		for (int i=0;i<key_values.length;i++)
 		{
 			string[] kv = key_values[i].split("=");
-			keys+=heading+"."+kv[0].strip();
+			keys+=heading+"."+kv[0].strip().replace(" ","_"); //correct old keys
 			values+=kv[1].strip();
 		}
 	}

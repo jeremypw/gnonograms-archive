@@ -311,10 +311,10 @@ public class Config {
 
 		public void set_patterntype(CellPatternType pt)
 	{
-		set_int(UI_HEADER+"cell pattern type",(int)pt);
+		set_int(UI_CONF+"cell_pattern_type",(int)pt);
 	}
 	public CellPatternType get_patterntype()
 	{
-		return (CellPatternType)get_int(UI_HEADER+"cell pattern type",0);
+		return (CellPatternType)get_int(UI_CONF+"cell_pattern_type",0);
 	}
 }

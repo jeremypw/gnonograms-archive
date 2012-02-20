@@ -45,46 +45,46 @@ public class Config {
 
 	private int get_int(string header, string key, int def)
 	{
-            if (get_value_string(header,key) == null)
-            {
-				set_value_string(header,key,def.to_string());
-                return def;
-            }
-            return int.parse(get_value_string(header, key));
+			if (get_value_string(header,key) == null)
+			{
+					set_value_string(header,key,def.to_string());
+					return def;
+			}
+			return int.parse(get_value_string(header, key));
 	}
 
 	private bool get_bool(string header, string key, bool def)
 	{
-            if (get_value_string(header,key) == null)
-            {
-				set_value_string(header,key,def.to_string());
-                return def;
-            }
-            return bool.parse(get_value_string(header, key));
+			if (get_value_string(header,key) == null)
+			{
+					set_value_string(header,key,def.to_string());
+					return def;
+			}
+			return bool.parse(get_value_string(header, key));
 	}
 
 	private string get_string(string header, string key, string def)
 	{
-            if (get_value_string(header,key) == null)
-            {
-				set_value_string(header,key,def.to_string());
-                return def;
-            }
-            return (get_value_string(header, key)).to_string();
+			if (get_value_string(header,key) == null)
+			{
+					set_value_string(header,key,def.to_string());
+					return def;
+			}
+			return (get_value_string(header, key)).to_string();
 	}
 
 	private bool set_int(string header, string key, int ivalue)
 	{
-           return set_value_string(header, key, ivalue.to_string());
+		 return set_value_string(header, key, ivalue.to_string());
 	}
 	private bool set_bool(string header, string key, bool bvalue)
 	{
-           return set_value_string(header, key, bvalue.to_string());
+		 return set_value_string(header, key, bvalue.to_string());
 	}
 
 	private bool set_string(string header, string key, string svalue)
 	{
-           return set_value_string(header, key, svalue);
+		 return set_value_string(header, key, svalue);
 	}
 
 	private string? get_value_string(string header, string key)
@@ -203,59 +203,59 @@ public class Config {
 
 	public void set_font(string font_desc)
 	{
-		set_string(UI_HEADER,"font description",font_desc);
+		set_string(UI_HEADER,"font_description",font_desc);
 	}
 	public string get_font()
 	{
-		return get_string(UI_HEADER,"font description",Resource.DEFAULT_FONT);
+		return get_string(UI_HEADER,"font_description",Resource.DEFAULT_FONT);
 	}
 
 	public void set_use_advanced_solver(bool use)
 	{
-		set_bool(UI_HEADER,"use advanced solver",use);
+		set_bool(UI_HEADER,"use_advanced_solver",use);
 	}
 	public bool get_use_advanced_solver()
 	{
-		return get_bool(UI_HEADER,"use advanced solver",Resource.DEFAULT_ADVANCEDSOLVER);
+		return get_bool(UI_HEADER,"use_advanced_solver",Resource.DEFAULT_ADVANCEDSOLVER);
 	}
 	public void set_generate_advanced_puzzles(bool generate)
 	{
-		set_bool(UI_HEADER,"generate advanced puzzles",generate);
+		set_bool(UI_HEADER,"generate_advanced_puzzles",generate);
 	}
 	public bool get_generate_advanced_puzzles()
 	{
-		return get_bool(UI_HEADER,"generate advanced puzzles",Resource.DEFAULT_ADVANCEDPUZZLES);
+		return get_bool(UI_HEADER,"generate_advanced_puzzles",Resource.DEFAULT_ADVANCEDPUZZLES);
 	}
 	public void set_show_grid(bool show)
 	{
-		set_bool(UI_HEADER,"show grid",show);
+		set_bool(UI_HEADER,"show_grid",show);
 	}
 	public bool get_show_grid()
 	{
-		return get_bool(UI_HEADER,"show grid",Resource.DEFAULT_SHOWGRID);
+		return get_bool(UI_HEADER,"show_grid",Resource.DEFAULT_SHOWGRID);
 	}
 	public void set_toolbar_visible(bool visible)
 	{
-		set_bool(UI_HEADER,"toolbar visible",visible);
+		set_bool(UI_HEADER,"toolbar_visible",visible);
 	}
 	public bool get_toolbar_visible()
 	{
-		return get_bool(UI_HEADER,"toolbar visible",Resource.DEFAULT_SHOWTOOLBAR);
+		return get_bool(UI_HEADER,"toolbar_visible",Resource.DEFAULT_SHOWTOOLBAR);
 	}
 	public void set_incur_time_penalty(bool incur)
 	{
-		set_bool(UI_HEADER,"time penalty incurred",incur);
+		set_bool(UI_HEADER,"time_penalty_incurred",incur);
 	}
 	public bool get_incur_time_penalty()
 	{
-		return get_bool(UI_HEADER,"time penalty incurred",Resource.DEFAULT_INCURTIMEPENALTY);
+		return get_bool(UI_HEADER,"time_penalty_incurred",Resource.DEFAULT_INCURTIMEPENALTY);
 	}
 	public void set_patterntype(CellPatternType pt)
 	{
-		set_int(UI_HEADER,"cell pattern type",(int)pt);
+		set_int(UI_HEADER,"cell_pattern_type",(int)pt);
 	}
 	public CellPatternType get_patterntype()
 	{
-		return (CellPatternType)get_int(UI_HEADER,"cell pattern type",0);
+		return (CellPatternType)get_int(UI_HEADER,"cell_pattern_type",0);
 	}
 }
