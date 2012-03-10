@@ -1,0 +1,218 @@
+Gnonograms3 version 0.9.7
+*************************
+01/Mar/12    Migration of program to Gtk3.0
+             Name and source assigned from imported image details.
+             Checks whether solved before trimming edges
+             Larger logo
+             Put all in built in games in solving state
+
+Gnonograms version 0.9.6
+**************************
+20/Feb/2012  Bug fix: Typo in Gconf_config preventing compilation without --nogconf
+             Bug fix: Column label and column misalignment under some circumstances
+             Changed Gnonogram config keys to remove spaces - for consistency with GConf
+             Add translator credits and website to About dialog
+19/Feb/2012  Add German translation from chrysn <chrysn@fsfe.org>
+             Remove extraneous files
+             Review copyright notices
+             Complete license field on built-in games
+             Add "Save As" option to File menu
+             Toolbar Save icon now does not ask for filename for existing files.
+
+06/Feb/2012  New feature - shows runlengths
+             Dialogs appear under mouse instead of covering the grid.
+
+Gnonograms version 0.9.5
+**************************
+05/Feb/2012  Debian package
+28/Jan/2012  Fix time penalty not reset bug
+26/Jan/2012  Updated manual
+25/Jan/2012  Updated translations
+21/Jan/2012  Bugfix in image import
+             Implemented hinting (hot key = Shift h)
+16/Jan/2012  Save pattern choice in config file.
+15/Jan/2012  Fill cells with patterns
+             Choose plain or circular fill pattern.
+07/Jan/2012  Prevent marking unknown cell
+             Prevent changing marked cell
+             Undo all errors feature
+             Changed "Author" to "Source" in puzzle information.
+01/Jan/2012  Allow marking of cell and undoing back to that point (Press 'm' to mark and 'l' to return to last mark).
+             Increase maximum undoes to 1000.
+             Code tidying and bug fixes
+             Disable spacebar activation of toolbar items to prevent accidental new game
+             Add confirm dialog on new game.
+
+Gnonograms version 0.9.4
+**************************
+21/Dec/2011  Remove superfluous files and Javascript from html generated from Mallard help files
+17/Dec/2011  Fixed bug in game editor
+             Update INSTALL, README
+07/Dec/2011  Update manual
+             Check if running installed before showing help.
+             Discontinue the --novala config option
+             Discontinue the make dist_with_c option
+04/Dec/2011  Option of time penalty for using "check for incorrect cells" tool added.
+             Tweaks to 'difficult' puzzle generator
+             Grid and labels cleared while puzzle generation in progress
+
+Gnonograms version 0.9.3
+**************************
+25/Nov/2011  Limit license field to 50 characters
+25/Nov/2011  Update the manual
+24/Nov/2011  Release 0.9.3
+24/Nov/2011  Clean and tidy code.
+             Small changes to solver and image importer.
+             Update translations
+22/NOv/2011  Clean up code
+06/Nov/2011  Tweak game generator
+             Tweak solver
+             Add "Built-in game directory" button to file dialog
+05/Nov/2011  Add "Trim empty edge columns/rows" function.
+31/Oct/2011  Add image to puzzle converter.
+30/OCt/2011  Show logo in upper left quadrant
+             Show game information at bottom of window
+             Include license in game information, file format and game editor.
+             Fix bug in solver (Cancel by user causes loss of existing solution)
+16/Oct/2011  Changed way solution validated to recognise alternative solutions
+             Fixed "load game in setting mode" bug
+             Fixed bug in solver (Filled subregion audit - remove blocks too small)
+
+Gnonograms version 0.9.2
+**************************
+04/Oct/2011  Fixed some Vala compiler warnings
+03/Oct/2011  Fixed regression caused by incorrect file validation
+             Stopped linking of un-needed libraries by using --as-needed linker flag
+             Turned off cc warnings and debugging for default build (can be re-instated by configure flags)
+01/Oct/2011  Move all default settings into Resources file.
+28/Sep/2011  Small tweaks
+24/Sep/2011  Fixed redo-undo bug
+             Extra validation of game and config files
+             Detect unsaved changes and prompt user on exit
+             Removed some redundant code
+             Autosize takes into account screen resolution
+22/Sep/2011  Fixed timer bug
+20/Sep/2011  Fixed auto size bug (failure for extremely asymmetric grid)
+
+18/Sep/2011  Added Gnome help files (Mallard) files
+             Modified Makefile and configure to install them (or not)
+             Include target to build binary archive
+             Include configure option to turn off all Gnome desktop integration on install
+             Removed unused configure options
+
+Gnonograms version 0.9.1
+************************
+17/Sep/2011  Updated manual
+             Separate setting of save and load puzzle directories
+             Default save puzzle directory changed to user's home directory
+             Remember advanced solver, difficult game, show grid, show toolbar settings
+             Added more menu accelerators
+             Incorrect cells only shown while dialog open.
+             Changed proxy menu so that it works in Unity
+             Increased minimum valac version to 0.12
+
+11/Sep/2011  Removed "moderately hard" and "almost impossible" puzzle directories
+             Corrected errors in Makefile install and uninstall targets.
+             Install in usr/games for Debian
+
+09/Sep/2011  Removed all non-GPL puzzles in preparation for Debian packaging
+             (other puzzles to be put in separate package)
+             Amended Makefile so that all src files included in tarball regardless of |Gconf/No GConf configuration.
+             Removed schema files
+04/Sep/2011  Conventional config file option complete
+             Saving puzzle now always saves working position as well - associated menu entries modified.
+             Menu item to pause clock
+             Menu item to zoom in and out
+             Use 'puzzle' instead of 'game' consistently in prompts
+             Added accelerator keys to menu items
+             Makefile now correctly adds translations to .desktop file
+             GConf schema files discontinued - do not uninstall properly
+             Fixed clue highlighting bug
+
+
+28/Aug/2011  Infra-structure for optional alternative conventional config file instead of GConf
+             Menu items for default settings
+             Clear buttons on color selection dialog
+             Last used puzzle directory now persists
+             GConf schema files installed/uninstalled by make file (unless NO_GCONF or DISABLE_SCHEMAS_INSTALL option)
+
+
+Gnonograms version 0.9.0
+************************
+New features:
+* Undo and redo last 100 moves
+* Game editor dialog -
+  Enter name, author, date
+  Enter row and column clues
+  Clues validated
+
+21/Aug/2011 Implemented undo-redo feature
+    Implemented game editor dialog
+    Small UI changes and bug fixes
+    Version increased to 0.9.0 to reflect new features
+
+14/Aug/2011 Small UI changes
+
+13/Aug/2011 More new icons
+    Removed non-GPL games and classified into folders by difficulty
+    Removed Mallard manual
+
+10/Jul/2011 Replaced some icons of unknown origin with own design SVG icons (CC)
+    Implemented icon theming infra-structure (but only default hicolor icons currently provided, apart from stock Gtk icons)
+
+04/Jul/2011 Converted Mallard manual to HTML in accordance with Debian guidelines. Used yelp-tools 3.1.3 from ShaunMcCance (yelp-build html *.page)
+
+28/Jun/2011 Created trial .deb package for squeeze -
+    Changed some code back to deprecated functions to allow this.
+    Changed configure option to "disable-desktop-update", combining desktop, mime and icon update disabling.
+
+21/Jun/2011 Added additional translated strings
+19/Jun/2011 Added facility to show time taken to solve puzzle manually. Small changes to manual.
+16/Jun/2011 New svg program icon designed. File-type icon created and integrated with desktop.  First tarball created and uploaded to |Google code
+
+
+Gnonograms version 0.8.0
+************************
+* Design puzzles manually
+* Generate random pattern puzzles with choice of difficulty
+* Save and load puzzles in native and Picto formats
+* Shows title, author, date created and difficulty score.
+* Solve puzzles manually and automatically, displaying time taken
+* Save current position
+* Choice of grid size from 1x1 to 100x100
+* Autoscaling of grid
+* Manual scaling of grid
+* Show/hide grid lines
+* Show/hide tool bar
+* Hint when hovering over clue
+* Mouse or keyboard controls
+* Check for incorrect cells on demand
+* Choice of colors and font used for grid.
+* Creates Game menu entry and mime-type icon when installed.
+
+
+14/06/2011  Added Gnome desktop integration file and created mime type for 'gno' files.  Program essentially complete and stable so version bumped to 0.8.0.
+
+06/06/2011  Added facilty to show time taken for computer to solve puzzle.
+31/05/2011  More manual pages
+25/05/2011  Manual started
+18/05/2011  Added ability to export in Picto (.pattern) format
+08/05/2011  Solver improvements. Added Author, Date and Score to native file format and display in UI.
+01/05/2011  Japanese translation
+24/04/2011  Add option of generating 'difficult'games
+23/04/2011  Optimisation of solver.
+18/04/2011  Added a number of native (.gno) puzzle files
+09/04/2011  First version of advanced solver
+01/04/2011  Fixed bug related to invalid game files and game files not containing the solution
+    Minor changes to 2D array class
+    Additional error checking
+22/03/2011  Project name decided to be Gnonograms.
+    Project created on Google Code
+    Temporary icon designed
+    Files uploaded
+
+March 2011  Added internationization
+Jan 2011  Re-factored monochrome version as Gnome project
+Sep 2010  Early colour version
+July 2010 Converted program to Vala
+Jan 2010  Original version of program written in Ruby

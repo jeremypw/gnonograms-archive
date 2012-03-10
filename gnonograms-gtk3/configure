@@ -1,0 +1,124 @@
+#! /bin/bash
+#
+#  Configuration file for Gnonograms3
+#  Copyright (C) 2010-2011  Jeremy Wootten
+#  based on the LGPL work of the Yorba Foundation 2009
+#
+#	This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License along
+#    with this program; if not, write to the Free Software Foundation, Inc.,
+#    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+# *
+# *  Author:
+# * 	Jeremy Wootten <jeremwootten@gmail.com>
+
+CONFIG_IN=configure.mk
+
+configure_help() {
+    printf "\nUsage:\n"
+    printf "\t./configure [OPTIONS]...\n"
+    printf "\n"
+    printf "Options:\n"
+    printf "\t-h, --help\t\tPrint this help and exit.\n"
+
+    printf "\t--assume-pkgs\t\tTurn off package version checking.\n"
+
+    printf "\t--build=DIR\t\tBuild secondary files in DIR.\n"
+
+    printf "\t--prefix=PREFIX\t\tPrepend PREFIX to program installation paths.\n"
+    printf "\t\t\t\t[/usr]\n"
+
+    printf "\t--define=SYMBOL\t\tDefine a symbol for the Vala compiler.\n"
+    printf "\n\n"
+
+    printf "\t--nognome\t\tDisable all Gnome integration\n"
+
+    printf "\t--disable-desktop-update\n"
+    printf "\t\t\t\tDisable desktop, mime and icon database update.\n"
+
+    printf "\t--disable-gnome-doc-install\n"
+    printf "\t\t\t\tDisable installation of gnome help files\n"
+
+    printf "\n"
+}
+
+abort() {
+    printf "%s: Invalid argument %s\n" $0 $1
+    configure_help
+    exit 1
+}
+
+while [ $# != 0 ]
+do
+    option=`echo $1 | sed 's/=.*//'`
+    if [ `echo $1 | grep '='` ]
+    then
+        value=`echo $1 | sed 's/.*=//'`
+    fi
+
+    case $option in
+        -h | --help)        configure_help
+                            exit 0
+                            ;;
+
+        --prefix)           if [ ! $value ]
+                            then
+                                abort $1
+                            fi
+
+                            variables="${variables}PREFIX=$value\n"
+                            ;;
+
+        --assume-pkgs)      variables="${variables}ASSUME_PKGS=1\n"
+                            ;;
+
+        --build)            if [ ! $value ]
+                            then
+                                abort $1
+                            fi
+
+                            variables="${variables}BUILD_DIR=$value\n"
+                            ;;
+
+        --define)           variables="${variables}USER_VALAFLAGS+=--define=$value\n"
+                            ;;
+
+		--nognome)			variables="${variables}DISABLE_DESKTOP_UPDATE=1\nDISABLE_GNOME_DOC_INSTALL=1"
+							;;
+
+        --disable-desktop-update)         variables="${variables}DISABLE_DESKTOP_UPDATE=1\n"
+                                          ;;
+
+        --disable-gnome-doc-install)         variables="${variables}DISABLE_GNOME_DOC_INSTALL=1\n"
+                                          ;;
+
+
+        *)                  if [ ! $value ]
+                            then
+                                abort $1
+                            fi
+
+                            variables="${variables}${option}=${value}\n"
+                            ;;
+    esac
+
+    shift
+done
+
+rm -f $CONFIG_IN
+if [ $variables ]
+then
+    echo -e -n $variables > $CONFIG_IN
+fi
+echo "CONFIG_IN=${CONFIG_IN}" >> $CONFIG_IN
+
+printf "Configured.  Type 'make' to build, 'make install' to install.\n"

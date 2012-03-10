@@ -1,0 +1,16 @@
+Translations:
+Japanese - Hiroko Wootten <hirokowootten@gmail.com>
+German   - chrysn <chrysn@fsfe.org>
+
+Testers:
+Hiroko Wootten <hirokowootten@gmail.com>
+
+Projects:
+Gtk/GLib
+Vala
+Shotwell (Makefile, Configure, minver and other design ideas)
+Geany
+Pictogame (Puzzles in .pattern format)
+
+Puzzles:
+Fido/Frederico Vera <dtkcoding@gmail.com>

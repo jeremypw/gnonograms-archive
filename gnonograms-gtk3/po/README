@@ -1,0 +1,8 @@
+Internationalisation
+********************
+
+To update the translation template (.pot) file and individual language (.po) files after changing strings in the program or adding additional (non-programmatic) strings that require translation (e.g. in desktop configuration file) to the "additional_strings" file, open a terminal in the po directory and run "./extract-strings.sh"
+
+To add an additional language, add the locale code as an additional line to the file "supported languages", run the extract strings script.
+
+Insert the translations into the resulting .po file, preferably using a PO editor such as GTranslator.

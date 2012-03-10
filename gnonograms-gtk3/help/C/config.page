@@ -1,0 +1,19 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      type="topic"
+      id="config">
+	<info>
+		<link type="guide" xref="index"/>
+		<link type="next" xref="imageconverter"/>
+	</info>
+	<title>07. Configuration and preferences</title>
+
+	<p>The behaviour and appearance of the program can be controlled using</p>
+	<list>
+		<item>
+			<p><link xref="menus#settingsmenu"/></p>
+		</item>
+		<item>
+			<p><link xref="menus#viewmenu"/></p>
+		</item>
+	</list>
+</page>
