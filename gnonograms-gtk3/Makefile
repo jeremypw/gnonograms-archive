@@ -269,16 +269,16 @@ install:
 	$(INSTALL_DATA) games/very\ hard/* $(DESTDIR)$(PREFIX)/share/gnonograms3/games/very\ hard
 
 	mkdir -p $(DESTDIR)$(PREFIX)/share/icons/hicolor/48x48/apps
-	$(INSTALL_DATA) icons/gnonograms48.png $(DESTDIR)$(PREFIX)/share/icons/hicolor/48x48/apps/gnonograms3.png
+	$(INSTALL_DATA) icons/gnonograms3-48.png $(DESTDIR)$(PREFIX)/share/icons/hicolor/48x48/apps/gnonograms3.png
 
 	mkdir -p $(DESTDIR)$(PREFIX)/share/icons/hicolor/48x48/mimetypes
 	$(INSTALL_DATA) icons/gnonogram-puzzle.png $(DESTDIR)$(PREFIX)/share/icons/hicolor/48x48/mimetypes/application-x-gnonogram-puzzle.png
 
 	mkdir -p $(DESTDIR)$(PREFIX)/share/icons/hicolor/scalable/apps
-	$(INSTALL_DATA) icons/gnonograms.svg $(DESTDIR)$(PREFIX)/share/icons/hicolor/scalable/apps/gnonograms3.svg
+	$(INSTALL_DATA) icons/gnonograms3.svg $(DESTDIR)$(PREFIX)/share/icons/hicolor/scalable/apps/gnonograms3.svg
 
 	mkdir -p $(DESTDIR)$(PREFIX)/share/pixmaps
-	$(INSTALL_DATA) icons/gnonograms32.xpm $(DESTDIR)$(PREFIX)/share/pixmaps
+	$(INSTALL_DATA) icons/gnonograms3-32.xpm $(DESTDIR)$(PREFIX)/share/pixmaps/gnonograms3.xpm
 
 	$(foreach lang,$(SUPPORTED_LANGUAGES),`mkdir -p $(SYSTEM_LANG_DIR)/$(lang)/LC_MESSAGES ; \
         $(INSTALL_DATA) $(LOCAL_LANG_DIR)/$(lang)/LC_MESSAGES/gnonograms3.mo \
@@ -288,7 +288,7 @@ install:
 	$(INSTALL_DATA) misc/x-gnonogram-puzzle.xml $(DESTDIR)$(PREFIX)/share/mime/packages
 
 	mkdir -p $(DESTDIR)$(PREFIX)/share/applications
-	$(INSTALL_DATA) misc/gnonograms3.desktop $(DESTDIR)$(PREFIX)/share/applications/gnonograms3-1.desktop
+	$(INSTALL_DATA) misc/gnonograms3.desktop $(DESTDIR)$(PREFIX)/share/applications/gnonograms3.desktop
 
 ifndef DISABLE_DESKTOP_UPDATE
 	-gtk-update-icon-cache -t -f $(DESTDIR)$(PREFIX)/share/icons/hicolor || :
@@ -317,7 +317,7 @@ uninstall:
 	rm -fr $(DESTDIR)$(PREFIX)/share/icons/hicolor/48x48/apps/gnonograms.png
 	rm -fr $(DESTDIR)$(PREFIX)/share/icons/hicolor/48x48/mimetypes/application-x-gnonogram-puzzle.png
 
-	rm -f $(DESTDIR)$(PREFIX)/share/applications/gnonograms3-1.desktop
+	rm -f $(DESTDIR)$(PREFIX)/share/applications/gnonograms3.desktop
 	rm -f misc/gnonograms3.desktop
 
 	rm -f $(DESTDIR)$(PREFIX)/share/mime/packages/x-gnonogram-puzzle.xml

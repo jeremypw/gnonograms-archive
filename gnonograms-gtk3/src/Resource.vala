@@ -58,7 +58,7 @@ namespace Resource
 	public const string HIDEICONFILENAME="eyes-open.png";
 	public const string REVEALICONFILENAME="eyes-closed.png";
 	public const string MISSINGICONFILENAME="";
-	public const string LOGOFILENAME="gnonograms.svg";
+	public const string LOGOFILENAME="gnonograms3.svg";
 	//Icon theme names
 	public const string SOLVEICONTHEMENAME="computer";
 	public const string PEEKICONTHEMENAME="";
@@ -171,7 +171,7 @@ namespace Resource
 
 		authors={"Jeremy Wootten <jeremywootten@gmail.com>",null};
 		translators=_("ja_JP\tHiroko Wootten <hirokowootten@gmail.com>\nde   \tchrysn <chrysn@fsfe.org>");
-		website="http://code.google.com/p/gnonograms3/";
+		website="http://code.google.com/p/gnonograms/";
 	}
 
 	public static void load_config(Config config_instance)

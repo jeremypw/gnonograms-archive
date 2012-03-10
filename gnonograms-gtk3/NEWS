@@ -1,10 +1,13 @@
 Gnonograms3 version 0.9.7
 *************************
+10/Mar/12    Put all in built in games in solving state
+             Revised logo for gtk3 version
+             Combined repository for gtk2 and gtk3 versions
 01/Mar/12    Migration of program to Gtk3.0
              Name and source assigned from imported image details.
              Checks whether solved before trimming edges
              Larger logo
-             Put all in built in games in solving state
+
 
 Gnonograms version 0.9.6
 **************************

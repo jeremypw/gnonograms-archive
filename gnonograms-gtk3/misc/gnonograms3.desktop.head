@@ -1,11 +1,11 @@
 [Desktop Entry]
 Version=1.0
 Type=Application
-Name=Gnonograms3
+Name=gnonograms3
 GenericName=Logic game
 Comment=Design and solve Nonogram puzzles
 Exec=gnonograms3 %f
-Icon=gnonograms
+Icon=gnonograms3
 MimeType=application/x-gnonogram-puzzle;
 Terminal=false
 StartupNotify=true
