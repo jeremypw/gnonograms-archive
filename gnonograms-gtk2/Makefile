@@ -191,9 +191,8 @@ $(LANG_STAMP): $(EXPANDED_PO_FILES)
     )
 	touch $(LANG_STAMP)
 
-$(VALA_STAMP): $(EXPANDED_SRC_FILES) $(EXPANDED_VAPI_FILES) $(EXPANDED_SRC_HEADER_FILES) Makefile \
-	$(CONFIG_IN)
-#####################################################################
+$(VALA_STAMP): $(EXPANDED_SRC_FILES) Makefile $(CONFIG_IN)
+##########################################################
 
 	@ ./minver `valac --version | awk '{print $$2}'` $(MIN_VALAC_VERSION) || ( echo 'gnonograms requires Vala compiler $(MIN_VALAC_VERSION) or greater.  You are running' `valac --version` '\b.'; exit 1 )
 

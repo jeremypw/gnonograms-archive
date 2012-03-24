@@ -91,7 +91,6 @@ public class Gnonogram_CellGrid : DrawingArea
 		var empty_color=Resource.colors[gs,(int) CellState.EMPTY];
 
 		window.clear();
-		stdout.printf("Window cleared\n");
 		if (show_grid)
 		{
 			_cell_offset=Resource.CELLOFFSET_WITHGRID;

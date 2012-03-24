@@ -1,15 +1,15 @@
 
-  Gnonograms3 Installation from Source Archive (Gnonograms3-x.x.x.tar.gz)
+  Gnonograms3 Installation from Source Archive (gnonograms3-x.x.x.tar.gz)
   -------------------------------------------------------------
 
   Requirements to compile from source:
   build-essentials package (libc6-dev, gcc, g++, make, dpkg-dev)
-  libgtk2.0-dev (version >=2.12) package and dependencies
+  libgtk3.0-dev (version >=3.0) package and dependencies
   valac (version >=0.12) package and dependencies
 
   Put the tarball in a directory for which you have read/write and execute rights.
 
-  Extract the files from the tar.gz file - this creates a Gnonograms3-x.x.x directory.
+  Extract the files from the tar.gz file - this creates a gnonograms3-x.x.x directory.
 
   Open a terminal in this directory
 
@@ -22,28 +22,28 @@
 
     This compiles the source code and creates an executable 'Gnonograms3'.
 
-    Type ./Gnonograms3 to run the program in the directory in which it was built.
+    Type ./gnonograms3 to run the program in the directory in which it was built.
 
     To install the program on the desktop:
   $ sudo make install
 
-    * By default, Gnonograms3 will install under /usr  The configure script
+    * By default, gnonograms3 will install under /usr  The configure script
       can customize the prefix directory.  Run ./configure --help for
       instructions and other installation options.
 
     * You may need to execute "make install" as root (i.e. sudo make install)
       if installing to system directories.]
 
-    * If you wish to try Gnonograms3 before installing it, you may execute it
+    * If you wish to try gnonograms3 before installing it, you may execute it
       directly from its build directory.
 
-    Once installed, Gnonograms3 will be available
+    Once installed, gnonograms3 will be available
 
 
-  Installation of Gnonograms3 binary-only archive (Gnonograms3-x.x.x-bin.tar.gz)
+  Installation of gnonograms3 binary-only archive (gnonograms3-x.x.x-bin.tar.gz)
   -----------------------------------------------------------------------------------------
 
-  This version is already compiled on Ubuntu 11.10 and is only intended to work on that distribution. It may well also work on other distributions with equivalent or later versions of Gtk+-2.0.
+  This version is already compiled on Ubuntu 11.10 and is only intended to work on that distribution. It may well also work on other distributions with equivalent or later versions of Gtk+-3.0.
 
-  Extract the archive in to a user directory and run the "Gnonograms3" binary from that directory.
+  Extract the archive in to a user directory and run the "gnonograms3" binary from that directory.
 

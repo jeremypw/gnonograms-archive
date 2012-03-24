@@ -3,6 +3,11 @@ Gnonograms3 version 0.9.7
 10/Mar/12    Put all in built in games in solving state
              Revised logo for gtk3 version
              Combined repository for gtk2 and gtk3 versions
+             Bugfix: too large grid from image import
+             Bugfix: Ultimate solver return value on fail -> 0.
+             Bugfix: Set puzzle score to 999999 if fail to solve.
+             Further migration of supporting files
+
 01/Mar/12    Migration of program to Gtk3.0
              Name and source assigned from imported image details.
              Checks whether solved before trimming edges
@@ -77,7 +82,7 @@ Gnonograms version 0.9.3
              Show game information at bottom of window
              Include license in game information, file format and game editor.
              Fix bug in solver (Cancel by user causes loss of existing solution)
-16/Oct/2011  Changed way solution validated to recognise alternative solutions
+16/Oct/2011  Changed way solution validated to recognize alternative solutions
              Fixed "load game in setting mode" bug
              Fixed bug in solver (Filled subregion audit - remove blocks too small)
 

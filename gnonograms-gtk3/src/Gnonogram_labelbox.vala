@@ -65,16 +65,22 @@ public class Gnonogram_LabelBox : Frame
 		if (new_size!=_size)
 		{
 			int diff=(new_size-_size);
-			if (diff>0)	for (int i=0; i<diff; i++)
+			if (diff>0)
 			{
+				for (int i=0; i<diff; i++)
+				{
 				_box.add(_labels[_size]);
 				_size++;
+				}
 			}
 			else
 			{
-				for (int i=0; i>diff; i--)
+			GLib.List<weak Gtk.Widget> l=_box.get_children();
+			uint length=l.length();
+				for (int i=-1; i>=diff; i--)
 				{
-					remove_label();
+					//stdout.printf("remove label\n");
+					_box.remove(l.nth_data(length+(uint)i));
 					_size--;
 				}
 			}
@@ -82,12 +88,6 @@ public class Gnonogram_LabelBox : Frame
 			this.show_all();
 		}
 		_other_size=other_size;
-	}
-
-	private void remove_label()
-	{
-		GLib.List<weak Gtk.Widget> l=_box.get_children();
-		_box.remove(l.nth_data((uint)l.length()-1));
 	}
 
 	public void change_font_height(bool increase)

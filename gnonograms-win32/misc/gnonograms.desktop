@@ -1,0 +1,21 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Gnonograms
+GenericName=Logic game
+Comment=Design and solve Nonogram puzzles
+Exec=gnonograms %f
+Icon=gnonograms
+MimeType=application/x-gnonogram-puzzle;
+Terminal=false
+StartupNotify=true
+Categories=GNOME;GTK;Game;
+Name[en_GB]=Gnonograms
+GenericName[en_GB]=Logic game
+Comment[en_GB]=Design and solve Nonogram puzzles
+Name[ja_JP]=Gnonogramsパズル
+GenericName[ja_JP]=論理ゲーム
+Comment[ja_JP]="nonogram"パズルを設計するし解決もする
+Name[de]=Gnonograms
+GenericName[de]=Logik-Spiel
+Comment[de]=Nonogram-Puzzles erstellen und lösen

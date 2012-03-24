@@ -406,7 +406,7 @@
 			for (int i=0; i<_region_count; i++) _regions[i].initial_state();
 			simple_solver(false,false);
 		}
-		return 9999999;
+		return 0;
 	}
 
 	private int choose_permute_region(ref int max_value)

@@ -183,7 +183,7 @@ public class Gnonogram_filereader {
 				case "LIC" :
 					in_error=!get_game_license(bodies[i]); break;
 				default :
-					err_msg=_("Unrecognised heading");
+					err_msg=_("Unrecognized heading");
 					in_error=true;
 					break;
 			}

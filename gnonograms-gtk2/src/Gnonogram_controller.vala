@@ -880,14 +880,20 @@ public class Gnonogram_controller
 		{
 			int rows=image_convertor.get_rows();
 			int cols= image_convertor.get_cols();
-
-			resize(rows,cols);
-			_model.use_solution();
-			for (int r=0;r<_rows;r++)
+			if (rows>Resource.MAXSIZE || cols>Resource.MAXSIZE)
 			{
-				_model.set_row_data_from_array(r,image_convertor.get_state_array(r));
-				update_labels_from_model();
-				_have_solution=true;
+				Utils.show_error_dialog("Too many rows or columns");
+			}
+			else
+			{
+				resize(rows,cols);
+				_model.use_solution();
+				for (int r=0;r<_rows;r++)
+				{
+					_model.set_row_data_from_array(r,image_convertor.get_state_array(r));
+					update_labels_from_model();
+					_have_solution=true;
+				}
 			}
 		}
 		image_convertor.destroy();
@@ -973,12 +979,15 @@ public class Gnonogram_controller
 				break;  //debug mode
 			case -1:
 				invalid_clues();
+				_gnonogram_view.set_score("999999");
 				break;
 			case 0:
 				Utils.show_info_dialog(_("Failed to solve or no unique solution"));
+				_gnonogram_view.set_score("999999");
 				break;
 			case 9999999:
 				Utils.show_info_dialog(_("Cancelled by user"));
+				_gnonogram_view.set_score("999999");
 				break;
 			default:
 				_gnonogram_view.set_score(passes.to_string());

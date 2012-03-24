@@ -53,7 +53,7 @@ public class Gnonogram_LabelBox : Frame
 			Gnonogram_label l=new Gnonogram_label("", is_col);
 			_labels[i]=l;
 		}
-		_size=0; //ensures 'size' no labels are added to box
+		_size=0;
 		resize(size, other_size);
 		add(_box);
 	}

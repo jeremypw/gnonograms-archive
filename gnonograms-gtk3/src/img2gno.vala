@@ -40,6 +40,8 @@ class Img2gno : Gtk.Dialog
 	Gtk.CheckButton _invertcheckbutton;
 	Gtk.CheckButton _monocheckbutton;
 
+	Gtk.Widget _okbutton;
+
 	Gtk.Label _ht_label;
 	Gtk.Label _wd_label;
 	Gtk.Label _bts_label;
@@ -132,6 +134,9 @@ class Img2gno : Gtk.Dialog
 		var vbox=(Gtk.Box)(this.get_content_area());
 		vbox.pack_start(hb,true,true,3);
 		this.add_buttons(Gtk.Stock.OK, Gtk.ResponseType.OK, Gtk.Stock.CANCEL, Gtk.ResponseType.CANCEL);
+
+		_okbutton=this.get_widget_for_response(Gtk.ResponseType.OK);
+		_okbutton.set_sensitive(false);
 
 		set_sliders_to_default_values();
 
@@ -349,6 +354,8 @@ class Img2gno : Gtk.Dialog
         _wd_label.label=_("Width: ")+@"$(pb.width)";
         _bts_label.label= _("Bits/sample: ")+@"$(pb.bits_per_sample)";
         _channels_label.label=_("Channels: ")+@"$(pb.n_channels)";
+
+				_okbutton.set_sensitive(pb.height<=Resource.MAXSIZE && pb.width<=Resource.MAXSIZE);
 	}
 
 	public string get_name()
