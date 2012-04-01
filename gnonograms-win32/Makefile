@@ -19,18 +19,19 @@
 # *  Author:
 # * 	Jeremy Wootten <jeremwootten@gmail.com>
 
-# Intended for cross-compilation using mingw32
+# Intended for cross-compilation on Linux using mingw32
 # Must add [location of mingw root directory]/usr/bin to PATH
 # Must add environment variable PKG_CONFIG_PATH_i686_pc_mingw32 = [location of mingw root directory]/usr/i686-pc-mingw32/lib/pkg-config
+# Run make from terminal, not within IDE.
 
 
-PROGRAM=gnonograms-win32.exe
+PROGRAM=gnonograms-win32
 CC=i686-pc-mingw32-gcc
 LD=i686-pc-mingw32-ld
 AR=i686-pc-mingw32-ar
 PKG_CONFIG=i686-pc-mingw32-pkg-config
 
-VERSION=0.9.6
+VERSION=0.9.6-beta
 GETTEXT_PACKAGE=$(PROGRAM)
 BUILD_ROOT=1
 
@@ -39,9 +40,9 @@ MIN_VALAC_VERSION = 0.12.0
 INSTALL_PROGRAM = install
 INSTALL_DATA = install -m 644
 
-SUPPORTED_LANGUAGES=en_GB ja_JP de
-LOCAL_LANG_DIR=locale
-SYSTEM_LANG_DIR=$(DESTDIR)$(PREFIX)/share/locale
+#SUPPORTED_LANGUAGES=en_GB ja_JP de
+#LOCAL_LANG_DIR=locale
+#SYSTEM_LANG_DIR=$(DESTDIR)$(PREFIX)/share/locale
 TARGET=mingw32
 
 # defaults that may be overridden by configure.mk
@@ -77,15 +78,7 @@ RESOURCE_FILES = \
 	icons/*.xpm \
 	games/*/*.gno \
 	html/*.* \
-	html/figures/*.* \
-	help/C/*.* \
-	help/C/figures/*.* \
-	po/gnonograms.pot \
-	po/additional_strings \
- 	po/extract-strings.sh \
- 	po/README \
- 	po/supported_languages.txt \
- 	po/VALAPOTFILES.in
+	html/figures/*.*
 
 TEXT_FILES = \
 	AUTHORS \
@@ -105,35 +98,25 @@ ifndef BUILD_DIR
 BUILD_DIR=build
 endif
 
-EXPANDED_PO_FILES = $(foreach po,$(SUPPORTED_LANGUAGES),po/$(po).po)
+#EXPANDED_PO_FILES = $(foreach po,$(SUPPORTED_LANGUAGES),po/$(po).po)
 EXPANDED_SRC_FILES = $(foreach src,$(SRC_FILES),src/$(src))
 EXPANDED_C_FILES = $(foreach src,$(SRC_FILES),$(BUILD_DIR)/$(src:.vala=.c))
 EXPANDED_SAVE_TEMPS_FILES = $(foreach src,$(SRC_FILES),$(BUILD_DIR)/$(src:.vala=.vala.c))
 EXPANDED_OBJ_FILES = $(foreach src,$(SRC_FILES),$(BUILD_DIR)/$(src:.vala=.o))
 
 VALA_STAMP = $(BUILD_DIR)/.stamp
-LANG_STAMP = $(LOCAL_LANG_DIR)/.langstamp
+#LANG_STAMP = $(LOCAL_LANG_DIR)/.langstamp
 
 DIST_FILES = Makefile configure minver
 DIST_FILES+= $(TEXT_FILES) $(EXPANDED_PO_FILES)
 DIST_FILES+= $(EXPANDED_SRC_FILES)
 DIST_FILES+= $(RESOURCE_FILES)
+DIST_FILES+= $(PROGRAM).exe
 
-BIN_FILES = gnonograms-mingw32.exe
-BIN_FILES+= html/*.*
-BIN_FILES+= html/figures/*.*
-BIN_FILES+= icons/*.*
-BIN_FILES+= locale/*/*/*.*
-BIN_FILES+= games/*/*.*
-BIN_FILES+= $(TEXT_FILES)
-
-DIST_TAR_GZ = $(PROGRAM)-$(VERSION).tar.gz
-BIN_TAR_GZ = $(PROGRAM)-$(VERSION)-bin.tar.gz
-ORIG_TAR_GZ = $(PROGRAM)_$(VERSION).orig.tar.gz
-DIST_WITH_C_TAR_GZ = $(PROGRAM)-$(VERSION)c.tar.gz
+DIST_ZIP = $(PROGRAM)-$(VERSION).zip
 
 # VALAFLAGS = -g --enable-checking $(USER_VALAFLAGS)
-VALAFLAGS = $(USER_VALAFLAGS)
+VALAFLAGS =  $(USER_VALAFLAGS)
 
 INCLUDE_ROOT=/media/Shared/shared_data/mingw/usr/i686-pc-mingw32/
 
@@ -152,10 +135,9 @@ DEFINES= \
 	_PREFIX='"$(PREFIX)"' \
 	_VERSION='"$(VERSION)"' \
 	GETTEXT_PACKAGE='"$(GETTEXT_PACKAGE)"' \
-	_LANG_SUPPORT_DIR='"$(SYSTEM_LANG_DIR)"' \
 	_OS='"$(TARGET)"' \
 	_GNOME_DOC='0'
-
+#	_LANG_SUPPORT_DIR='"$(SYSTEM_LANG_DIR)"' \
 
 VALA_CFLAGS = \
 		`$(PKG_CONFIG) --cflags $(EXT_PKGS)` \
@@ -171,9 +153,10 @@ CFLAGS = -mms-bitfields -O0 -g -pipe -Wall
 all: $(PROGRAM)
 ###############
 
-$(PROGRAM): $(EXPANDED_OBJ_FILES) $(RESOURCES) $(LANG_STAMP)
+$(PROGRAM): $(EXPANDED_OBJ_FILES) $(RESOURCES)
+#$(LANG_STAMP)
 ############################################################
-	$(CC) $(EXPANDED_OBJ_FILES) $(CFLAGS) $(RESOURCES) $(VALA_LDFLAGS) -o $@
+	$(CC) $(EXPANDED_OBJ_FILES) $(CFLAGS) $(RESOURCES) $(VALA_LDFLAGS) -o $@.exe
 
 $(EXPANDED_OBJ_FILES): %.o: %.c $(CONFIG_IN) Makefile
 #####################################################
@@ -184,13 +167,13 @@ $(EXPANDED_C_FILES): $(VALA_STAMP)
 ###################################
 	@
 
-$(LANG_STAMP): $(EXPANDED_PO_FILES)
+#$(LANG_STAMP): $(EXPANDED_PO_FILES)
 #####################################
-	$(foreach po,$(SUPPORTED_LANGUAGES), \
-		`mkdir -p $(LOCAL_LANG_DIR)/$(po)/LC_MESSAGES ; \
-       msgfmt -o $(LOCAL_LANG_DIR)/$(po)/LC_MESSAGES/gnonograms.mo po/$(po).po` \
-    )
-	touch $(LANG_STAMP)
+#	$(foreach po,$(SUPPORTED_LANGUAGES), \
+#		`mkdir -p $(LOCAL_LANG_DIR)/$(po)/LC_MESSAGES ; \
+#       msgfmt -o $(LOCAL_LANG_DIR)/$(po)/LC_MESSAGES/gnonograms.mo po/$(po).po` \
+#    )
+#	touch $(LANG_STAMP)
 
 $(VALA_STAMP): $(EXPANDED_SRC_FILES) Makefile	$(CONFIG_IN)
 #####################################################################
@@ -205,7 +188,7 @@ else ifdef EXT_PKGS
 endif
 endif
 
-	@ type msgfmt > /dev/null || ( echo 'msgfmt (usually found in the gettext package) is missing and is required to build gnonograms. ' ; exit 1 )
+#	@ type msgfmt > /dev/null || ( echo 'msgfmt (usually found in the gettext package) is missing and is required to build gnonograms. ' ; exit 1 )
 
 	mkdir -p $(BUILD_DIR)
 	$(VALAC) --ccode --directory=$(BUILD_DIR) --basedir=src $(VALAFLAGS) \
@@ -222,8 +205,8 @@ clean:
 	rm -f $(VALA_STAMP)
 	rm -rf $(PROGRAM)-$(VERSION)
 	rm -f $(PROGRAM)
-	rm -rf $(LOCAL_LANG_DIR)
-	rm -f $(LANG_STAMP)
+#	rm -rf $(LOCAL_LANG_DIR)
+#	rm -f $(LANG_STAMP)
 
 cleantemps:
 ###########
@@ -231,22 +214,14 @@ cleantemps:
 	rm -f $(EXPANDED_SAVE_TEMPS_FILES)
 	rm -f $(EXPANDED_OBJ_FILES)
 	rm -f $(VALA_STAMP)
-	rm -f $(LANG_STAMP)
+#	rm -f $(LANG_STAMP)
 
 dist: $(DIST_FILES)
 ###################
 	mkdir -p $(PROGRAM)-$(VERSION)
 	cp --parents $(DIST_FILES) $(PROGRAM)-$(VERSION)
-	tar --gzip -cvf $(DIST_TAR_GZ) $(PROGRAM)-$(VERSION)
+	zip -r $(DIST_ZIP) $(PROGRAM)-$(VERSION)
 	rm -rf $(PROGRAM)-$(VERSION)
-
-bin: $(PROGRAM) $(BIN_FILES)
-############################
-	rm -f $(BIN_TAR_GZ)
-	mkdir -p $(PROGRAM)-$(VERSION)-bin
-	cp --parents $(BIN_FILES) $(PROGRAM)-$(VERSION)-bin
-	tar --gzip -cvf $(BIN_TAR_GZ) $(PROGRAM)-$(VERSION)-bin
-	rm -rf $(PROGRAM)-$(VERSION)-bin
 
 distclean: clean
 ##########

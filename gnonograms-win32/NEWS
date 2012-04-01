@@ -1,7 +1,10 @@
 Windows version:
 
+Changes to INSTALL and README files
+Change default font to SANS
 Changes to makefile
-
+Use zip to make dist archive
+Remove internationalisation for now.
 Changes to Resources
 Add _OS extern const
 Add use build_filename to get paths (automatically uses correct separator)

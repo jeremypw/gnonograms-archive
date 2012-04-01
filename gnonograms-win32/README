@@ -1,9 +1,9 @@
 
-  Gnonograms.   Nonogram puzzle generator and solver for Gtk/Gnome.
+  Gnonograms.   Nonogram puzzle generator and solver
   -----------------------------------------------------------------
 
   * Introduction
-   Gnonograms is an implementation for the Gnome desktop  of the Japanese logic puzzle "Nonograms",   also known as "Tsunami", "Griddlers" .....". The object of the game is to discover the pattern in the grid which is encoded by the clues which are give for each row and column. Each clue is a series of numbers which represent blocks of filled in cells in the corresponding row or column.  Each number indicates how many cells are in the block it represents.  Each block must be separated by at least one empty cell from neighbouring blocks.  The order of the numbers in the clue shows the order in which the blocks appear in the row or column.
+   Gnonograms is an implementation of the Japanese logic puzzle "Nonograms",   also known as "Tsunami", "Griddlers" .....". The object of the game is to discover the pattern in the grid which is encoded by the clues which are give for each row and column. Each clue is a series of numbers which represent blocks of filled in cells in the corresponding row or column.  Each number indicates how many cells are in the block it represents.  Each block must be separated by at least one empty cell from neighbouring blocks.  The order of the numbers in the clue shows the order in which the blocks appear in the row or column.
 
   * Main Features
     * Design nonogram puzzles manually by painting
@@ -40,4 +40,20 @@
   -------------------------------------------
   1/. Fido/Frederico Vera <dktcoding@gmail.com>.
   License: As displayed
+
+  The program is designed to work best on the Linux operating system and was created using freely available open-source software. If you wish to know more about Linux and open source software see, for example:
+
+  http://en.wikipedia.org/wiki/Linux
+  http://www.newlinuxuser.net/
+
+  The source code is supplied with the program and is licensed under the GNU General Public License.  This allows to freely use, copy, distribute and modify the program provided that any copy or modfied version remains under the licensing conditions.  See the file COPYING for details.
+
+  The puzzles and artwork are licensed under the Creative Commons Attribution Share-Alike license which allows you to copy, modify and distribute them subject to the copies and derivatives remaining similarly licensed and the original creator being credited. See the file COPYING for details.
+
+  For more information on GNU and software freedoms see, for example:
+  http://www.gnu.org/philosophy/free-sw.html
+
+  The source code is in the Vala programming language and the makefile is designed for cross-compilation on a Linux platform.  If you wish to re-compile it on Windows you will need to modify this file. You will also need a Vala compiler to generate the intermediate C language code and a C compiler. You will also need the Gtk+2.0 and related libraries - see http://live.gnome.org/Vala/ValaOnWindows for further information.
+
+  The source code is currently hosted at "http://code.google.com/p/gnonograms/" from where other versions can be downloaded.
 

@@ -92,6 +92,7 @@ public class Gnonogram_LabelBox : Frame
 
 	public void change_font_height(bool increase)
 	{
+		stdout.printf("Change font height \n");
 		if (increase) _fontheight+=1.0;
 		else _fontheight-=1.0;
 		set_font_height(_fontheight);
@@ -121,6 +122,7 @@ public class Gnonogram_LabelBox : Frame
 	{
 		//stdout.printf("Idx %d Label txt %s\n",idx,txt);
 		_labels[idx].set_markup(_attribstart,txt,_attribend);
+		//_labels[idx].set_text(txt);
 		_labels[idx].set_size(_other_size);
 	}
 
@@ -145,8 +147,11 @@ public class Gnonogram_LabelBox : Frame
 	private void set_attribs(double fontheight)
 	{
 
-		 int fontsize=1024*(int)(fontheight);
+		int fontsize=1024*(int)(fontheight);
 		_attribstart=@"<span font_desc='$(Resource.font_desc)' size='$fontsize'>";
+		//_attribstart=@"<span font_desc='$(Resource.font_desc)'>";
+		stdout.printf("attrib start %s\n",_attribstart);
+		//_attribstart=@"<span size='$fontsize'>";
 		_attribend="</span>";
 	}
 

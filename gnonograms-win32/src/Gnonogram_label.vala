@@ -61,6 +61,8 @@ class Gnonogram_label : Gtk.EventBox
 		blockextent=Utils.blockextent_from_clue(clue);
 	}
 
+//	public void set_text(string s) {l.set_text(s);}
+
 	public void set_size(int s)
 	{
 		size=s;

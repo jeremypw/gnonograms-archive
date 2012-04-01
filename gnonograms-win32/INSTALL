@@ -1,51 +1,10 @@
 
-  Gnonograms Installation from Source Archive (gnonograms-x.x.x.tar.gz)
-  -------------------------------------------------------------
+  Gnonograms Installation on Windows
+  ------------------------------------
 
-  Requirements to compile from source:
-  build-essentials package (libc6-dev, gcc, g++, make, dpkg-dev)
-  libgtk2.0-dev (version >=2.12) package and dependencies
-  libgconf2-dev (version >=2.12) package and dependencies  (unless using ./configure --nogconf option)
-  valac (version >=0.12) package and dependencies
+  The program is distributed cross-compiled on Linux and is self-contained; you do not need to install it.
+  Unzipping the supplied file "gnonograms-win32-0.x.x.zip" will create a folder "gnonograms-win32-0.x.x".
+  Open this folder and run the file "gnonograms-win32.exe".
 
-  Put the tarball in a directory for which you have read/write and execute rights.
-
-  Extract the files from the tar.gz file - this creates a gnonograms-x.x.x directory.
-
-  Open a terminal in this directory
-
-  Type the following commands:
-
-    $ ./configure
-    OR $ ./configure --nogconf (to compile a version that does not use gconf to store settings)
-    OR $ ./configure --help (to see all possible options)
-
-    $ make
-
-    This compiles the source code and creates an executable 'gnonograms'.
-
-    Type ./gnonograms to run the program in the directory in which it was built.
-
-    To install the program on the desktop:
-  $ sudo make install
-
-    * By default, gnonograms will install under /usr  The configure script
-      can customize the prefix directory.  Run ./configure --help for
-      instructions and other installation options.
-
-    * You may need to execute "make install" as root (i.e. sudo make install)
-      if installing to system directories.]
-
-    * If you wish to try gnonograms before installing it, you may execute it
-      directly from its build directory.
-
-    Once installed, gnonograms will be available
-
-
-  Installation of Gnonograms binary-only archive (gnonograms-x.x.x-bin.tar.gz)
-  -----------------------------------------------------------------------------------------
-
-  This version is already compiled on Ubuntu 11.10 and is only intended to work on that distribution. It may well also work on other distributions with equivalent or later versions of Gtk+-2.0.
-
-  Extract the archive in to a user directory and run the "gnonograms" binary from that directory.
+  You can remove the program by simply deleting this folder and the configuration file "gnonograms.conf" that is created in your home folder. This file and the puzzle files (extension .gno) are plain text files.
 

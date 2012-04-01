@@ -103,11 +103,6 @@ public class Gnonogram_controller
 		_cellgrid = new Gnonogram_CellGrid(_rows,_cols);
 		_gnonogram_view = new Gnonogram_view(_rowbox, _colbox, _cellgrid);
 
-//		try{
-//			_gnonogram_view.set_icon_from_file(Resource.icon_dir+"/gnonograms.svg");
-//		}
-//		catch (GLib.Error e) {stdout.printf("Icon file not loaded\n");}
-
 
 		_gnonogram_view.savegame.connect(()=>{this.save_game(_game_path);});
 		_gnonogram_view.saveasgame.connect(()=>{this.save_game("");});

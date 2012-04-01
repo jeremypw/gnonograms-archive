@@ -28,7 +28,7 @@ using GLib;
 // Defined by configure and make
 extern const string _PREFIX;
 extern const string _VERSION;
-extern const string GETTEXT_PACKAGE;
+//extern const string GETTEXT_PACKAGE;
 extern const int _GNOME_DOC;
 extern const string _OS;
 
@@ -42,7 +42,7 @@ namespace Resource
 			HIDE,
 			REVEAL
 	}
-	public const string APP_GETTEXT_PACKAGE = GETTEXT_PACKAGE;
+//	public const string APP_GETTEXT_PACKAGE = GETTEXT_PACKAGE;
 	public const string DEFAULTGAMENAME = "New puzzle";
 	public const string GAMEFILEEXTENSION=".gno";
 	public const string POSITIONFILENAME="currentposition";
@@ -69,7 +69,7 @@ namespace Resource
 	public const string REVEALICONTHEMENAME="";
 	public const string MISSINGICONTHEMENAME="image-missing";
 
-	public const string DEFAULT_FONT="Ariel";
+	public const string DEFAULT_FONT="Sans 10";
 
 //Performace/capability related parameters
 	public static int MAXSIZE = 100; // max number rows or columns
@@ -136,7 +136,7 @@ namespace Resource
 		prefix=_PREFIX;
 		stdout.printf("Prefix is %s \n",prefix);
 		stdout.printf("OS is %s \n",_OS);
-		stdout.printf("gettext package is %s \n",APP_GETTEXT_PACKAGE);
+//		stdout.printf("gettext package is %s \n",APP_GETTEXT_PACKAGE);
 		stdout.printf("User home is %s \n",Environment.get_home_dir());
 		stdout.printf("User config dir is %s \n",Environment.get_user_config_dir());
 		stdout.printf("User data dir is %s \n",Environment.get_user_data_dir());
@@ -196,10 +196,10 @@ namespace Resource
 		return exec_dir.has_prefix(prefix) ? true : false;
 	}
 
-	public static string get_langpack_dir()
-	{
-		return locale_dir;
-	}
+//	public static string get_langpack_dir()
+//	{
+//		return locale_dir;
+//	}
 
 	public void reset_all()
 	{

@@ -187,7 +187,7 @@ public class Gnonogram_view : Gtk.Window
 
 		this.title = _("Gnonograms");
 		this.position = WindowPosition.CENTER;
-		this.resizable=false;
+		this.resizable=true; //for Wine
 	}
 
 	private MenuBar create_viewer_menubar()
