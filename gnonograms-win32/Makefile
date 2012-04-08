@@ -31,7 +31,7 @@ LD=i686-pc-mingw32-ld
 AR=i686-pc-mingw32-ar
 PKG_CONFIG=i686-pc-mingw32-pkg-config
 
-VERSION=0.9.6-beta
+VERSION=0.9.8-beta
 GETTEXT_PACKAGE=$(PROGRAM)
 BUILD_ROOT=1
 
@@ -216,10 +216,11 @@ cleantemps:
 	rm -f $(VALA_STAMP)
 #	rm -f $(LANG_STAMP)
 
-dist: $(DIST_FILES)
-###################
+dist: $(PROGRAM) $(DIST_FILES)
+#############################
 	mkdir -p $(PROGRAM)-$(VERSION)
 	cp --parents $(DIST_FILES) $(PROGRAM)-$(VERSION)
+	rm -f $(DIST_ZIP)
 	zip -r $(DIST_ZIP) $(PROGRAM)-$(VERSION)
 	rm -rf $(PROGRAM)-$(VERSION)
 

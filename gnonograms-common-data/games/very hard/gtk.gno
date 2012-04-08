@@ -1,5 +1,5 @@
 [Description]
-GTK (Very Dificult!)
+GTK (Very Difficult!)
 Fido
 2010/06/27
 57883

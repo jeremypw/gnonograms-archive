@@ -47,7 +47,7 @@ namespace Resource
 	public const string POSITIONFILENAME="currentposition";
 
 	public static string[] authors;
-	public static string translators;
+	//public static string translators;
 	public static string website;
 
 	//Built in icon filenames
@@ -170,7 +170,7 @@ namespace Resource
 		MINORGRIDDASH={3.0, 3.0};
 
 		authors={"Jeremy Wootten <jeremywootten@gmail.com>",null};
-		translators=_("ja_JP\tHiroko Wootten <hirokowootten@gmail.com>\nde   \tchrysn <chrysn@fsfe.org>");
+		//translators="ja_JP\tHiroko Wootten <hirokowootten@gmail.com>\nde   \tchrysn <chrysn@fsfe.org>\nes   \tFederico Vera <dtkcoding@gmail.com>";
 		website="http://code.google.com/p/gnonograms/";
 	}
 

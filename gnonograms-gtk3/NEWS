@@ -1,3 +1,11 @@
+
+Gnonograms3 version 0.9.8
+**************************
+08/Apr/12    Added Spanish translation from Federico Vera <dtkcoding@gmail.com>
+             Corrected headers in translation files
+             Add "translator-credits" to translation files and use this in about dialog.
+             Load image immediately in constructor of image to gnonogram convertor
+             Bugfix: Change state to SETTING after trimming blank edges.
 Gnonograms3 version 0.9.7
 *************************
 10/Mar/12    Put all in built in games in solving state
@@ -20,7 +28,7 @@ Gnonograms version 0.9.6
              Bug fix: Column label and column misalignment under some circumstances
              Changed Gnonogram config keys to remove spaces - for consistency with GConf
              Add translator credits and website to About dialog
-19/Feb/2012  Add German translation from chrysn <chrysn@fsfe.org>
+19/Feb/2012  Add German translation from Christian M. Amsüss <chrysn@fsfe.org>
              Remove extraneous files
              Review copyright notices
              Complete license field on built-in games

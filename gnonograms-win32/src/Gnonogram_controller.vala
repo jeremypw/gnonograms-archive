@@ -889,6 +889,10 @@ public class Gnonogram_controller
 					update_labels_from_model();
 					_have_solution=true;
 				}
+				_gnonogram_view.set_name(image_convertor.get_name());
+				_gnonogram_view.set_source("Image");
+				_gnonogram_view.set_license("Unknown");
+				_gnonogram_view.set_score("999999");
 			}
 		}
 		image_convertor.destroy();
@@ -896,6 +900,7 @@ public class Gnonogram_controller
 		initialize_view();
 		redraw_all();
 	}
+
 
 
 	public void start_solving()
@@ -980,7 +985,7 @@ public class Gnonogram_controller
 				Utils.show_info_dialog(_("Failed to solve or no unique solution"));
 				_gnonogram_view.set_score("999999");
 				break;
-			case 9999999:
+			case 999999:
 				Utils.show_info_dialog(_("Cancelled by user"));
 				_gnonogram_view.set_score("999999");
 				break;
@@ -1296,7 +1301,12 @@ public class Gnonogram_controller
 		if (blank_left_edge+blank_right_edge+blank_top_edge+blank_bottom_edge>0)
 		{
 			if (blank_top_edge+blank_bottom_edge>=_rows||blank_left_edge+blank_right_edge>=_cols) return; //mustnt remove everything!
-			if(Utils.show_confirm_dialog(_("Trim blank edges?\nWARNING - only use on a computer soluble puzzle")))
+			if (_gnonogram_view.get_score()=="999999")
+			{
+				Utils.show_warning_dialog(_("Puzzle not solved yet - only use on a computer soluble puzzle"));
+				return;
+			}
+			if (Utils.show_confirm_dialog(_("Trim blank edges?")))
 			{
 				_model.clear();
 				resize(_rows-blank_top_edge-blank_bottom_edge,_cols-blank_left_edge-blank_right_edge);
@@ -1311,6 +1321,7 @@ public class Gnonogram_controller
 				}
 				validate_game();
 				initialize_view();
+				change_state(GameState.SETTING);
 			}
 		}
 	}

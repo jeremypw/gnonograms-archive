@@ -1,14 +1,15 @@
-# German translations for gnonograms package.
-# Copyright (C) 2012 THE gnonograms'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the gnonograms package.
+# German translations for gnonograms3 package.
+# Copyright (C) 2012 Jeremy Wootten <jeremywootten@gmail.com>
+# This file is distributed under the same license as the gnonograms3 package.
 # Christian M. Amsüss <chrysn@fsfe.org>, 2012.
+# chrysn <chrysn@fsfe.org>, 2012.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: gnonograms 0.9.5\n"
+"Project-Id-Version: gnonograms3 0.9.7\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-03-10 19:40+0000\n"
-"PO-Revision-Date: 2012-02-18 10:38+0100\n"
+"POT-Creation-Date: 2012-04-08 13:05+0100\n"
+"PO-Revision-Date: 2012-04-08 13:12+0100\n"
 "Last-Translator: chrysn <chrysn@fsfe.org>\n"
 "Language-Team: German <translation-team-de@lists.sourceforge.net>\n"
 "Language: de\n"
@@ -246,9 +247,8 @@ msgid "Keep trying?"
 msgstr "Weiter versuchen?"
 
 #: ../src/Gnonogram_viewer.vala:187 ../src/Gnonogram_viewer.vala:551
-#, fuzzy
 msgid "Gnonograms3"
-msgstr "Gnonograms"
+msgstr "Gnonograms3"
 
 #: ../src/Gnonogram_viewer.vala:198
 msgid "_File"
@@ -477,9 +477,12 @@ msgstr "Nonogram-Puzzles erstellen und lösen"
 
 #. _logo.get_pixbuf(),
 #: ../src/Gnonogram_viewer.vala:557
-#, fuzzy
 msgid "About Gnonograms3"
-msgstr "Über Gnonograms"
+msgstr "Über Gnonograms3"
+
+#: ../src/Gnonogram_viewer.vala:559
+msgid "translator-credits"
+msgstr "Christian M. Amsüss <chrysn@fsfe.org>"
 
 #: ../src/Gnonogram_viewer.vala:587
 msgid "Source:"
@@ -605,12 +608,6 @@ msgstr "Zeilen"
 #: ../src/utils.vala:150
 msgid "Columns"
 msgstr "Spalten"
-
-#: ../src/Resource.vala:173
-msgid ""
-"ja_JP\tHiroko Wootten <hirokowootten@gmail.com>\n"
-"de   \tchrysn <chrysn@fsfe.org>"
-msgstr ""
 
 #: ../src/Resource.vala:231 ../src/Resource.vala:243
 msgid "Color of filled cell when setting"

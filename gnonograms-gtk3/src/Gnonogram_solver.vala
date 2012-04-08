@@ -126,7 +126,7 @@
 				int advanced_result=advanced_solver(grid_store, debug);
 				if (advanced_result>0)
 				{
-					if(advanced_result==9999999 && use_ultimate)
+					if(advanced_result==999999 && use_ultimate)
 					{
 						return ultimate_solver(grid_store, debug);
 					}
@@ -287,7 +287,7 @@
 		}
 		//return vague measure of difficulty
 		if (simple_result>0) return simple_result+_guesses;
-		return 9999999;
+		return 999999;
 	}
 
 	private void save_position(CellState[] gs)
@@ -346,7 +346,7 @@
 	private int ultimate_solver(CellState[] grid_store, bool debug)
 	{
 		//stdout.printf("Ultimate solver\n");
-		int perm_reg=-1, max_value=9999999, advanced_result=-99, simple_result=-99;
+		int perm_reg=-1, max_value=999999, advanced_result=-99, simple_result=-99;
 		int limit=GUESSES_BEFORE_ASK;
 
 		load_position(grid_store); //return to last valid state
@@ -354,7 +354,7 @@
 		simple_solver(false,true); //make sure region state correct
 
 		showsolvergrid();
-		if(!Utils.show_confirm_dialog(_("Start Ultimate solver?\n This can take a long time and may not work"))) return 9999999;
+		if(!Utils.show_confirm_dialog(_("Start Ultimate solver?\n This can take a long time and may not work"))) return 999999;
 
 		CellState[] grid_store2 = new CellState[_rows*_cols];
 		CellState[] guess={};
@@ -384,7 +384,7 @@
 				if (_guesses>limit)
 				{
 					if(Utils.show_confirm_dialog(_("This is taking a long time!")+"\n"+_("Keep trying?"))) limit+=GUESSES_BEFORE_ASK;
-					else return 9999999;
+					else return 999999;
 				}
 				guess=p.get();
 
@@ -394,7 +394,7 @@
 				if(simple_result==0)
 				{
 					advanced_result=advanced_solver(grid_store, debug);
-					if (advanced_result>0 && advanced_result<9999999) return advanced_result; //solution found
+					if (advanced_result>0 && advanced_result<999999) return advanced_result; //solution found
 				}
 				else if (simple_result>0) return simple_result+_guesses; //unlikely!
 

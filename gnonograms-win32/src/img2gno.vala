@@ -156,6 +156,7 @@ class Img2gno : Gtk.Dialog
 		_thr_blue_scale.value_changed.connect(display_image);
 		_thr_alpha_scale.value_changed.connect(display_image);
 
+		load_image();
 	}
 
 	private void set_sliders_to_default_values()
@@ -355,5 +356,10 @@ class Img2gno : Gtk.Dialog
         _channels_label.label=_("Channels: ")+@"$(pb.n_channels)";
 
 				_okbutton.set_sensitive(pb.height<=Resource.MAXSIZE && pb.width<=Resource.MAXSIZE);
+	}
+
+	public string get_name()
+	{
+		return _name;
 	}
 }

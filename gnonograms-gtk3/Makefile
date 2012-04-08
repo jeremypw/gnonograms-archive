@@ -20,7 +20,7 @@
 # * 	Jeremy Wootten <jeremwootten@gmail.com>
 PROGRAM=gnonograms3
 
-VERSION=0.9.7
+VERSION=0.9.8
 GETTEXT_PACKAGE=$(PROGRAM)
 BUILD_ROOT=1
 
@@ -29,7 +29,7 @@ MIN_VALAC_VERSION = 0.12.0
 INSTALL_PROGRAM = install
 INSTALL_DATA = install -m 644
 
-SUPPORTED_LANGUAGES=en_GB ja_JP de
+SUPPORTED_LANGUAGES=en_GB ja_JP de es
 LOCAL_LANG_DIR=locale
 SYSTEM_LANG_DIR=$(DESTDIR)$(PREFIX)/share/locale
 
@@ -223,10 +223,11 @@ cleantemps:
 	rm -f $(VALA_STAMP)
 	rm -f $(LANG_STAMP)
 
-dist: $(DIST_FILES)
-###################
+dist: $(PROGRAM) $(DIST_FILES)
+##############################
 	mkdir -p $(PROGRAM)-$(VERSION)
 	cp --parents $(DIST_FILES) $(PROGRAM)-$(VERSION)
+	rm -f $(DIST_TAR_GZ)
 	tar --gzip -cvf $(DIST_TAR_GZ) $(PROGRAM)-$(VERSION)
 	rm -rf $(PROGRAM)-$(VERSION)
 
@@ -242,8 +243,8 @@ distclean: clean
 ##########
 	rm -f configure.mk
 
-install:
-#######
+install: $(PROGRAM)
+###################
 	cp misc/gnonograms3.desktop.head misc/gnonograms3.desktop
 	$(foreach lang,$(SUPPORTED_LANGUAGES), \
 		echo Name[$(lang)]=`TEXTDOMAINDIR=locale LANGUAGE=$(lang) gettext --domain=gnonograms3 $(DESKTOP_APPLICATION_NAME)` >>  misc/gnonograms3.desktop ; \

@@ -990,7 +990,7 @@ public class Gnonogram_controller
 				Utils.show_info_dialog(_("Failed to solve or no unique solution"));
 				_gnonogram_view.set_score("999999");
 				break;
-			case 9999999:
+			case 999999:
 				Utils.show_info_dialog(_("Cancelled by user"));
 				_gnonogram_view.set_score("999999");
 				break;
@@ -1326,6 +1326,7 @@ public class Gnonogram_controller
 				}
 				validate_game();
 				initialize_view();
+				change_state(GameState.SETTING);
 			}
 		}
 	}

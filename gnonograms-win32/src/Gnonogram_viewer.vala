@@ -187,7 +187,7 @@ public class Gnonogram_view : Gtk.Window
 
 		this.title = _("Gnonograms");
 		this.position = WindowPosition.CENTER;
-		this.resizable=true; //for Wine
+		this.resizable=false;
 	}
 
 	private MenuBar create_viewer_menubar()
@@ -539,7 +539,7 @@ public class Gnonogram_view : Gtk.Window
 
 	private void show_about()
 	{
-		Gtk.Image _logo = new Gtk.Image.from_file(Resource.resource_dir+"/icons/gnonograms48.png");
+		Gtk.Image _logo = new Gtk.Image.from_file(Resource.resource_dir+"/icons/gnonograms3-48.png");
 		show_about_dialog (null,
                        "program-name", _("Gnonograms"),
                        "version", _VERSION,
@@ -549,7 +549,7 @@ public class Gnonogram_view : Gtk.Window
                        "logo", _logo.get_pixbuf(),
                        "title", _("About Gnonograms"),
                        "authors", Resource.authors,
-                       "translator-credits",Resource.translators,
+                       "translator-credits",_("translator-credits"),
                        "website",Resource.website,
                        null);
 	}

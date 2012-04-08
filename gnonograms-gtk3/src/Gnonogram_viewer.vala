@@ -556,7 +556,7 @@ public class Gnonogram_view : Gtk.Window
                        "logo", gnonogram_pb,// _logo.get_pixbuf(),
                        "title", _("About Gnonograms3"),
                        "authors", Resource.authors,
-                       "translator-credits",Resource.translators,
+                       "translator-credits",_("translator-credits"),
                        "website",Resource.website,
                        null);
 	}

@@ -48,7 +48,7 @@ namespace Resource
 	public const string POSITIONFILENAME="currentposition";
 
 	public static string[] authors;
-	public static string translators;
+//	public static string translators;
 	public static string website;
 
 	//Built in icon filenames
@@ -89,7 +89,7 @@ namespace Resource
 //	public static double MAXWINDOWWIDTH=700.0;  //now uses actual screen resolution
 //	public static int MINWINDOWHEIGHT=400;
 //	public static int MINWINDOWWIDTH=350;  //to fit toobar and status bar
-	public static int LOGOSIZE=100;
+	public static int LOGOSIZE=150;
 
 	public static string font_desc;
 	public static double CELLOFFSET_NOGRID=0.0;
@@ -180,7 +180,7 @@ namespace Resource
 		MINORGRIDDASH={3.0, 3.0};
 
 		authors={"Jeremy Wootten <jeremywootten@gmail.com>",null};
-		translators=_("ja_JP\tHiroko Wootten <hirokowootten@gmail.com>\nde   \tchrysn <chrysn@fsfe.org>");
+//		translators=_("ja_JP\tHiroko Wootten <hirokowootten@gmail.com>\nde   \tchrysn <chrysn@fsfe.org>");
 		website="http://code.google.com/p/gnonograms/";
 	}
 

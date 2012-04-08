@@ -1,3 +1,21 @@
+Gnonograms-win32 version 0.9.8-beta
+***********************************
+08/Apr/2012  Incorporate bugfixes from Linux version 0.9.8:
+               Bugfix: too large grid from image import
+               Bugfix: Ultimate solver return value on fail -> 0.
+               Bugfix: Set puzzle score to 999999 if fail to solve.
+               Bugfix: Change state to SETTING after trimming blank edges.
+               Bump version number to 0.9.8 to match gtk-3 version
+             Incorporate improvements from Linux version 0.9.8:
+               Check for solvability before trimming edges
+               Set puzzle name and source when importing from image
+               Increase logo size
+               Put all built-in games in solving state.
+               Load image immediately in constructor of image to gnonogram convertor
+             Remove reference to translators from about dialog
+
+Gnonograms-win32 version 0.9.6-beta
+***********************************
 Windows version:
 
 Changes to INSTALL and README files

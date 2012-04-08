@@ -894,6 +894,10 @@ public class Gnonogram_controller
 					update_labels_from_model();
 					_have_solution=true;
 				}
+				_gnonogram_view.set_name(image_convertor.get_name());
+				_gnonogram_view.set_source("Image");
+				_gnonogram_view.set_license("Unknown");
+				_gnonogram_view.set_score("999999");
 			}
 		}
 		image_convertor.destroy();
@@ -901,6 +905,43 @@ public class Gnonogram_controller
 		initialize_view();
 		redraw_all();
 	}
+
+
+//	private void import_image()
+//	{
+//		//stdout.printf("Import image");
+//		new_game(false);
+//		Environment.set_current_dir("/usr/share/icons");
+//		Img2gno image_convertor=new Img2gno();
+
+//		image_convertor.show_all();
+//		var response=image_convertor.run();
+
+//		if (response==Gtk.ResponseType.OK)
+//		{
+//			int rows=image_convertor.get_rows();
+//			int cols= image_convertor.get_cols();
+//			if (rows>Resource.MAXSIZE || cols>Resource.MAXSIZE)
+//			{
+//				Utils.show_error_dialog("Too many rows or columns");
+//			}
+//			else
+//			{
+//				resize(rows,cols);
+//				_model.use_solution();
+//				for (int r=0;r<_rows;r++)
+//				{
+//					_model.set_row_data_from_array(r,image_convertor.get_state_array(r));
+//					update_labels_from_model();
+//					_have_solution=true;
+//				}
+//			}
+//		}
+//		image_convertor.destroy();
+//		change_state(GameState.SETTING);
+//		initialize_view();
+//		redraw_all();
+//	}
 
 
 	public void start_solving()
@@ -985,7 +1026,7 @@ public class Gnonogram_controller
 				Utils.show_info_dialog(_("Failed to solve or no unique solution"));
 				_gnonogram_view.set_score("999999");
 				break;
-			case 9999999:
+			case 999999:
 				Utils.show_info_dialog(_("Cancelled by user"));
 				_gnonogram_view.set_score("999999");
 				break;
@@ -1301,7 +1342,12 @@ public class Gnonogram_controller
 		if (blank_left_edge+blank_right_edge+blank_top_edge+blank_bottom_edge>0)
 		{
 			if (blank_top_edge+blank_bottom_edge>=_rows||blank_left_edge+blank_right_edge>=_cols) return; //mustnt remove everything!
-			if(Utils.show_confirm_dialog(_("Trim blank edges?\nWARNING - only use on a computer soluble puzzle")))
+			if (_gnonogram_view.get_score()=="999999")
+			{
+				Utils.show_warning_dialog(_("Puzzle not solved yet - only use on a computer soluble puzzle"));
+				return;
+			}
+			if (Utils.show_confirm_dialog(_("Trim blank edges?")))
 			{
 				_model.clear();
 				resize(_rows-blank_top_edge-blank_bottom_edge,_cols-blank_left_edge-blank_right_edge);
@@ -1316,9 +1362,76 @@ public class Gnonogram_controller
 				}
 				validate_game();
 				initialize_view();
+				change_state(GameState.SETTING);
 			}
 		}
 	}
+
+//	private void trim_game()
+//	{	//remove blank edge rows and columns.
+//		 //Note: Only clues are trimmed and the puzzle re-generated from the clues
+//		 //Should only be used on soluble game.
+//		string[] row_clues;
+//		string[] col_clues;
+//		int blank_left_edge=0;
+//		int blank_top_edge=0;
+//		int blank_right_edge=0;
+//		int blank_bottom_edge=0;
+
+//		row_clues=new string[_rows];
+//		col_clues=new string[_cols];
+
+//		for (int r=0;r<_rows;r++)
+//		{
+//			row_clues[r]=_rowbox.get_label_text(r);
+//		}
+//		for (int r=0;r<_rows;r++)
+//		{
+//			if (row_clues[r]=="0") blank_top_edge++;
+//			else break;
+//		}
+//		for (int r=_rows-1;r>=0;r--)
+//		{
+//			if (row_clues[r]=="0") blank_bottom_edge++;
+//			else break;
+//		}
+
+//		for (int c=0;c<_cols;c++)
+//		{
+//			col_clues[c]=_colbox.get_label_text(c);
+//		}
+//		for (int c=0;c<_cols;c++)
+//		{
+//			if (col_clues[c]=="0") blank_left_edge++;
+//			else break;
+//		}
+//		for (int c=_cols-1;c>=0;c--)
+//		{
+//			if (col_clues[c]=="0") blank_right_edge++;
+//			else break;
+//		}
+
+//		if (blank_left_edge+blank_right_edge+blank_top_edge+blank_bottom_edge>0)
+//		{
+//			if (blank_top_edge+blank_bottom_edge>=_rows||blank_left_edge+blank_right_edge>=_cols) return; //mustnt remove everything!
+//			if(Utils.show_confirm_dialog(_("Trim blank edges?\nWARNING - only use on a computer soluble puzzle")))
+//			{
+//				_model.clear();
+//				resize(_rows-blank_top_edge-blank_bottom_edge,_cols-blank_left_edge-blank_right_edge);
+//				//_rows and _cols now new values
+//				for(int r=0;r<_rows;r++)
+//				{
+//					_rowbox.update_label(r,row_clues[r+blank_top_edge]);
+//				}
+//				for(int c=0;c<_cols;c++)
+//				{
+//					_colbox.update_label(c,col_clues[c+blank_left_edge]);
+//				}
+//				validate_game();
+//				initialize_view();
+//			}
+//		}
+//	}
 
 	private void update_labels_from_model()
 	{	//stdout.printf("update labels from model\n");
