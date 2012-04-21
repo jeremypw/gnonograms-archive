@@ -1,3 +1,8 @@
+Gnonograms3 - version 0.9.9
+***************************
+21/Apr/2012  Corrections/improvements to install and uninstall to ensure
+             all files removed on uninstall (except user config).
+             Use different mime-type file & icon to gnonograms gtk2 version
 
 Gnonograms3 version 0.9.8
 **************************

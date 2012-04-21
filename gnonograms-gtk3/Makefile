@@ -273,7 +273,7 @@ install: $(PROGRAM)
 	$(INSTALL_DATA) icons/gnonograms3-48.png $(DESTDIR)$(PREFIX)/share/icons/hicolor/48x48/apps/gnonograms3.png
 
 	mkdir -p $(DESTDIR)$(PREFIX)/share/icons/hicolor/48x48/mimetypes
-	$(INSTALL_DATA) icons/gnonogram-puzzle.png $(DESTDIR)$(PREFIX)/share/icons/hicolor/48x48/mimetypes/application-x-gnonogram-puzzle.png
+	$(INSTALL_DATA) icons/gnonogram3-puzzle.png $(DESTDIR)$(PREFIX)/share/icons/hicolor/48x48/mimetypes/application-x-gnonogram3-puzzle.png
 
 	mkdir -p $(DESTDIR)$(PREFIX)/share/icons/hicolor/scalable/apps
 	$(INSTALL_DATA) icons/gnonograms3.svg $(DESTDIR)$(PREFIX)/share/icons/hicolor/scalable/apps/gnonograms3.svg
@@ -286,7 +286,7 @@ install: $(PROGRAM)
             $(SYSTEM_LANG_DIR)/$(lang)/LC_MESSAGES/gnonograms3.mo`)
 
 	mkdir -p $(DESTDIR)$(PREFIX)/share/mime/packages
-	$(INSTALL_DATA) misc/x-gnonogram-puzzle.xml $(DESTDIR)$(PREFIX)/share/mime/packages
+	$(INSTALL_DATA) misc/x-gnonogram3-puzzle.xml $(DESTDIR)$(PREFIX)/share/mime/packages
 
 	mkdir -p $(DESTDIR)$(PREFIX)/share/applications
 	$(INSTALL_DATA) misc/gnonograms3.desktop $(DESTDIR)$(PREFIX)/share/applications/gnonograms3.desktop
@@ -316,12 +316,12 @@ uninstall:
 
 	rm -fr $(DESTDIR)$(PREFIX)/share/icons/hicolor/scalable/apps/gnonograms3.svg
 	rm -fr $(DESTDIR)$(PREFIX)/share/icons/hicolor/48x48/apps/gnonograms3.png
-	rm -fr $(DESTDIR)$(PREFIX)/share/icons/hicolor/48x48/mimetypes/application-x-gnonogram-puzzle.png
+	rm -fr $(DESTDIR)$(PREFIX)/share/icons/hicolor/48x48/mimetypes/application-x-gnonogram3-puzzle.png
 	rm -f $(DESTDIR)$(PREFIX)/share/pixmaps/gnonograms3.xpm
 	rm -f $(DESTDIR)$(PREFIX)/share/applications/gnonograms3.desktop
 	rm -f misc/gnonograms3.desktop
 
-	rm -f $(DESTDIR)$(PREFIX)/share/mime/packages/x-gnonogram-puzzle.xml
+	rm -f $(DESTDIR)$(PREFIX)/share/mime/packages/x-gnonogram3-puzzle.xml
 
 ifndef DISABLE_DESKTOP_UPDATE
 	update-mime-database $(DESTDIR)$(PREFIX)/share/mime || :

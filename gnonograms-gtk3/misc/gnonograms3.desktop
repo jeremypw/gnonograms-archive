@@ -1,0 +1,24 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=gnonograms3
+GenericName=Logic game
+Comment=Design and solve Nonogram puzzles
+Exec=gnonograms3 %f
+Icon=gnonograms3
+MimeType=application/x-gnonogram3-puzzle;
+Terminal=false
+StartupNotify=true
+Categories=GNOME;GTK;Game;
+Name[en_GB]=gnonograms3
+GenericName[en_GB]=Logic game
+Comment[en_GB]=Design and solve Nonogram puzzles
+Name[ja_JP]=gnonograms3
+GenericName[ja_JP]=論理ゲーム
+Comment[ja_JP]="nonogram"パズルを設計するし解決もする
+Name[de]=gnonograms3
+GenericName[de]=Logik-Spiel
+Comment[de]=Nonogram-Puzzles erstellen und lösen
+Name[es]=gnonograms3
+GenericName[es]=Juego de lógica
+Comment[es]=Diseñar y resolver nonogramas
