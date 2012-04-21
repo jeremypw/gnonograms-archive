@@ -255,6 +255,7 @@ distclean: clean
 
 install: $(PROGRAM)
 ###################
+	rm -f misc/gnonograms.desktop
 	cp misc/gnonograms.desktop.head misc/gnonograms.desktop
 	$(foreach lang,$(SUPPORTED_LANGUAGES), \
 		echo Name[$(lang)]=`TEXTDOMAINDIR=locale LANGUAGE=$(lang) gettext --domain=gnonograms $(DESKTOP_APPLICATION_NAME)` >>  misc/gnonograms.desktop ; \
@@ -322,14 +323,15 @@ endif
 uninstall:
 ##########
 	rm -f $(DESTDIR)$(PREFIX)/games/$(PROGRAM)
+
+#Remove gnonograms folder with icons, games and html subfolders
 	rm -fr $(DESTDIR)$(PREFIX)/share/gnonograms
 
-	rm -fr $(DESTDIR)$(PREFIX)/share/icons/hicolor/scalable/apps/gnonograms.png
-	rm -fr $(DESTDIR)$(PREFIX)/share/icons/hicolor/48x48/apps/gnonograms.png
-	rm -fr $(DESTDIR)$(PREFIX)/share/icons/hicolor/48x48/mimetypes/application-x-gnonogram-puzzle.png
-
+	rm -f $(DESTDIR)$(PREFIX)/share/icons/hicolor/scalable/apps/gnonograms.svg
+	rm -f $(DESTDIR)$(PREFIX)/share/icons/hicolor/48x48/apps/gnonograms.png
+	rm -f $(DESTDIR)$(PREFIX)/share/icons/hicolor/48x48/mimetypes/application-x-gnonogram-puzzle.png
+	rm -f $(DESTDIR)$(PREFIX)/share/pixmaps/gnonograms32.xpm
 	rm -f $(DESTDIR)$(PREFIX)/share/applications/gnonograms-1.desktop
-	rm -f misc/gnonograms.desktop
 
 	rm -f $(DESTDIR)$(PREFIX)/share/mime/packages/x-gnonogram-puzzle.xml
 

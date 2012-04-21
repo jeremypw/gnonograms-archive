@@ -314,10 +314,10 @@ uninstall:
 	rm -f $(DESTDIR)$(PREFIX)/games/$(PROGRAM)
 	rm -fr $(DESTDIR)$(PREFIX)/share/gnonograms3
 
-	rm -fr $(DESTDIR)$(PREFIX)/share/icons/hicolor/scalable/apps/gnonograms.png
-	rm -fr $(DESTDIR)$(PREFIX)/share/icons/hicolor/48x48/apps/gnonograms.png
+	rm -fr $(DESTDIR)$(PREFIX)/share/icons/hicolor/scalable/apps/gnonograms3.svg
+	rm -fr $(DESTDIR)$(PREFIX)/share/icons/hicolor/48x48/apps/gnonograms3.png
 	rm -fr $(DESTDIR)$(PREFIX)/share/icons/hicolor/48x48/mimetypes/application-x-gnonogram-puzzle.png
-
+	rm -f $(DESTDIR)$(PREFIX)/share/pixmaps/gnonograms3.xpm
 	rm -f $(DESTDIR)$(PREFIX)/share/applications/gnonograms3.desktop
 	rm -f misc/gnonograms3.desktop
 

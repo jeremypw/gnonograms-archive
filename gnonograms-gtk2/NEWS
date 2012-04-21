@@ -1,3 +1,8 @@
+Gnonograms version 0.9.9
+**************************
+21/Apr/2012  Corrections/improvements to install and uninstall to ensure
+             all files removed on uninstall (except user config).
+
 Gnonograms version 0.9.8
 **************************
 08/Apr/2012  Added Spanish translation from Federico Vera <dtkcoding@gmail.com>
