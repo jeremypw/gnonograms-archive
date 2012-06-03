@@ -44,7 +44,7 @@ public class Gnonograms {
     catch (IllegalAccessException e) {
        // handle exception
     }
-		new Controller(5,5);
+		new Controller(10,10);
 	}
 }
 

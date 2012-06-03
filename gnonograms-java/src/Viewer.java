@@ -30,6 +30,10 @@ import javax.swing.ImageIcon;
 import javax.swing.JToolBar;
 import javax.swing.AbstractAction;
 
+import javax.swing.JDialog;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
+
 import javax.imageio.ImageIO;
 
 import java.awt.Graphics;
@@ -42,6 +46,8 @@ import java.awt.GridBagConstraints;
 import java.awt.ComponentOrientation;
 import java.awt.image.BufferedImage;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 
 import java.io.File;
 import java.io.IOException;
@@ -52,22 +58,23 @@ import static java.lang.System.out;
 
 public class Viewer extends JFrame {
   private static final long serialVersionUID = 1;
-  CellGrid drawing;
-  JLabel [] rowlabels, collabels;
-  Container contentpane;
-  GridBagConstraints c;
-  public LabelBox rowbox, colbox;
-  public Controller control;
-  BufferedImage rawLogo;
-  ImageIcon scaledLogo;
-  JLabel logoLabel;
-  JToolBar toolbar;
-  JPanel puzzlePane, toolbarPane;
+  private CellGrid drawing;
+  private JLabel [] rowlabels, collabels;
+  private Container contentpane;
+  private GridBagConstraints c;
+  private LabelBox rowbox, colbox;
+  private  Controller control;
+  private BufferedImage rawLogo;
+  private ImageIcon scaledLogo;
+  private JLabel logoLabel;
+  private JToolBar toolbar;
+  private JPanel puzzlePane, toolbarPane;
+  private int rows, cols;
 
-  public Viewer(int rows, int cols, Controller control)
+  public Viewer(Controller control)
   {
     this.control=control;
-    this.setSize(500,600);
+    //this.setSize(500,600);
     this.setDefaultCloseOperation(EXIT_ON_CLOSE);
     this.setTitle("Gnonograms");
     this.setResizable(true);
@@ -78,7 +85,7 @@ public class Viewer extends JFrame {
     }
     else
     {
-      scaledLogo=new ImageIcon(scaledLogo.getImage().getScaledInstance(100,100,BufferedImage.SCALE_SMOOTH));
+      scaledLogo=new ImageIcon(scaledLogo.getImage().getScaledInstance(128,128,BufferedImage.SCALE_SMOOTH));
       logoLabel=new JLabel(scaledLogo);
     }
     puzzlePane=new JPanel();
@@ -93,16 +100,20 @@ public class Viewer extends JFrame {
     contentpane.add(toolbarPane,BorderLayout.PAGE_START);
     contentpane.add(puzzlePane,BorderLayout.CENTER);
 
-    init(rows,cols);
+    //init(rows,cols);
 
-    this.setVisible(true);
   }
 
-  private void init(int rows, int cols)
+  public void setDimensions(int rows, int cols)
   {
+    out.println("View set dimensions to "+rows+" rows "+cols+" cols");
+    this.rows=rows; this.cols=cols;
+
     rowbox=new LabelBox(rows, false, control);
     colbox=new LabelBox(cols, true, control);
     drawing=new CellGrid(rows, cols, control);
+
+    puzzlePane.removeAll();
 
     c = new GridBagConstraints();
     c.gridx=1;
@@ -145,6 +156,9 @@ public class Viewer extends JFrame {
     c.fill=GridBagConstraints.NONE;
     c.anchor=GridBagConstraints.CENTER;
     puzzlePane.add(logoLabel,c);
+
+    this.setVisible(true);
+    this.pack();
   }
 
   public void setLabelText(int idx, String text, boolean isColumn){
@@ -171,6 +185,7 @@ public class Viewer extends JFrame {
     toolbar.add(new MyAction("Hide game",createImageIcon("images/eyes-closed.png","Hide icon"),"HIDE_GAME"));
     toolbar.add(new MyAction("Show game",createImageIcon("images/eyes-open.png","Show icon"),"SHOW_GAME"));
     toolbar.add(new MyAction("Solve game",createImageIcon("images/computer.png","Solve icon"),"SOLVE_GAME"));
+    toolbar.add(new MyAction("Set Size",createImageIcon("images/resize.png","Solve icon"),"RESIZE_GAME"));
   }
 
   private class MyAction extends AbstractAction{
@@ -185,9 +200,10 @@ public class Viewer extends JFrame {
       if (command=="NEW_GAME") control.newGame();
       if (command=="LOAD_GAME") control.loadGame();
       if (command=="RANDOM_GAME") control.randomGame();
-      if (command=="HIDE_GAME") control.hideSolution();
-      if (command=="SHOW_GAME") control.showSolution();
+      if (command=="HIDE_GAME") control.setSolving(true);
+      if (command=="SHOW_GAME") control.setSolving(false);
       if (command=="SOLVE_GAME") control.userSolveGame();
+      if (command=="RESIZE_GAME") resizeGame();
     }
   }
 
@@ -202,17 +218,81 @@ public class Viewer extends JFrame {
     }
   }
 
-  public Dimension getDimensions(int r, int c){
-    JDialog dialog=new JDialog(this,"Enter number of rows and column");
-    //JButton okButton=new JButton(new MyAction("OK","images/);
-    JButton cancelButton=new JButton("Cancel");
-    JLabel rowLabel=new JLabel("Rows");
-    JLabel columnLabel=new JLabel("Columns");
-    JSpinner rowSpinner=new JSpinner(new SpinnerNumberModel(r,1,Resource.MAXSIZE,1));
-    JSpinner columnSpinner=new JSpinner(new SpinnerNumberModel(1,c,Resource.MAXSIZE,1));
+  protected void resizeGame(){
+    int[] d=getDimensions(rows,cols);
+    if (d==null) return;
+    else control.resize(d[0],d[1]);
+  }
 
+  private int[] getDimensions(int r, int c){
+    int[] dimensions;
+    DimensionsDialog dialog=new DimensionsDialog(this,r,c);
+    dialog.setVisible(true);
+    if (dialog.wasCancelled) dimensions=null;
+    else dimensions=dialog.getDimensions();
+    dialog.dispose();
+    return dimensions;
+  }
 
+  protected class DimensionsDialog extends JDialog implements ActionListener{
+    private static final long serialVersionUID = 1;
+    public boolean wasCancelled=true;
+    private JLabel rowLabel,columnLabel;
+    private JSpinner rowSpinner,columnSpinner;
+    private JButton okButton, cancelButton;
 
+    public DimensionsDialog(JFrame owner, int r, int c){
+      super(owner, "Enter number of rows and columns", true);
+      this.setLayout(new BorderLayout());
+      this.setUndecorated(true);
+      okButton=new JButton("OK");
+      okButton.setActionCommand("DIMENSIONS_OK");
+      okButton.addActionListener(this);
+      cancelButton=new JButton("Cancel");
+      cancelButton.setActionCommand("DIMENSIONS_CANCEL");
+      cancelButton.addActionListener(this);
+      rowLabel=new JLabel("Rows");
+      columnLabel=new JLabel("Columns");
+      rowSpinner=new JSpinner(new SpinnerNumberModel(r,1,Resource.MAXSIZE,1));
+      columnSpinner=new JSpinner(new SpinnerNumberModel(c,1,Resource.MAXSIZE,1));
+      JPanel buttonPanel=new JPanel();
+      buttonPanel.setLayout(new BorderLayout());
+      buttonPanel.add(okButton, BorderLayout.LINE_START);
+      buttonPanel.add(cancelButton, BorderLayout.LINE_END);
+      JPanel spinnerPanel=new JPanel();
+      spinnerPanel.add(rowLabel);
+      spinnerPanel.add(rowSpinner);
+      spinnerPanel.add(columnLabel);
+      spinnerPanel.add(columnSpinner);
+
+      this.add(spinnerPanel,BorderLayout.PAGE_START);
+      this.add(buttonPanel,BorderLayout.PAGE_END);
+
+      this.pack();
+    }
+
+    public void actionPerformed(ActionEvent a){
+      String command=a.getActionCommand();
+      if (command=="DIMENSIONS_OK") wasCancelled=false;
+      else wasCancelled=true;
+      this.setVisible(false);
+    }
+
+    public int[] getDimensions(){
+      Object r=rowSpinner.getValue();
+      if (r==null || !(r instanceof Integer)) return null;
+      Object c=columnSpinner.getValue();
+      if (c==null || !(c instanceof Integer)) return null;
+      int[] newDimensions=new int[2];
+      newDimensions[0]=((Integer)r).intValue();
+      newDimensions[1]=((Integer)c).intValue();
+
+      return newDimensions;
+    }
+  }
+
+  public void setSolving(boolean isSolving){
+    drawing.setSolving(isSolving);
   }
 }
 

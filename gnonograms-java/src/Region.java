@@ -122,7 +122,7 @@ public class Region {
 
 		for (int i=0;i<nBlocks;i++){
 			myBlocks[i]=tmpblcks[i];
-      out.println("Block "+i+" is"+myBlocks[i]);
+      //out.println("Block "+i+" is"+myBlocks[i]);
 			blockTotal=blockTotal+myBlocks[i];
 		}
 
@@ -152,7 +152,8 @@ public class Region {
 		isCompleted=(nCells==1); //allows debugging of single row
 
 		if (isCompleted) {
-      out.println(this.toString()+" is completed - one cell");return;
+      //out.println(this.toString()+" is completed - one cell");
+      return;
     }
 
 		this.unknown=99;
@@ -170,7 +171,7 @@ public class Region {
 				status[i]=Resource.CELLSTATE_EMPTY;
 				tempStatus[i]=Resource.CELLSTATE_EMPTY;
 			}
-      out.println(this.toString()+" is completed - no blocks");
+      //out.println(this.toString()+" is completed - no blocks");
 			isCompleted=true;
 		}
 		else	initialfix();
@@ -252,47 +253,47 @@ public class Region {
 	private boolean fullfix()	{
 		// Tries each ploy in turn, returns as soon as a change is made
 		// or an error detected.
-    out.println("CappedRangeAudit");
+    //out.println("CappedRangeAudit");
 		if (cappedrangeaudit()||inError)//||tagstostatus())
 		{
 			return true;
 		}
-    out.println("PossibilitiesAudit");
+    //out.println("PossibilitiesAudit");
 		if (possibilitiesaudit()||inError)//||tagstostatus())
 		{
 			return true;
 		}
-out.println("OnlyPossibility");
+    //out.println("OnlyPossibility");
 		if (onlypossibility()||inError)//||tagstostatus())
 		{
 			return true;
 		}
-out.println("DoEdge 1");
+    //out.println("DoEdge 1");
 		if (doedge(1)||inError)//||tagstostatus())
 		{
 			return true;
 		}
-out.println("DoEdge -1");
+    //out.println("DoEdge -1");
 		if (doedge(-1)||inError)//||tagstostatus())
 		{
 			return true;
 		}
-out.println("FilledSubRegionAudit");
+    //out.println("FilledSubRegionAudit");
 		if (filledsubregionaudit()||inError)//||tagstostatus())
 		{
 			return true;
 		}
-out.println("FillGaps");
+    //out.println("FillGaps");
 		if (fillgaps()||inError)//||tagstostatus())
 		{
 			return true;
 		}
-out.println("FreeCellAudit");
+    //out.println("FreeCellAudit");
 		if (freecellaudit()||inError)//||tagstostatus())
 		{
 			return true;
 		}
-out.println("FixBlocksInRanges");
+    //out.println("FixBlocksInRanges");
 		if (fixblocksinranges()||inError)//||tagstostatus())
 		{
 			return true;
@@ -1079,7 +1080,7 @@ out.println("FixBlocksInRanges");
 	}
 
 	private boolean fixBlockInRange(int block, int start, int length){
-    out.println("Fix Block in Range");
+    //out.println("Fix Block in Range");
 		// block must be limited to range
 		boolean changed=false;
 

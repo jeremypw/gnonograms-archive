@@ -43,8 +43,8 @@ class LabelBox extends JPanel{
 		this.isColumn=isColumn;
 		this.control=control;
 
-		if (isColumn)	this.setLayout(new GridLayout(1,no_labels));
-		else	this.setLayout(new GridLayout(no_labels,1));
+		if (isColumn)	this.setLayout(new GridLayout(1,no_labels,0,0));
+		else	this.setLayout(new GridLayout(no_labels,1,0,0));
     this.setBorder(BorderFactory.createLineBorder(Color.black));
 
 		GnonogramLabel l;

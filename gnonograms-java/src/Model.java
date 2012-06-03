@@ -28,6 +28,8 @@ public class Model {
 
 	public void setDimensions(int r, int c){
 		this.rows=r;this.cols=c;
+    solutionData.resize(r,c);
+    workingData.resize(r,c);
 	}
 
 	public void useWorking(){
@@ -54,9 +56,21 @@ public class Model {
 		return displayData.getDataFromRC(r,c);
   }
 
+  public Cell getCell(int r, int c){
+    return displayData.getCell(r,c);
+  }
+
   public void setDataFromCell(Cell c){displayData.setDataFromCell(c);}
 
   public void setRowDataFromString(int r, String s){solutionData.setRowDataFromString(r,s);}
+
+  public int countUnknownCells(){
+    return displayData.countState(Resource.CELLSTATE_UNKNOWN);
+  }
+
+  public int countErrors(){
+    return workingData.countDifferences(solutionData);
+  }
 
 	public void fillRandom(double grade){
 		int[] temp;

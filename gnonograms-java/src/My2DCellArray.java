@@ -27,6 +27,8 @@ import static java.lang.System.out;
 {
 	private int rows;
 	private int cols;
+  private int maxRows;
+  private int maxCols;
 	private int[][] myData;
 
 	public My2DCellArray(int rows, int cols){
@@ -40,6 +42,8 @@ import static java.lang.System.out;
 	private void init(int rows, int cols, int cs){
 		this.rows=rows;
 		this.cols=cols;
+    this.maxRows=rows;
+    this.maxCols=cols;
 		myData = new int[this.rows][this.cols];
 		setAll(cs);
 		Math.random();
@@ -47,17 +51,16 @@ import static java.lang.System.out;
 
 	public int getRows() {return rows;}
 	private void setRows(int r) {
-		if (r>=0 && r<this.rows) this.rows=r;
+		if (r>=0 && r<this.maxRows) this.rows=r;
 	}
 	public int getCols() {return cols;}
 	private void setCols(int c) {
-		if (c>=0 && c<this.cols) this.cols=c;
+		if (c>=0 && c<this.maxCols) this.cols=c;
 	}
 
-	public void resize(int r, int c, int init){
+	public void resize(int r, int c){
 		setRows(r);
 		setCols(c);
-		setAll(init);
 	}
 
 	public void setDataFromCell(Cell c) {myData[c.getRow()][c.getColumn()]=c.getState();}
@@ -135,6 +138,30 @@ import static java.lang.System.out;
 				myData[r][c]=ca.getDataFromRC(r,c);
 			}
 		}
+	}
+
+	public int countDifferences(My2DCellArray ca)	{
+		int rows = Math.min(ca.getRows(), this.rows);
+		int cols	= Math.min(ca.getCols(), this.cols);
+    int count=0;
+		for (int r=0; r<rows; r++){
+			for (int c=0; c<cols; c++){
+				if(myData[r][c]!=ca.getDataFromRC(r,c)) count++;
+			}
+		}
+    //out.println("Count of differences is "+count);
+    return count;
+	}
+
+	public int countState(int cs){
+    int count=0;
+		for (int r=0; r<rows; r++){
+			for (int c=0;c<cols;c++){
+				if (myData[r][c]==cs) count++;
+			}
+		}
+    //out.println("Count of state "+cs+" is "+count);
+    return count;
 	}
 
 	public boolean setRowDataFromString(int r, String s){

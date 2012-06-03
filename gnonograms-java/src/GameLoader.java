@@ -240,7 +240,7 @@ public class GameLoader extends JFileChooser {
     String[] s = splitString(body,"\n",1,3);
 		state=s[0];
 		if (state.contains("SETTING") || state.contains("SOLVING")) has_state=true;
-    else throw new Exception("Invalid Game State"+state+"Options: "+(GameState.SETTING).toString()+"or"+(GameState.SOLVING).toString());
+    else throw new Exception("Invalid Game State"+state+"Options: 'SETTING' or 'SOLVING'");
 	}
 
 	private void getGameDescription(String body) throws Exception{

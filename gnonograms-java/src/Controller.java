@@ -7,28 +7,29 @@ public class Controller {
   private Model model;
   private Solver solver;
   private int rows, cols;
-  private boolean isSolving;
+  public boolean isSolving;
   private boolean haveSolution;
 
 	public Controller(int r, int c) {
     model=new Model();
     solver=new Solver(false,false,false,0,this);
+    view=new Viewer(this);
     init(r,c);
 	}
 
   public void init(int r, int c){
+    //out.println("Controller init");
     this.rows=r;
     this.cols=c;
     model.setDimensions(r,c);
-    model.useSolution();
     solver.setDimensions(r,c);
-		view=new Viewer(r,c,this);
-    isSolving=false;
+    view.setDimensions(r,c);
+    setSolving(false);
     haveSolution=false;
   }
 
-  private void resize(int r, int c){
-    view.dispose();
+  public void resize(int r, int c){
+    //view.dispose();
     model.clear();
     init(r,c);
   }
@@ -56,12 +57,19 @@ public class Controller {
 
   public void setDataFromCell(Cell c){
     model.setDataFromCell(c);
+    if(isSolving){
+      if(model.countUnknownCells()==0){
+        if(model.countErrors()==0){
+          Utils.showInfoDialog("Congratulations!");
+          setSolving(false);
+        }
+      }
+    }
   }
 
   public void newGame(){
     model.clear();
-    model.useSolution();
-    isSolving=false;
+    setSolving(false);
     haveSolution=false;
     updateAllLabelText();
     view.redrawGrid();
@@ -70,8 +78,7 @@ public class Controller {
   public void randomGame(){
     double grade=5;
     int passes;
-    model.clear();
-    model.useSolution();
+    newGame();
     while (true){
       model.fillRandom(grade);
       updateAllLabelText();
@@ -79,7 +86,7 @@ public class Controller {
       passes=solver.solveIt(false,false,false);
       if (passes>0 && passes<9999) break;
     }
-    hideSolution();
+    setSolving(true);
   }
 
   public void loadGame(){
@@ -95,7 +102,8 @@ public class Controller {
     catch (java.util.NoSuchElementException e) {out.println(e.getMessage());}
     catch (Exception e) {out.println("Exception:  "+e.getMessage());}
 
-    resize(gl.rows,gl.cols);
+    this.resize(gl.rows,gl.cols);
+
     if (gl.hasSolution){
       model.useSolution();
       for (int i=0; i<this.rows; i++) model.setRowDataFromString(i,gl.solution[i]);
@@ -105,26 +113,12 @@ public class Controller {
 			for (int i=0; i<this.rows; i++) view.setLabelText(i,gl.rowClues[i],false);
 			for (int i=0; i<this.cols; i++) view.setLabelText(i,gl.colClues[i],true);
     }
-    hideSolution();
-  }
-
-  public void hideSolution(){
-    model.useWorking();
-    isSolving=true;
-    out.println("Using working - solve mode");
-    view.redrawGrid();
-  }
-
-  public void showSolution(){
-    model.useSolution();
-    isSolving=false;
-    out.println("Using solution - design mode");
-    view.redrawGrid();
+    setSolving(true);
   }
 
   public void userSolveGame(){
-    hideSolution();
-    prepareToSolve(false,false,false);
+    setSolving(true);
+    prepareToSolve(true,false,false);
     int passes=solver.solveIt(false,false,false);
     switch (passes) {
 			case -2:
@@ -152,28 +146,28 @@ public class Controller {
 				break;
 		}
     updateWorkingGridFromSolver();
-    hideSolution(); //redisplay working grid
+    setSolving(true); //redisplay working grid
   }
 
-	private void prepareToSolve(boolean use_startgrid, boolean use_advanced, boolean use_ultimate)
-	{out.println("Controller.prepare_to_solve\n");
+	private void prepareToSolve(boolean use_startgrid, boolean use_advanced, boolean use_ultimate){ //out.println("Controller.prepare_to_solve\n");
 		String[] rowClues= new String[this.rows];
 		String[] columnClues= new String[this.cols];
+    My2DCellArray startgrid;
 
-		//if (use_startgrid) {
-			//startgrid = new My2DCellArray(this.rows,this.cols,Resource.CELLSTATE_UNKNOWN);
-			//for(int r=0; r<this.rows; r++){
-				//for(int c=0;c<this.cols; c++){
-					//startgrid.set_data_from_cell(model.getCell(r,c));
-				//}
-			//}
-		//}
-		//else startgrid=null;
+		if (use_startgrid) {
+			startgrid = new My2DCellArray(this.rows,this.cols,Resource.CELLSTATE_UNKNOWN);
+			for(int r=0; r<this.rows; r++){
+				for(int c=0;c<this.cols; c++){
+					startgrid.setDataFromCell(model.getCell(r,c));
+				}
+			}
+		}
+		else startgrid=null;
 
 		for (int i =0; i<this.rows; i++) rowClues[i]=view.getLabelText(i,false);
 		for (int i =0; i<this.cols; i++) columnClues[i]=view.getLabelText(i, true);
 
-		solver.initialize(rowClues, columnClues, null);
+		solver.initialize(rowClues, columnClues, startgrid);
   }
 
   public void updateWorkingGridFromSolver(){
@@ -199,5 +193,16 @@ public class Controller {
     for(int c=0;c<cols;c++){
       view.setLabelText(c, Utils.clueFromintArray(model.getColumn(c)),true);
     }
+  }
+
+  public void setSolving(boolean isSolving){
+    this.isSolving=isSolving;
+    if (isSolving){
+      model.useWorking();
+    }else{
+      model.useSolution();
+    }
+    view.setSolving(isSolving);
+    view.redrawGrid();
   }
 }

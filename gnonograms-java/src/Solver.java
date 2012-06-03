@@ -80,9 +80,9 @@ import static java.lang.System.out;
 			return false;
 		}
 
-    grid.setAll(Resource.CELLSTATE_UNKNOWN);
-		//if (startgrid==null) grid.setAll(Resource.CELLSTATE_UNKNOWN);
-		//else grid.copy(startgrid);
+    //grid.setAll(Resource.CELLSTATE_UNKNOWN);
+		if (startgrid==null) grid.setAll(Resource.CELLSTATE_UNKNOWN);
+		else grid.copy(startgrid);
 
 		//Create regions
 		//Dont create regions of length 1
@@ -161,7 +161,7 @@ import static java.lang.System.out;
 	}
 
 	private int simplesolver(boolean debug, boolean logerror){
-		out.println("Simple solver  debug "+debug+"  region count "+regionCount+"\n");
+		//out.println("Simple solver  debug "+debug+"  region count "+regionCount+"\n");
 		boolean changed=true;
 		int pass=1;
 		while (changed && pass<30){
