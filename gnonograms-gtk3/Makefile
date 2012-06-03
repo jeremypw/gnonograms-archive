@@ -82,13 +82,14 @@ RESOURCE_FILES = \
 	help/C/*.* \
 	help/C/figures/*.* \
 	misc/gnonograms3.desktop.head \
-	misc/x-gnonogram-puzzle.xml \
+	misc/x-gnonogram3-puzzle.xml \
 	po/gnonograms3.pot \
 	po/additional_strings \
  	po/extract-strings.sh \
  	po/README \
  	po/supported_languages.txt \
  	po/VALAPOTFILES.in
+
 
 TEXT_FILES = \
 	AUTHORS \
