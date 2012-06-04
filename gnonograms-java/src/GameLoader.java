@@ -66,8 +66,7 @@ public class GameLoader extends JFileChooser {
 
   private int result, headingCount;
 
-	public GameLoader(Component parent)
-	{
+	public GameLoader(Component parent)	{
     super();
     this.setFileSelectionMode(FILES_ONLY);
     this.setFileFilter(new FileNameExtensionFilter("Gnonogram Puzzles","gno"));
@@ -82,8 +81,7 @@ public class GameLoader extends JFileChooser {
     return getName(getSelectedFile());
   }
 
-	public void openDataInputStream() throws FileNotFoundException
-	{
+	public void openDataInputStream() throws FileNotFoundException{
     dataStream= new Scanner(new FileReader(getSelectedFile()));
 	}
 
@@ -95,14 +93,14 @@ public class GameLoader extends JFileChooser {
 
     //int len = nextLine.length();
     dataStream.useDelimiter("\\]");
-    out.println("Starting");
+    //out.println("Starting");
     while (nextToken!=null)
     {
       try{
         nextToken=dataStream.next();
       }
       catch (Exception e){out.println("OOPS"+"\n"+e.getMessage()); break;}
-      out.println("Next Token:\n"+nextToken);
+      //out.println("Next Token:\n"+nextToken);
       if(nextToken.startsWith("["))
       {
         headingCount++;
@@ -115,9 +113,9 @@ public class GameLoader extends JFileChooser {
         dataStream.useDelimiter("\\]");
       }
     }
-    out.println("Finished");
+    //out.println("Finished");
     for (int i=0; i<=headingCount; i++) {
-      out.println("Heading "+i+":\n"+headings[i]+"\nBody "+i+"\n"+bodies[i]);
+      //out.println("Heading "+i+":\n"+headings[i]+"\nBody "+i+"\n"+bodies[i]);
     }
     //throw new Exception("Parse failure");
 		parseGnonogramHeadingsAndBodies();
@@ -159,7 +157,7 @@ public class GameLoader extends JFileChooser {
   private int headingToInt(String heading){
       if (heading==null||heading.length()<3) return -1;
 			if (heading.length()>3) heading=heading.substring(0,3).toUpperCase();
-      out.println("heading :"+heading+":");
+      //out.println("heading :"+heading+":");
       if (heading.compareTo("DIM")==0) return 1;
       if (heading.compareTo("ROW")==0) return 2;
       if (heading.compareTo("COL")==0) return 3;
@@ -172,17 +170,17 @@ public class GameLoader extends JFileChooser {
   }
 
 	private void getGnonogramDimensions(String body) throws NumberFormatException, Exception{
-		out.println("In get_dimensions\n");
+		//out.println("In get_dimensions\n");
     String[] s=splitString(body,"\n",2,3);
 		rows=new Integer(s[0]);
 		cols=new Integer(s[1]);
 
-    if (rows<1 || cols<1 || rows>Resource.MAXSIZE || cols> Resource.MAXSIZE) throw new Exception("Dimensions out of range:"+rows+","+cols);
+    if (rows<1 || cols<1 || rows>Resource.MAXIMUM_GRID_SIZE || cols> Resource.MAXIMUM_GRID_SIZE) throw new Exception("Dimensions out of range:"+rows+","+cols);
     else hasDimensions=true;
 	}
 
 	private void getGnonogramClues(String body, boolean isColumn) throws Exception{
-		out.println("In get_clues\n");
+		//out.println("In get_clues\n");
     String[] s=splitString(body,"\n",isColumn?cols:rows,isColumn?cols:rows);
     String[] arr=new String[s.length];
 		for (int i=0; i< s.length; i++){
@@ -198,15 +196,15 @@ public class GameLoader extends JFileChooser {
 		}
 	}
 	private String parseGnonogramClue(String line, boolean isColumn) throws NumberFormatException, Exception {
-    out.println("Clue line :"+line+":");
+    //out.println("Clue line :"+line+":");
 		String[] sa=splitString(line,"[\\D\\n]",1,isColumn?rows:cols); //split on non-digit or EOL
 		int b, zero_count=0;
 		int maxblock=isColumn?rows:cols;
-    out.println("Clue line had "+sa.length+" tokens");
+    //out.println("Clue line had "+sa.length+" tokens");
 		StringBuilder sb=new StringBuilder(200);
 		for (int i=0; i<sa.length; i++){
 			// ignore extraneous non-digits (allow one zero)
-      out.println("Token "+i+" is "+ sa[i]);
+      //out.println("Token "+i+" is "+ sa[i]);
       try{b=new Integer(sa[i]);}
       catch (NumberFormatException e){out.println("Not a number:"+sa[i]); continue;}
       if (b<0||b>maxblock) throw new Exception("Invalid block size in clue");
@@ -219,7 +217,7 @@ public class GameLoader extends JFileChooser {
 	}
 
 	private void getGnonogramCellstateArray(String body, boolean is_solution) throws Exception{
-		out.println("In getintArray\n");
+		//out.println("In getintArray\n");
     String[] s=splitString(body,"\n",rows,110);
 		if (s.length!=rows) throw new Exception("Wrong number of rows in solution or working grid");
 		for (int i=0; i<s.length;i++){
@@ -236,7 +234,7 @@ public class GameLoader extends JFileChooser {
 	}
 
 	private void getGnonogramState(String body) throws Exception{
-		out.println("In get_state\n");
+		//out.println("In get_state\n");
     String[] s = splitString(body,"\n",1,3);
 		state=s[0];
 		if (state.contains("SETTING") || state.contains("SOLVING")) has_state=true;
@@ -244,7 +242,7 @@ public class GameLoader extends JFileChooser {
 	}
 
 	private void getGameDescription(String body) throws Exception{
-		out.println("In get_description\n");
+		//out.println("In get_description\n");
 		String[] s = splitString(body,"\n",1,10);
 		if (s.length>=1) name=convertHtml(s[0]);
 		if (s.length>=2) author=convertHtml(s[1]);
@@ -254,7 +252,7 @@ public class GameLoader extends JFileChooser {
   private String convertHtml(String s){return s;}
 
 	private void get_game_license(String body) throws Exception{
-		out.println("In get_license\n");
+		//out.println("In get_license\n");
 		String[] s = splitString(body,"\n",1,2);
 			if (s[0].length()>50)license=s[0].substring(0,50);
 			else license=s[0];

@@ -28,6 +28,8 @@ import javax.swing.BorderFactory;
 import java.awt.GridLayout;
 import java.awt.ComponentOrientation;
 import java.awt.Color;
+import java.awt.Font;
+import java.awt.Dimension;
 
 class LabelBox extends JPanel{
 	private static final long serialVersionUID = 1;
@@ -56,13 +58,20 @@ class LabelBox extends JPanel{
 		}
 	}
 
+  public void setFontSize(int size){
+    Font f=new Font("Arial",Font.BOLD,size);
+    for (int i=0; i<no_labels; i++) {
+			labels[i].setFont(f);
+      if (isColumn) labels[i].setPreferredSize(new Dimension((int)(size*1.4),size*5));
+      else labels[i].setPreferredSize(new Dimension(size*5,(int)(size*1.2)));
+		}
+  }
+
 	public void setLabelText(int l, String text)
 	{
 		if (l>=no_labels || l<0) return;
 		if (text==null) text="?";
 		labels[l].setText(text);
-//		if (isColumn) (labels[l]).setText(Utils.verticalizeString(text,Resource.BLOCKSEPARATOR));
-//		else (labels[l]).setText(text);
 	}
 
 	public String getLabelText(int l)

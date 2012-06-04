@@ -8,9 +8,9 @@ public class Model {
 
   public Model(){
 		rows = 10; cols = 10; //Must call set dimensions before use
-		solutionData=new My2DCellArray(Resource.MAXSIZE,Resource.MAXSIZE,Resource.CELLSTATE_EMPTY);
-		workingData=new My2DCellArray(Resource.MAXSIZE,Resource.MAXSIZE,Resource.CELLSTATE_UNKNOWN);
-		arr = new int[Resource.MAXSIZE];
+		solutionData=new My2DCellArray(Resource.MAXIMUM_GRID_SIZE,Resource.MAXIMUM_GRID_SIZE,Resource.CELLSTATE_EMPTY);
+		workingData=new My2DCellArray(Resource.MAXIMUM_GRID_SIZE,Resource.MAXIMUM_GRID_SIZE,Resource.CELLSTATE_UNKNOWN);
+		arr = new int[Resource.MAXIMUM_GRID_SIZE];
 		displayData = solutionData;
   }
 
@@ -77,16 +77,16 @@ public class Model {
 		solutionData.setAll(Resource.CELLSTATE_UNKNOWN);
 		int midcol = rows/2;
 		int midrow = cols/2;
-		int mincdf = 2+(int)((rows*grade)/(Resource.MAXGRADE*4));
-		int minrdf = 2+(int)((cols*grade)/(Resource.MAXGRADE*4));
+		int mincdf = 2+(int)((rows*grade)/(Resource.MAXIMUM_GRADE*4));
+		int minrdf = 2+(int)((cols*grade)/(Resource.MAXIMUM_GRADE*4));
 
-		int maxb=(int)(cols*(1.0-grade/Resource.MAXGRADE));
+		int maxb=(int)(cols*(1.0-grade/Resource.MAXIMUM_GRADE));
 		for (int r=0;r<rows;r++){
 			temp=solutionData.getRow(r);
 			temp=fillRegion(cols, temp, grade, Math.abs((r-midcol)), maxb);
 			solutionData.setRow(r, temp);
 		}
-		maxb=1+(int)(rows*(1.0-grade/Resource.MAXGRADE));
+		maxb=1+(int)(rows*(1.0-grade/Resource.MAXIMUM_GRADE));
 		for (int c=0;c<cols;c++){
 			temp =solutionData.getColumn(c);
 			temp=fillRegion(rows, temp, grade, Math.abs((c-midrow)), maxb);

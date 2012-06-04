@@ -53,8 +53,8 @@ import static java.lang.System.out;
 
 	public Solver(boolean testing, boolean debug, boolean testColumn, int testIdx, Controller control){
     this.control=control;
-		grid=new My2DCellArray(Resource.MAXSIZE, Resource.MAXSIZE);
-		regions=new Region[Resource.MAXSIZE+Resource.MAXSIZE];
+		grid=new My2DCellArray(Resource.MAXIMUM_GRID_SIZE, Resource.MAXIMUM_GRID_SIZE);
+		regions=new Region[Resource.MAXIMUM_GRID_SIZE+Resource.MAXIMUM_GRID_SIZE];
 
 		for (int i=0;i<regions.length;i++) regions[i]=new Region(grid);
 
@@ -196,7 +196,7 @@ import static java.lang.System.out;
 
 	private int advancedsolver(int[] gridstore, boolean debug)
 	{
-		// out.println("Advanced solver\n");
+		//out.println("Advanced solver\n");
 		// single cell guesses, depth 1 (no recursion)
 		// make a guess in each unknown cell in turn
 		// if leads to contradiction mark opposite to guess,

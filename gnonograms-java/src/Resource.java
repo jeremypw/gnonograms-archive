@@ -1,8 +1,10 @@
 public class Resource
 {
 	static final String BLOCKSEPARATOR=",";
-	static final double MAXGRADE=12.0;
-	static final int MAXSIZE=60;
+	static final double MAXIMUM_GRADE=12.0;
+	static final int MAXIMUM_GRID_SIZE=60;
+	static final int MAXIMUM_CLUE_POINTSIZE=72;
+	static final int MINIMUM_CLUE_POINTSIZE=8;
 
 	static final int CELLSTATE_UNKNOWN=0;
 	static final int CELLSTATE_EMPTY=1;

@@ -29,10 +29,11 @@ public class Controller {
   }
 
   public void resize(int r, int c){
-    //view.dispose();
     model.clear();
     init(r,c);
   }
+
+  public void zoomFont(int change){view.zoomFont(change);}
 
   public void updateLabelsFromModel(int r, int c){
     if (isSolving) return;
@@ -72,6 +73,13 @@ public class Controller {
     setSolving(false);
     haveSolution=false;
     updateAllLabelText();
+    view.redrawGrid();
+  }
+  public void restartGame(){
+    model.blankWorking();
+    setSolving(true);
+    //haveSolution=false;
+    //updateAllLabelText();
     view.redrawGrid();
   }
 

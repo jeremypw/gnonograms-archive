@@ -29,7 +29,6 @@ import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JToolBar;
 import javax.swing.AbstractAction;
-
 import javax.swing.JDialog;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
@@ -44,17 +43,19 @@ import java.awt.GridBagLayout;
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.ComponentOrientation;
+import java.awt.Font;
+
 import java.awt.image.BufferedImage;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
+//import java.awt.event.KeyAdapter;
+//import java.awt.event.KeyEvent;
 
 import java.io.File;
 import java.io.IOException;
 
 import static java.lang.System.out;
-
-
 
 public class Viewer extends JFrame {
   private static final long serialVersionUID = 1;
@@ -70,21 +71,19 @@ public class Viewer extends JFrame {
   private JToolBar toolbar;
   private JPanel puzzlePane, toolbarPane;
   private int rows, cols;
+  private int cluePointSize;
 
   public Viewer(Controller control)
   {
     this.control=control;
-    //this.setSize(500,600);
     this.setDefaultCloseOperation(EXIT_ON_CLOSE);
     this.setTitle("Gnonograms");
-    this.setResizable(true);
+    this.setResizable(false);
+    cluePointSize=20;
+    //this.addKeyListener(new ViewKeyAdapter());
     scaledLogo=createImageIcon("images/gnonograms3-256.png","Logo");
-    if (scaledLogo==null)
-    {
-      logoLabel=new JLabel("HELP!!");
-    }
-    else
-    {
+    if (scaledLogo==null)logoLabel=new JLabel("MISSING ICON");
+    else{
       scaledLogo=new ImageIcon(scaledLogo.getImage().getScaledInstance(128,128,BufferedImage.SCALE_SMOOTH));
       logoLabel=new JLabel(scaledLogo);
     }
@@ -94,20 +93,20 @@ public class Viewer extends JFrame {
     toolbarPane.setLayout(new BorderLayout());
     toolbar=new JToolBar();
     createToolBar();
-    toolbarPane.add(toolbar,BorderLayout.PAGE_START);
+    toolbarPane.add(toolbar,BorderLayout.CENTER);
     contentpane=this.getContentPane();
     contentpane.setLayout(new BorderLayout());
     contentpane.add(toolbarPane,BorderLayout.PAGE_START);
     contentpane.add(puzzlePane,BorderLayout.CENTER);
-
     //init(rows,cols);
-
   }
 
-  public void setDimensions(int rows, int cols)
-  {
-    out.println("View set dimensions to "+rows+" rows "+cols+" cols");
+  public void setDimensions(int rows, int cols){
+    //out.println("View set dimensions to "+rows+" rows "+cols+" cols");
     this.rows=rows; this.cols=cols;
+    cluePointSize=250/(Math.max(rows,cols));
+    if(cluePointSize<Resource.MINIMUM_CLUE_POINTSIZE) cluePointSize=Resource.MINIMUM_CLUE_POINTSIZE;
+    else if(cluePointSize>Resource.MAXIMUM_CLUE_POINTSIZE) cluePointSize=Resource.MAXIMUM_CLUE_POINTSIZE;
 
     rowbox=new LabelBox(rows, false, control);
     colbox=new LabelBox(cols, true, control);
@@ -118,17 +117,17 @@ public class Viewer extends JFrame {
     c = new GridBagConstraints();
     c.gridx=1;
     c.gridy=1;
-    c.gridwidth=cols;
-    c.gridheight=rows;
+    c.gridwidth=1;
+    c.gridheight=1;
     c.fill=GridBagConstraints.BOTH;
-    c.weightx=cols;
-    c.weighty=rows;
+    c.weightx=1;
+    c.weighty=1;
     puzzlePane.add(drawing,c);
 
     c = new GridBagConstraints();
     c.gridx=1;
     c.gridy=0;
-    c.gridwidth=cols;
+    c.gridwidth=1;
     c.gridheight=1;
     c.fill=GridBagConstraints.BOTH;
     c.weightx=1;
@@ -140,7 +139,7 @@ public class Viewer extends JFrame {
     c.gridx=0;
     c.gridy=1;
     c.gridwidth=1;
-    c.gridheight=rows;
+    c.gridheight=1;
     c.fill=GridBagConstraints.BOTH;
     c.weighty=1;
     c.weightx=1;
@@ -152,11 +151,13 @@ public class Viewer extends JFrame {
     c.gridy=0;
     c.gridwidth=1;
     c.gridheight=1;
+    c.weightx=1;
     c.weighty=1;
     c.fill=GridBagConstraints.NONE;
     c.anchor=GridBagConstraints.CENTER;
     puzzlePane.add(logoLabel,c);
 
+    setCluePointSize();
     this.setVisible(true);
     this.pack();
   }
@@ -170,12 +171,28 @@ public class Viewer extends JFrame {
     else return rowbox.getLabelText(idx);
   }
 
-  public void redrawGrid(){
-    drawing.repaint();
-  }
+  public void redrawGrid(){drawing.repaint();}
 
   public void setScore(String score){
     out.println("Score is: "+score);
+  }
+
+  public void zoomFont(int changeInPointSize){
+    //out.println("View zoom font by " +changeInPointSize);
+    if (changeInPointSize>0)cluePointSize++;
+    else cluePointSize--;
+    //cluePointSize+=changeInPointSize;
+    if(cluePointSize<4) cluePointSize=4;
+    //else if(cluePointSize>Resource.MAXIMUM_CLUE_POINTSIZE) cluePointSize=Resource.MAXIMUM_CLUE_POINTSIZE;
+    //out.println("New size " +cluePointSize);
+    setCluePointSize();
+    this.pack();
+    setVisible(true);
+  }
+
+  private void setCluePointSize(){
+    rowbox.setFontSize(cluePointSize);
+    colbox.setFontSize(cluePointSize);
   }
 
   private void createToolBar(){
@@ -186,6 +203,9 @@ public class Viewer extends JFrame {
     toolbar.add(new MyAction("Show game",createImageIcon("images/eyes-open.png","Show icon"),"SHOW_GAME"));
     toolbar.add(new MyAction("Solve game",createImageIcon("images/computer.png","Solve icon"),"SOLVE_GAME"));
     toolbar.add(new MyAction("Set Size",createImageIcon("images/resize.png","Solve icon"),"RESIZE_GAME"));
+    toolbar.add(new MyAction("Restart",createImageIcon("images/Refresh24.gif","Restart icon"),"RESTART_GAME"));
+    toolbar.add(new MyAction("Smaller",createImageIcon("images/ZoomOut24.gif","Restart icon"),"ZOOM_OUT"));
+    toolbar.add(new MyAction("Larger",createImageIcon("images/ZoomIn24.gif","Restart icon"),"ZOOM_IN"));
   }
 
   private class MyAction extends AbstractAction{
@@ -204,6 +224,9 @@ public class Viewer extends JFrame {
       if (command=="SHOW_GAME") control.setSolving(false);
       if (command=="SOLVE_GAME") control.userSolveGame();
       if (command=="RESIZE_GAME") resizeGame();
+      if (command=="RESTART_GAME") control.restartGame();
+      if (command=="ZOOM_IN") control.zoomFont(2);
+      if (command=="ZOOM_OUT") control.zoomFont(-2);
     }
   }
 
@@ -253,8 +276,8 @@ public class Viewer extends JFrame {
       cancelButton.addActionListener(this);
       rowLabel=new JLabel("Rows");
       columnLabel=new JLabel("Columns");
-      rowSpinner=new JSpinner(new SpinnerNumberModel(r,1,Resource.MAXSIZE,1));
-      columnSpinner=new JSpinner(new SpinnerNumberModel(c,1,Resource.MAXSIZE,1));
+      rowSpinner=new JSpinner(new SpinnerNumberModel(r,1,Resource.MAXIMUM_GRID_SIZE,1));
+      columnSpinner=new JSpinner(new SpinnerNumberModel(c,1,Resource.MAXIMUM_GRID_SIZE,1));
       JPanel buttonPanel=new JPanel();
       buttonPanel.setLayout(new BorderLayout());
       buttonPanel.add(okButton, BorderLayout.LINE_START);
@@ -294,5 +317,6 @@ public class Viewer extends JFrame {
   public void setSolving(boolean isSolving){
     drawing.setSolving(isSolving);
   }
+
 }
 
