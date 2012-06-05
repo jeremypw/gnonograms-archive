@@ -72,6 +72,7 @@ public class Viewer extends JFrame {
   private JPanel puzzlePane, toolbarPane;
   private int rows, cols;
   private int cluePointSize;
+  private JSpinner gradeSpinner;
 
   public Viewer(Controller control)
   {
@@ -170,6 +171,11 @@ public class Viewer extends JFrame {
     if (isColumn) return colbox.getLabelText(idx);
     else return rowbox.getLabelText(idx);
   }
+  public double getGrade(){
+    Object g=gradeSpinner.getValue();
+    if (g==null || !(g instanceof Double))return 5.0;
+    else return ((Double)(g)).doubleValue();
+  }
 
   public void redrawGrid(){drawing.repaint();}
 
@@ -181,10 +187,7 @@ public class Viewer extends JFrame {
     //out.println("View zoom font by " +changeInPointSize);
     if (changeInPointSize>0)cluePointSize++;
     else cluePointSize--;
-    //cluePointSize+=changeInPointSize;
     if(cluePointSize<4) cluePointSize=4;
-    //else if(cluePointSize>Resource.MAXIMUM_CLUE_POINTSIZE) cluePointSize=Resource.MAXIMUM_CLUE_POINTSIZE;
-    //out.println("New size " +cluePointSize);
     setCluePointSize();
     this.pack();
     setVisible(true);
@@ -195,9 +198,16 @@ public class Viewer extends JFrame {
     colbox.setFontSize(cluePointSize);
   }
 
+  public void setLabelToolTip(int idx, int freedom, boolean isColumn){
+    if (isColumn) colbox.setLabelToolTip(idx, freedom);
+    else rowbox.setLabelToolTip(idx, freedom);
+  }
+
   private void createToolBar(){
     toolbar.add(new MyAction("New",createImageIcon("images/New24.gif","New icon"),"NEW_GAME"));
     toolbar.add(new MyAction("Random game",createImageIcon("images/dice.png","Random icon"),"RANDOM_GAME"));
+    gradeSpinner=new JSpinner(new SpinnerNumberModel(5,1,Resource.MAXIMUM_GRADE,1));
+    toolbar.add(gradeSpinner);
     toolbar.add(new MyAction("Load game",createImageIcon("images/Open24.gif","Load icon"),"LOAD_GAME"));
     toolbar.add(new MyAction("Hide game",createImageIcon("images/eyes-closed.png","Hide icon"),"HIDE_GAME"));
     toolbar.add(new MyAction("Show game",createImageIcon("images/eyes-open.png","Show icon"),"SHOW_GAME"));
@@ -219,7 +229,7 @@ public class Viewer extends JFrame {
       String command=a.getActionCommand();
       if (command=="NEW_GAME") control.newGame();
       if (command=="LOAD_GAME") control.loadGame();
-      if (command=="RANDOM_GAME") control.randomGame();
+      if (command=="RANDOM_GAME") control.randomGame(getGrade());
       if (command=="HIDE_GAME") control.setSolving(true);
       if (command=="SHOW_GAME") control.setSolving(false);
       if (command=="SOLVE_GAME") control.userSolveGame();
@@ -290,7 +300,6 @@ public class Viewer extends JFrame {
 
       this.add(spinnerPanel,BorderLayout.PAGE_START);
       this.add(buttonPanel,BorderLayout.PAGE_END);
-
       this.pack();
     }
 
@@ -309,7 +318,6 @@ public class Viewer extends JFrame {
       int[] newDimensions=new int[2];
       newDimensions[0]=((Integer)r).intValue();
       newDimensions[1]=((Integer)c).intValue();
-
       return newDimensions;
     }
   }

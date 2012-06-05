@@ -1,0 +1,7 @@
+Gnonograms-java - version 0.1
+*****************************
+June 2012 - Basic program converted from gtk version.
+            Can generate random pattern puzzles using simple solver
+            Can load ready-made puzzles from .gno files
+            Basic user interface to manually solve puzzles
+            Missing features:  save puzzles, import from images, advanced and ultimate solver, save preferences, undo, redo, mark cell, show errors, etc etc.

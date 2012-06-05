@@ -74,11 +74,13 @@ class LabelBox extends JPanel{
 		labels[l].setText(text);
 	}
 
+  public void setLabelToolTip(int l, int freedom){
+    labels[l].setToolTipText("Freedom="+freedom);
+  }
+
 	public String getLabelText(int l)
 	{
 		if (l>=no_labels || l<0) return "";
 		else return labels[l].getOriginalText();
-		//if (isColumn) return Utils.horizontalizeString((labels[l]).getText());
-		//else return (labels[l]).getText();
 	}
 }

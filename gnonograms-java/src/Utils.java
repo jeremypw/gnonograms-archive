@@ -5,19 +5,15 @@ import java.util.ListIterator;
 
 public class Utils
 {
-	static public String clueFromintArray(int[] cs)
-	{
+	static public String clueFromIntArray(int[] cs){
 		//out.println("block string from cell_state_array length %d\n", cs.length);
 		StringBuilder sb= new StringBuilder("");
 		int count=0, blocks=0;
 		boolean counting=false;
 
-		for (int i=0; i<cs.length; i++)
-		{
-			if (cs[i]==Resource.CELLSTATE_EMPTY)
-			{
-				if (counting)
-				{
+		for (int i=0; i<cs.length; i++){
+			if (cs[i]==Resource.CELLSTATE_EMPTY){
+				if (counting){
 					sb.append(count);
 					sb.append(Resource.BLOCKSEPARATOR);
 					counting=false;
@@ -25,19 +21,11 @@ public class Utils
 					blocks++;
 				}
 			}
-			else if(cs[i]==Resource.CELLSTATE_FILLED)
-			{
-				counting=true;
-				count++;
-			}
-			else
-			{
-				//out.println("Error in clue from cellstate array - Cellstate UNKNOWN OR IN ERROR\n");
-				//break;
+			else if(cs[i]==Resource.CELLSTATE_FILLED){
+				counting=true; count++;
 			}
 		}
-		if (counting)
-		{
+		if (counting)	{
 			sb.append(count);
 			sb.append(Resource.BLOCKSEPARATOR);
 			blocks++;
@@ -48,17 +36,24 @@ public class Utils
 		return sb.toString();
 	}
 
-	public static String clue_from_block_array(int[] b)
-	{
-		StringBuilder sb=new StringBuilder("");
-		for (int block : b)
-		{
-			sb.append(block);
-			sb.append(Resource.BLOCKSEPARATOR);
-		}
-		sb.setLength(sb.length() -1);
-		return sb.toString();
-	}
+  public static int freedomFromClue(int regionSize, String clue){
+    int[] blocks=blockArrayFromClue(clue);
+    int count=0;
+    for(int e : blocks) count+=e;
+    return regionSize-count-blocks.length+1;
+  }
+
+	//public static String clueFromBlockArray(int[] b)
+	//{
+		//StringBuilder sb=new StringBuilder("");
+		//for (int block : b)
+		//{
+			//sb.append(block);
+			//sb.append(Resource.BLOCKSEPARATOR);
+		//}
+		//sb.setLength(sb.length() -1);
+		//return sb.toString();
+	//}
 
   static public int[] cellStateArrayFromString(String s) throws NumberFormatException	{
 		//out.println("int string: "+s);

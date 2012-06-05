@@ -353,15 +353,17 @@
 
 						// For the adjacent cells (if not at edge) the minimum length
 						// of the owner is one higher.
-						if (start>0) start--;
+						if (start>0)
 						{
+							start--;
 							for (int bl=0;bl<_nblocks;bl++)
 							{
 								if (_tags[start,bl] && _blocks[bl]<length+1) _tags[start,bl]=false;
 							}
 						}
-						if (end<_ncells-1) end++;
+						if (end<_ncells-1)
 						{
+							end++;
 							for (int bl=0;bl<_nblocks;bl++)
 							{
 								if (_tags[end,bl] && _blocks[bl]<length+1) _tags[end,bl]=false;
@@ -959,6 +961,7 @@
 				else {_ranges[range,1]=length; range++;}
 
 			//skip to beginning of next range
+			idx++;
 			while (idx<_ncells && _tags[idx,_is_finished_ptr]) idx++;
 		}
 		return range; //number of ranges - not last index!
@@ -987,7 +990,7 @@
 	{
 		// determine location of capped ranges of filled cells (not marked complete) and store in _ranges[,]
 		int range=0, start=0, length=0, idx=0;
-		while (_status[idx]!=CellState.FILLED && idx<_ncells) idx++; //skip to beginning of first range
+		while (idx<_ncells && _status[idx]!=CellState.FILLED) idx++; //skip to beginning of first range
 		while (idx<_ncells)
 		{
 			length=0;
@@ -996,7 +999,7 @@
 			_ranges[range,2]=0; //not used
 			_ranges[range,3]=0; //not used
 
-			while (_status[idx]==CellState.FILLED && idx<_ncells)
+			while (idx<_ncells && _status[idx]==CellState.FILLED)
 			{
 				idx++; length++;
 			}
@@ -1006,8 +1009,8 @@
 				_ranges[range,1]=length;
 				range++;
 			}
-
-			while (_status[idx]!=CellState.FILLED && idx<_ncells) idx++; //skip to beginning of next range
+			idx++;
+			while (idx<_ncells && _status[idx]!=CellState.FILLED) idx++; //skip to beginning of next range
 		}
 		return range;
 	}

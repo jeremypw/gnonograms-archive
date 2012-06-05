@@ -94,42 +94,29 @@ public class GameLoader extends JFileChooser {
     //int len = nextLine.length();
     dataStream.useDelimiter("\\]");
     //out.println("Starting");
-    while (nextToken!=null)
-    {
-      try{
-        nextToken=dataStream.next();
-      }
-      catch (Exception e){out.println("OOPS"+"\n"+e.getMessage()); break;}
+    while (nextToken!=null){
+      try {nextToken=dataStream.next();}
+      catch (Exception e){break;}
       //out.println("Next Token:\n"+nextToken);
-      if(nextToken.startsWith("["))
-      {
+      if(nextToken.startsWith("[")){
         headingCount++;
         headings[headingCount]=nextToken.substring(1);
         dataStream.useDelimiter("\\[");
-      }
-      else
-      {
+      } else {
         bodies[headingCount]=nextToken.substring(2);
         dataStream.useDelimiter("\\]");
       }
     }
-    //out.println("Finished");
-    for (int i=0; i<=headingCount; i++) {
-      //out.println("Heading "+i+":\n"+headings[i]+"\nBody "+i+"\n"+bodies[i]);
-    }
-    //throw new Exception("Parse failure");
 		parseGnonogramHeadingsAndBodies();
 	}
 
 	private boolean parseGnonogramHeadingsAndBodies() throws Exception
 	{
     int headingID;
-		for (int i=0;i<=headingCount;i++)
-		{
+		for (int i=0;i<=headingCount;i++){
 			headingID=headingToInt(headings[i]);
       //out.println(headingID);
-			switch (headingID)
-			{
+			switch (headingID)	{
 				case 1:
 					getGnonogramDimensions(bodies[i]); break;
 				case 2 :

@@ -9,11 +9,13 @@ public class Controller {
   private int rows, cols;
   public boolean isSolving;
   private boolean haveSolution;
+  private double grade;
 
 	public Controller(int r, int c) {
     model=new Model();
     solver=new Solver(false,false,false,0,this);
     view=new Viewer(this);
+    grade=5.0;
     init(r,c);
 	}
 
@@ -22,6 +24,7 @@ public class Controller {
     this.rows=r;
     this.cols=c;
     model.setDimensions(r,c);
+   // model.setGrade(grade); //default grade pending implementation of user choice
     solver.setDimensions(r,c);
     view.setDimensions(r,c);
     setSolving(false);
@@ -29,16 +32,16 @@ public class Controller {
   }
 
   public void resize(int r, int c){
-    model.clear();
     init(r,c);
+    model.clear();
   }
 
   public void zoomFont(int change){view.zoomFont(change);}
 
   public void updateLabelsFromModel(int r, int c){
     if (isSolving) return;
-    view.setLabelText(r, Utils.clueFromintArray(model.getRow(r)),false);
-    view.setLabelText(c, Utils.clueFromintArray(model.getColumn(c)),true);
+    view.setLabelText(r, Utils.clueFromIntArray(model.getRow(r)),false);
+    view.setLabelText(c, Utils.clueFromIntArray(model.getColumn(c)),true);
   }
   public void updateAllLabelsFromModel(){
     if (isSolving) return;
@@ -78,23 +81,26 @@ public class Controller {
   public void restartGame(){
     model.blankWorking();
     setSolving(true);
-    //haveSolution=false;
-    //updateAllLabelText();
     view.redrawGrid();
   }
 
-  public void randomGame(){
-    double grade=5;
-    int passes;
+  public void randomGame(double grade){
+    int passes=-1;
     newGame();
-    while (true){
-      model.fillRandom(grade);
-      updateAllLabelText();
-      prepareToSolve(false,false,false);
-      passes=solver.solveIt(false,false,false);
-      if (passes>0 && passes<9999) break;
+    while (grade>0) {
+      int count=0;
+      model.setGrade(grade);
+      while (count<30){
+        count++;
+        model.generateRandomPattern();
+        updateAllLabelText();
+        prepareToSolve(false,false,false);
+        passes=solver.solveIt(false,false,false);
+        if (passes>grade-1 && passes<grade+3) break;
+      }
+      if (count==30) {out.println("Failed to generate - try reducing grade"); grade--;}
+      else {out.println("Passes "+passes); setSolving(true); break;}
     }
-    setSolving(true);
   }
 
   public void loadGame(){
@@ -195,11 +201,16 @@ public class Controller {
 	}
 
   private void updateAllLabelText(){
+    String clue;
     for(int r=0;r<rows;r++){
-      view.setLabelText(r, Utils.clueFromintArray(model.getRow(r)),false);
+      clue=Utils.clueFromIntArray(model.getRow(r));
+      view.setLabelText(r,clue,false);
+      view.setLabelToolTip(r,Utils.freedomFromClue(cols,clue),false);
     }
     for(int c=0;c<cols;c++){
-      view.setLabelText(c, Utils.clueFromintArray(model.getColumn(c)),true);
+      clue=Utils.clueFromIntArray(model.getColumn(c));
+      view.setLabelText(c,clue,true);
+      view.setLabelToolTip(c,Utils.freedomFromClue(rows,clue),true);
     }
   }
 

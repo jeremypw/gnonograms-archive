@@ -71,7 +71,7 @@ namespace Resource
 	public const string DEFAULT_FONT="Ariel";
 
 //Performace/capability related parameters
-	public static int MAXSIZE = 100; // max number rows or columns
+	public static int MAXSIZE = 60; // max number rows or columns
 	public static int MINSIZE = 5;
 	public static int MAXGRADE = 12; //max grade level
 	public static int MAXTRIES = 500; //max attempts to generate solvable game

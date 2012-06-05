@@ -125,7 +125,7 @@ import static java.lang.System.out;
 	public String data2text(int idx, int length, boolean isColumn){
 		int[] arr;
 		arr=getArray(idx, isColumn);
-		return Utils.clueFromintArray(arr);
+		return Utils.clueFromIntArray(arr);
 	}
 
 
