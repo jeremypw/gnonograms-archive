@@ -1,6 +1,5 @@
 #  Make file for gnonograms-java
-#  Copyright (C) 2010-2011  Jeremy Wootten
-#  based on the LGPL work of the Yorba Foundation 2009
+#  Copyright (C) 2012  Jeremy Wootten
 #
 #	This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -19,22 +18,21 @@
 # *  Author:
 # * 	Jeremy Wootten <jeremwootten@gmail.com>
 PROGRAM=gnonograms-java
-
-VERSION=0.0.1
+VERSION=0.1.0
 
 JAVAC=javac
-
-# VALAFLAGS = -g --enable-checking $(USER_VALAFLAGS)
+JAR=jar
 
 SRC_FILES = \
 	Cell.java \
 	CellGrid.java \
 	Controller.java \
 	GameLoader.java \
+	GameSaver.java \
 	GameState.java \
-	Gnonograms.java \
 	GnonogramLabel.java \
 	LabelBox.java \
+	Gnonograms.java \
 	Model.java \
 	My2DCellArray.java \
 	Permutor.java \
@@ -50,8 +48,6 @@ BUILD_DIR=build
 endif
 
 EXPANDED_SRC_FILES = $(foreach src,$(SRC_FILES),src/$(src))
-
-
 #-----------------------------------TARGETS----------------------------------------------
 all: $(PROGRAM)
 ###############
@@ -59,3 +55,7 @@ all: $(PROGRAM)
 $(PROGRAM): $(EXPANDED_SRC_FILES) Makefile
 ############################################################
 	$(JAVAC) -Xlint -d $(BUILD_DIR) $(EXPANDED_SRC_FILES)
+
+jar: $(PROGRAM)
+###############
+	$(JAR) cfm Gnonograms-$(VERSION).jar Manifest.txt -C build .

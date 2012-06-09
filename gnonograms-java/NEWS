@@ -1,5 +1,13 @@
-Gnonograms-java - version 0.1
-*****************************
+Gnonograms-java - version 0.2
+*******************************
+June 09, 2012 Added save game function
+
+Gnonograms-java - version 0.1.1
+*******************************
+June 08, 2012 Fix bug in puzzle generator - array out of bounds for asymmetric puzzles.
+
+Gnonograms-java - version 0.1.0
+*******************************
 June 2012 - Basic program converted from gtk version.
             Can generate random pattern puzzles using simple solver
             Can load ready-made puzzles from .gno files

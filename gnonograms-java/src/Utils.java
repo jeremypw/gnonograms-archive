@@ -43,6 +43,19 @@ public class Utils
     return regionSize-count-blocks.length+1;
   }
 
+	public static String stringFromIntArray(int[] cs)
+	{
+		//stdout.printf("string from cell_state_array\n");
+		if (cs==null) return "";
+		StringBuilder sb= new StringBuilder();
+		for (int i=0; i<cs.length; i++)
+		{
+			sb.append(cs[i]);
+			sb.append(" ");
+		}
+		return sb.toString();
+	}
+
 	//public static String clueFromBlockArray(int[] b)
 	//{
 		//StringBuilder sb=new StringBuilder("");

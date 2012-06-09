@@ -85,13 +85,16 @@ public class Model {
     }
 
     private int calculatemaximumBlockSize(double lengthOfRegion, double grade){
-      return 1+(int)((lengthOfRegion-1)*(1.0-(grade/Resource.MAXIMUM_GRADE)));
+      double max=1+(int)((lengthOfRegion-1)*(1.0-(grade/Resource.MAXIMUM_GRADE)));
+      if (max>lengthOfRegion)max=lengthOfRegion;
+      return (int)max;
     }
 
     protected void setMaximumBlockSizes(double grade){
-      maximumColumnBlockSize=calculatemaximumBlockSize(cols2D, grade);
+      maximumColumnBlockSize=calculatemaximumBlockSize(rows2D,grade);
       //out.println("Max Col Block "+maximumColumnBlockSize);
-      maximumRowBlockSize=calculatemaximumBlockSize(rows2D,grade);
+      maximumRowBlockSize=calculatemaximumBlockSize(cols2D,grade);
+      //out.println("Max Col Block "+maximumColumnBlockSize);
     }
 
     protected void setGrade(double grade){
@@ -99,7 +102,9 @@ public class Model {
       setMaximumBlockSizes(grade);
       //baselineOffset=(int)(Resource.MAXIMUM_GRADE-grade)-10;
       minimumColumnFreedom = 2+(int)((rows*grade)/(Resource.MAXIMUM_GRADE*4));
+      //out.println("min col freedom: "+minimumColumnFreedom);
       minimumRowFreedom = 2+(int)((cols*grade)/(Resource.MAXIMUM_GRADE*4));
+      //out.println("min row freedom = "+minimumRowFreedom);
     }
 
     protected void generateBasicPattern(){
@@ -125,7 +130,7 @@ public class Model {
         // random length up to remaining space but not larger than
         max=fill ? maximumBlockSize : (sizeOfRegion-maximumBlockSize);
         blockSize=Math.min(getRandomInteger(1,sizeOfRegion-1-p),max);
-        //out.println("Block Size "+blockSize);
+        //out.println("Block Size "+blockSize+" max: "+max+" p "+p);
         if (fill){
           for (int i=0; i<blockSize; i++){
             region[p]=Resource.CELLSTATE_FILLED;
@@ -188,4 +193,18 @@ public class Model {
       return lower + (int)(range*rand);
     }
   }
+
+  public String displayDataToString()
+	{
+		//stdout.printf("model to string\n");
+		StringBuilder sb= new StringBuilder();
+		for (int r=0; r<rows; r++)
+		{
+			temp=displayData.getRow(r);
+			sb.append(Utils.stringFromIntArray(temp));
+			sb.append("\n");
+		}
+		return sb.toString();
+	}
+
 }

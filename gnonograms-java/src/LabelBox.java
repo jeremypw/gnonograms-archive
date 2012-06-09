@@ -31,6 +31,8 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Dimension;
 
+import static java.lang.System.out;
+
 class LabelBox extends JPanel{
 	private static final long serialVersionUID = 1;
 	GnonogramLabel[] labels;
@@ -58,12 +60,20 @@ class LabelBox extends JPanel{
 		}
 	}
 
-  public void setFontSize(int size){
+  public void setFontSize(int size, int otherSize){
     Font f=new Font("Arial",Font.BOLD,size);
+    int boxWidth, boxHeight;
+    if (isColumn){
+      boxHeight=(int)(0.6*size*otherSize);
+      boxWidth=(int)(size*1.4);
+    }else{
+      boxWidth=(int)(0.3*size*otherSize);
+      boxHeight=(int)(size*1.4);
+    }
+    //out.println("Is Column"+isColumn+" Dimensions: "+ boxWidth+","+boxHeight);
     for (int i=0; i<no_labels; i++) {
 			labels[i].setFont(f);
-      if (isColumn) labels[i].setPreferredSize(new Dimension((int)(size*1.4),size*5));
-      else labels[i].setPreferredSize(new Dimension(size*5,(int)(size*1.2)));
+      labels[i].setPreferredSize(new Dimension(boxWidth, boxHeight));
 		}
   }
 
@@ -78,9 +88,18 @@ class LabelBox extends JPanel{
     labels[l].setToolTipText("Freedom="+freedom);
   }
 
-	public String getLabelText(int l)
+	public String getClueText(int l)
 	{
 		if (l>=no_labels || l<0) return "";
 		else return labels[l].getOriginalText();
 	}
+
+  public String getClues(){
+    StringBuilder sb=new StringBuilder("");
+    for (GnonogramLabel l : labels){
+      sb.append(l.getOriginalText());
+      sb.append("\n");
+    }
+    return sb.toString();
+  }
 }

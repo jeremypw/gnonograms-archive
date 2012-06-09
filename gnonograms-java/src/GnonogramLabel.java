@@ -12,11 +12,9 @@ public class GnonogramLabel extends JLabel{
     if (isColumn) {
       this.setHorizontalAlignment(CENTER);
       this.setVerticalAlignment(BOTTOM);
-      //setPreferredSize(new Dimension(24,128));
     }else{
       this.setHorizontalAlignment(RIGHT);
       this.setVerticalAlignment(CENTER);
-      //setPreferredSize(new Dimension(128,24));
     }
     setText(text);
   }
@@ -39,9 +37,6 @@ public class GnonogramLabel extends JLabel{
     return sb.toString();
   }
 	private String horizontalString (String s){
-    //StringBuilder sb=new StringBuilder("<html><b>");
-    //sb.append(text); sb.append("</b></html>");
-    //return sb.toString();
     return "<html><b>"+s+"</b></html>";
   }
 

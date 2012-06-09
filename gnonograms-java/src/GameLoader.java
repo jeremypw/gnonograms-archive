@@ -47,7 +47,7 @@ public class GameLoader extends JFileChooser {
 	public String date="";
 	public String score="";
 	public String license="";
-	//public bool in_error=false;
+	public boolean validGame=false;
 	public boolean hasDimensions=false;
 	public boolean hasRowClues=false;
 	public boolean hasColumnClues=false;
@@ -85,6 +85,8 @@ public class GameLoader extends JFileChooser {
     dataStream= new Scanner(new FileReader(getSelectedFile()));
 	}
 
+  public void close(){dataStream.close();}
+
 	public void parseGameFile() throws IOException, NoSuchElementException, Exception {
 		headingCount=-1;
     String nextToken="";
@@ -108,6 +110,7 @@ public class GameLoader extends JFileChooser {
       }
     }
 		parseGnonogramHeadingsAndBodies();
+    validGame=true;
 	}
 
 	private boolean parseGnonogramHeadingsAndBodies() throws Exception

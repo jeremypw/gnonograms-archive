@@ -1,5 +1,7 @@
 
 import static java.lang.System.out;
+import java.io.IOException;
+import java.io.FileNotFoundException;
 
 public class Controller {
 
@@ -21,10 +23,8 @@ public class Controller {
 
   public void init(int r, int c){
     //out.println("Controller init");
-    this.rows=r;
-    this.cols=c;
+    this.rows=r; this.cols=c;
     model.setDimensions(r,c);
-   // model.setGrade(grade); //default grade pending implementation of user choice
     solver.setDimensions(r,c);
     view.setDimensions(r,c);
     setSolving(false);
@@ -99,8 +99,18 @@ public class Controller {
         if (passes>grade-1 && passes<grade+3) break;
       }
       if (count==30) {out.println("Failed to generate - try reducing grade"); grade--;}
-      else {out.println("Passes "+passes); setSolving(true); break;}
+      else {
+        setSolving(true);
+        haveSolution=true;
+        break;
+      }
     }
+    out.println("Passes "+passes);
+    view.setScore(passes+" ");
+    view.setName("Random");
+    view.setAuthor("Computer");
+    view.setLicense("GPL");
+    view.setDate("Today");
   }
 
   public void loadGame(){
@@ -116,6 +126,12 @@ public class Controller {
     catch (java.util.NoSuchElementException e) {out.println(e.getMessage());}
     catch (Exception e) {out.println("Exception:  "+e.getMessage());}
 
+    if (!gl.validGame) {gl.close(); return;}
+    view.setName(gl.name);
+    view.setAuthor(gl.author);
+    view.setDate(gl.date);
+    view.setScore(gl.score);
+    view.setLicense(gl.license);
     this.resize(gl.rows,gl.cols);
 
     if (gl.hasSolution){
@@ -128,6 +144,33 @@ public class Controller {
 			for (int i=0; i<this.cols; i++) view.setLabelText(i,gl.colClues[i],true);
     }
     setSolving(true);
+    gl.close();
+  }
+
+  public void saveGame(){
+    GameSaver gs=new GameSaver(view);
+    int result=gs.getResult();
+    if (result>0) return;
+    try {gs.openDataOutputStream();}
+    catch (IOException e){out.println("Error while opening game file: "+e.getMessage());return;}
+
+    try {
+      gs.writeDescription(view.getName(), view.getAuthor(), view.getDate(), view.getScore());
+      gs.writeLicense(view.getLicense());
+      gs.writeDimensions(rows,cols);
+      gs.writeClues(view.getClues(false),false);
+      gs.writeClues(view.getClues(true),true);
+      if (haveSolution) {
+        model.useSolution();
+        gs.writeSolution(model.displayDataToString());
+      }
+      model.useWorking();
+      gs.writeWorking(model.displayDataToString());
+      gs.writeState(isSolving);
+    }
+    catch (IOException e) {out.println("Error while writing game file: "+e.getMessage());}
+    try {gs.close();}
+    catch (IOException e){out.println("Error closing file:"+e.getMessage());}
   }
 
   public void userSolveGame(){
@@ -178,8 +221,8 @@ public class Controller {
 		}
 		else startgrid=null;
 
-		for (int i =0; i<this.rows; i++) rowClues[i]=view.getLabelText(i,false);
-		for (int i =0; i<this.cols; i++) columnClues[i]=view.getLabelText(i, true);
+		for (int i =0; i<this.rows; i++) rowClues[i]=view.getClueText(i,false);
+		for (int i =0; i<this.cols; i++) columnClues[i]=view.getClueText(i, true);
 
 		solver.initialize(rowClues, columnClues, startgrid);
   }
