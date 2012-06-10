@@ -67,7 +67,7 @@ class LabelBox extends JPanel{
       boxHeight=(int)(0.6*size*otherSize);
       boxWidth=(int)(size*1.4);
     }else{
-      boxWidth=(int)(0.3*size*otherSize);
+      boxWidth=(int)(0.4*size*otherSize);
       boxHeight=(int)(size*1.4);
     }
     //out.println("Is Column"+isColumn+" Dimensions: "+ boxWidth+","+boxHeight);
@@ -77,7 +77,7 @@ class LabelBox extends JPanel{
 		}
   }
 
-	public void setLabelText(int l, String text)
+	public void setClueText(int l, String text)
 	{
 		if (l>=no_labels || l<0) return;
 		if (text==null) text="?";

@@ -27,7 +27,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 public class Gnonograms {
 
 	public static void main (String args[]) {
-        try {
+    try {
             // Set System L&F
         UIManager.setLookAndFeel(
             UIManager.getSystemLookAndFeelClassName());

@@ -2,6 +2,13 @@ import static java.lang.System.out;
 import javax.swing.ImageIcon;
 import java.util.ArrayList;
 import java.util.ListIterator;
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.JDialog;
+import javax.swing.JOptionPane;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.BorderLayout;
 
 public class Utils
 {
@@ -115,18 +122,33 @@ public class Utils
 
 	public static boolean showConfirmDialog(String s){
 		out.println("Confirm "+s);
-		//TO BE COMPLETED
-		return true;
+		int result=JOptionPane.showConfirmDialog(null,s,"",JOptionPane.YES_NO_OPTION);
+		return (result==JOptionPane.YES_OPTION);
 	}
-	public static boolean showWarningDialog(String s){
+	public static void showWarningDialog(String s){
 		out.println("Warning "+s);
-		//TO BE COMPLETED
-		return true;
+		JOptionPane.showMessageDialog(null,s,"",JOptionPane.WARNING_MESSAGE);
+	}
+	public static void showErrorDialog(String s){
+		out.println("Warning "+s);
+		JOptionPane.showMessageDialog(null,s,"",JOptionPane.ERROR_MESSAGE);
 	}
 	public static boolean showInfoDialog(String s){
 		out.println("Info "+s);
-		//TO BE COMPLETED
+		JOptionPane.showMessageDialog(null,s,"",JOptionPane.INFORMATION_MESSAGE);
 		return true;
 	}
-
+  public static JPanel okCancelPanelFactory(ActionListener listener, String okCommand){
+		JButton okButton=new JButton("OK");
+		okButton.setActionCommand(okCommand);
+		okButton.addActionListener(listener);
+		JButton cancelButton=new JButton("Cancel");
+		cancelButton.setActionCommand("");
+		cancelButton.addActionListener(listener);
+		JPanel buttonPanel=new JPanel();
+		buttonPanel.setLayout(new BorderLayout());
+		buttonPanel.add(okButton, BorderLayout.LINE_START);
+		buttonPanel.add(cancelButton, BorderLayout.LINE_END);
+    return buttonPanel;
+  }
 }

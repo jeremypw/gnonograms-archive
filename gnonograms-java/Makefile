@@ -18,7 +18,7 @@
 # *  Author:
 # * 	Jeremy Wootten <jeremwootten@gmail.com>
 PROGRAM=gnonograms-java
-VERSION=0.1.0
+VERSION=0.3.0
 
 JAVAC=javac
 JAR=jar
@@ -27,6 +27,7 @@ SRC_FILES = \
 	Cell.java \
 	CellGrid.java \
 	Controller.java \
+	GameEditor.java \
 	GameLoader.java \
 	GameSaver.java \
 	GameState.java \

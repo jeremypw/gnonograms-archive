@@ -11,7 +11,7 @@
     * Solve puzzles manually
     * Solve simple puzzles by computer
     * Save puzzles and partially completed puzzles
-    * Handles puzzle grids up to 160 X 60 (practical limit depends on screen size)
+    * Handles puzzle grids up to 60 X 60 (practical limit depends on screen size)
 
   * Installation & Licensing
 

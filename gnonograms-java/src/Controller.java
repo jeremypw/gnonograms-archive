@@ -40,8 +40,9 @@ public class Controller {
 
   public void updateLabelsFromModel(int r, int c){
     if (isSolving) return;
-    view.setLabelText(r, Utils.clueFromIntArray(model.getRow(r)),false);
-    view.setLabelText(c, Utils.clueFromIntArray(model.getColumn(c)),true);
+    view.setClueText(r, Utils.clueFromIntArray(model.getRow(r)),false);
+    view.setClueText(c, Utils.clueFromIntArray(model.getColumn(c)),true);
+    model.blankWorking();
   }
   public void updateAllLabelsFromModel(){
     if (isSolving) return;
@@ -52,7 +53,7 @@ public class Controller {
     }
   }
   public void updateLabelFromString(int idx, String clue, boolean isColumn){
-    view.setLabelText(idx,clue,isColumn);
+    view.setClueText(idx,clue,isColumn);
   }
 
   public int getDataFromRC(int r, int c){
@@ -64,8 +65,12 @@ public class Controller {
     if(isSolving){
       if(model.countUnknownCells()==0){
         if(model.countErrors()==0){
-          Utils.showInfoDialog("Congratulations!");
           setSolving(false);
+          view.redrawGrid();
+          Utils.showInfoDialog("Congratulations!");
+        }
+        else{
+          //TODO Check for alternative solution found
         }
       }
     }
@@ -110,7 +115,7 @@ public class Controller {
     view.setName("Random");
     view.setAuthor("Computer");
     view.setLicense("GPL");
-    view.setDate("Today");
+    view.setCreationDate("Today");
   }
 
   public void loadGame(){
@@ -129,7 +134,7 @@ public class Controller {
     if (!gl.validGame) {gl.close(); return;}
     view.setName(gl.name);
     view.setAuthor(gl.author);
-    view.setDate(gl.date);
+    view.setCreationDate(gl.date);
     view.setScore(gl.score);
     view.setLicense(gl.license);
     this.resize(gl.rows,gl.cols);
@@ -140,8 +145,8 @@ public class Controller {
 			updateAllLabelsFromModel(); this.haveSolution=true;
     }
     if (gl.hasRowClues && gl.hasColumnClues){
-			for (int i=0; i<this.rows; i++) view.setLabelText(i,gl.rowClues[i],false);
-			for (int i=0; i<this.cols; i++) view.setLabelText(i,gl.colClues[i],true);
+			for (int i=0; i<this.rows; i++) view.setClueText(i,gl.rowClues[i],false);
+			for (int i=0; i<this.cols; i++) view.setClueText(i,gl.colClues[i],true);
     }
     setSolving(true);
     gl.close();
@@ -155,7 +160,7 @@ public class Controller {
     catch (IOException e){out.println("Error while opening game file: "+e.getMessage());return;}
 
     try {
-      gs.writeDescription(view.getName(), view.getAuthor(), view.getDate(), view.getScore());
+      gs.writeDescription(view.getName(), view.getAuthor(), view.getCreationDate(), view.getScore());
       gs.writeLicense(view.getLicense());
       gs.writeDimensions(rows,cols);
       gs.writeClues(view.getClues(false),false);
@@ -177,32 +182,32 @@ public class Controller {
     setSolving(true);
     prepareToSolve(true,false,false);
     int passes=solver.solveIt(false,false,false);
+    view.setScore("999999");
+    String message="";
     switch (passes) {
-			case -2:
-				break;  //debug mode
-			case -1:
-				//invalid_clues();
-				view.setScore("999999");
+			case -2://debug mode
+      case 999999: //user cancelled
+        break;
+			case -1:	//invalid clues;
+        model.clear();
+        haveSolution=false;
+        message="Invalid or inconsistent clues - no solution";
 				break;
-			case 0:
-				Utils.showInfoDialog("Failed to solve or no unique solution");
-				view.setScore("999999");
+			case 0: //solver failed
+				message="Failed to solve or no unique solution";
+        updateWorkingGridFromSolver();
 				break;
-			case 999999:
-				Utils.showInfoDialog("Cancelled by user");
-				view.setScore("999999");
-				break;
-			default:
+			default: //solver succeeded
 				view.setScore(String.valueOf(passes));
 				//Utils.showInfoDialog(String.format("Solved in %8.3f seconds",secs_taken));
-
 				if (!haveSolution){
 					haveSolution=true;
 					updateSolutionGridFromSolver();
 				}
+        updateWorkingGridFromSolver();
 				break;
 		}
-    updateWorkingGridFromSolver();
+    if (message.length()>0) Utils.showInfoDialog(message);
     setSolving(true); //redisplay working grid
   }
 
@@ -247,12 +252,12 @@ public class Controller {
     String clue;
     for(int r=0;r<rows;r++){
       clue=Utils.clueFromIntArray(model.getRow(r));
-      view.setLabelText(r,clue,false);
+      view.setClueText(r,clue,false);
       view.setLabelToolTip(r,Utils.freedomFromClue(cols,clue),false);
     }
     for(int c=0;c<cols;c++){
       clue=Utils.clueFromIntArray(model.getColumn(c));
-      view.setLabelText(c,clue,true);
+      view.setClueText(c,clue,true);
       view.setLabelToolTip(c,Utils.freedomFromClue(rows,clue),true);
     }
   }
