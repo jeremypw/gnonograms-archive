@@ -2,6 +2,10 @@ Gnonograms-java - version 0.3
 *******************************
 June 10, 2012 Added information panel.
               Added game editor (unvalidated clue input)
+June 16,2012  Added tooltips to toolbar
+              Visible cursor on grid (highlight cell)
+              Keyboard control of cell cursor
+              Keyboard entry of cell status
 
 Gnonograms-java - version 0.2
 *******************************

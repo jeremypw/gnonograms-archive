@@ -51,11 +51,13 @@ import static java.lang.System.out;
 
 	public int getRows() {return rows;}
 	private void setRows(int r) {
-		if (r>=0 && r<this.maxRows) this.rows=r;
+    assert (r>=0 && r<=this.maxRows);
+		this.rows=r;
 	}
 	public int getCols() {return cols;}
 	private void setCols(int c) {
-		if (c>=0 && c<this.maxCols) this.cols=c;
+    assert (c>=0 && c<=this.maxCols);
+		this.cols=c;
 	}
 
 	public void resize(int r, int c){
@@ -64,7 +66,6 @@ import static java.lang.System.out;
 	}
 
 	public void setDataFromCell(Cell c) {myData[c.getRow()][c.getColumn()]=c.getState();}
-
 	public void setDataFromRC(int r, int c, int s) {myData[r][c]=s;}
 
 	public int getDataFromRC(int r, int c) {return myData[r][c];}

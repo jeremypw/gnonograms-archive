@@ -11,7 +11,7 @@ import java.awt.event.KeyEvent;
 import javax.swing.JPanel;
 import javax.swing.BorderFactory;
 
-import java.util.EnumMap;
+//import java.util.EnumMap;
 
 import static java.lang.System.out;
 import java.lang.Math;
@@ -25,6 +25,7 @@ public class CellGrid extends JPanel{
 	private Color[] solvingColors;
 	private Color[] settingColors;
 	private Color[] displayColors;
+  private Graphics myGraphics;
 
 	public Controller control;
 
@@ -36,15 +37,16 @@ public class CellGrid extends JPanel{
 				this.addMouseMotionListener(new GridMouseMotionAdapter());
 				this.addKeyListener(new GridKeyAdapter());
 				this.setBorder(BorderFactory.createLineBorder(Color.black));
-				//this.setPreferredSize(new Dimension(Math.min(cols*20,600), Math.min(rows*20,400)));
 
 				currentCell=new Cell(-1,-1,Resource.CELLSTATE_UNDEFINED);
 				previousCell=new Cell(-1,-1,Resource.CELLSTATE_UNDEFINED);
-				solvingColors=new Color[6];
+				solvingColors=new Color[8];
+        for(Color c : solvingColors) c=Color.orange;
 				solvingColors[Resource.CELLSTATE_FILLED]=Color.blue;
 				solvingColors[Resource.CELLSTATE_EMPTY]=Color.yellow;
-				solvingColors[Resource.CELLSTATE_UNKNOWN]=(new Color(190,190,190,0));
-				settingColors=new Color[6];
+				solvingColors[Resource.CELLSTATE_UNKNOWN]=(new Color(240,240,240,255));
+				settingColors=new Color[8];
+        for(Color c : settingColors)c=Color.orange;
 				settingColors[Resource.CELLSTATE_FILLED]=Color.black;
 				settingColors[Resource.CELLSTATE_EMPTY]=Color.white;
 				settingColors[Resource.CELLSTATE_UNKNOWN]=Color.red;
@@ -64,10 +66,11 @@ public class CellGrid extends JPanel{
 
 		super.paintComponent(g);
 
+    //Draw cell bodies
 		for (int r=0;r<rows;r++){
 		 for(int c=0;c<cols;c++){
 			 g.setColor(displayColors[control.getDataFromRC(r,c)]);
-			 g.fillRect((int)(c*columnWidth)+1,(int)(r*rowHeight)+1,(int)(columnWidth),(int)(rowHeight));
+			 g.fillRect((int)(c*columnWidth+1),(int)(r*rowHeight+1),(int)(columnWidth),(int)(rowHeight));
 		 }
 		}
 		g.setColor(Color.gray);
@@ -79,6 +82,8 @@ public class CellGrid extends JPanel{
 			int w=(int)(c*columnWidth);
 			g.drawLine(w, 0, w, gridHeight);
 		}
+
+    // Draw major gridlines
 		g.setColor(Color.black);
 		for (int r=0;r<=rows;r+=5){
 			int h=(int)(r*rowHeight);
@@ -90,7 +95,34 @@ public class CellGrid extends JPanel{
       g.drawLine(w, 0, w, gridHeight);
 			g.drawLine(w+1, 0, w+1, gridHeight);
 		}
+
+    //draw current cell outline
+    highlightCell(currentRow, currentCol);
 	}
+
+  protected void moveHighlight(int r, int c){
+      if (r== currentRow && c== currentCol) return;
+      unhighlightCell(currentRow,currentCol);
+      if (r<0||r>rows||c<0||c>=cols) return;
+      highlightCell(r,c);
+      currentRow= r; currentCol= c;
+  }
+  protected void highlightCell(int r, int c){
+    if (r<0||r>rows||c<0||c>=cols) return;
+    myGraphics=this.getGraphics();
+    myGraphics.setColor(Color.red);
+    //out.println("highlight current cell r "+r+" c "+c);
+    myGraphics.drawRect((int)(c*columnWidth+2),(int)(r*rowHeight+2),(int)(columnWidth-3),(int)(rowHeight-3));
+    myGraphics.drawRect((int)(c*columnWidth+3),(int)(r*rowHeight+3),(int)(columnWidth-5),(int)(rowHeight-5));
+  }
+  protected void unhighlightCell(int r, int c){
+    if (r<0||r>rows||c<0||c>=cols) return;
+    myGraphics=this.getGraphics();
+    myGraphics.setColor(displayColors[control.getDataFromRC(r,c)]);
+    //out.println("unhighlight previous cell r "+r+" c "+c + "Color" + displayColors[control.getDataFromRC(r,c)] );
+    myGraphics.drawRect((int)(c*columnWidth+2),(int)(r*rowHeight+2),(int)(columnWidth-3),(int)(rowHeight-3));
+    myGraphics.drawRect((int)(c*columnWidth+3),(int)(r*rowHeight+3),(int)(columnWidth-5),(int)(rowHeight-5));
+  }
 
 	protected void updateCell(int r,int c,int cs){
 		if (cs==Resource.CELLSTATE_UNDEFINED) return;
@@ -137,12 +169,12 @@ public class CellGrid extends JPanel{
 		 previousCell.clear();
     }
 		public void mouseEntered(MouseEvent e) {
-      //out.println("Entered grid");
 		 requestFocus();
     }
 	}
 
 	private class GridMouseMotionAdapter extends MouseMotionAdapter{
+
 		public void mouseDragged(MouseEvent e) {
 			int r= (int)((double)(e.getY())/rowHeight);
 			int c= (int)((double)(e.getX())/columnWidth);
@@ -152,13 +184,16 @@ public class CellGrid extends JPanel{
 			currentCol= c;
 			updateCell(r,c,currentCell.getState());
     }
+    public void mouseMoved(MouseEvent e){
+			int r= (int)((double)(e.getY())/rowHeight);
+			int c= (int)((double)(e.getX())/columnWidth);
+      moveHighlight(r,c);
+    }
 	}
 
   private class GridKeyAdapter extends KeyAdapter{
     public void keyPressed(KeyEvent e){
       int keyCode =e.getKeyCode();
-      //out.println("KeyCode is "+keyCode);
-      //out.println("VK_MINUS is "+KeyEvent.VK_MINUS);
       switch (keyCode){
         case KeyEvent.VK_MINUS:
               control.zoomFont(-2);
@@ -166,6 +201,31 @@ public class CellGrid extends JPanel{
         case KeyEvent.VK_PLUS:
         case KeyEvent.VK_EQUALS:
               control.zoomFont(2);
+              break;
+        case KeyEvent.VK_KP_LEFT:
+        case KeyEvent.VK_LEFT:
+              if (currentCol>0) moveHighlight(currentRow,currentCol-1);
+              break;
+        case KeyEvent.VK_KP_RIGHT:
+        case KeyEvent.VK_RIGHT:
+              if (currentCol<cols-1) moveHighlight(currentRow,currentCol+1);
+              break;
+        case KeyEvent.VK_KP_UP:
+        case KeyEvent.VK_UP:
+              if (currentRow>0) moveHighlight(currentRow-1,currentCol);
+              break;
+        case KeyEvent.VK_KP_DOWN:
+        case KeyEvent.VK_DOWN:
+              if (currentRow<rows-1) moveHighlight(currentRow+1,currentCol);
+              break;
+        case Resource.KEY_FILLED:
+              updateCell(currentRow,currentCol,Resource.CELLSTATE_FILLED);
+              break;
+        case Resource.KEY_EMPTY:
+              updateCell(currentRow,currentCol,Resource.CELLSTATE_EMPTY);
+              break;
+        case Resource.KEY_UNKNOWN:
+              if(control.isSolving)updateCell(currentRow,currentCol,Resource.CELLSTATE_UNKNOWN);
               break;
         default:
           break;

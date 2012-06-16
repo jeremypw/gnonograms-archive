@@ -58,11 +58,9 @@ public class GameLoader extends JFileChooser {
 	public String[] working;
 
 	private Scanner dataStream;
-	//private bool is_game;
-	//private bool is_picto_game;
 	private String[] headings;
 	private String[] bodies;
-	//private String[] picto_grid_data;
+
 
   private int result, headingCount;
 

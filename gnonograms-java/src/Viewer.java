@@ -28,6 +28,7 @@ import javax.swing.JButton;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JToolBar;
+import javax.swing.JComponent;
 import javax.swing.AbstractAction;
 import javax.swing.JDialog;
 import javax.swing.JSpinner;
@@ -135,12 +136,23 @@ public class Viewer extends JFrame {
 	public void setLicense(String license){
 		licenseLabel.setInfo(license);
 	}
-
+  public void clearInfoBar(){
+    setName("");
+    setAuthor("");
+    setCreationDate("");
+    setLicense("");
+    setScore("");
+  }
 	public String getClues(boolean isColumn){
 		if (isColumn) return columnBox.getClues();
 		else return rowBox.getClues();
 	}
 
+  private void calculateCluePointSize(){
+    cluePointSize=400/(Math.max(rows,cols));
+		if(cluePointSize<Resource.MINIMUM_CLUE_POINTSIZE) cluePointSize=Resource.MINIMUM_CLUE_POINTSIZE;
+		else if(cluePointSize>Resource.MAXIMUM_CLUE_POINTSIZE) cluePointSize=Resource.MAXIMUM_CLUE_POINTSIZE;
+  }
 	private void setCluePointSize(){
 		rowBox.setFontSize(cluePointSize, cols);
 		columnBox.setFontSize(cluePointSize, rows);
@@ -214,9 +226,7 @@ public class Viewer extends JFrame {
 		c.gridy=0; puzzlePane.add(columnBox,c);
 		c.gridx=0; c.gridy=1;	puzzlePane.add(rowBox,c);
 		c.gridy=0; puzzlePane.add(logoLabel,c);
-		cluePointSize=250/(Math.max(rows,cols));
-		if(cluePointSize<Resource.MINIMUM_CLUE_POINTSIZE) cluePointSize=Resource.MINIMUM_CLUE_POINTSIZE;
-		else if(cluePointSize>Resource.MAXIMUM_CLUE_POINTSIZE) cluePointSize=Resource.MAXIMUM_CLUE_POINTSIZE;
+    calculateCluePointSize();
 		setCluePointSize();
 		this.setVisible(true);
 		this.pack();
@@ -242,19 +252,32 @@ public class Viewer extends JFrame {
 	private void createToolBar(){
 		toolbar=new JToolBar();
 		toolbar.add(new MyAction("New",createImageIcon("images/New24.gif","New icon"),"NEW_GAME"));
+    ((JComponent)(toolbar.getComponentAtIndex(0))).setToolTipText("Make a new blank puzzle grid");
 		toolbar.add(new MyAction("Random game",createImageIcon("images/dice.png","Random icon"),"RANDOM_GAME"));
+    ((JComponent)(toolbar.getComponentAtIndex(1))).setToolTipText("Generate a random puzzle");
 		gradeSpinner=new JSpinner(new SpinnerNumberModel(5,1,Resource.MAXIMUM_GRADE,1));
 		toolbar.add(gradeSpinner);
+    ((JComponent)(toolbar.getComponentAtIndex(2))).setToolTipText("Set the difficulty of the generated puzzle");
 		toolbar.add(new MyAction("Load game",createImageIcon("images/Open24.gif","Load icon"),"LOAD_GAME"));
+    ((JComponent)(toolbar.getComponentAtIndex(3))).setToolTipText("Load a puzzle from file");
 		toolbar.add(new MyAction("Save game",createImageIcon("images/Save24.gif","Save icon"),"SAVE_GAME"));
+    ((JComponent)(toolbar.getComponentAtIndex(4))).setToolTipText("Save the puzzle to file");
 		toolbar.add(new MyAction("Hide game",createImageIcon("images/eyes-closed.png","Hide icon"),"HIDE_GAME"));
+    ((JComponent)(toolbar.getComponentAtIndex(5))).setToolTipText("Hide the solution and start solving");
 		toolbar.add(new MyAction("Show game",createImageIcon("images/eyes-open.png","Show icon"),"SHOW_GAME"));
+    ((JComponent)(toolbar.getComponentAtIndex(6))).setToolTipText("Show the solution to the puzzle");
 		toolbar.add(new MyAction("Solve game",createImageIcon("images/computer.png","Solve icon"),"SOLVE_GAME"));
+    ((JComponent)(toolbar.getComponentAtIndex(7))).setToolTipText("Let the computer try to solve the puzzle");
 		toolbar.add(new MyAction("Set Size",createImageIcon("images/resize.png","Solve icon"),"RESIZE_GAME"));
+    ((JComponent)(toolbar.getComponentAtIndex(8))).setToolTipText("Change the number of rows and columns in the grid");
 		toolbar.add(new MyAction("Restart",createImageIcon("images/Refresh24.gif","Restart icon"),"RESTART_GAME"));
+    ((JComponent)(toolbar.getComponentAtIndex(9))).setToolTipText("Start solving this puzzle again");
 		toolbar.add(new MyAction("Smaller",createImageIcon("images/ZoomOut24.gif","Restart icon"),"ZOOM_OUT"));
+    ((JComponent)(toolbar.getComponentAtIndex(10))).setToolTipText("Make the font smaller");
 		toolbar.add(new MyAction("Larger",createImageIcon("images/ZoomIn24.gif","Restart icon"),"ZOOM_IN"));
+    ((JComponent)(toolbar.getComponentAtIndex(11))).setToolTipText("Make the font larger");
 		toolbar.add(new MyAction("Edit",createImageIcon("images/Edit24.gif","Edit icon"),"EDIT_GAME"));
+    ((JComponent)(toolbar.getComponentAtIndex(12))).setToolTipText("Edit the description and clues");
 	}
 
 	private class MyAction extends AbstractAction{

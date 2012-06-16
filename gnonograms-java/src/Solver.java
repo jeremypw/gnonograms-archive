@@ -44,11 +44,7 @@ import static java.lang.System.out;
 	private boolean debug;
 	private boolean testColumn;
 	private int testIdx;
-
-	//public signal void updateWorkingGridFromSolver();
-	//public signal void showprogress(int guesses);
-
-	int GUESSESBEFOREASK=50000;
+	int GUESSESBEFOREASK=10000;
 
 
 	public Solver(boolean testing, boolean debug, boolean testColumn, int testIdx, Controller control){
@@ -66,11 +62,8 @@ import static java.lang.System.out;
 		//
 	}
 
-  //public Solver(){
-    //Solver(false,false,false-1);
-  //}
-
 	public void setDimensions(int r, int c)	{
+    //out.println("Solver set dimensions "+r+","+c);
 		rows=r; cols=c;
 	}
 

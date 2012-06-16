@@ -81,8 +81,10 @@ public class Controller {
     setSolving(false);
     haveSolution=false;
     updateAllLabelText();
-    view.redrawGrid();
+    view.clearInfoBar();
+    view.validate();
   }
+
   public void restartGame(){
     model.blankWorking();
     setSolving(true);
@@ -92,30 +94,33 @@ public class Controller {
   public void randomGame(double grade){
     int passes=-1;
     newGame();
-    while (grade>0) {
-      int count=0;
-      model.setGrade(grade);
-      while (count<30){
-        count++;
-        model.generateRandomPattern();
-        updateAllLabelText();
-        prepareToSolve(false,false,false);
-        passes=solver.solveIt(false,false,false);
-        if (passes>grade-1 && passes<grade+3) break;
-      }
-      if (count==30) {out.println("Failed to generate - try reducing grade"); grade--;}
-      else {
-        setSolving(true);
-        haveSolution=true;
-        break;
-      }
+    int count=0;
+    model.setGrade(grade);
+    int limit=(int)(20+10*grade);
+    while (count<limit){
+      count++;
+      model.generateRandomPattern();
+      updateAllLabelText();
+      prepareToSolve(false,false,false);
+      passes=solver.solveIt(false,false,false);
+      if (passes>0) break;
     }
-    out.println("Passes "+passes);
+    if (count==limit) {}
+    else {
+      setSolving(true);
+      haveSolution=true;
+    }
+    if (haveSolution){
     view.setScore(passes+" ");
     view.setName("Random");
     view.setAuthor("Computer");
     view.setLicense("GPL");
     view.setCreationDate("Today");
+    }
+    else {
+      view.setScore("999999");
+      Utils.showWarningDialog("Failed to generate puzzle - try reducing grade or grid size");
+    }
   }
 
   public void loadGame(){
@@ -225,10 +230,8 @@ public class Controller {
 			}
 		}
 		else startgrid=null;
-
 		for (int i =0; i<this.rows; i++) rowClues[i]=view.getClueText(i,false);
 		for (int i =0; i<this.cols; i++) columnClues[i]=view.getClueText(i, true);
-
 		solver.initialize(rowClues, columnClues, startgrid);
   }
 
@@ -242,7 +245,7 @@ public class Controller {
     }
   private void setDisplayGridFromSolver()	{
 		for (int r=0; r<this.rows; r++) {
-			for(int c=0; c<=this.cols; c++) {
+			for(int c=0; c<this.cols; c++) {
 				model.setDataFromCell(solver.getCell(r,c));
 			}
 		}

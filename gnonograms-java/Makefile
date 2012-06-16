@@ -30,7 +30,6 @@ SRC_FILES = \
 	GameEditor.java \
 	GameLoader.java \
 	GameSaver.java \
-	GameState.java \
 	GnonogramLabel.java \
 	LabelBox.java \
 	Gnonograms.java \
@@ -55,7 +54,7 @@ all: $(PROGRAM)
 
 $(PROGRAM): $(EXPANDED_SRC_FILES) Makefile
 ############################################################
-	$(JAVAC) -Xlint -d $(BUILD_DIR) $(EXPANDED_SRC_FILES)
+	$(JAVAC) -Xlint -d  $(BUILD_DIR) $(EXPANDED_SRC_FILES)
 
 jar: $(PROGRAM)
 ###############

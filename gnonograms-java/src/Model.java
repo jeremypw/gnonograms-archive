@@ -13,7 +13,6 @@ public class Model {
 		rows = 10; cols = 10; //Must call set dimensions before use
 		solutionData=new My2DCellArray(Resource.MAXIMUM_GRID_SIZE,Resource.MAXIMUM_GRID_SIZE,Resource.CELLSTATE_EMPTY);
 		workingData=new My2DCellArray(Resource.MAXIMUM_GRID_SIZE,Resource.MAXIMUM_GRID_SIZE,Resource.CELLSTATE_UNKNOWN);
-		//arr = new int[Resource.MAXIMUM_GRID_SIZE];
 		displayData = solutionData;
   }
 
@@ -30,6 +29,7 @@ public class Model {
 	}
 
 	public void setDimensions(int r, int c){
+    //out.println("Model set dimensions "+r+","+c);
 		this.rows=r;this.cols=c;
     solutionData.resize(r,c); workingData.resize(r,c);
     generator=new RandomPatternGenerator(r,c);
@@ -85,26 +85,20 @@ public class Model {
     }
 
     private int calculatemaximumBlockSize(double lengthOfRegion, double grade){
-      double max=1+(int)((lengthOfRegion-1)*(1.0-(grade/Resource.MAXIMUM_GRADE)));
+      double max=3+(int)((lengthOfRegion-1)*(1.0-(grade/Resource.MAXIMUM_GRADE)));
       if (max>lengthOfRegion)max=lengthOfRegion;
       return (int)max;
     }
 
     protected void setMaximumBlockSizes(double grade){
       maximumColumnBlockSize=calculatemaximumBlockSize(rows2D,grade);
-      //out.println("Max Col Block "+maximumColumnBlockSize);
       maximumRowBlockSize=calculatemaximumBlockSize(cols2D,grade);
-      //out.println("Max Col Block "+maximumColumnBlockSize);
     }
 
     protected void setGrade(double grade){
-      //out.println("Grade set to "+grade);
       setMaximumBlockSizes(grade);
-      //baselineOffset=(int)(Resource.MAXIMUM_GRADE-grade)-10;
-      minimumColumnFreedom = 2+(int)((rows*grade)/(Resource.MAXIMUM_GRADE*4));
-      //out.println("min col freedom: "+minimumColumnFreedom);
-      minimumRowFreedom = 2+(int)((cols*grade)/(Resource.MAXIMUM_GRADE*4));
-      //out.println("min row freedom = "+minimumRowFreedom);
+      minimumColumnFreedom = 1+(int)((rows*grade)/(Resource.MAXIMUM_GRADE*4));
+      minimumRowFreedom = 1+(int)((cols*grade)/(Resource.MAXIMUM_GRADE*4));
     }
 
     protected void generateBasicPattern(){
@@ -122,15 +116,15 @@ public class Model {
 
     private int[] fillRegion (int sizeOfRegion, int[] region, int distanceFromCenter, int maximumBlockSize){
       int p=0, blockSize, max;
-      //int baseline = Math.max(0,distanceFromCenter-baselineOffset);
       int cellState;
       boolean fill;
-      while (p<sizeOfRegion){
+      assert sizeOfRegion<=region.length;
+      while (p<sizeOfRegion-1){
         fill=getRandomInteger(0,100)>50;
         // random length up to remaining space but not larger than
         max=fill ? maximumBlockSize : (sizeOfRegion-maximumBlockSize);
         blockSize=Math.min(getRandomInteger(1,sizeOfRegion-1-p),max);
-        //out.println("Block Size "+blockSize+" max: "+max+" p "+p);
+        //out.println("Fill is "+fill+" Block Size "+blockSize+" max: "+max+" p "+p);
         if (fill){
           for (int i=0; i<blockSize; i++){
             region[p]=Resource.CELLSTATE_FILLED;

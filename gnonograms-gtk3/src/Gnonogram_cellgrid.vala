@@ -162,9 +162,9 @@ public class Gnonogram_CellGrid : DrawingArea
 				break;
 		}
 
-			pattern_matrix=Cairo.Matrix.identity();
-			pattern_matrix.translate(-x,-y);
-			cell_pattern.pattern.set_matrix(pattern_matrix);
+		pattern_matrix=Cairo.Matrix.identity();
+		pattern_matrix.translate(-x,-y);
+		cell_pattern.pattern.set_matrix(pattern_matrix);
 
 		draw_cell_body(_cr, cell_pattern, x,y, highlight, error, mark);
 	}
@@ -172,7 +172,6 @@ public class Gnonogram_CellGrid : DrawingArea
 
 	private void draw_cell_body(Cairo.Context _cr, CellPattern cp, double x, double y, bool highlight, bool error, bool mark)
 	{
-		//(this.get_window()).clear_area((int)x,(int)y, (int)_cell_body_width, (int)_cell_body_height);
 		_cr.set_line_width(0.5);
 		_cr.rectangle(x, y, _cell_body_width, _cell_body_height);
 		_cr.set_source(cp.pattern);

@@ -64,10 +64,10 @@ class LabelBox extends JPanel{
     Font f=new Font("Arial",Font.BOLD,size);
     int boxWidth, boxHeight;
     if (isColumn){
-      boxHeight=(int)(0.6*size*otherSize);
+      boxHeight=(int)(0.5*size*otherSize);
       boxWidth=(int)(size*1.4);
     }else{
-      boxWidth=(int)(0.4*size*otherSize);
+      boxWidth=(int)(0.3*size*otherSize);
       boxHeight=(int)(size*1.4);
     }
     //out.println("Is Column"+isColumn+" Dimensions: "+ boxWidth+","+boxHeight);
