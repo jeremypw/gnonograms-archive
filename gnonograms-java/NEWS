@@ -1,3 +1,15 @@
+Gnonograms-java - version 0.4
+*****************************
+June 17, 2012 Tweak font and clue label sizing algorithms
+              Count errors when solving manually (but not indicate location)
+              Load working position
+              Insert copyright notices
+June 18, 2012 Implement undo/redo
+              Various bug fixes
+              Simple About box
+              Jar uploaded
+
+
 Gnonograms-java - version 0.3
 *******************************
 June 10, 2012 Added information panel.
@@ -6,6 +18,7 @@ June 16,2012  Added tooltips to toolbar
               Visible cursor on grid (highlight cell)
               Keyboard control of cell cursor
               Keyboard entry of cell status
+              Jar file uploaded
 
 Gnonograms-java - version 0.2
 *******************************

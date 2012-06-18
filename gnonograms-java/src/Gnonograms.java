@@ -1,7 +1,6 @@
-/*
- * Gnonograms.java
- *
- * Copyright 2012 Jeremy Paul Wootten <jeremy@jeremy-laptop>
+/* Gnonograms class for Gnonograms-java
+ * Main entry point.
+ * Copyright 2012 Jeremy Paul Wootten <jeremywootten@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,11 +25,10 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 public class Gnonograms {
 
-	public static void main (String args[]) {
+  public static void main (String args[]) {
     try {
-            // Set System L&F
-        UIManager.setLookAndFeel(
-            UIManager.getSystemLookAndFeelClassName());
+        // Set System L&F
+        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
     }
     catch (UnsupportedLookAndFeelException e) {
        // handle exception
@@ -44,7 +42,7 @@ public class Gnonograms {
     catch (IllegalAccessException e) {
        // handle exception
     }
-		new Controller(10,15);
-	}
+    new Controller(10,15); //default size.  TODO store user preference
+  }
 }
 

@@ -1,5 +1,5 @@
-/* Permutator class for gnonograms-java
- * Currently on a stub.  Used for advanced solver
+/* Move class for gnonograms-java
+ * Structure for recording moves during solving puzzle
  * Copyright 2012 Jeremy Paul Wootten <jeremywootten@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -19,14 +19,16 @@
  *
  *
  */
- public class Permutor {
-  public int start;
-  public boolean valid=false;
-  public Permutor(int start, int length, String clue){
-  }
-  public void initialise(){}
-
-  public boolean next(){return false;}
-
-  public int[] get(){return null;}
+ public class Move {
+	protected int previousState;
+	protected int replacementState;
+	protected int row;
+	protected int col;
+	private static final long serialVersionUID = 1;
+	protected Move(Cell newCell, int previousState){
+		this.previousState=previousState;
+		this.replacementState=newCell.state;
+		this.row=newCell.row;
+		this.col=newCell.col;
+	}
 }

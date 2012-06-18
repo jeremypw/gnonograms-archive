@@ -18,7 +18,7 @@
 # *  Author:
 # * 	Jeremy Wootten <jeremwootten@gmail.com>
 PROGRAM=gnonograms-java
-VERSION=0.3.0
+VERSION=0.4.0
 
 JAVAC=javac
 JAR=jar
@@ -34,6 +34,8 @@ SRC_FILES = \
 	LabelBox.java \
 	Gnonograms.java \
 	Model.java \
+	Move.java \
+	MoveList.java \
 	My2DCellArray.java \
 	Permutor.java \
 	Region.java \

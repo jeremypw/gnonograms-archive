@@ -5,13 +5,15 @@
   * Introduction
    Gnonograms-java is an implementation in Java of the Japanese logic puzzle "Nonograms",   also known as "Tsunami", "Griddlers" .....". The object of the game is to discover the pattern in the grid which is encoded by the clues which are give for each row and column. Each clue is a series of numbers which represent blocks of filled in cells in the corresponding row or column.  Each number indicates how many cells are in the block it represents.  Each block must be separated by at least one empty cell from neighbouring blocks.  The order of the numbers in the clue shows the order in which the blocks appear in the row or column.
 
-  * Main Features (version 0.1)
+  * Main Features (version 0.4)
     * Design nonogram puzzles manually by painting
     * Automatically generate simple puzzles
     * Solve puzzles manually
+    * Undo/redo moves
+    * Enter/edit puzzle information and clues
     * Solve simple puzzles by computer
     * Save puzzles and partially completed puzzles
-    * Handles puzzle grids up to 60 X 60 (practical limit depends on screen size)
+    * Handles puzzle grids up to 35 X 35 (practical limit depends on screen size)
 
   * Installation & Licensing
 

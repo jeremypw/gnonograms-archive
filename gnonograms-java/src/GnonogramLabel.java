@@ -1,3 +1,24 @@
+/* GnonogramLabel class for Gnonograms-java
+ * Displays a clue in correct orientation
+ * Copyright (C) 2012  Jeremy Wootten
+ *
+  This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License along
+    with this program; if not, write to the Free Software Foundation, Inc.,
+    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ *
+ *  Author:
+ *  Jeremy Wootten <jeremwootten@gmail.com>
+ */
 import javax.swing.JLabel;
 
 public class GnonogramLabel extends JLabel{
@@ -27,7 +48,7 @@ public class GnonogramLabel extends JLabel{
     else super.setText(horizontalString(text));
   }
 
-	private String verticalString (String s){
+  private String verticalString (String s){
     String[] sa=s.split(Resource.BLOCKSEPARATOR);;
     StringBuilder sb=new StringBuilder("<html><P align='right'><b>");
     for (String ss : sa){
@@ -36,7 +57,7 @@ public class GnonogramLabel extends JLabel{
     sb.append("</b></P></html>");
     return sb.toString();
   }
-	private String horizontalString (String s){
+  private String horizontalString (String s){
     return "<html><b>"+s+"</b></html>";
   }
 

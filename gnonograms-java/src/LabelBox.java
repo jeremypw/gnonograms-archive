@@ -1,7 +1,6 @@
-/*
- * LabelBox.java
- *
- * Copyright 2012 Jeremy Paul Wootten <jeremy@jeremy-laptop>
+/* LabelBox class for gnonograms-java
+ * Holds and manages clue labels
+ * Copyright 2012 Jeremy Paul Wootten <jeremywootten@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,70 +28,56 @@ import java.awt.GridLayout;
 import java.awt.ComponentOrientation;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Dimension;
 
 import static java.lang.System.out;
 
 class LabelBox extends JPanel{
-	private static final long serialVersionUID = 1;
-	GnonogramLabel[] labels;
+  private static final long serialVersionUID = 1;
+  
+  GnonogramLabel[] labels;
+  int no_labels;
+  boolean isColumn;
+  Controller control;
 
-	int no_labels;
-	boolean isColumn;
-	Controller control;
+  public LabelBox(int no_labels, boolean isColumn, Controller control){
+    this.no_labels=no_labels;
+    this.isColumn=isColumn;
+    this.control=control;
 
-	public LabelBox(int no_labels, boolean isColumn, Controller control)
-	{
-		this.no_labels=no_labels;
-		this.isColumn=isColumn;
-		this.control=control;
-
-		if (isColumn)	this.setLayout(new GridLayout(1,no_labels,0,0));
-		else	this.setLayout(new GridLayout(no_labels,1,0,0));
+    if (isColumn) this.setLayout(new GridLayout(1,no_labels,0,0));
+    else  this.setLayout(new GridLayout(no_labels,1,0,0));
     this.setBorder(BorderFactory.createLineBorder(Color.black));
 
-		GnonogramLabel l;
     labels=new GnonogramLabel[no_labels];
     for (int i=0; i<no_labels; i++) {
-			l=new GnonogramLabel("0", isColumn);
-			labels[i]=l;
-			this.add(l);
-		}
-	}
-
-  public void setFontSize(int size, int otherSize){
-    Font f=new Font("Arial",Font.BOLD,size);
-    int boxWidth, boxHeight;
-    if (isColumn){
-      boxHeight=(int)(0.5*size*otherSize);
-      boxWidth=(int)(size*1.4);
-    }else{
-      boxWidth=(int)(0.3*size*otherSize);
-      boxHeight=(int)(size*1.4);
+      labels[i]=new GnonogramLabel("0", isColumn);
+      this.add(labels[i]);
     }
-    //out.println("Is Column"+isColumn+" Dimensions: "+ boxWidth+","+boxHeight);
-    for (int i=0; i<no_labels; i++) {
-			labels[i].setFont(f);
-      labels[i].setPreferredSize(new Dimension(boxWidth, boxHeight));
-		}
   }
 
-	public void setClueText(int l, String text)
-	{
-		if (l>=no_labels || l<0) return;
-		if (text==null) text="?";
-		labels[l].setText(text);
-	}
+  public void setFontAndSize(Font f, int width, int height){
+    for (int i=0; i<no_labels; i++) {
+      labels[i].setFont(f);
+      labels[i].setPreferredSize(new Dimension(width, height));
+    }
+  }
+
+  public void setClueText(int l, String text){
+    if (l>=no_labels || l<0) return;
+    if (text==null) text="?";
+    labels[l].setText(text);
+  }
 
   public void setLabelToolTip(int l, int freedom){
     labels[l].setToolTipText("Freedom="+freedom);
   }
 
-	public String getClueText(int l)
-	{
-		if (l>=no_labels || l<0) return "";
-		else return labels[l].getOriginalText();
-	}
+  public String getClueText(int l){
+    if (l>=no_labels || l<0) return "";
+    else return labels[l].getOriginalText();
+  }
 
   public String getClues(){
     StringBuilder sb=new StringBuilder("");
