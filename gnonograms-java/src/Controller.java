@@ -106,33 +106,6 @@ public class Controller {
     }
   }
 
-  public void randomGame(double grade){
-    newGame();
-    model.setGrade(grade);
-    
-    int passes=-1, count=0, limit=(int)(20+10*grade);
-    while (count<limit){
-      count++;
-      model.generateRandomPattern();
-      updateAllLabelText();
-      prepareToSolve(false,false,false);
-      passes=solver.solveIt(false,false,false); //only simple solver
-      if (passes>0) break;
-    }
-    if (count<limit){
-      setSolving(true);
-      validSolution=true;
-      view.setScore(passes+" ");
-      view.setName("Random");
-      view.setAuthor("Computer");
-      view.setLicense("GPL");
-      view.setCreationDate("Today");
-    }
-    else {
-      view.setScore("999999");
-      Utils.showWarningDialog("Failed to generate puzzle - try reducing grade or grid size");
-    }
-  }
 
   public void loadGame(){
     GameLoader gl=new GameLoader(view);
@@ -223,6 +196,40 @@ public class Controller {
     setSolving(isSolving);
   }
 
+  public void randomGame(double grade){
+    newGame();
+    model.setGrade(grade);
+    
+    int passes=-1, count=0, limit=(int)(20+10*grade);
+    out.println("limit "+limit);
+    while (count<limit){
+      count++;
+      model.generateRandomPattern();
+      updateAllLabelText();
+      prepareToSolve(false,false,false);
+      passes=solver.solveIt(false,false,false); //only simple solver
+      out.println("COunt "+count+" passes "+passes);
+      if (passes>0) break;
+    }
+    if (count<limit){
+      out.println("count < limit - passes"+passes);
+      updateSolutionGridFromSolver();
+      setSolving(true);
+      validSolution=true;
+      view.setScore(passes+" ");
+      view.setName("Random");
+      view.setAuthor("Computer");
+      view.setLicense("GPL");
+      view.setCreationDate("Today");
+    }
+    else {
+      out.println("count >=limit - passes"+passes);
+      view.setScore("999999");
+      validSolution=false;
+      Utils.showWarningDialog("Failed to generate puzzle - try reducing grade or grid size");
+    }
+  }
+
   public void userSolveGame(){
     prepareToSolve(true,false,false); //uses existing working grid as start point
     solveGame();
@@ -259,7 +266,6 @@ public class Controller {
   }
 
   private void prepareToSolve(boolean use_startgrid, boolean use_advanced, boolean use_ultimate){
-    setSolving(true);
     String[] rowClues= new String[this.rows];
     String[] columnClues= new String[this.cols];
     My2DCellArray startgrid;
