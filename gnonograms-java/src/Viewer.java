@@ -43,7 +43,7 @@ import java.awt.Container;
 import java.awt.GridLayout;
 import java.awt.GridBagLayout;
 import java.awt.BorderLayout;
-
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.ComponentOrientation;
 import java.awt.Font;
@@ -82,6 +82,7 @@ public class Viewer extends JFrame {
     this.setDefaultCloseOperation(EXIT_ON_CLOSE);
     this.setTitle("Gnonograms");
     this.setResizable(false);
+    this.setMaximumSize(new Dimension(1200,750));
     cluePointSize=20;
 
     scaledLogo=createImageIcon("images/gnonograms3-256.png","Logo");
@@ -215,7 +216,8 @@ public class Viewer extends JFrame {
   public void zoomFont(int changeInPointSize){
     if (changeInPointSize>0)cluePointSize++;
     else cluePointSize--;
-    if(cluePointSize<4) cluePointSize=4;
+    if(cluePointSize<Resource.MINIMUM_CLUE_POINTSIZE) cluePointSize=Resource.MINIMUM_CLUE_POINTSIZE;
+    if(cluePointSize>Resource.MAXIMUM_CLUE_POINTSIZE) cluePointSize=Resource.MAXIMUM_CLUE_POINTSIZE;
     setClueFontAndSize(cluePointSize);
     this.pack();
     setVisible(true);
