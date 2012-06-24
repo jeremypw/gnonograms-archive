@@ -20,6 +20,7 @@
  *
  */
  import static java.lang.System.out;
+ import java.util.Random;
 
 public class Model {
   private int rows;
@@ -29,6 +30,7 @@ public class Model {
   private My2DCellArray workingData; //display when solving
   private RandomPatternGenerator generator;
   private int[] temp;
+  private static Random rand = new Random(System.nanoTime());
 
   public Model(){
     rows = 10; cols = 10; //Must call set dimensions before use
@@ -83,8 +85,8 @@ public class Model {
     int[] temp;
     double rows2D, cols2D, middleOfColumn, middleOfRow;
     int maximumColumnBlockSize, maximumRowBlockSize;
-    int minimumRowFreedom, minimumColumnFreedom;
-
+    int minimumColumnFreedom, minimumRowFreedom;
+       
     public RandomPatternGenerator(int r, int c){
       rows2D=(double)(r);
       cols2D=(double)(c);
@@ -131,10 +133,12 @@ public class Model {
       boolean fill;
       assert sizeOfRegion<=region.length;
       while (p<sizeOfRegion-1){
-        fill=getRandomInteger(0,100)>50;
+//        fill=getRandomInteger(0,100)>50;
+        fill=(rand.nextInt(100)>50);
         // random length up to remaining space but not larger than
         max=fill ? maximumBlockSize : (sizeOfRegion-maximumBlockSize);
-        blockSize=Math.min(getRandomInteger(1,sizeOfRegion-1-p),max);
+//        blockSize=Math.min(getRandomInteger(1,sizeOfRegion-1-p),max);
+        blockSize=Math.min(1+rand.nextInt(sizeOfRegion-p),max);
         if (fill){
           for (int i=0; i<blockSize; i++){
             region[p]=Resource.CELLSTATE_FILLED;
@@ -177,13 +181,15 @@ public class Model {
     degreesOfFreedom=sizeOfRegion-filledCells-filledBlocks+1;
 
     if (degreesOfFreedom>sizeOfRegion){//completely empty - fill one cell
-      region[getRandomInteger(0,sizeOfRegion-1)]=Resource.CELLSTATE_FILLED;
+//      region[getRandomInteger(0,sizeOfRegion-1)]=Resource.CELLSTATE_FILLED;
+      region[rand.nextInt(sizeOfRegion)]=Resource.CELLSTATE_FILLED;
     }
     else{ // empty cells until reach min freedom
       int count=0;
       while (degreesOfFreedom<mindf && count<30){
         count++;
-        int i=getRandomInteger(0,sizeOfRegion-1);
+        //int i=getRandomInteger(0,sizeOfRegion-1);
+        int i=rand.nextInt(sizeOfRegion);
         if (region[i]==Resource.CELLSTATE_FILLED) {
           region[i]=Resource.CELLSTATE_EMPTY;
           degreesOfFreedom++;
@@ -192,11 +198,12 @@ public class Model {
     }
     return region;
   }
-    private int getRandomInteger(int lower, int upper){
-      double rand=Math.random();
-      double range=(double)(upper-lower);
-      return lower + (int)(range*rand);
-    }
+    //private int getRandomInteger(int lower, int upper){
+      //double rand=Math.random();
+      //double range=(double)(upper-lower);
+      //return lower + (int)(range*rand);
+    //}
+    
   }
 
   public String displayDataToString(){

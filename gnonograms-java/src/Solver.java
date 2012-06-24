@@ -62,9 +62,7 @@ import static java.lang.System.out;
     rows=r; cols=c;
     grid=new My2DCellArray(r, c);
     regions=new Region[r+c];
-
     for (int i=0;i<regions.length;i++) regions[i]=new Region(grid);
-
   }
 
   public boolean initialize(String[] rowclues, String[] colclues, My2DCellArray startgrid){
@@ -130,7 +128,7 @@ import static java.lang.System.out;
     //Solver must be initialised with current state of puzzle before calling.
     int   pass=1;
     while (pass<=30){
-      //cycle through regions until one of them is changed then returns
+      //cycle through regions until one of them is changed then return
       //that region index.
       for (int i=0; i<regionCount; i++){
         if (regions[i].isCompleted) continue;
@@ -155,27 +153,35 @@ import static java.lang.System.out;
 
   private int simplesolver(boolean debug, boolean logerror){
     boolean changed=true;
-    int pass=1;
-    while (changed && pass<30){
-      //keep cycling through regions while at least one of them is changing (up to 30 times)
+    Region r;
+    int pass=1, start=regionCount-1;//, count=0;
+    while (changed && pass<50){
+      //keep cycling through regions while at least one of them is changing
+      //if a change occurs skip to intersecting row/column that changed.
       changed=false;
-      for (int i=0; i<regionCount; i++){
-        if (regions[i].isCompleted) continue;
-        if (regions[i].solve(debug,false)) changed=true;
-        if (debug ||(logerror && regions[i].inError)){
-          if(regions[i].message!="") out.println("Region - "+i+": "+regions[i].message+"\n");
+      for (int i=start; i>=0; i--){
+        r=regions[i];
+        //count++;
+        if (r.isCompleted) continue;
+        if (r.solve(debug,false)){
+          changed=true;
+//          if (rows>1 && r.isColumn) {i=r.lastChangedCellIndex+1;}
+//         else if (cols>1 && !r.isColumn) {i=r.lastChangedCellIndex+rows+1;}
         }
-        if (regions[i].inError) return -1;
+        //if (debug ||(logerror && regions[i].inError)){
+          //if(regions[i].message!="") out.println("Region - "+i+": "+regions[i].message+"\n");
+        //}
+        else if (r.inError) return -1;
       }
-
       pass++;
-      if (debug){
-        control.updateWorkingGridFromSolver();
-        if (!Utils.showConfirmDialog("Simple solver pass "+pass+" ... continue?")) return 0;
-      }
+      //if (debug){
+        //control.updateWorkingGridFromSolver();
+        //if (!Utils.showConfirmDialog("Simple solver pass "+pass+" ... continue?")) return 0;
+      //}
     }
+    //out.println("Regions visited "+count);
     if (solved()) return pass;
-    if (pass>30) Utils.showWarningDialog("Simple solver - too many passes\n");
+    //if (pass>30) Utils.showWarningDialog("Simple solver - too many passes\n");
     return 0;
   }
 

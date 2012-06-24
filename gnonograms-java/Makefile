@@ -26,6 +26,7 @@ JAR=jar
 SRC_FILES = \
 	Cell.java \
 	CellGrid.java \
+	Config.java \
 	Controller.java \
 	GameEditor.java \
 	GameLoader.java \
@@ -56,7 +57,7 @@ all: $(PROGRAM)
 
 $(PROGRAM): $(EXPANDED_SRC_FILES) Makefile
 ############################################################
-	$(JAVAC) -Xlint -d  $(BUILD_DIR) $(EXPANDED_SRC_FILES)
+	$(JAVAC) -d  $(BUILD_DIR) $(EXPANDED_SRC_FILES)
 
 jar: $(PROGRAM)
 ###############

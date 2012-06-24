@@ -40,6 +40,7 @@ import javax.imageio.ImageIO;
 import java.awt.Graphics;
 import java.awt.Color;
 import java.awt.Container;
+import java.awt.Component;
 import java.awt.GridLayout;
 import java.awt.GridBagLayout;
 import java.awt.BorderLayout;
@@ -53,6 +54,8 @@ import java.awt.image.BufferedImage;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import java.io.File;
 import java.io.IOException;
@@ -104,6 +107,14 @@ public class Viewer extends JFrame {
     contentPane.add(toolbarPane,BorderLayout.PAGE_START);
     contentPane.add(puzzlePane,BorderLayout.CENTER);
     contentPane.add(infoPane,BorderLayout.PAGE_END);
+    
+    addWindowListener(new WindowAdapter() {
+        @Override
+        public void windowClosing(WindowEvent e) {
+          out.println("Window closing");
+            quit();
+        }
+    });
   }
 
   public String getClueText(int idx, boolean isColumn){
@@ -112,9 +123,10 @@ public class Viewer extends JFrame {
   }
   public double getGrade(){
     Object g=gradeSpinner.getValue();
-    if (g==null || !(g instanceof Double))return 5.0;
+    if (g==null || !(g instanceof Double))return Resource.DEFAULT_GRADE;
     else return ((Double)(g)).doubleValue();
   }
+  public void setGrade(double grade){gradeSpinner.setValue(grade);}
   public String getScore() {return scoreLabel.getInfo();}
   public void setScore(String score){scoreLabel.setInfo(score);}
   public String getName() {return nameLabel.getInfo();}
@@ -142,6 +154,8 @@ public class Viewer extends JFrame {
     if (d==null) return;
     else control.resize(d[0],d[1]);
   }
+  
+  protected void quit(){control.quit();}
 
   private void editGame(){
     GameEditor ge=new GameEditor(this,rows, cols);
@@ -170,6 +184,7 @@ public class Viewer extends JFrame {
   private int[] getDimensions(int r, int c){
     int[] dimensions;
     DimensionsDialog dialog=new DimensionsDialog(this,r,c);
+    dialog.setLocationRelativeTo((Component)this);
     dialog.setVisible(true);
     if (dialog.wasCancelled) dimensions=null;
     else dimensions=dialog.getDimensions();
@@ -201,7 +216,7 @@ public class Viewer extends JFrame {
     this.pack();
   }
   private int calculateCluePointSize(){
-    return Resource.MINIMUM_CLUE_POINTSIZE+(4*Resource.MAXIMUM_CLUE_POINTSIZE)/(Math.max(rows,cols));
+    return Resource.MINIMUM_CLUE_POINTSIZE+(3*Resource.MAXIMUM_CLUE_POINTSIZE)/(Math.max(rows,cols));
   }
   private void setClueFontAndSize(int pointSize){
     Font f=new Font("Arial",Font.BOLD,cluePointSize);

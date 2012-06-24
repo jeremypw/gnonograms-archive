@@ -52,6 +52,7 @@ public class Region {
   public boolean inError;
   public boolean isCompleted=false;
   private boolean debug;
+  //public int lastChangedCellIndex=-1;
   public int index;
 
   private boolean completedStore;
@@ -156,6 +157,7 @@ public class Region {
       isCompleted=true;
     }
     else  initialfix();
+    //lastChangedCellIndex=
     tagstostatus(); putstatus();
   }
 
@@ -206,6 +208,7 @@ public class Region {
       count++;
       fullfix();
       if (inError) break;
+      //lastChangedCellIndex=
       tagstostatus();
       if (totalsChanged()){
         if(inError) break;
@@ -1191,19 +1194,19 @@ public class Region {
     }
   }
 
-  private boolean tagstostatus(){
+  private void tagstostatus(){
     //out.println("tags to status\n");
-    boolean changed=false;
+   //int changed=-1;//false;
     for (int i=0;i<nCells; i++){
       // skip cells not unknown or with more than one possibility (including empty)
       if (status[i]!=Resource.CELLSTATE_UNKNOWN) continue;
       if (!tags[i][canBeEmptyPointer]){
         status[i]=Resource.CELLSTATE_FILLED;
-        changed=true;
+        //changed=i;//true;
         continue;
       }
       if(countownersandempty(i)>1) continue;
-      changed=true;
+      //changed=i;//true;
       //Either the 'can be empty' flag is set and there are no owners
       //(ie cell is empty) or there is one owner.
       if (tags[i][canBeEmptyPointer]){
@@ -1211,7 +1214,7 @@ public class Region {
       }
       else status[i]=Resource.CELLSTATE_FILLED;
     }
-    return changed;
+    //return changed;
   }
 
   private void recordError(String method, String errmessage){

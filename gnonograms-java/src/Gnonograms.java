@@ -42,7 +42,7 @@ public class Gnonograms {
     catch (IllegalAccessException e) {
        // handle exception
     }
-    new Controller(10,15); //default size.  TODO store user preference
+    new Controller(); 
   }
 }
 

@@ -30,18 +30,21 @@ public class Controller {
   private Model model;
   private Solver solver;
   private MoveList history;
+  private Config config;
   private int rows, cols;
   public boolean isSolving;
   private boolean validSolution;
   private double grade;
 
-  public Controller(int r, int c) {
+  public Controller() {
     model=new Model();
     solver=new Solver(false,false,false,0,this);
     view=new Viewer(this);
     history=new MoveList();
-    grade=5.0;
-    init(r,c);
+    config=new Config();
+    view.setGrade(config.getGrade());
+    init(config.getRows(),config.getCols());
+
   }
 
   public void init(int r, int c){
@@ -50,8 +53,6 @@ public class Controller {
     solver.setDimensions(r,c);
     view.setDimensions(r,c);
     newGame();
-    //setSolving(false);
-    //validSolution=true;
   }
 
   public void resize(int r, int c){
@@ -68,15 +69,18 @@ public class Controller {
   public void setDataFromCell(Cell c){
     history.recordMove(c,model.getDataFromRC(c.getRow(),c.getColumn()));
     model.setDataFromCell(c);
-    if(isSolving){
-      if(model.countUnknownCells()==0){
-        if(model.countErrors()==0){
-          setSolving(false);
-          view.redrawGrid();
-          Utils.showInfoDialog("Congratulations!");
-        }
-      }
+    if(isSolving && model.countUnknownCells()==0 && model.countErrors()==0){
+      setSolving(false);
+      view.redrawGrid();
+      Utils.showInfoDialog("Congratulations!");
     }
+  }
+  
+  public void quit(){
+      config.setRows(rows);
+      config.setCols(cols);
+      config.setGrade((int)view.getGrade());
+      config.saveProperties();
   }
 
   public void newGame(){
@@ -144,12 +148,12 @@ public class Controller {
     view.setLicense(gl.license);
     this.resize(gl.rows,gl.cols);
 
-    out.println("Has solution "+gl.hasSolution+" Has working "+gl.hasWorking);
+    //out.println("Has solution "+gl.hasSolution+" Has working "+gl.hasWorking);
     if (gl.hasSolution){
       model.useSolution();
       for (int i=0; i<this.rows; i++) model.setRowDataFromString(i,gl.solution[i]);
       updateAllLabelsFromModel(); this.validSolution=true;
-      out.println("Updated Solution from file");
+      //out.println("Updated Solution from file");
     }else {
       //Valid games either have Solution or Clues (or both)
       for (int i=0; i<this.rows; i++) view.setClueText(i,gl.rowClues[i],false);
@@ -163,16 +167,15 @@ public class Controller {
         model.setRowDataFromString(i,gl.working[i]);
       }
     }
-    if (gl.state.contains("SETTING")) setSolving(false);
-    else setSolving(true);
+    setSolving(gl.state.contains("SOLVING"));
     view.redrawGrid();
     gl.close();
   }
 
   public void saveGame(){
     GameSaver gs=new GameSaver(view);
-    int result=gs.getResult();
-    if (result>0) return;
+    if (gs.getResult()>0) return;
+    
     try {gs.openDataOutputStream();}
     catch (IOException e){out.println("Error while opening game file: "+e.getMessage());return;}
 
@@ -199,20 +202,21 @@ public class Controller {
   public void randomGame(double grade){
     newGame();
     model.setGrade(grade);
-    
+    //Try to generate a solvable pattern
     int passes=-1, count=0, limit=(int)(20+10*grade);
-    out.println("limit "+limit);
+    //out.println("limit "+limit);
     while (count<limit){
       count++;
       model.generateRandomPattern();
       updateAllLabelText();
       prepareToSolve(false,false,false);
       passes=solver.solveIt(false,false,false); //only simple solver
-      out.println("COunt "+count+" passes "+passes);
-      if (passes>0) break;
+      //out.println("COunt "+count+" passes "+passes);
+      if (passes>grade-2) break;
     }
-    if (count<limit){
-      out.println("count < limit - passes"+passes);
+    
+    if (count<limit){ //solvable pattern found
+      //out.println("count < limit - passes"+passes);
       updateSolutionGridFromSolver();
       setSolving(true);
       validSolution=true;
@@ -222,7 +226,7 @@ public class Controller {
       view.setLicense("GPL");
       view.setCreationDate("Today");
     }
-    else {
+    else { //timed out searching for solvable pattern
       out.println("count >=limit - passes"+passes);
       view.setScore("999999");
       validSolution=false;
