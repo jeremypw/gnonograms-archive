@@ -1,16 +1,3 @@
-import javax.swing.JTabbedPane;
-import javax.swing.JPanel;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JComponent;
-import javax.swing.JTextField;
-import javax.swing.JFrame;
-import javax.swing.JButton;
-import javax.swing.JScrollPane;
-
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
-import java.awt.BorderLayout;
 /* GameEditor class for Gnonograms-java
  * Keyboard Input puzzle description and clues
  * Copyright (C) 2012  Jeremy Wootten
@@ -33,6 +20,27 @@ import java.awt.BorderLayout;
  * 	Jeremy Wootten <jeremwootten@gmail.com>
  */
 
+import javax.swing.JTabbedPane;
+import javax.swing.JPanel;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JComponent;
+import javax.swing.JTextField;
+import javax.swing.JFrame;
+import javax.swing.JButton;
+import javax.swing.JScrollPane;
+import javax.swing.InputVerifier;
+import javax.swing.plaf.basic.BasicTextFieldUI;
+import javax.swing.UIManager;
+
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
+import java.awt.BorderLayout;
+import java.awt.Color;
+
+import java.lang.NumberFormatException;
+
+import static java.lang.System.out;
 import java.awt.GridLayout;
 import java.awt.Dimension;
 
@@ -43,7 +51,8 @@ public class GameEditor extends JDialog implements ActionListener{
   private static final long serialVersionUID = 1;
   private JComponent infoPane,rowPane,columnPane;
   private JTextField nameField, authorField, dateField, licenseField;
-  private JTextField[] rowClues, columnClues;
+  protected JButton okButton;
+  private ClueEditor[] clues;
   private int rows, cols;
   public boolean wasCancelled=false;
 
@@ -53,12 +62,15 @@ public class GameEditor extends JDialog implements ActionListener{
 		this.setLayout(new BorderLayout());
 		this.setPreferredSize(new Dimension(500,400));
 		JTabbedPane tp=new JTabbedPane();
+		clues=new ClueEditor[rows+cols];
 		tp.add("Information", createInfoPane());
-		tp.add("Row Clues",createRowCluePane());
-		tp.add("Column Clues", createColumnCluePane());
+		tp.add("Row Clues",createCluePane(false));
+		tp.add("Column Clues", createCluePane(true));
 
 		this.add(tp,BorderLayout.PAGE_START);
-		this.add(Utils.okCancelPanelFactory(this,"INFO_OK"),BorderLayout.PAGE_END);
+		JPanel temp=Utils.okCancelPanelFactory(this,"INFO_OK");
+		okButton=(JButton)(temp.getComponent(0));
+		this.add(temp,BorderLayout.PAGE_END);
 		this.pack();
 	}
 
@@ -96,38 +108,17 @@ public class GameEditor extends JDialog implements ActionListener{
 		return infoPane;
 	}
 
-	private JScrollPane createRowCluePane(){
-		JPanel rowCluePane=new JPanel(new GridLayout(0,1));
-		JPanel tempPanel;
-		JLabel tempLabel;
-		JScrollPane sp=new JScrollPane(rowCluePane);
-		sp.setPreferredSize(new Dimension(400,300));
-		rowClues=new JTextField[rows];
-		for (int r=0; r<rows; r++) {
-			rowClues[r]=new JTextField(25);
-			tempPanel=new JPanel(new BorderLayout());
-			tempLabel=new JLabel("Row Clue "+r);
-			tempPanel.add(tempLabel,BorderLayout.LINE_START);
-			tempPanel.add(rowClues[r],BorderLayout.LINE_END);
-			rowCluePane.add(tempPanel);
+	private JScrollPane createCluePane(boolean isColumn){
+
+		int offset=isColumn ? rows : 0;
+		int size=isColumn ? cols : rows;
+		JPanel CluePane=new JPanel(new GridLayout(0,1));
+		for (int i=0; i<size; i++) {
+			clues[offset+i]=new ClueEditor(i,isColumn);
+			CluePane.add(clues[offset+i]);
 		}
-		return sp;
-	}
-	private JScrollPane createColumnCluePane(){
-		JPanel columnCluePane=new JPanel(new GridLayout(0,1));
-		JPanel tempPanel;
-		JLabel tempLabel;
-		JScrollPane sp=new JScrollPane(columnCluePane);
+		JScrollPane sp=new JScrollPane(CluePane);
 		sp.setPreferredSize(new Dimension(400,300));
-		columnClues=new JTextField[cols];
-		for (int c=0; c<cols; c++) {
-			columnClues[c]=new JTextField(25);
-			tempPanel=new JPanel(new BorderLayout());
-			tempLabel=new JLabel("Column Clue "+c);
-			tempPanel.add(tempLabel,BorderLayout.LINE_START);
-			tempPanel.add(columnClues[c],BorderLayout.LINE_END);
-			columnCluePane.add(tempPanel);
-		}
 		return sp;
 	}
 
@@ -136,25 +127,76 @@ public class GameEditor extends JDialog implements ActionListener{
 	public void setCreationDate(String date){dateField.setText(date);}
 	public void setLicense(String license){licenseField.setText(license);}
 	public void setClue(int idx, String clue, boolean isColumn){
-		if(isColumn) columnClues[idx].setText(clue);
-		else rowClues[idx].setText(clue);
+		if(isColumn) clues[idx+rows].setClueText(clue);
+		else clues[idx].setClueText(clue);
 	}
-
-//TODO Validate format of clues as entered
 
 	public String getGameName(){return nameField.getText();}
 	public String getAuthor(){return authorField.getText();}
 	public String getCreationDate(){return dateField.getText();}
 	public String getLicense(){return licenseField.getText();}
 	public String getClue(int idx, boolean isColumn){
-		if(isColumn) return columnClues[idx].getText();
-		else return rowClues[idx].getText();
+		if(isColumn) return clues[idx+rows].getClueText();
+		else return clues[idx].getClueText();
 	}
 
 	public void actionPerformed(ActionEvent a){
 		String command=a.getActionCommand();
-		if (command=="INFO_OK") wasCancelled=false;
-		else wasCancelled=true;
+		wasCancelled=!(command.equals("INFO_OK"));
 		this.setVisible(false);
 	}
+	
+	private class ClueEditor extends JPanel{
+		private JTextField clueText;
+		public ClueEditor(int idx, boolean isColumn){
+			this.setLayout(new BorderLayout());
+			this.add(new JLabel((isColumn ? "Column " : "Row ")+String.valueOf(idx)),BorderLayout.LINE_START);
+			clueText=new JTextField(25);
+			clueText.setInputVerifier(new ClueVerifier());
+
+				
+			this.add(clueText,BorderLayout.LINE_END);
+		}
+		
+		public String getClueText(){return clueText.getText();}
+		public void setClueText(String clue){clueText.setText(clue);}
+		
+	}
+	
+	private class ClueVerifier extends InputVerifier{
+				@Override
+				public boolean verify(JComponent input){
+					boolean valid=false;
+					JTextField tf=(JTextField)input;
+					String[] sa=(tf.getText()).split(",");
+					int count=0, tokens=sa.length;
+					int[] blocks=new int[tokens];
+					for (String s: sa){
+						try{
+						blocks[count]=Integer.valueOf(s);
+						}
+						catch(NumberFormatException e){break;}
+						if ((blocks[count]==0) && (count>0 || tokens>1)) {
+							break;
+						}
+						count++;
+					}
+					if (count==tokens){
+					StringBuilder sb= new StringBuilder("");
+					for(int i : blocks){
+						sb.append(String.valueOf(i)+",");
+					}
+					tf.setText(sb.substring(0,sb.length()-1));
+					tf.setForeground(UIManager.getColor("TextField.foreground"));
+					valid=true;
+					}
+					else{
+						tf.setForeground(Color.red);
+						tf.repaint();
+						valid=false;
+					}
+					okButton.setEnabled(valid);
+					return valid;
+				}
+			}
 }

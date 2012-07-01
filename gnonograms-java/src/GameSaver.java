@@ -41,19 +41,19 @@ public class GameSaver extends JFileChooser {
     this.setFileFilter(new FileNameExtensionFilter("Gnonogram Puzzles","gno"));
     this.setDialogTitle("Save the puzzle");
     result=this.showSaveDialog(parent);
-    out.println("Result is "+result);
+    //out.println("Result is "+result);
   }
 
   public void openDataOutputStream() throws IOException{
       File f=this.getSelectedFile();
       String filename=f.getName();
-      out.println("Filename is "+filename);
-      out.println("filename.substring(filename.length()-4) is"+filename.substring(filename.length()-4));
+      //out.println("Filename is "+filename);
+      //out.println("filename.substring(filename.length()-4) is "+filename.substring(filename.length()-4));
       if (filename.length()<5 || (filename.substring(filename.length()-4)).compareTo(".gno")!=0) {
-    out.println("Renaming file to "+f.getPath()+".gno");
+    //out.println("Renaming file to "+f.getPath()+".gno");
     f=new File(f.getPath()+".gno");
       }
-      out.println("Opening file path "+f.getPath());
+      //out.println("Opening file path "+f.getPath());
       dataStream=new BufferedWriter(new FileWriter(f));
   }
 

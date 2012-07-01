@@ -23,6 +23,7 @@
 import static java.lang.System.out;
 import java.io.IOException;
 import java.io.FileNotFoundException;
+import java.util.Date;
 
 public class Controller {
 
@@ -34,17 +35,20 @@ public class Controller {
   private int rows, cols;
   public boolean isSolving;
   private boolean validSolution;
-  private double grade;
+  //private double grade;
+  private boolean debug;
+  private Date startDate, endDate;
 
   public Controller() {
     model=new Model();
-    solver=new Solver(false,false,false,0,this);
+    debug=false;
+    solver=new Solver(false,debug,false,0,this);
     view=new Viewer(this);
     history=new MoveList();
     config=new Config();
     view.setGrade(config.getGrade());
     init(config.getRows(),config.getCols());
-
+    view.setClueFontAndSize(config.getPointSize());
   }
 
   public void init(int r, int c){
@@ -57,10 +61,18 @@ public class Controller {
 
   public void resize(int r, int c){
     init(r,c);
+    view.setClueFontAndSize(calculateCluePointSize(r,c));
     model.clear();
   }
 
-  public void zoomFont(int change){view.zoomFont(change);}
+  private int calculateCluePointSize(int r, int c){
+    return Resource.MINIMUM_CLUE_POINTSIZE+(3*Resource.MAXIMUM_CLUE_POINTSIZE)/(Math.max(r,c));
+  }
+  
+  public void zoomFont(int change){
+    view.zoomFont(change);
+    config.setPointSize(view.getPointSize());
+  }
 
   public int getDataFromRC(int r, int c){return model.getDataFromRC(r,c);}
 
@@ -70,17 +82,31 @@ public class Controller {
     history.recordMove(c,model.getDataFromRC(c.getRow(),c.getColumn()));
     model.setDataFromCell(c);
     if(isSolving && model.countUnknownCells()==0 && model.countErrors()==0){
+      endDate=new Date();
       setSolving(false);
       view.redrawGrid();
-      Utils.showInfoDialog("Congratulations!");
+      Utils.showInfoDialog("Congratulations! Solved in "+Utils.calculateTimeTaken(startDate, endDate));
     }
   }
   
   public void quit(){
-      config.setRows(rows);
-      config.setCols(cols);
-      config.setGrade((int)view.getGrade());
+      //config.setRows(rows);
+      //config.setCols(cols);
+      //config.setGrade((int)view.getGrade());
+      //config.setPointSize(view.getPointSize());
       config.saveProperties();
+  }  
+  
+  public void editPreferences(){
+      if (config.editPreferences(view)){
+        int r=config.getRows(),c=config.getCols();
+        view.setGrade(config.getGrade());
+        view.setClueFontAndSize(config.getPointSize());
+        if (rows!=r || cols!=c){
+          rows=r;cols=c;
+          resize(r,c);
+        }
+      }
   }
 
   public void newGame(){
@@ -94,11 +120,14 @@ public class Controller {
   }
 
   public void restartGame(){
-    if(isSolving) model.blankWorking();
-    else {
-      model.blankSolution();
-      this.updateAllLabelsFromModel();
-    }
+    //if(isSolving) model.blankWorking();
+    //else {
+      //model.blankSolution();
+      //this.updateAllLabelsFromModel();
+    //}
+    model.blankWorking();
+    setSolving(true);
+    startDate=new Date();  //should this be reset?
     history.initialize();
     view.redrawGrid();
   }
@@ -106,10 +135,21 @@ public class Controller {
   public void checkGame(){
     if(isSolving){
       int numberOfErrors=model.countErrors()-model.countUnknownCells();
-      Utils.showInfoDialog("There are "+numberOfErrors+" errors");
+      if (numberOfErrors==0)Utils.showInfoDialog("There are no errors");
+      else{
+        if (Utils.showConfirmDialog("There are "+numberOfErrors+" errors\n\nGo back to last correct position?")){
+          rewindGame();
+        }
+      }
     }
   }
 
+  private void rewindGame(){
+    while (model.countErrors()-model.countUnknownCells()>0){
+      undoMove();
+    }
+    view.redrawGrid();
+  }
 
   public void loadGame(){
     GameLoader gl=new GameLoader(view);
@@ -148,17 +188,19 @@ public class Controller {
     view.setLicense(gl.license);
     this.resize(gl.rows,gl.cols);
 
-    //out.println("Has solution "+gl.hasSolution+" Has working "+gl.hasWorking);
     if (gl.hasSolution){
       model.useSolution();
       for (int i=0; i<this.rows; i++) model.setRowDataFromString(i,gl.solution[i]);
       updateAllLabelsFromModel(); this.validSolution=true;
-      //out.println("Updated Solution from file");
     }else {
       //Valid games either have Solution or Clues (or both)
       for (int i=0; i<this.rows; i++) view.setClueText(i,gl.rowClues[i],false);
       for (int i=0; i<this.cols; i++) view.setClueText(i,gl.colClues[i],true);
-      checkCluesValid();
+      if (!checkCluesValid()) {
+        newGame();
+        gl.close();
+        return;
+      }
     }
     
     if (gl.hasWorking){
@@ -173,6 +215,7 @@ public class Controller {
   }
 
   public void saveGame(){
+    if (!checkCluesValid()) return; 
     GameSaver gs=new GameSaver(view);
     if (gs.getResult()>0) return;
     
@@ -227,7 +270,7 @@ public class Controller {
       view.setCreationDate("Today");
     }
     else { //timed out searching for solvable pattern
-      out.println("count >=limit - passes"+passes);
+      //out.println("count >=limit - passes"+passes);
       view.setScore("999999");
       validSolution=false;
       Utils.showWarningDialog("Failed to generate puzzle - try reducing grade or grid size");
@@ -236,12 +279,17 @@ public class Controller {
 
   public void userSolveGame(){
     prepareToSolve(true,false,false); //uses existing working grid as start point
-    solveGame();
+    startDate=new Date();
+    int result=solveGame();
+    endDate=new Date();
+    if (result>0&&result<99999){
+      Utils.showInfoDialog("Solved in "+Utils.calculateTimeTaken(startDate,endDate)) ;
+    }
     setSolving(true); //redisplay working grid
   }
   
-  public void solveGame(){
-    int passes=solver.solveIt(false,false,false);
+  public int solveGame(){
+    int passes=solver.solveIt(debug,false,false);
     view.setScore("999999");
     String message="";
     switch (passes) {
@@ -267,6 +315,7 @@ public class Controller {
         break;
     }
     if (message.length()>0) Utils.showInfoDialog(message);
+    return passes;
   }
 
   private void prepareToSolve(boolean use_startgrid, boolean use_advanced, boolean use_ultimate){
@@ -279,11 +328,14 @@ public class Controller {
     else solver.initialize(rowClues, columnClues, null);
 }
 
-  public void checkCluesValid(){
+  public boolean checkCluesValid(){
+      boolean valid;
       model.blankWorking();
       prepareToSolve(false,false,false); //no start grid
-      solveGame();
+      valid=(solveGame()>=0);
       setSolving(false);//used after editing so want to end up in setting mode
+      out.println("Valid is "+valid);
+      return valid;
   }
   
   public void updateWorkingGridFromSolver(){
@@ -307,12 +359,10 @@ public class Controller {
     for(int r=0;r<rows;r++){
       clue=Utils.clueFromIntArray(model.getRow(r));
       view.setClueText(r,clue,false);
-      view.setLabelToolTip(r,Utils.freedomFromClue(cols,clue),false);
     }
     for(int c=0;c<cols;c++){
       clue=Utils.clueFromIntArray(model.getColumn(c));
       view.setClueText(c,clue,true);
-      view.setLabelToolTip(c,Utils.freedomFromClue(rows,clue),true);
     }
   }
    public void updateLabelsFromModel(int r, int c){
@@ -351,8 +401,11 @@ public class Controller {
   public void setSolving(boolean isSolving){
     if (isSolving){
       model.useWorking();
-      if (!this.isSolving) history.initialize();
-    }else if(!isSolving){
+      if (!this.isSolving){
+         history.initialize();
+         startDate=new Date();
+      }
+    }else{
       model.useSolution();
     }
     view.setSolving(isSolving);

@@ -118,7 +118,7 @@ import static java.lang.System.out;
 
   public boolean setRowDataFromArray(int r, int[] cs) {
     if (cs.length>this.cols){
-      out.println("Error - too many number of columns");
+      out.println("Error - too many columns");
       return false;
     }
     this.setRow(r, cs);

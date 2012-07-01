@@ -25,8 +25,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseMotionAdapter;
-import java.awt.event.KeyAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
 import javax.swing.JPanel;
@@ -117,6 +117,10 @@ public class CellGrid extends JPanel{
     highlightCell(currentRow, currentCol);
   }
 
+  public void moveHighlightRelative(int rowchange, int colchange){
+    moveHighlight(currentRow+rowchange,currentCol+colchange);
+  }
+  
   protected void moveHighlight(int r, int c){
       if (r== currentRow && c== currentCol) return;
       unhighlightCell(currentRow,currentCol);
@@ -139,6 +143,10 @@ public class CellGrid extends JPanel{
     myGraphics.drawRect((int)(c*columnWidth+3),(int)(r*rowHeight+3),(int)(columnWidth-5),(int)(rowHeight-5));
   }
 
+  public void updateCurrentCell(int state){
+    updateCell(currentRow,currentCol,state);
+  }
+  
   protected void updateCell(int r,int c,int cs){
     if (cs==Resource.CELLSTATE_UNDEFINED) return;
     currentCell.set(r,c,cs);
@@ -241,6 +249,9 @@ public class CellGrid extends JPanel{
               break;
         case Resource.KEY_UNKNOWN:
               if(control.isSolving)updateCell(currentRow,currentCol,Resource.CELLSTATE_UNKNOWN);
+              break;
+        case KeyEvent.VK_S:
+              if (e.isControlDown()) control.saveGame();
               break;
         default:
           break;

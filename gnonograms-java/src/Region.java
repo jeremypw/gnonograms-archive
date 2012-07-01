@@ -192,16 +192,16 @@ public class Region {
     * */
 
     message="";
-    debug=debug;
+    this.debug=debug;
+    //out.println("Is completed "+isCompleted);
     if (isCompleted) return false;
 
     getstatus();
     //has a change been made by another region?
     //boolean stillchanging=totalsChanged();
-    //also detects whether completed and if so calls checknBlocks().
-
+    //also detects whether now completed and if so calls checknBlocks().
+    //out.println("Is completed "+isCompleted+" totalsChanged() "+" in Error "+inError+" debug "+debug);
     if (isCompleted || inError||!totalsChanged()) return false;
-
     int count=0;  boolean madechanges=false;
     while (!isCompleted && count<MAXCYCLES){
     //count guards against infinite loops
@@ -225,25 +225,26 @@ public class Region {
   }
 
   private boolean fullfix() {
+    //out.println("Fullfix");
     // Tries each ploy in turn, returns as soon as a change is made
     // or an error detected.
-    //out.println("CappedRangeAudit");
+    //if (debug) out.println("CappedRangeAudit");
     if (cappedrangeaudit()||inError)return true;
-    //out.println("PossibilitiesAudit");
+    //if (debug)out.println("PossibilitiesAudit");
     if (possibilitiesAudit()||inError)return true;
-    //out.println("OnlyPossibility");
+    //if (debug)out.println("OnlyPossibility");
     if (onlypossibility()||inError)return true;
-    //out.println("DoEdge 1");
+    //if (debug)out.println("DoEdge 1");
     if (doedge(1)||inError)return true;
-    //out.println("DoEdge -1");
+    //if (debug)out.println("DoEdge -1");
     if (doedge(-1)||inError)return true;
-    //out.println("FilledSubRegionAudit");
+    //if (debug)out.println("FilledSubRegionAudit");
     if (filledSubregionAudit()||inError)return true;
-    //out.println("FillGaps");
+    //if (debug)out.println("FillGaps");
     if (fillGaps()||inError)return true;
-    //out.println("FreeCellAudit");
+    //if (debug)out.println("FreeCellAudit");
     if (freecellaudit()||inError) return true;
-    //out.println("FixBlocksInRanges");
+    //if (debug)out.println("FixBlocksInRanges");
     if (fixblocksinranges()||inError)return true;
     return false;
   }
@@ -377,12 +378,12 @@ public class Region {
       count=0; //how many possible ranges for this block
       for (int idx=0;idx<nCells;idx++){
         if (count>1) break; //no unique range - try next block
-        if (!tags[idx][i]||tags[idx][isFinishedPointer]) continue;
+        if (!tags[idx][i]||tags[idx][isFinishedPointer]) continue; //cell not possible for this block or already completed
 
         int s=idx; //first cell with block i as possible owner
         int l=countnextowner(i,idx); //length of contiguous cells having this block (i) as a possible owner.
 
-        if (l<myBlocks[i]) removeBlockFromRange(i,s,l);//block cannot be here
+        if (l<myBlocks[i]) removeBlockFromRange(i,s,l,1);//block cannot be here
         else{
           length=l;
           start=s;
@@ -477,7 +478,6 @@ public class Region {
     // FILLED and mark all blocks COMPLETE.
     // If there are no unassigned block cells then mark all UNKNOWN
     // cells as EMPTY.
-
     int freecells=countcellstate(Resource.CELLSTATE_UNKNOWN);
     if (freecells==0) return false;
 
@@ -586,7 +586,7 @@ public class Region {
         continue;
       }
       currentIdx=i;
-      found=true;
+      found=(currentBlockNum>=0 && currentBlockNum<nBlocks);
       break;
     }
     return found;
@@ -639,16 +639,16 @@ public class Region {
         fixBlockInRange(availableBlocks[b],start+offset,length);
       }
       //remove block from outside possible range
-      if(offset>1)removeBlockFromRange(availableBlocks[b],start,offset-1);
+      if(offset>1)removeBlockFromRange(availableBlocks[b],start,offset-1,1);
       for (int r=0; r<blockstart[b][0];r++) {//ranges before possible
-        removeBlockFromRange(availableBlocks[b],ranges[r][0],ranges[r][1]);
+        removeBlockFromRange(availableBlocks[b],ranges[r][0],ranges[r][1],1);
       }
       rng=blockend[b][0];
       start=ranges[rng][0]+blockend[b][1];
       length=ranges[rng][1]-blockend[b][1];
-      if(length>0)removeBlockFromRange(availableBlocks[b],start,length);
+      if(length>0)removeBlockFromRange(availableBlocks[b],start,length,1);
       for (int r=numberOfAvailableRanges-1; r>blockend[b][0]; r--) {//ranges after possible
-        removeBlockFromRange(availableBlocks[b],ranges[r][0],ranges[r][1]);
+        removeBlockFromRange(availableBlocks[b],ranges[r][0],ranges[r][1],1);
       }
     }
     return true;
@@ -894,7 +894,7 @@ public class Region {
       if (freedom<blocklength){
         if (freedom==0){
           setBlockCompleteAndCap(block,start);
-          changed=true;
+          //changed=true;   not necessarily changed
         }
         else setRangeOwner(block,start+freedom,blocklength-freedom,true,false);
       }
@@ -936,12 +936,12 @@ public class Region {
 
     int length=direction>0 ? nCells-start : start+1;
     start=direction>0 ? start : 0;
-    removeBlockFromRange(block,start,length);
-  }
-
-  private void removeBlockFromRange(int block, int start, int length){
     removeBlockFromRange(block,start,length,1);
   }
+
+  //private void removeBlockFromRange(int block, int start, int length){
+    //removeBlockFromRange(block,start,length,1);
+  //}
   private void removeBlockFromRange(int block, int start, int length, int direction){
     //remove block as possibility in given range
     //bi-directional forward=1 backward =-1

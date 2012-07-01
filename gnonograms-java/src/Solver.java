@@ -163,15 +163,11 @@ import static java.lang.System.out;
         r=regions[i];
         //count++;
         if (r.isCompleted) continue;
-        if (r.solve(debug,false)){
-          changed=true;
-//          if (rows>1 && r.isColumn) {i=r.lastChangedCellIndex+1;}
-//         else if (cols>1 && !r.isColumn) {i=r.lastChangedCellIndex+rows+1;}
-        }
-        //if (debug ||(logerror && regions[i].inError)){
-          //if(regions[i].message!="") out.println("Region - "+i+": "+regions[i].message+"\n");
+        if (r.solve(debug,false))changed=true;
+        //if (debug ||(logerror && r.inError)){
+          //if(r.message!="") out.println("Region - "+i+": "+r.message+"\n");
         //}
-        else if (r.inError) return -1;
+        if (r.inError) return -1;
       }
       pass++;
       //if (debug){
@@ -181,7 +177,7 @@ import static java.lang.System.out;
     }
     //out.println("Regions visited "+count);
     if (solved()) return pass;
-    //if (pass>30) Utils.showWarningDialog("Simple solver - too many passes\n");
+    if (pass>30) Utils.showWarningDialog("Simple solver - too many passes\n");
     return 0;
   }
 

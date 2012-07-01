@@ -741,7 +741,7 @@
 			}
 
 			idx=i;
-			found=true;
+			found=(blocknum>=0 && blocknum<_nblocks);
 			break;
 		}
 		return found;
@@ -1123,7 +1123,7 @@
 				if (freedom==0)
 				{
 					set_block_complete_and_cap(block,start);
-					changed=true;
+					//changed=true;
 				}
 				else set_range_owner(block,start+freedom,block_length-freedom,true,false);
 			}

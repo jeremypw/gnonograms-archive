@@ -72,6 +72,7 @@ public class Viewer extends JFrame {
   private Controller control;
   private BufferedImage rawLogo;
   private ImageIcon scaledLogo;
+  protected ImageIcon hideIcon, revealIcon;
   private JLabel logoLabel;
   private InfoLabel nameLabel,authorLabel,licenseLabel,scoreLabel,sizeLabel,dateLabel;
   private JToolBar toolbar;
@@ -79,11 +80,12 @@ public class Viewer extends JFrame {
   private int rows, cols;
   private int cluePointSize;
   private JSpinner gradeSpinner;
+  private JButton hiderevealButton;
 
   public Viewer(Controller control){
     this.control=control;
     this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-    this.setTitle("Gnonograms");
+    this.setTitle("Gnonograms for Windows");
     this.setResizable(false);
     this.setMaximumSize(new Dimension(1200,750));
     cluePointSize=20;
@@ -94,6 +96,8 @@ public class Viewer extends JFrame {
       scaledLogo=new ImageIcon(scaledLogo.getImage().getScaledInstance(128,128,BufferedImage.SCALE_SMOOTH));
       logoLabel=new JLabel(scaledLogo);
     }
+    hideIcon=createImageIcon("images/eyes-closed.png","Hide icon");
+    revealIcon=createImageIcon("images/eyes-open.png","Reveal icon");
 
     puzzlePane=new JPanel();
     puzzlePane.setLayout(new GridBagLayout());
@@ -111,7 +115,6 @@ public class Viewer extends JFrame {
     addWindowListener(new WindowAdapter() {
         @Override
         public void windowClosing(WindowEvent e) {
-          out.println("Window closing");
             quit();
         }
     });
@@ -121,6 +124,8 @@ public class Viewer extends JFrame {
     if (isColumn) return columnBox.getClueText(idx);
     else return rowBox.getClueText(idx);
   }
+  public int getPointSize(){return cluePointSize;}
+  
   public double getGrade(){
     Object g=gradeSpinner.getValue();
     if (g==null || !(g instanceof Double))return Resource.DEFAULT_GRADE;
@@ -147,6 +152,14 @@ public class Viewer extends JFrame {
 
   public void setSolving(boolean isSolving){
     drawing.setSolving(isSolving);
+    if (isSolving){
+        hiderevealButton.setIcon(revealIcon);
+        hiderevealButton.setToolTipText("Reveal the solution");
+    }
+    else{
+        hiderevealButton.setIcon(hideIcon);
+        hiderevealButton.setToolTipText("Hide the solution");
+    }
   }
 
   protected void resizeGame(){
@@ -165,10 +178,10 @@ public class Viewer extends JFrame {
     ge.setLicense(getLicense());
     for (int r=0; r<rows; r++) ge.setClue(r,rowBox.getClueText(r),false);
     for (int c=0; c<cols; c++) ge.setClue(c,columnBox.getClueText(c),true);
-
+    ge.setLocationRelativeTo((Component)this);
     ge.setVisible(true);
 
-    if (ge.wasCancelled){}
+    if (ge.wasCancelled){out.println("Was cancelled");}
     else{
       setName(ge.getGameName());
       setCreationDate(ge.getCreationDate());
@@ -211,14 +224,11 @@ public class Viewer extends JFrame {
     c.gridx=0; c.gridy=1; puzzlePane.add(rowBox,c);
     c.gridy=0; puzzlePane.add(logoLabel,c);
     this.setVisible(true);
-    cluePointSize=calculateCluePointSize();
-    setClueFontAndSize(cluePointSize);
     this.pack();
   }
-  private int calculateCluePointSize(){
-    return Resource.MINIMUM_CLUE_POINTSIZE+(3*Resource.MAXIMUM_CLUE_POINTSIZE)/(Math.max(rows,cols));
-  }
-  private void setClueFontAndSize(int pointSize){
+
+  public void setClueFontAndSize(int pointSize){
+    cluePointSize=pointSize;
     Font f=new Font("Arial",Font.BOLD,cluePointSize);
     FontMetrics fm= this.getGraphics().getFontMetrics(f);
     int fontHeight=fm.getHeight();
@@ -226,6 +236,8 @@ public class Viewer extends JFrame {
     int boxAllocation=4+Math.max(fontHeight,fontWidth);
     rowBox.setFontAndSize(f, (int)(0.5*fontWidth*(cols+1)), boxAllocation);
     columnBox.setFontAndSize(f, boxAllocation, (int)(0.5*fontHeight*(rows+1)));
+    this.pack();
+    setVisible(true);
   }
 
   public void zoomFont(int changeInPointSize){
@@ -234,13 +246,17 @@ public class Viewer extends JFrame {
     if(cluePointSize<Resource.MINIMUM_CLUE_POINTSIZE) cluePointSize=Resource.MINIMUM_CLUE_POINTSIZE;
     if(cluePointSize>Resource.MAXIMUM_CLUE_POINTSIZE) cluePointSize=Resource.MAXIMUM_CLUE_POINTSIZE;
     setClueFontAndSize(cluePointSize);
-    this.pack();
-    setVisible(true);
   }
 
   public void setClueText(int idx, String text, boolean isColumn){
-    if (isColumn) columnBox.setClueText(idx,text);
-    else rowBox.setClueText(idx,text);
+    if (isColumn) {
+      columnBox.setClueText(idx,text);
+      setLabelToolTip(idx,Utils.freedomFromClue(rows,text),true);
+    }
+    else {
+      rowBox.setClueText(idx,text);
+      setLabelToolTip(idx,Utils.freedomFromClue(cols,text),false);
+    }
   }
 
   public String getClues(boolean isColumn){
@@ -264,14 +280,6 @@ public class Viewer extends JFrame {
     ((JComponent)(toolbar.getComponentAtIndex(position))).setToolTipText("Make a new blank puzzle grid");
     position++;
 
-    toolbar.add(new MyAction("Random game",createImageIcon("images/dice.png","Random icon"),"RANDOM_GAME"));
-    ((JComponent)(toolbar.getComponentAtIndex(position))).setToolTipText("Generate a random puzzle");
-    position++;
-
-    toolbar.add(gradeSpinner);
-    ((JComponent)(toolbar.getComponentAtIndex(position))).setToolTipText("Set the difficulty of the generated puzzle");
-    position++;
-
     toolbar.add(new MyAction("Load game",createImageIcon("images/Open24.gif","Load icon"),"LOAD_GAME"));
     ((JComponent)(toolbar.getComponentAtIndex(position))).setToolTipText("Load a puzzle from file");
     position++;
@@ -279,17 +287,21 @@ public class Viewer extends JFrame {
     toolbar.add(new MyAction("Save game",createImageIcon("images/Save24.gif","Save icon"),"SAVE_GAME"));
     ((JComponent)(toolbar.getComponentAtIndex(position))).setToolTipText("Save the puzzle to file");
      position++;
+     
+    toolbar.addSeparator();
+    position++;
 
-    toolbar.add(new MyAction("Hide game",createImageIcon("images/eyes-closed.png","Hide icon"),"HIDE_GAME"));
-    ((JComponent)(toolbar.getComponentAtIndex(position))).setToolTipText("Hide the solution and start solving");
-     position++;
-
-    toolbar.add(new MyAction("Show game",createImageIcon("images/eyes-open.png","Show icon"),"SHOW_GAME"));
-    ((JComponent)(toolbar.getComponentAtIndex(position))).setToolTipText("Show the solution to the puzzle");
+    toolbar.add(new MyAction("Hide game",hideIcon,"HIDE_REVEAL_GAME"));
+    hiderevealButton=((JButton)(toolbar.getComponentAtIndex(position)));
+    hiderevealButton.setToolTipText("Hide the solution and start solving");
      position++;
 
     toolbar.add(new MyAction("Check",createImageIcon("images/errorcheck.png","Check icon"),"CHECK_GAME"));
      position++;
+     
+    toolbar.addSeparator();
+    position++;
+
     toolbar.add(new MyAction("Undo",createImageIcon("images/Undo24.gif","Undo icon"),"UNDO_MOVE"));
      position++;
     toolbar.add(new MyAction("Redo",createImageIcon("images/Redo24.gif","Redo icon"),"REDO_MOVE"));
@@ -298,15 +310,21 @@ public class Viewer extends JFrame {
     toolbar.add(new MyAction("Restart",createImageIcon("images/Refresh24.gif","Restart icon"),"RESTART_GAME"));
     ((JComponent)(toolbar.getComponentAtIndex(position))).setToolTipText("Start solving this puzzle again");
     position++;
+     
+    toolbar.addSeparator();
+    position++;
+
+    toolbar.add(new MyAction("Random game",createImageIcon("images/dice.png","Random icon"),"RANDOM_GAME"));
+    ((JComponent)(toolbar.getComponentAtIndex(position))).setToolTipText("Generate a random puzzle");
+    position++;
 
     toolbar.add(new MyAction("Solve game",createImageIcon("images/computer.png","Solve icon"),"SOLVE_GAME"));
     ((JComponent)(toolbar.getComponentAtIndex(position))).setToolTipText("Let the computer try to solve the puzzle");
      position++;
-
-    toolbar.add(new MyAction("Set Size",createImageIcon("images/resize.png","Solve icon"),"RESIZE_GAME"));
-    ((JComponent)(toolbar.getComponentAtIndex(position))).setToolTipText("Set the number of rows and columns");
+     
+    toolbar.addSeparator();
     position++;
-
+     
     toolbar.add(new MyAction("Smaller",createImageIcon("images/ZoomOut24.gif","Soom Out icon"),"ZOOM_OUT"));
     ((JComponent)(toolbar.getComponentAtIndex(position))).setToolTipText("Make the font smaller");
     position++;
@@ -317,6 +335,10 @@ public class Viewer extends JFrame {
 
     toolbar.add(new MyAction("Edit",createImageIcon("images/Edit24.gif","Edit icon"),"EDIT_GAME"));
     ((JComponent)(toolbar.getComponentAtIndex(position))).setToolTipText("Edit the description and clues");
+    position++;
+    
+    toolbar.add(new MyAction("Preferences",createImageIcon("images/Preferences24.gif","Preferences icon"),"EDIT_PREFERENCES"));
+    ((JComponent)(toolbar.getComponentAtIndex(position))).setToolTipText("Edit preferences");
     position++;
     
     toolbar.add(new MyAction("About",createImageIcon("images/About24.gif","About icon"),"ABOUT_GAME"));
@@ -333,22 +355,31 @@ public class Viewer extends JFrame {
     @Override
     public void actionPerformed(ActionEvent a){
       String command=a.getActionCommand();
-      if (command.compareTo("NEW_GAME")==0) control.newGame();
-      if (command.compareTo("LOAD_GAME")==0) control.loadGame();
-      if (command.compareTo("SAVE_GAME")==0) control.saveGame();
-      if (command.compareTo("RANDOM_GAME")==0) control.randomGame(getGrade());
-      if (command.compareTo("HIDE_GAME")==0) control.setSolving(true);
-      if (command.compareTo("SHOW_GAME")==0) control.setSolving(false);
-      if (command.compareTo("SOLVE_GAME")==0) control.userSolveGame();
-      if (command.compareTo("RESIZE_GAME")==0) resizeGame();
-      if (command.compareTo("RESTART_GAME")==0) control.restartGame();
-      if (command.compareTo("ZOOM_IN")==0) control.zoomFont(2);
-      if (command.compareTo("ZOOM_OUT")==0) control.zoomFont(-2);
-      if (command.compareTo("EDIT_GAME")==0) editGame();
-      if (command.compareTo("CHECK_GAME")==0) control.checkGame();
-      if (command.compareTo("UNDO_MOVE")==0) control.undoMove();
-      if (command.compareTo("REDO_MOVE")==0) control.redoMove();
-      if (command.compareTo("ABOUT_GAME")==0) Utils.showInfoDialog("Gnonograms for Java version "+Resource.VERSION_STRING+"\n\n by Jeremy Wootten\n<jeremywootten@gmail.com>");
+      if (command.equals("NEW_GAME")) control.newGame();
+      if (command.equals("LOAD_GAME")) control.loadGame();
+      if (command.equals("SAVE_GAME")) control.saveGame();
+      if (command.equals("RANDOM_GAME")) control.randomGame(getGrade());
+      if (command.equals("HIDE_REVEAL_GAME")) 
+      {
+        JButton b=(JButton)a.getSource();
+        if (b.getToolTipText().contains("Hide")){
+          control.setSolving(true);
+        }
+        else{
+          control.setSolving(false);
+        }
+      }
+      if (command.equals("SOLVE_GAME")) control.userSolveGame();
+      if (command.equals("RESIZE_GAME")) resizeGame();
+      if (command.equals("RESTART_GAME")) control.restartGame();
+      if (command.equals("ZOOM_IN")) control.zoomFont(2);
+      if (command.equals("ZOOM_OUT")) control.zoomFont(-2);
+      if (command.equals("EDIT_GAME")) editGame();
+      if (command.equals("CHECK_GAME")) control.checkGame();
+      if (command.equals("UNDO_MOVE")) control.undoMove();
+      if (command.equals("REDO_MOVE")) control.redoMove();
+      if (command.equals("ABOUT_GAME")) Utils.showInfoDialog("Gnonograms for Java version "+Resource.VERSION_STRING+"\n\n by Jeremy Wootten\n<jeremywootten@gmail.com>");
+      if (command.equals("EDIT_PREFERENCES")) control.editPreferences();
     }
   }
 

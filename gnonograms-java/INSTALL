@@ -7,8 +7,12 @@
 
   Mark the file Gnonograms-x.x.x.jar as executable if the OS requires it.
 
-  The program can then be run by right-clicking the .jar file and choosing "Open with OpenJDK Java 6 Runtime" or the equivalent command.
+  The program can then be run by right-clicking the .jar file and choosing "Open with OpenJDK Java 6 Runtime" or the equivalent command or by double-clicking.  This may not work on some systems if the file associations are not properly set. 
 
-  Alternatively open a terminal in the directory containing the .jar file and enter "java -jar ./Gnonograms-x.x.x.jar".
+  Alternatively open a terminal/Command window in the directory containing the .jar file and enter 
+  
+  Linux: "java -jar ./Gnonograms-x.x.x.jar".
+  Windows "javaw -jar ./Gnonograms-x.x.x.jar".
+
 
 

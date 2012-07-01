@@ -30,6 +30,7 @@ import javax.swing.JOptionPane;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.BorderLayout;
+import java.util.Date;
 
 public class Utils
 {
@@ -134,6 +135,7 @@ public class Utils
     JOptionPane.showMessageDialog(null,s,"",JOptionPane.INFORMATION_MESSAGE);
     return true;
   }
+
   public static JPanel okCancelPanelFactory(ActionListener listener, String okCommand){
     JButton okButton=new JButton("OK");
     okButton.setActionCommand(okCommand);
@@ -146,5 +148,15 @@ public class Utils
     buttonPanel.add(okButton, BorderLayout.LINE_START);
     buttonPanel.add(cancelButton, BorderLayout.LINE_END);
     return buttonPanel;
+  }
+  
+  public static String calculateTimeTaken(Date startDate, Date endDate){
+    //TODO localization
+    long msec=endDate.getTime()-startDate.getTime();
+    long seconds=msec/1000;
+    msec=msec-seconds*1000;
+    long minutes=seconds/60;
+    seconds=seconds-minutes*60;
+    return minutes+" minutes "+seconds+"."+msec+" seconds ";
   }
 }

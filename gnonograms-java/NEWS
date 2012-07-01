@@ -1,6 +1,13 @@
 Gnonograms-java - version 0.5
 *****************************
 June 24, 2012 Add persistent properties
+July 1, 2012  Add Timer
+              Bug fix - freedom tooltip not recalculated when game loaded from file
+              Hide and reveal buttons merged
+              Go back to last correct position feature
+              Preferences dialog
+              Remember font size
+              Restart solved game
 
 Gnonograms-java - version 0.4
 *****************************

@@ -770,7 +770,7 @@ public class Gnonogram_controller
 
 		if (load_common(reader) && load_position_extra(reader))
 		{
-			if (reader.hasState && reader.state==(GameState.SETTING).to_string())
+			if (reader.has_state && reader.state==(GameState.SETTING).to_string())
 			{
 				change_state(GameState.SETTING);
 			}
@@ -787,7 +787,7 @@ public class Gnonogram_controller
 
 	private bool load_position_extra(Gnonogram_filereader reader)
 	{
-		if (reader.hasWorking){
+		if (reader.has_working){
 			_model.use_working();
 			for (int i=0; i<_rows; i++){
 				_model.set_row_data_from_string(i,reader.working[i]);
