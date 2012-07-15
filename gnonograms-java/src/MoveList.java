@@ -27,7 +27,6 @@ public class MoveList extends LinkedList<Move> {
   int currentMove;
   private static final long serialVersionUID = 1; 
   public MoveList(){
-    super();
     this.initialize();
   }
   
@@ -40,7 +39,8 @@ public class MoveList extends LinkedList<Move> {
   public void recordMove(Cell newCell, int previousState){
     currentMove++;
     this.add(currentMove,new Move(newCell,previousState));
-    numberOfMoves=currentMove+1;  }
+    numberOfMoves=currentMove+1;
+  }
   
   public Move getLastMove(){
     if(currentMove>=0)return this.get(currentMove--);

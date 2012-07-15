@@ -34,22 +34,22 @@ import static java.lang.System.out;
   public My2DCellArray(int rows, int cols){
     init(rows,cols,Resource.CELLSTATE_EMPTY);
   }
-  public My2DCellArray(int rows, int cols, int init){
-    init(rows,cols,init);
+  public My2DCellArray(int rows, int cols, int state){
+    init(rows,cols,state);
   }
 
-  private void init(int rows, int cols, int cs){
+  private void init(int rows, int cols, int state){
     this.rows=rows;
     this.cols=cols;
     this.maxRows=rows;
     this.maxCols=cols;
     myData = new int[this.rows][this.cols];
-    setAll(cs);
+    setAll(state);
     Math.random();
   }
+  
   public void resize(int r, int c){
-    setRows(r);
-    setCols(c);
+    init(r,c,Resource.CELLSTATE_UNKNOWN);
   }
 
   public int getRows() {return rows;}
@@ -164,6 +164,4 @@ import static java.lang.System.out;
     }
     return count;
   }
-
-
 }

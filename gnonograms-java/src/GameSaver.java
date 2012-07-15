@@ -21,7 +21,9 @@
  */
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
+
 import java.awt.Component;
+
 import java.io.File;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -35,25 +37,20 @@ public class GameSaver extends JFileChooser {
     BufferedWriter dataStream;
 
     private static final long serialVersionUID = 1;
-    public GameSaver(Component parent){
-    super();
+    public GameSaver(Component parent, String puzzleDirectoryPath){
+    super(puzzleDirectoryPath);
     this.setFileSelectionMode(FILES_ONLY);
     this.setFileFilter(new FileNameExtensionFilter("Gnonogram Puzzles","gno"));
     this.setDialogTitle("Save the puzzle");
     result=this.showSaveDialog(parent);
-    //out.println("Result is "+result);
   }
 
   public void openDataOutputStream() throws IOException{
       File f=this.getSelectedFile();
       String filename=f.getName();
-      //out.println("Filename is "+filename);
-      //out.println("filename.substring(filename.length()-4) is "+filename.substring(filename.length()-4));
       if (filename.length()<5 || (filename.substring(filename.length()-4)).compareTo(".gno")!=0) {
-    //out.println("Renaming file to "+f.getPath()+".gno");
-    f=new File(f.getPath()+".gno");
+        f=new File(f.getPath()+".gno");
       }
-      //out.println("Opening file path "+f.getPath());
       dataStream=new BufferedWriter(new FileWriter(f));
   }
 
@@ -74,13 +71,8 @@ public class GameSaver extends JFileChooser {
       dataStream.write(cols+"\n");
   }
   public void writeClues(String clues, boolean isColumn)throws IOException{
-      if(isColumn){
-    dataStream.write("[Column clues]\n");
+    dataStream.write(isColumn ? "[Column clues]\n" : "[Row clues]\n");
     dataStream.write(clues);
-      }else{
-    dataStream.write("[Row clues]\n");
-    dataStream.write(clues);
-      }
   }
   public void writeSolution(String solution)throws IOException{
       dataStream.write("[Solution]\n");

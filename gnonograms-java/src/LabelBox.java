@@ -23,9 +23,11 @@
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 
+import java.awt.BorderLayout;
 import java.awt.GridLayout;
-import java.awt.ComponentOrientation;
+import java.awt.Component;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -35,39 +37,51 @@ import static java.lang.System.out;
 
 class LabelBox extends JPanel{
   private static final long serialVersionUID = 1;
-  
-  GnonogramLabel[] labels;
-  int no_labels;
-  boolean isColumn;
-  Controller control;
+  private int maxClueLength=10;
+  private GnonogramLabel[] labels;
+  private int no_labels;
+  private boolean isColumn;
 
-  public LabelBox(int no_labels, boolean isColumn, Controller control){
+  public LabelBox(int no_labels, boolean isColumn){
+    if (isColumn)this.setLayout(new GridLayout(1,no_labels));
+    else this.setLayout(new GridLayout(no_labels,1));
     this.no_labels=no_labels;
     this.isColumn=isColumn;
-    this.control=control;
-
-    if (isColumn) this.setLayout(new GridLayout(1,no_labels,0,0));
-    else  this.setLayout(new GridLayout(no_labels,1,0,0));
     this.setBorder(BorderFactory.createLineBorder(Color.black));
 
     labels=new GnonogramLabel[no_labels];
     for (int i=0; i<no_labels; i++) {
-      labels[i]=new GnonogramLabel("0", isColumn);
-      this.add(labels[i]);
+      GnonogramLabel l=new GnonogramLabel("0", isColumn);
+      if (isColumn){
+        l.setAlignmentY(Component.BOTTOM_ALIGNMENT);
+        l.setAlignmentX(Component.CENTER_ALIGNMENT);
+      }else{
+        l.setAlignmentX(Component.RIGHT_ALIGNMENT);
+        l.setAlignmentY(Component.CENTER_ALIGNMENT);
+      }
+      this.add(l);
+      labels[i]=l;
     }
   }
 
-  public void setFontAndSize(Font f, int width, int height){
-    for (int i=0; i<no_labels; i++) {
-      labels[i].setFont(f);
-      labels[i].setPreferredSize(new Dimension(width, height));
+  public void setFontAndSize(Font f, int size){
+    int labelWidth, labelHeight;
+    int labelLength=Math.max(size*maxClueLength/2+30,48);
+    int labelThickness=size*100/85;
+    labelWidth=isColumn ? labelThickness : labelLength;
+    labelHeight=isColumn ? labelLength : labelThickness;
+    for (GnonogramLabel l :labels){
+      l.setFont(f);
+      l.setPreferredSize(new Dimension(labelWidth,labelHeight));
     }
+    this.repaint();
   }
 
   public void setClueText(int l, String text){
     if (l>=no_labels || l<0) return;
     if (text==null) text="?";
     labels[l].setText(text);
+    maxClueLength=Math.max(maxClueLength,text.length());
   }
 
   public void setLabelToolTip(int l, int freedom){

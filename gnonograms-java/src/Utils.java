@@ -20,17 +20,20 @@
  *
  */
 import static java.lang.System.out;
+
 import javax.swing.ImageIcon;
-import java.util.ArrayList;
-import java.util.ListIterator;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.BorderLayout;
+
 import java.util.Date;
+import java.util.ArrayList;
+import java.util.ListIterator;
 
 public class Utils
 {
@@ -71,12 +74,10 @@ public class Utils
     return regionSize-count-blocks.length+1;
   }
 
-  public static String stringFromIntArray(int[] cs)
-  {
+  public static String stringFromIntArray(int[] cs){
     if (cs==null) return "";
     StringBuilder sb= new StringBuilder();
-    for (int i=0; i<cs.length; i++)
-    {
+    for (int i=0; i<cs.length; i++){
       sb.append(cs[i]);
       sb.append(" ");
     }
@@ -105,10 +106,8 @@ public class Utils
     return result;
   }
 
-  public static int[] blockArrayFromClue(String s)
-  {
+  public static int[] blockArrayFromClue(String s){
     String[] clues=removeBlankLines(s.split("[\\D\\n]",50));
-
     if(clues.length==0) {
       clues=new String[1]; clues[0]="0";
     }
@@ -137,10 +136,10 @@ public class Utils
   }
 
   public static JPanel okCancelPanelFactory(ActionListener listener, String okCommand){
-    JButton okButton=new JButton("OK");
+    JButton okButton = new JButton(createImageIcon("images/dialog-ok-apply48.png","okButtonIcon"));
     okButton.setActionCommand(okCommand);
     okButton.addActionListener(listener);
-    JButton cancelButton=new JButton("Cancel");
+    JButton cancelButton=new JButton(createImageIcon("images/dialog-cancel48.png","cancelButtonIcon"));
     cancelButton.setActionCommand("");
     cancelButton.addActionListener(listener);
     JPanel buttonPanel=new JPanel();
@@ -157,6 +156,15 @@ public class Utils
     msec=msec-seconds*1000;
     long minutes=seconds/60;
     seconds=seconds-minutes*60;
-    return minutes+" minutes "+seconds+"."+msec+" seconds ";
+    return minutes+" minutes "+seconds+((msec<100)? ".0":".")+msec+" seconds ";
+  }
+  
+  public static ImageIcon createImageIcon(String path,String description){
+    java.net.URL imgURL = Utils.class.getResource(path);
+    if (imgURL != null) return new ImageIcon(imgURL, description);
+    else {
+        System.out.println("Couldn't find file: " + path);
+        return null;
+    }
   }
 }

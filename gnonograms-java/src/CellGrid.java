@@ -74,7 +74,7 @@ public class CellGrid extends JPanel{
     settingColors[Resource.CELLSTATE_EMPTY]=Color.white;
     settingColors[Resource.CELLSTATE_UNKNOWN]=Color.red;
     displayColors=settingColors;
-    }
+  }
 
 @Override
   public void paintComponent(Graphics g) {

@@ -61,6 +61,7 @@ public class Region {
   private boolean[][] tags;
   private boolean[][] tagsStore;
   private int [][] ranges; //format: start,length,unfilled?,complete?
+  private int counts[];
   private int nCells;
   private String clue;
   private int nBlocks;
@@ -90,12 +91,10 @@ public class Region {
 
   public Region (My2DCellArray grid){
     this.grid=grid;
+    this.index=index;   this.isColumn=isColumn;  this.nCells=nCells; 
     int maxlen=Math.max(grid.getRows(), grid.getCols());
     status=new int[maxlen]; statusStore=new int[maxlen];
     tempStatus=new int[maxlen];
-    // in order that size of class is determined initialize all
-    //array variables to maximum possible size.
-    // Get memory errors (in Gtk at least) otherwise.
     int maxblks=maxlen/2+2;
     ranges=new int[maxblks][4+maxblks];
     myBlocks=new int[maxblks];
@@ -103,11 +102,15 @@ public class Region {
     completedBlocksStore=new boolean[maxblks];
     tags=new boolean[maxlen][maxblks+2];
     tagsStore=new boolean[maxlen][maxblks+2];
+    counts=new int[Resource.CELLSTATE_UNDEFINED];
     //two extra flags for "can be empty" and "is finished".
   }
 
   public void initialize(int index, boolean isColumn, int nCells, String clue){
+//  public void initialize(String clue){
     this.index=index;   this.isColumn=isColumn;  this.nCells=nCells; this.clue=clue;
+    if (nCells==1) {this.isCompleted=true; return;}
+    
     int[] tmpblcks=Utils.blockArrayFromClue(clue);
     nBlocks=tmpblcks.length;
     canBeEmptyPointer=nBlocks; //flag for cell that may be empty
@@ -199,7 +202,7 @@ public class Region {
     getstatus();
     //has a change been made by another region?
     //boolean stillchanging=totalsChanged();
-    //also detects whether now completed and if so calls checknBlocks().
+    //also detects whether now completed and if so calls checkNumberOfBlocks().
     //out.println("Is completed "+isCompleted+" totalsChanged() "+" in Error "+inError+" debug "+debug);
     if (isCompleted || inError||!totalsChanged()) return false;
     int count=0;  boolean madechanges=false;
@@ -422,7 +425,7 @@ public class Region {
     }
     if(count==0) return; //no matching block - range is not complete
     if (count==1){  //unique owner
-      setBlockCompleteAndCap(maxblks[0],start);
+      setBlockCompleteAndCap(maxblks[0],start,1);
     }
     else{ //ambiguous owner
       //delete out of sequence blocks before end of range
@@ -525,7 +528,6 @@ public class Region {
     if (status[currentIdx]==Resource.CELLSTATE_FILLED){
     //first cell is FILLED. Can complete whole block
       setBlockCompleteAndCap(currentBlockNum,currentIdx,direction);
-      changed=true;
     } else {  // see if filled cell in range of first block and complete after that
       int edgestart=currentIdx;
       int fillstart=-1;
@@ -538,7 +540,6 @@ public class Region {
         while (currentIdx!=blocklimit){
           if (status[currentIdx]==Resource.CELLSTATE_UNKNOWN){
             setcellowner(currentIdx,currentBlockNum,true,false);
-            changed=true;
           }
           if (dir) currentIdx++;
           else currentIdx--;
@@ -765,7 +766,7 @@ public class Region {
     return range; //number of ranges - not last index!
   }
 
-  private boolean checknBlocks(){
+  private boolean checkNumberOfBlocks(){
     //only called when region is completed. Checks whether number of blocks is correct
     int count=0, idx=0;
     while (idx<nCells){
@@ -827,18 +828,19 @@ public class Region {
     }
     return count;
   }
+  
+  private void countAllStates(){
+    for ( int i =0; i<Resource.CELLSTATE_UNDEFINED;i++) counts[i]=0;
+    for ( int i :status) counts[i]++;
+  }
 
   private int[] countBlocksAvailable(){
     //array of incomplete block indexes
-    //int[] blocks = {};
     int[] tempInt=new int[50];
     int count=0;
     for (int i=0; i<nBlocks; i++){
       if (!completedBlocks[i]) tempInt[count++]=i;
     }
-    //int[] returnInt=new Int[count];
-    //for[int i=0;i<count;i++) returnInt[i]=tempInt[i];
-    //return returnInt;
     return Arrays.copyOf(tempInt,count);
   }
 
@@ -892,10 +894,7 @@ public class Region {
       }
 
       if (freedom<blocklength){
-        if (freedom==0){
-          setBlockCompleteAndCap(block,start);
-          //changed=true;   not necessarily changed
-        }
+        if (freedom==0)setBlockCompleteAndCap(block,start,1);
         else setRangeOwner(block,start+freedom,blocklength-freedom,true,false);
       }
     }
@@ -939,9 +938,6 @@ public class Region {
     removeBlockFromRange(block,start,length,1);
   }
 
-  //private void removeBlockFromRange(int block, int start, int length){
-    //removeBlockFromRange(block,start,length,1);
-  //}
   private void removeBlockFromRange(int block, int start, int length, int direction){
     //remove block as possibility in given range
     //bi-directional forward=1 backward =-1
@@ -957,11 +953,9 @@ public class Region {
     }
   }
 
-  private void setBlockCompleteAndCap(int block, int start){
-  setBlockCompleteAndCap(block,start,1);
-  }
   private void setBlockCompleteAndCap(int block, int start, int direction){
     //returns true - always changes a cell status if not in error
+    //boolean changed=false;
     int length=myBlocks[block];
     if (direction<0) start=start-length+1;
     if (invalidData(start,block, length)) {
@@ -1006,7 +1000,8 @@ public class Region {
     }else{
       int blocklength=myBlocks[owner];
       for (int cell=start; cell<start+length; cell++){
-        changed = setcellowner(cell,owner,exclusive,canbeempty)||changed; //this checks owner valid
+        //changed = setcellowner(cell,owner,exclusive,canbeempty)||changed; //this checks owner valid
+        setcellowner(cell,owner,exclusive,canbeempty);
       }
 
       if (exclusive){
@@ -1118,7 +1113,7 @@ public class Region {
       else if (this.unknown==0){
          this.isCompleted=true;
          if (filled+completed<blockTotal) recordError("totals changed","too few filled cells - "+filled);
-         else checknBlocks();
+         else checkNumberOfBlocks();
       }
     }
     return changed;
@@ -1202,11 +1197,9 @@ public class Region {
       if (status[i]!=Resource.CELLSTATE_UNKNOWN) continue;
       if (!tags[i][canBeEmptyPointer]){
         status[i]=Resource.CELLSTATE_FILLED;
-        //changed=i;//true;
         continue;
       }
       if(countownersandempty(i)>1) continue;
-      //changed=i;//true;
       //Either the 'can be empty' flag is set and there are no owners
       //(ie cell is empty) or there is one owner.
       if (tags[i][canBeEmptyPointer]){
@@ -1214,15 +1207,14 @@ public class Region {
       }
       else status[i]=Resource.CELLSTATE_FILLED;
     }
-    //return changed;
   }
 
   private void recordError(String method, String errmessage){
-    recordError(method,errmessage,false);
+    recordError(method,errmessage,true);
   }
 
   private void recordError(String method, String errmessage, boolean debug){
-    //out.println("record error\n");
+    //out.println("record error" + method + " " + errmessage +debug);
     if (debug){
       StringBuilder sb =new StringBuilder("");
       sb.append(":  ");
@@ -1247,6 +1239,7 @@ public class Region {
         sb.append("\n");
       }
       message=  message+sb.toString();
+      //if (!isColumn && index==6) out.println(message);
     }
     else{
       message=method+": "+errmessage+"\n";

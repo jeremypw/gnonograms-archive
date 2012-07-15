@@ -70,25 +70,14 @@ import static java.lang.System.out;
       out.println("row/col size mismatch\n");
       return false;
     }
-
     if (startgrid!=null) grid.copyFrom(startgrid);
     else grid.setAll(Resource.CELLSTATE_UNKNOWN);
-
-    //Create regions
-    //Dont create regions of length 1
-    regionCount=0;
-    if(cols>1) {
       for (int r=0; r<rows; r++){
         regions[r].initialize(r, false,cols,rowclues[r]);
-        regionCount++;
       }
-    }
-    if(rows>1){
       for (int c=0; c<cols; c++){
         regions[c+rows].initialize(c,true,rows,colclues[c]);
-        regionCount++;
       }
-    }
     guesses=0; counter=0;
     return valid();
   }
@@ -153,37 +142,28 @@ import static java.lang.System.out;
 
   private int simplesolver(boolean debug, boolean logerror){
     boolean changed=true;
-    Region r;
     int pass=1, start=regionCount-1;//, count=0;
     while (changed && pass<50){
       //keep cycling through regions while at least one of them is changing
-      //if a change occurs skip to intersecting row/column that changed.
       changed=false;
-      for (int i=start; i>=0; i--){
-        r=regions[i];
-        //count++;
+      for (Region r : regions){
         if (r.isCompleted) continue;
         if (r.solve(debug,false))changed=true;
-        //if (debug ||(logerror && r.inError)){
-          //if(r.message!="") out.println("Region - "+i+": "+r.message+"\n");
-        //}
-        if (r.inError) return -1;
+        if (r.inError) {
+          if (debug) out.println("::"+r.message);
+          return -1;
+        }
       }
       pass++;
-      //if (debug){
-        //control.updateWorkingGridFromSolver();
-        //if (!Utils.showConfirmDialog("Simple solver pass "+pass+" ... continue?")) return 0;
-      //}
     }
-    //out.println("Regions visited "+count);
     if (solved()) return pass;
     if (pass>30) Utils.showWarningDialog("Simple solver - too many passes\n");
     return 0;
   }
 
   public boolean solved(){
-    for (int i=0; i<regionCount; i++){
-      if (!regions[i].isCompleted) return false;
+    for (Region r : regions){
+      if (!r.isCompleted) return false;
     }
     return true;
   }

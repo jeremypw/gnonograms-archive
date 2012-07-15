@@ -112,7 +112,7 @@ public class Model {
     protected void setGrade(double grade){
       setMaximumBlockSizes(grade);
       setMinimumFreedoms(grade);
-   }
+    }
 
     protected void generateBasicPattern(){
       for (int c=0;c<cols;c++){
@@ -133,11 +133,9 @@ public class Model {
       boolean fill;
       assert sizeOfRegion<=region.length;
       while (p<sizeOfRegion-1){
-//        fill=getRandomInteger(0,100)>50;
         fill=(rand.nextInt(100)>50);
         // random length up to remaining space but not larger than
         max=fill ? maximumBlockSize : (sizeOfRegion-maximumBlockSize);
-//        blockSize=Math.min(getRandomInteger(1,sizeOfRegion-1-p),max);
         blockSize=Math.min(1+rand.nextInt(sizeOfRegion-p),max);
         if (fill){
           for (int i=0; i<blockSize; i++){
@@ -170,40 +168,32 @@ public class Model {
     }
     
     private int[] adjustRegion(int sizeOfRegion, int [] region, int mindf)  {
-    // mindf = minimum degrees of freedom
-    int filledCells=0, filledBlocks=0, degreesOfFreedom=0;
-    for (int i=0; i<sizeOfRegion; i++){
-      if (region[i]==Resource.CELLSTATE_FILLED) {
-        filledCells++;
-        if (i==0 || region[i-1]==Resource.CELLSTATE_EMPTY) filledBlocks++;
-      }
-    }
-    degreesOfFreedom=sizeOfRegion-filledCells-filledBlocks+1;
-
-    if (degreesOfFreedom>sizeOfRegion){//completely empty - fill one cell
-//      region[getRandomInteger(0,sizeOfRegion-1)]=Resource.CELLSTATE_FILLED;
-      region[rand.nextInt(sizeOfRegion)]=Resource.CELLSTATE_FILLED;
-    }
-    else{ // empty cells until reach min freedom
-      int count=0;
-      while (degreesOfFreedom<mindf && count<30){
-        count++;
-        //int i=getRandomInteger(0,sizeOfRegion-1);
-        int i=rand.nextInt(sizeOfRegion);
+      // mindf = minimum degrees of freedom
+      int filledCells=0, filledBlocks=0, degreesOfFreedom=0;
+      for (int i=0; i<sizeOfRegion; i++){
         if (region[i]==Resource.CELLSTATE_FILLED) {
-          region[i]=Resource.CELLSTATE_EMPTY;
-          degreesOfFreedom++;
+          filledCells++;
+          if (i==0 || region[i-1]==Resource.CELLSTATE_EMPTY) filledBlocks++;
         }
       }
+      degreesOfFreedom=sizeOfRegion-filledCells-filledBlocks+1;
+
+      if (degreesOfFreedom>sizeOfRegion){//completely empty - fill one cell
+        region[rand.nextInt(sizeOfRegion)]=Resource.CELLSTATE_FILLED;
+      }
+      else{ // empty cells until reach min freedom
+        int count=0;
+        while (degreesOfFreedom<mindf && count<30){
+          count++;
+          int i=rand.nextInt(sizeOfRegion);
+          if (region[i]==Resource.CELLSTATE_FILLED) {
+            region[i]=Resource.CELLSTATE_EMPTY;
+            degreesOfFreedom++;
+          }
+        }
+      }
+      return region;
     }
-    return region;
-  }
-    //private int getRandomInteger(int lower, int upper){
-      //double rand=Math.random();
-      //double range=(double)(upper-lower);
-      //return lower + (int)(range*rand);
-    //}
-    
   }
 
   public String displayDataToString(){

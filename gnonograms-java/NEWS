@@ -8,6 +8,14 @@ July 1, 2012  Add Timer
               Preferences dialog
               Remember font size
               Restart solved game
+July 8, 2012  Context aware toolbars
+July 14, 2012 Replaced some text with icons.
+              Code tidying
+              View tweaking
+July15, 2012  Persistent Puzzle Directory property.
+              Bug fix: Info bar inappropriately cleared when game loaded
+              Revert to single toobar
+              Starts off in solve mode with random puzzle
 
 Gnonograms-java - version 0.4
 *****************************

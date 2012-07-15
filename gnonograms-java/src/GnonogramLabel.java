@@ -20,6 +20,9 @@
  *  Jeremy Wootten <jeremwootten@gmail.com>
  */
 import javax.swing.JLabel;
+import javax.swing.BorderFactory;
+
+import java.awt.Color;
 
 public class GnonogramLabel extends JLabel{
   private static final long serialVersionUID = 1;
@@ -50,7 +53,7 @@ public class GnonogramLabel extends JLabel{
 
   private String verticalString (String s){
     String[] sa=s.split(Resource.BLOCKSEPARATOR);;
-    StringBuilder sb=new StringBuilder("<html><P align='right'><b>");
+    StringBuilder sb=new StringBuilder("<html><P align=right><b>");
     for (String ss : sa){
       sb.append(ss); sb.append("<br>");
     }
@@ -60,5 +63,4 @@ public class GnonogramLabel extends JLabel{
   private String horizontalString (String s){
     return "<html><b>"+s+"</b></html>";
   }
-
 }

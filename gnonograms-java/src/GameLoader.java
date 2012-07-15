@@ -32,8 +32,8 @@ import java.io.IOException;
 
 import java.util.Scanner;
 import java.util.NoSuchElementException;
-import static java.lang.System.out;
 
+import static java.lang.System.out;
 
 public class GameLoader extends JFileChooser {
   private static final long serialVersionUID = 1;
@@ -56,28 +56,21 @@ public class GameLoader extends JFileChooser {
   public boolean hasState=false;
   public String[] solution;
   public String[] working;
-
-  private Scanner dataStream;
   private String[] headings;
   private String[] bodies;
-
-
+  private Scanner dataStream;
   private int result, headingCount;
 
-  public GameLoader(Component parent) {
-    super();
+  public GameLoader(Component parent, String puzzleDirectoryPath) {
+    super(puzzleDirectoryPath);
     this.setFileSelectionMode(FILES_ONLY);
     this.setFileFilter(new FileNameExtensionFilter("Gnonogram Puzzles","gno"));
     this.setDialogTitle("Choose a puzzle");
     result=this.showOpenDialog(parent);
   }
 
-  public int getResult(){
-    return this.result;
-  }
-  public String getFileName(){
-    return getName(getSelectedFile());
-  }
+  public int getResult(){return this.result;}
+  public String getFileName(){return getName(getSelectedFile());}
 
   public void openDataInputStream() throws FileNotFoundException{
     dataStream= new Scanner(new FileReader(getSelectedFile()));
@@ -108,8 +101,7 @@ public class GameLoader extends JFileChooser {
     validGame=(hasDimensions && ((hasColumnClues && hasRowClues) || hasSolution));
   }
 
-  private boolean parseGnonogramHeadingsAndBodies() throws Exception
-  {
+  private boolean parseGnonogramHeadingsAndBodies() throws Exception {
     int headingID;
     for (int i=0;i<=headingCount;i++){
       headingID=headingToInt(headings[i]);
@@ -219,10 +211,10 @@ public class GameLoader extends JFileChooser {
 
   private void getGameDescription(String body) throws Exception{
     String[] s = splitString(body,"\n",1,10);
-    if (s.length>=1) name=convertHtml(s[0]);
-    if (s.length>=2) author=convertHtml(s[1]);
-    if (s.length>=3) date=s[2];
-    if (s.length>=4) score=s[3];
+    if (s.length>=1) this.name=convertHtml(s[0]);
+    if (s.length>=2) this.author=convertHtml(s[1]);
+    if (s.length>=3) this.date=s[2];
+    if (s.length>=4) this.score=s[3];
   }
   
   //This is needed to cope with some characters
