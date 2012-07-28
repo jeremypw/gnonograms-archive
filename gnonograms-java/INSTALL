@@ -13,6 +13,8 @@
   
   Linux: "java -jar ./Gnonograms-x.x.x.jar".
   Windows "javaw -jar ./Gnonograms-x.x.x.jar".
+  
+  NOTE: This program has mainly been tested on Linux. It is confirmed to run on Windows 7 but has not been tested on other versions of Windows or on Apple computers.  However, as it uses only standard Java it should run on any machine with a suitable Java Runtime Engine.
 
 
 

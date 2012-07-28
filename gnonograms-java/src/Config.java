@@ -31,6 +31,7 @@ import static java.lang.System.out;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.BorderLayout;
+import java.awt.GridLayout;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -46,6 +47,8 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JSlider;
+import javax.swing.JRadioButton;
+import javax.swing.ButtonGroup;
 
 import java.util.Hashtable;
 import java.util.Properties;
@@ -90,6 +93,7 @@ public class Config extends Properties {
         defaultProperties.setProperty("model.rows",String.valueOf(Resource.DEFAULT_ROWS));
         defaultProperties.setProperty("model.cols",String.valueOf(Resource.DEFAULT_COLS));
         defaultProperties.setProperty("model.grade",String.valueOf(Resource.DEFAULT_GRADE));
+        defaultProperties.setProperty("model.startstate",String.valueOf(Resource.DEFAULT_STARTSTATE));
         defaultProperties.setProperty("view.pointsize","20");
         defaultProperties.setProperty("system.puzzledirectory",System.getProperty("user.home"));
     }
@@ -128,6 +132,9 @@ public class Config extends Properties {
     public String getPuzzleDirectory(){return getString("system.puzzledirectory");}
     public void setPuzzleDirectory(String value){setString("system.puzzledirectory",value);}
     
+    public int getStartState(){return getInteger("model.startstate");}
+    public void setStartState(int state){setInteger("model.startstate",state);}
+    
     public boolean saveProperties(){
         try{
             FileOutputStream fos = new FileOutputStream(propertiesFile);
@@ -154,7 +161,7 @@ public class Config extends Properties {
     }
     
     public boolean editPreferences(JFrame owner){
-        ConfigDialog dialog = new ConfigDialog(owner,getRows(),getCols(), (int)getGrade(), getPointSize());
+        ConfigDialog dialog = new ConfigDialog(owner,getRows(),getCols(), (int)getGrade(), getPointSize(), getStartState());
         dialog.setLocationRelativeTo((Component)owner);
         dialog.setVisible(true);
         boolean cancelled=dialog.wasCancelled;
@@ -163,6 +170,7 @@ public class Config extends Properties {
             setCols(dialog.getCols());
             setGrade(dialog.getGrade());
             setPointSize(dialog.getPointSize());
+            setStartState(dialog.getStartState());
         }
         dialog.dispose();
         return !cancelled;
@@ -172,26 +180,27 @@ public class Config extends Properties {
         private static final long serialVersionUID = 1;
         private JSpinner rowSpinner,columnSpinner, pointsizeSpinner;
         private JSlider gradeSlider;
+        private JRadioButton settingButton, solvingButton, loadingButton;
 
         public boolean wasCancelled=false;
         
-        public ConfigDialog(JFrame owner, int rows, int cols, int grade, int pointsize){
+        public ConfigDialog(JFrame owner, int rows, int cols, int grade, int pointsize, int startstate){
             super(owner,"Preferences",true);
             this.setLayout(new BorderLayout());
-            this.add(createInfoPane(rows,cols,grade,pointsize),BorderLayout.PAGE_START);
+            this.add(createInfoPane(rows,cols,grade,pointsize,startstate),BorderLayout.PAGE_START);
             this.add(Utils.okCancelPanelFactory(this,"INFO_OK"),BorderLayout.PAGE_END);
             this.pack();
         }
         
-        private JPanel createInfoPane(int rows, int cols, int grade, int pointsize){
+        private JPanel createInfoPane(int rows, int cols, int grade, int pointsize, int startstate){
             JPanel infoPane=new JPanel(new GridBagLayout());
             GridBagConstraints c=new GridBagConstraints();
             c.gridx=0; c.gridy=0;
             c.gridwidth=1; c.gridheight=1;
             c.weightx=0; c.weighty=0;
-            c.ipadx=6; c.ipady=12;
+            c.ipadx=48; c.ipady=24;
             c.fill=GridBagConstraints.NONE;
-            c.anchor=GridBagConstraints.LINE_END;
+            c.anchor=GridBagConstraints.LINE_START;
             JLabel tmpLabel=new JLabel(Utils.createImageIcon("images/resize-rows48.png","resizeRowIcon"));
             tmpLabel.setToolTipText("Set number of rows");
             infoPane.add(tmpLabel,c);
@@ -203,7 +212,7 @@ public class Config extends Properties {
 
             c.gridy=2;
             tmpLabel=new JLabel(Utils.createImageIcon("images/resize-font48.png","resizeFontIcon"));
-            tmpLabel.setToolTipText("Set difficulty of puzzles");
+            tmpLabel.setToolTipText("Set size of font");
             infoPane.add(tmpLabel,c);
 
             c.gridy=3;
@@ -211,36 +220,85 @@ public class Config extends Properties {
             tmpLabel.setToolTipText("Set difficulty of puzzles");
             infoPane.add(tmpLabel,c);
             
+            c.gridy=4;
+            tmpLabel=new JLabel(Utils.createImageIcon("images/start48.png","startIcon"));
+            tmpLabel.setToolTipText("Set state on startup");
+            infoPane.add(tmpLabel,c);
+            
             rowSpinner=new JSpinner(new SpinnerNumberModel(rows,1,Resource.MAXIMUM_GRID_SIZE,1));
             columnSpinner=new JSpinner(new SpinnerNumberModel(cols,1,Resource.MAXIMUM_GRID_SIZE,1));
+            pointsizeSpinner=new JSpinner(new SpinnerNumberModel(pointsize,Resource.MINIMUM_CLUE_POINTSIZE,Resource.MAXIMUM_CLUE_POINTSIZE,1));
 
             int max=(int)Resource.MAXIMUM_GRADE;
             gradeSlider=new JSlider(1, max, grade );
             Hashtable<Integer , JLabel> gradeSliderLabels = new Hashtable<Integer , JLabel>();
-            gradeSliderLabels.put(1,new JLabel(Utils.createImageIcon("images/smile.png","easyIcon")));
-            gradeSliderLabels.put(max/2,new JLabel(Utils.createImageIcon("images/undecided.png","mediumIcon")));
-            gradeSliderLabels.put(max,new JLabel(Utils.createImageIcon("images/confused.png","hardIcon")));
+            gradeSliderLabels.put(1,new JLabel(Utils.createImageIcon("images/face-smile-big.png","easyIcon")));
+            gradeSliderLabels.put(max/2,new JLabel(Utils.createImageIcon("images/face-plain.png","mediumIcon")));
+            gradeSliderLabels.put(max,new JLabel(Utils.createImageIcon("images/face-uncertain.png","hardIcon")));
             
             gradeSlider.setLabelTable(gradeSliderLabels);
             gradeSlider.setPaintLabels(true);
-
             gradeSlider.setPaintTrack(true);
             gradeSlider.setPaintTicks(false);
-            gradeSlider.setMajorTickSpacing(5);
-            gradeSlider.setMinorTickSpacing(1);
-            pointsizeSpinner=new JSpinner(new SpinnerNumberModel(pointsize,Resource.MINIMUM_CLUE_POINTSIZE,Resource.MAXIMUM_CLUE_POINTSIZE,1));
+//            gradeSlider.setMajorTickSpacing(5);
+//            gradeSlider.setMinorTickSpacing(1);
+            gradeSlider.setBorder(BorderFactory.createEtchedBorder());
 
+            ButtonGroup stateButtons= new ButtonGroup();
+            solvingButton = new JRadioButton();
+            JLabel solvingLabel = new JLabel(Utils.createImageIcon("images/dice.png","randomIcon"));
+            solvingButton.setToolTipText("Start with random puzzle");
+            solvingLabel.setToolTipText("Start with random puzzle");
+            settingButton = new JRadioButton();
+            JLabel settingLabel = new JLabel(Utils.createImageIcon("images/New24.gif","newIcon"));
+            settingButton.setToolTipText("Start in design mode");
+            settingLabel.setToolTipText("Start in design mode");
+            loadingButton = new JRadioButton();
+            JLabel loadingLabel = new JLabel(Utils.createImageIcon("images/Open24.gif","loadIcon"));
+            loadingButton.setToolTipText("Start in file chooser");
+            loadingLabel.setToolTipText("Start in file chooser");
+            stateButtons.add(solvingButton);
+            stateButtons.add(settingButton);
+            stateButtons.add(loadingButton);
+            switch (startstate) {
+                case Resource.GAME_STATE_SOLVING:
+                    solvingButton.setSelected(true);
+                    break;
+                case Resource.GAME_STATE_SETTING:
+                    settingButton.setSelected(true);
+                    break;
+                case Resource.GAME_STATE_LOADING:
+                    loadingButton.setSelected(true);
+                    break;
+                default:
+                    solvingButton.setSelected(true);
+                    break;
+            }
+            
+            JPanel radioPane=new JPanel(new GridLayout(1,0));
+            radioPane.add(solvingLabel);
+            radioPane.add(solvingButton);
+            radioPane.add(settingLabel);
+            radioPane.add(settingButton);
+            radioPane.add(loadingLabel);
+            radioPane.add(loadingButton);
+            radioPane.setBorder(BorderFactory.createEtchedBorder());
+             
             c.weightx=1;
             c.anchor=GridBagConstraints.LINE_START;
             c.fill=GridBagConstraints.NONE;
-            c.gridx=1; c.gridy=0;
+            c.gridx=1; 
+            c.gridy=0;
             infoPane.add(rowSpinner,c);
             c.gridy=1;
             infoPane.add(columnSpinner,c);
             c.gridy=2;
             infoPane.add(pointsizeSpinner,c);
             c.gridy=3;
+            c.fill=GridBagConstraints.HORIZONTAL;
             infoPane.add(gradeSlider,c);
+            c.gridy=4;
+            infoPane.add(radioPane,c);
             infoPane.setBorder(BorderFactory.createEtchedBorder());
             return infoPane;
         }
@@ -255,6 +313,11 @@ public class Config extends Properties {
         protected int getCols(){return spinnerValueToInt(columnSpinner.getValue());}
         protected int getGrade(){return gradeSlider.getValue();}
         protected int getPointSize(){return spinnerValueToInt(pointsizeSpinner.getValue());}
+        protected int getStartState(){
+            if (loadingButton.isSelected()) return Resource.GAME_STATE_LOADING;
+            if (settingButton.isSelected()) return Resource.GAME_STATE_SETTING;
+            return Resource.GAME_STATE_SOLVING;
+        }
         
         private int spinnerValueToInt(Object o){
             return ((Integer)o).intValue();

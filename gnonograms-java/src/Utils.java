@@ -134,7 +134,20 @@ public class Utils
     JOptionPane.showMessageDialog(null,s,"",JOptionPane.INFORMATION_MESSAGE);
     return true;
   }
-
+  public static boolean showHelpDialog(){
+        StringBuilder sb = new StringBuilder("Gnonograms for Java version ");
+        sb.append(Resource.VERSION_STRING);
+        sb.append("\n\n by Jeremy Wootten\n<jeremywootten@gmail.com>");
+        sb.append("\n\nKEY CONTROLS (cursor in grid):");
+        sb.append("\nArrows  : move cell selection cursor");
+        sb.append("\nF or f  : mark selected cell full");
+        sb.append("\nE or e  : mark selected cell empty");
+        sb.append("\nX or x  : mark selected cell unknown");
+        sb.append("\n+ or =  : increase size of cells");
+        sb.append("\n- or _  : decrease size of cells");
+        Utils.showInfoDialog(sb.toString());
+        return true;
+  }
   public static JPanel okCancelPanelFactory(ActionListener listener, String okCommand){
     JButton okButton = new JButton(createImageIcon("images/dialog-ok-apply48.png","okButtonIcon"));
     okButton.setActionCommand(okCommand);

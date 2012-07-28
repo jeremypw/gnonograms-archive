@@ -41,15 +41,29 @@ public class Controller {
   public Controller() {
     model=new Model();
     debug=false;
-    debug=true;
+    //debug=true;
     solver=new Solver(false,debug,false,0,this);
     view=new Viewer(this);
     history=new MoveList();
     config=new Config();
     init(config.getRows(),config.getCols());
-    randomGame();
-    view.setVisible(true);
+    int startState=config.getStartState();
+    switch (startState){
+      case Resource.GAME_STATE_SETTING:
+            setSolving(false);
+            break;
+      case Resource.GAME_STATE_SOLVING:
+            randomGame();
+            setSolving(true);
+            break;
+      case Resource.GAME_STATE_LOADING:
+            loadGame();
+            break;
+      default :
+            setSolving(false);
+    }
     view.setClueFontAndSize(config.getPointSize());
+    view.setVisible(true);
 
   }
 
@@ -95,6 +109,7 @@ public class Controller {
         rows=r;cols=c;
         resize(r,c);
         view.setClueFontAndSize(calculateCluePointSize(r,c));
+        randomGame();
         view.setSolving(isSolving); //else cells turn red
       }
       else view.setClueFontAndSize(config.getPointSize());
@@ -170,6 +185,7 @@ public class Controller {
       return;
     }
     
+    setSolving(false); //ensure clues updated etc
     this.rows=gl.rows; this.cols=gl.cols;
     this.resize(this.rows,this.cols);
 
@@ -183,7 +199,8 @@ public class Controller {
     if (gl.hasSolution){
       model.useSolution();
       for (int i=0; i<this.rows; i++) model.setRowDataFromString(i,gl.solution[i]);
-      updateAllLabelsFromModel(); this.validSolution=true;
+      updateAllLabelsFromModel(); 
+      this.validSolution=true;
     }else {
       //Valid games either have Solution or Clues (or both)
       for (int i=0; i<this.rows; i++) view.setClueText(i,gl.rowClues[i],false);
@@ -362,13 +379,13 @@ public class Controller {
     }
   }
    public void updateLabelsFromModel(int r, int c){
-   //if (isSolving) return;
+    if (isSolving) return;
     view.setClueText(r, Utils.clueFromIntArray(model.getRow(r)),false);
     view.setClueText(c, Utils.clueFromIntArray(model.getColumn(c)),true);
     model.blankWorking();
   }
   public void updateAllLabelsFromModel(){
-    //if (isSolving) return;
+    if (isSolving) return;
     for (int r=0;r<rows;r++){
       for(int c=0;c<cols;c++){
         updateLabelsFromModel(r,c);
@@ -397,10 +414,10 @@ public class Controller {
   public void setSolving(boolean isSolving){
     if (isSolving){
       model.useWorking();
-      if (!this.isSolving){
+      //if (!this.isSolving){
          history.initialize();
          startDate=new Date();
-      }
+      //}
     }else{
       model.useSolution();
     }

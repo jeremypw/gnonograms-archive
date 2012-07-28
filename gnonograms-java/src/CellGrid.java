@@ -188,6 +188,7 @@ public class CellGrid extends JPanel{
       updateCell(r,c,cs);
     }
     public void mouseExited(MouseEvent e) {
+      unhighlightCell(currentRow,currentCol);
      currentCell.clear();
      previousCell.clear();
     }

@@ -24,7 +24,7 @@
 public class Resource
 {
   static final String BLOCKSEPARATOR=",";
-  static final String VERSION_STRING="0.5.0";
+  static final String VERSION_STRING="0.6.0";
   static final double MAXIMUM_GRADE=12;
   static final int MAXIMUM_GRID_SIZE=50;
   static final int MAXIMUM_CLUE_POINTSIZE=72;
@@ -41,6 +41,12 @@ public class Resource
   static final int CELLSTATE_ERROR_EMPTY=5;
   static final int CELLSTATE_ERROR_FILLED=6;
   static final int CELLSTATE_UNDEFINED=7;
+  
+  static final int GAME_STATE_SETTING=0;
+  static final int GAME_STATE_SOLVING=1;
+  static final int GAME_STATE_LOADING=2;
+  static final int DEFAULT_STARTSTATE= GAME_STATE_SOLVING;
+  
 
   static final int KEY_FILLED=KeyEvent.VK_F;
   static final int KEY_EMPTY=KeyEvent.VK_E;

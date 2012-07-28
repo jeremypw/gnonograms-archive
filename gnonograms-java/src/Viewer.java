@@ -75,9 +75,6 @@ public class Viewer extends JFrame {
   private ImageIcon scaledLogo;
   protected ImageIcon hideIcon, revealIcon;
   private JLabel logoLabel;
-  private JToolBar toolbar;
-  private JToolBar settingToolBar;
-  private JToolBar solvingToolBar;
   private JToolBar commonToolBar;
   private JPanel puzzlePane, toolbarPane, infoPane;
   private JButton hiderevealButton;
@@ -89,7 +86,6 @@ public class Viewer extends JFrame {
     this.setDefaultCloseOperation(EXIT_ON_CLOSE);
     this.setTitle("Gnonograms for Java");
     this.setResizable(false);
-//    this.setLocationRelativeTo(null);
     myLogo=Utils.createImageIcon("images/gnonograms3-256.png","Logo");
     logoLabel=new JLabel();
     if (myLogo==null)logoLabel=new JLabel("MISSING ICON");
@@ -105,12 +101,7 @@ public class Viewer extends JFrame {
     toolbarPane.setLayout(new BorderLayout());
     contentPane=this.getContentPane();
     createInfoPane();
-
-    //createSettingToolBar();
-    //createSolvingToolBar();
     createCommonToolBar();
-    //toolbarPane.add(settingToolBar,BorderLayout.LINE_START);
-    //toolbarPane.add(solvingToolBar,BorderLayout.CENTER);
     toolbarPane.add(commonToolBar,BorderLayout.LINE_START);
 
     contentPane.setLayout(new BorderLayout());
@@ -161,8 +152,6 @@ public class Viewer extends JFrame {
     drawing.setSolving(isSolving);
     hiderevealButton.setIcon(isSolving ? revealIcon : hideIcon);
     hiderevealButton.setToolTipText(isSolving ? "Reveal the solution" : "Hide the solution");
-    //settingToolBar.setVisible(!isSolving);
-    //solvingToolBar.setVisible(isSolving);
   }
 
   protected void quit(){control.quit();}
@@ -251,7 +240,7 @@ public class Viewer extends JFrame {
     lb.setClueText(idx,text);
     setLabelToolTip(idx, Utils.freedomFromClue((isColumn ? rows : cols),text),isColumn);
   }
-
+  
   public String getClues(boolean isColumn){
     if (isColumn) return columnBox.getClues();
     else return rowBox.getClues();
@@ -265,22 +254,7 @@ public class Viewer extends JFrame {
   public void redrawGrid(){
     drawing.repaint();
   }
-
-  //private void createSettingToolBar(){
-    //JToolBar tb=new JToolBar();
-    //tb.setFloatable(false);
-    //int position=0;
-    //settingToolBar=tb;
-  //}
   
-  //private void createSolvingToolBar(){
-    //JToolBar tb=new JToolBar();
-    //tb.setFloatable(false);
-
-    //int position=0;
-    //solvingToolBar=tb;
-  //}
-
   private void createCommonToolBar(){
     JToolBar tb=new JToolBar();
     tb.setFloatable(false);
@@ -402,7 +376,7 @@ public class Viewer extends JFrame {
       if (command.equals("CHECK_GAME")) control.checkGame();
       if (command.equals("UNDO_MOVE")) control.undoMove();
       if (command.equals("REDO_MOVE")) control.redoMove();
-      if (command.equals("ABOUT_GAME")) Utils.showInfoDialog("Gnonograms for Java version "+Resource.VERSION_STRING+"\n\n by Jeremy Wootten\n<jeremywootten@gmail.com>");
+      if (command.equals("ABOUT_GAME")) Utils.showHelpDialog();
       if (command.equals("EDIT_PREFERENCES")) control.editPreferences();
     }
   }

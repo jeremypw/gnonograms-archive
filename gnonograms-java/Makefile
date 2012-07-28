@@ -18,7 +18,7 @@
 # *  Author:
 # * 	Jeremy Wootten <jeremwootten@gmail.com>
 PROGRAM=gnonograms-java
-VERSION=0.5.0
+VERSION=0.6.0
 
 JAVAC=javac
 JAR=jar

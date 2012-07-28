@@ -50,7 +50,7 @@ public class GnonogramLabel extends JLabel{
     if (isColumn) super.setText(verticalString(text));
     else super.setText(horizontalString(text));
   }
-
+  
   private String verticalString (String s){
     String[] sa=s.split(Resource.BLOCKSEPARATOR);;
     StringBuilder sb=new StringBuilder("<html><P align=right><b>");
