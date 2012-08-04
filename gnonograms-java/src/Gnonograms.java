@@ -22,6 +22,7 @@
 
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import static java.lang.System.out;
 
 public class Gnonograms {
 
@@ -30,17 +31,8 @@ public class Gnonograms {
         // Set System L&F
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
     }
-    catch (UnsupportedLookAndFeelException e) {
-       // handle exception
-    }
-    catch (ClassNotFoundException e) {
-       // handle exception
-    }
-    catch (InstantiationException e) {
-       // handle exception
-    }
-    catch (IllegalAccessException e) {
-       // handle exception
+    catch (Exception e) {
+       out.println("Problem getting system look and feel - using default Java look and feel");
     }
     new Controller(); 
   }

@@ -220,11 +220,11 @@ public class CellGrid extends JPanel{
       int keyCode =e.getKeyCode();
       switch (keyCode){
         case KeyEvent.VK_MINUS:
-              control.zoomFont(-2);
+              control.zoomFont(-1);
               break;
         case KeyEvent.VK_PLUS:
         case KeyEvent.VK_EQUALS:
-              control.zoomFont(2);
+              control.zoomFont(1);
               break;
         case KeyEvent.VK_KP_LEFT:
         case KeyEvent.VK_LEFT:

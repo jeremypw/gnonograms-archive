@@ -76,7 +76,6 @@ public class Controller {
   }
 
   public void resize(int r, int c){
-    model.clear();
     init(r,c);
   }
   
@@ -108,8 +107,8 @@ public class Controller {
       if (rows!=r || cols!=c){
         rows=r;cols=c;
         resize(r,c);
-        view.setClueFontAndSize(calculateCluePointSize(r,c));
         randomGame();
+        view.setClueFontAndSize(calculateCluePointSize(r,c));
         view.setSolving(isSolving); //else cells turn red
       }
       else view.setClueFontAndSize(config.getPointSize());
@@ -160,7 +159,7 @@ public class Controller {
     if (result>0) return; //User cancelled
 
     config.setPuzzleDirectory((gl.getCurrentDirectory()).getPath());
-    
+
     try {gl.openDataInputStream();} //can chosen file be opened?
     catch (java.io.FileNotFoundException e){
       Utils.showErrorDialog(e.getMessage()); 
@@ -218,7 +217,6 @@ public class Controller {
         model.setRowDataFromString(i,gl.working[i]);
       }
     }
-    //setSolving(gl.state.contains("SOLVING"));
     setSolving(true); //always start in solving mode to avoid displaying solution
     view.redrawGrid();
     gl.close();
@@ -230,10 +228,11 @@ public class Controller {
   }
   
   public void saveGame(){
-    //if (!checkCluesValid()) return; 
     GameSaver gs=new GameSaver(view, config.getPuzzleDirectory());
     if (gs.getResult()>0) return;
-    
+
+    config.setPuzzleDirectory((gs.getCurrentDirectory()).getPath());
+
     try {gs.openDataOutputStream();}
     catch (IOException e){out.println("Error while opening game file: "+e.getMessage());return;}
 
@@ -243,10 +242,10 @@ public class Controller {
       gs.writeDimensions(rows,cols);
       gs.writeClues(view.getClues(false),false);
       gs.writeClues(view.getClues(true),true);
-      //if (validSolution) {
-        model.useSolution();
-        gs.writeSolution(model.displayDataToString());
-      //}
+
+      model.useSolution();
+      gs.writeSolution(model.displayDataToString());
+
       model.useWorking();
       gs.writeWorking(model.displayDataToString());
       gs.writeState(isSolving);
@@ -326,7 +325,6 @@ public class Controller {
           validSolution=true;
         }
         updateSolutionGridFromSolver();
-       //updateWorkingGridFromSolver();
         break;
     }
     if (message.length()>0) Utils.showInfoDialog(message);
@@ -344,7 +342,6 @@ public class Controller {
 
   public boolean checkCluesValid(){
       boolean valid;
-      //model.blankWorking();
       prepareToSolve(false,false,false); //no start grid
       valid=(solveGame()>=0);
       setSolving(isSolving);
@@ -414,10 +411,8 @@ public class Controller {
   public void setSolving(boolean isSolving){
     if (isSolving){
       model.useWorking();
-      //if (!this.isSolving){
-         history.initialize();
-         startDate=new Date();
-      //}
+      history.initialize();
+      startDate=new Date();
     }else{
       model.useSolution();
     }

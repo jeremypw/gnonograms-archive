@@ -149,7 +149,9 @@ public class GameLoader extends JFileChooser {
     String[] s=splitString(body,"\n",2,3);
     rows=new Integer(s[0]);
     cols=new Integer(s[1]);
-    if (rows<1 || cols<1 || rows>Resource.MAXIMUM_GRID_SIZE || cols> Resource.MAXIMUM_GRID_SIZE) throw new Exception("Dimensions out of range:"+rows+","+cols);
+    if (rows<1 || cols<1 || rows>Resource.MAXIMUM_GRID_SIZE || cols> Resource.MAXIMUM_GRID_SIZE) {
+      throw new Exception("Dimensions out of range:"+rows+","+cols);
+    }
     else hasDimensions=true;
   }
 

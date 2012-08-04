@@ -37,7 +37,7 @@ import static java.lang.System.out;
 
 class LabelBox extends JPanel{
   private static final long serialVersionUID = 1;
-  private int maxClueLength=10;
+  private int maxClueLength=4;
   private GnonogramLabel[] labels;
   private int no_labels;
   private boolean isColumn;
@@ -66,15 +66,21 @@ class LabelBox extends JPanel{
 
   public void setFontAndSize(Font f, int size){
     int labelWidth, labelHeight;
-    int labelLength=Math.max(size*maxClueLength/2+30,48);
-    int labelThickness=size*100/85;
-    labelWidth=isColumn ? labelThickness : labelLength;
-    labelHeight=isColumn ? labelLength : labelThickness;
+    //Trial and error functions giving reasonable appearance.
+    if (isColumn){
+      labelWidth=size*2+4;
+      labelHeight=maxClueLength*size*10/8;
+    }else{
+      labelWidth=maxClueLength*size*9/10;
+      labelHeight=size*2+4;
+    }
+
+    Dimension d = new Dimension(labelWidth,labelHeight);
+    
     for (GnonogramLabel l :labels){
       l.setFont(f);
-      l.setPreferredSize(new Dimension(labelWidth,labelHeight));
+      l.setPreferredSize(d);
     }
-    this.repaint();
   }
 
   public void setClueText(int l, String text){

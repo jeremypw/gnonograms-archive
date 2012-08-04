@@ -82,6 +82,7 @@ public class Viewer extends JFrame {
   private int rows, cols, cluePointSize=20;
   
   public Viewer(Controller control){
+    out.println("Starting to initialise viewer");
     this.control=control;
     this.setDefaultCloseOperation(EXIT_ON_CLOSE);
     this.setTitle("Gnonograms for Java");
@@ -197,33 +198,36 @@ public class Viewer extends JFrame {
     
     c.weightx=1;c.weighty=1;
     c.fill=GridBagConstraints.BOTH;
+    c.anchor=GridBagConstraints.PAGE_END;
     c.gridwidth=cols; c.gridheight=1;
     c.gridx=1; c.gridy=0;
     puzzlePane.add(columnBox,c);
     
     c.fill=GridBagConstraints.BOTH;
+    c.anchor=GridBagConstraints.LINE_END;
     c.gridwidth=1; c.gridheight=rows;
     c.gridx=0; c.gridy=1;
     puzzlePane.add(rowBox,c);
 
     c.gridwidth=1; c.gridheight=1;
     c.gridx=0; c.gridy=0;
+    c.fill=GridBagConstraints.NONE;
+    c.anchor=GridBagConstraints.LINE_END;
     puzzlePane.add(logoLabel,c);
     this.pack();
   }
 
   public void setClueFontAndSize(int pointSize){
     cluePointSize=pointSize;
+    if (this.getGraphics()==null) return;
     Font f=new Font("Arial",Font.BOLD,cluePointSize);
     FontMetrics fm= this.getGraphics().getFontMetrics(f);
-    int fontWidth=fm.stringWidth("00");
+    int fontWidth=fm.stringWidth("0");
     rowBox.setFontAndSize(f, fontWidth);
     columnBox.setFontAndSize(f, fontWidth);
     logoLabel.setIcon(null);
     this.pack(); //size according to clues
-    int imageSize=Math.max(48,Math.max(rowBox.getWidth(),columnBox.getHeight()));
-    resizeLogoLabelImage(imageSize,imageSize); //resize logo label accordingly
-    this.pack();
+    resizeLogoLabelImage(rowBox.getWidth(),columnBox.getHeight()); //resize logo label accordingly
     setLocationRelativeTo(null); //centers on screen
   }
 

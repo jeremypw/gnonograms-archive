@@ -1,5 +1,5 @@
 /* Permutator class for gnonograms-java
- * Currently on a stub.  Used for advanced solver
+ * Currently only a stub.  Used for advanced solver
  * Copyright 2012 Jeremy Paul Wootten <jeremywootten@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify

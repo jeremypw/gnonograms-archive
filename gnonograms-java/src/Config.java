@@ -72,15 +72,7 @@ public class Config extends Properties {
             alreadyExists=!propertiesFile.createNewFile();
             }
         catch(IOException e){out.println("Problem creating properties file "+e.getMessage());}
-        //if(!alreadyExists){
-            //valid=createDefaultProperties();
-        //}
-        //else{
-            //if(!loadProperties()){
-                //valid=createDefaultProperties();
-            //}
-            //else valid=true;
-        //}
+
         if(!alreadyExists||!loadProperties()){
             this.properties=new Properties(defaultProperties);
             valid=saveProperties();
@@ -240,8 +232,6 @@ public class Config extends Properties {
             gradeSlider.setPaintLabels(true);
             gradeSlider.setPaintTrack(true);
             gradeSlider.setPaintTicks(false);
-//            gradeSlider.setMajorTickSpacing(5);
-//            gradeSlider.setMinorTickSpacing(1);
             gradeSlider.setBorder(BorderFactory.createEtchedBorder());
 
             ButtonGroup stateButtons= new ButtonGroup();

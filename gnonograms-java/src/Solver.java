@@ -169,7 +169,7 @@ import static java.lang.System.out;
   }
 
   private int advancedsolver(int[] gridstore, boolean debug){
-    //Not used in Java version
+    // Not used in Java version
     // single cell guesses, depth 1 (no recursion)
     // make a guess in each unknown cell in turn
     // if leads to contradiction mark opposite to guess,
