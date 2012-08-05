@@ -187,8 +187,9 @@ public class Controller {
     setSolving(false); //ensure clues updated etc
     this.rows=gl.rows; this.cols=gl.cols;
     this.resize(this.rows,this.cols);
-
+    
     view.setClueFontAndSize(calculateCluePointSize(this.rows,this.cols));
+
     view.setName(gl.name);
     view.setAuthor(gl.author);
     view.setCreationDate(gl.date);
@@ -217,7 +218,7 @@ public class Controller {
         model.setRowDataFromString(i,gl.working[i]);
       }
     }
-    setSolving(true); //always start in solving mode to avoid displaying solution
+     setSolving(true); //always start in solving mode to avoid displaying solution
     view.redrawGrid();
     gl.close();
   }

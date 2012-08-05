@@ -87,7 +87,7 @@ class LabelBox extends JPanel{
     if (l>=no_labels || l<0) return;
     if (text==null) text="?";
     labels[l].setText(text);
-    maxClueLength=Math.max(maxClueLength,text.length());
+    maxClueLength=Math.max(maxClueLength,text.length()+2);
   }
 
   public void setLabelToolTip(int l, int freedom){
