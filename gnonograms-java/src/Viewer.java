@@ -194,25 +194,31 @@ public class Viewer extends JFrame {
     c.weightx=0;c.weighty=0;
     c.fill=GridBagConstraints.BOTH;
     c.anchor=GridBagConstraints.CENTER;
-    puzzlePane.add(drawing,c);
     
-    c.weightx=1;c.weighty=1;
+    puzzlePane.add(drawing,c);
+ 
+    c.gridx=1; c.gridy=0;   
+    c.gridwidth=cols; c.gridheight=1;
+    c.weightx=1;c.weighty=0;
     c.fill=GridBagConstraints.BOTH;
     c.anchor=GridBagConstraints.PAGE_END;
-    c.gridwidth=cols; c.gridheight=1;
-    c.gridx=1; c.gridy=0;
+
     puzzlePane.add(columnBox,c);
-    
+
+    c.gridx=0; c.gridy=1;    
+    c.gridwidth=1; c.gridheight=rows;
+    c.weightx=0;c.weighty=1;
     c.fill=GridBagConstraints.BOTH;
     c.anchor=GridBagConstraints.LINE_END;
-    c.gridwidth=1; c.gridheight=rows;
-    c.gridx=0; c.gridy=1;
+    
     puzzlePane.add(rowBox,c);
 
-    c.gridwidth=1; c.gridheight=1;
     c.gridx=0; c.gridy=0;
+    c.gridwidth=1; c.gridheight=1;
+    c.weightx=0;c.weighty=0;
     c.fill=GridBagConstraints.NONE;
     c.anchor=GridBagConstraints.LINE_END;
+    
     puzzlePane.add(logoLabel,c);
     this.pack();
   }
@@ -227,7 +233,9 @@ public class Viewer extends JFrame {
     columnBox.setFontAndSize(f, fontWidth);
     logoLabel.setIcon(null);
     this.pack(); //size according to clues
-    resizeLogoLabelImage(rowBox.getWidth(),columnBox.getHeight()); //resize logo label accordingly
+    int imageSize=Math.max(rowBox.getWidth(),columnBox.getHeight())-1;
+    resizeLogoLabelImage(imageSize,imageSize);
+    //resizeLogoLabelImage(rowBox.getWidth(),columnBox.getHeight()); //resize logo label accordingly
     setLocationRelativeTo(null); //centers on screen
   }
 

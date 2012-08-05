@@ -69,9 +69,9 @@ class LabelBox extends JPanel{
     //Trial and error functions giving reasonable appearance.
     if (isColumn){
       labelWidth=size*2+4;
-      labelHeight=maxClueLength*size*10/8;
+      labelHeight=maxClueLength*size;
     }else{
-      labelWidth=maxClueLength*size*9/10;
+      labelWidth=maxClueLength*size*7/10;
       labelHeight=size*2+4;
     }
 
