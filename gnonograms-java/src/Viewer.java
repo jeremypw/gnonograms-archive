@@ -87,6 +87,7 @@ public class Viewer extends JFrame {
     this.setDefaultCloseOperation(EXIT_ON_CLOSE);
     this.setTitle("Gnonograms for Java");
     this.setResizable(false);
+    //this.setResizable(true);
     myLogo=Utils.createImageIcon("images/gnonograms3-256.png","Logo");
     logoLabel=new JLabel();
     if (myLogo==null)logoLabel=new JLabel("MISSING ICON");
@@ -98,6 +99,7 @@ public class Viewer extends JFrame {
 
     puzzlePane=new JPanel();
     puzzlePane.setLayout(new GridBagLayout());
+    //puzzlePane.setBorder(BorderFactory.createLineBorder(Color.red));
     toolbarPane=new JPanel();
     toolbarPane.setLayout(new BorderLayout());
     contentPane=this.getContentPane();
@@ -107,8 +109,9 @@ public class Viewer extends JFrame {
 
     contentPane.setLayout(new BorderLayout());
     contentPane.add(toolbarPane,BorderLayout.PAGE_START);
-    contentPane.add(puzzlePane,BorderLayout.LINE_START);
+    contentPane.add(puzzlePane,BorderLayout.LINE_START);//Java bug in calculating window size - better to truncate left hand edge rather than right hand edge.
     contentPane.add(infoPane,BorderLayout.PAGE_END);
+    this.pack();
     
     addWindowListener(new WindowAdapter() {
         @Override
@@ -189,37 +192,36 @@ public class Viewer extends JFrame {
     drawing=new CellGrid(rows, cols, control);
     c = new GridBagConstraints();
     
-    c.gridx=1; c.gridy=1;
-    c.gridwidth=cols; c.gridheight=rows;
-    c.weightx=0;c.weighty=0;
-    c.fill=GridBagConstraints.BOTH;
-    c.anchor=GridBagConstraints.CENTER;
-    
-    puzzlePane.add(drawing,c);
- 
     c.gridx=1; c.gridy=0;   
-    c.gridwidth=cols; c.gridheight=1;
-    c.weightx=1;c.weighty=0;
-    c.fill=GridBagConstraints.BOTH;
-    c.anchor=GridBagConstraints.PAGE_END;
+    //c.gridwidth=cols; c.gridheight=1;
+    c.weightx=0;c.weighty=1;
+    c.fill=GridBagConstraints.CENTER;
 
     puzzlePane.add(columnBox,c);
 
     c.gridx=0; c.gridy=1;    
-    c.gridwidth=1; c.gridheight=rows;
-    c.weightx=0;c.weighty=1;
+   // c.gridwidth=1; c.gridheight=rows;
+    c.weightx=1;c.weighty=0;
     c.fill=GridBagConstraints.BOTH;
-    c.anchor=GridBagConstraints.LINE_END;
+    c.anchor=GridBagConstraints.CENTER;
     
     puzzlePane.add(rowBox,c);
 
     c.gridx=0; c.gridy=0;
-    c.gridwidth=1; c.gridheight=1;
+    //c.gridwidth=1; c.gridheight=1;
     c.weightx=0;c.weighty=0;
     c.fill=GridBagConstraints.NONE;
     c.anchor=GridBagConstraints.LINE_END;
     
     puzzlePane.add(logoLabel,c);
+    
+    c.gridx=1; c.gridy=1;
+    //c.gridwidth=cols; c.gridheight=rows;
+    c.weightx=0;c.weighty=0;
+    c.fill=GridBagConstraints.BOTH;
+    c.anchor=GridBagConstraints.CENTER;
+    
+    puzzlePane.add(drawing,c);
     this.pack();
   }
 
@@ -233,9 +235,8 @@ public class Viewer extends JFrame {
     columnBox.setFontAndSize(f, fontWidth);
     logoLabel.setIcon(null);
     this.pack(); //size according to clues
-    int imageSize=Math.max(rowBox.getWidth(),columnBox.getHeight())-1;
-    resizeLogoLabelImage(imageSize,imageSize);
-    //resizeLogoLabelImage(rowBox.getWidth(),columnBox.getHeight()); //resize logo label accordingly
+    resizeLogoLabelImage(rowBox.getWidth(),columnBox.getHeight()); //resize logo label accordingly
+    this.pack();
     setLocationRelativeTo(null); //centers on screen
   }
 
@@ -251,6 +252,11 @@ public class Viewer extends JFrame {
     LabelBox lb= isColumn ? columnBox : rowBox;
     lb.setClueText(idx,text);
     setLabelToolTip(idx, Utils.freedomFromClue((isColumn ? rows : cols),text),isColumn);
+  }
+  
+  public void resetMaximumClueLength(boolean isColumn){
+    if (isColumn)  columnBox.resetMaximumClueLength();
+    else  rowBox.resetMaximumClueLength();
   }
   
   public String getClues(boolean isColumn){

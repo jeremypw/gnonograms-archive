@@ -40,6 +40,7 @@ public class GnonogramLabel extends JLabel{
       this.setHorizontalAlignment(RIGHT);
       this.setVerticalAlignment(CENTER);
     }
+    //this.setBorder(BorderFactory.createLineBorder(Color.green));
     setText(text);
   }
 

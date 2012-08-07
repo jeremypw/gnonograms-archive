@@ -2,6 +2,7 @@ Gnonograms3 - version 0.9.10
 ****************************
 04/June/2012 Bugfix: possible array bound error in solver (count_capped_ranges)
              Reduced maximum size to 60 X 60;
+05/Aug/2012  Column clue numbers right way up.
 
 Gnonograms3 - version 0.9.9
 ***************************

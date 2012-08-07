@@ -69,7 +69,7 @@ class LabelBox extends JPanel{
     //Trial and error functions giving reasonable appearance.
     if (isColumn){
       labelWidth=size*2+4;
-      labelHeight=maxClueLength*size;
+      labelHeight=maxClueLength*size+6;
     }else{
       labelWidth=maxClueLength*size*7/10;
       labelHeight=size*2+4;
@@ -90,6 +90,8 @@ class LabelBox extends JPanel{
     maxClueLength=Math.max(maxClueLength,text.length()+2);
   }
 
+  public void resetMaximumClueLength(){maxClueLength=4;}
+  
   public void setLabelToolTip(int l, int freedom){
     labels[l].setToolTipText("Freedom="+freedom);
   }

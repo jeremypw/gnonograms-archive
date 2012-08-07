@@ -117,9 +117,10 @@ public class Gnonogram_LabelBox : Frame
 		for (int i=0;i<_size;i++) {highlight(i,false);}
 	}
 
-	public void update_label(int idx, string txt)
+	public void update_label(int idx, string? txt)
 	{
 		//stdout.printf("Idx %d Label txt %s\n",idx,txt);
+		if (txt==null) txt="?";
 		_labels[idx].set_markup(_attribstart,txt,_attribend);
 		_labels[idx].set_size(_other_size);
 	}

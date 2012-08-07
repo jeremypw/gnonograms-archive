@@ -30,16 +30,19 @@ class Gnonogram_label : Gtk.EventBox
 	private string clue;
 	private int blockextent;
 	private int size;
+	private bool is_column;
 
 	public Gnonogram_label(string label_text, bool is_column)
 	{
+		this.is_column=is_column;
 		l=new Gtk.Label(label_text);
 		l.has_tooltip=true;
 
 		if (is_column)
 		{
-			l.set_angle(270);
+			//l.set_angle(270);
 			l.set_alignment((float)0.5,(float)1.0);
+			l.set_padding(6,2);
 		}
 		else
 		{
@@ -56,9 +59,12 @@ class Gnonogram_label : Gtk.EventBox
 
 	public void set_markup(string start, string text, string end)
 	{
+		//stdout.printf(@"$start $text $end\n");
 		attrib_start=start; attrib_end=end; clue=text;
-		l.set_markup(attrib_start+clue+attrib_end);
 		blockextent=Utils.blockextent_from_clue(clue);
+		if (is_column) l.set_markup(attrib_start+verticalString(clue)+attrib_end);
+		else l.set_markup(attrib_start+clue+attrib_end);
+
 	}
 
 	public void set_size(int s)
@@ -69,6 +75,20 @@ class Gnonogram_label : Gtk.EventBox
 
 	public string get_text()
 	{
-		return l.get_text();
+		return clue;
+		//return l.get_text();
 	}
+  
+  private string verticalString (string s){
+    string[] sa=s.split_set(", ");
+    StringBuilder sb=new StringBuilder("");
+    foreach (string ss in sa){
+      sb.append(ss);
+      sb.append("\n"); 
+    }
+    sb.truncate(sb.len -1);
+    //stdout.printf(sb.str+"\n");
+    return sb.str;
+  }
+
 }

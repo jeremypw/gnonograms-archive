@@ -218,7 +218,7 @@ public class Controller {
         model.setRowDataFromString(i,gl.working[i]);
       }
     }
-     setSolving(true); //always start in solving mode to avoid displaying solution
+    setSolving(true); //always start in solving mode to avoid displaying solution
     view.redrawGrid();
     gl.close();
   }
@@ -367,10 +367,12 @@ public class Controller {
 
   private void updateAllLabelText(){
     String clue;
+    view.resetMaximumClueLength(false);
     for(int r=0;r<rows;r++){
       clue=Utils.clueFromIntArray(model.getRow(r));
       view.setClueText(r,clue,false);
     }
+    view.resetMaximumClueLength(true);
     for(int c=0;c<cols;c++){
       clue=Utils.clueFromIntArray(model.getColumn(c));
       view.setClueText(c,clue,true);
