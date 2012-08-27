@@ -104,6 +104,7 @@ import static java.lang.System.out;
     if (isColumn) setColumn(idx, sa, start);
     else setRow(idx, sa, start);
   }
+  
   public void setAll(int s){
     for (int r=0; r<rows; r++){
       for (int c=0;c<cols;c++){
@@ -111,6 +112,7 @@ import static java.lang.System.out;
       }
     }
   }
+  
   public boolean setRowDataFromString(int r, String s){
     int[] cs =Utils.cellStateArrayFromString(s);
     return setRowDataFromArray(r, cs);
@@ -140,9 +142,7 @@ import static java.lang.System.out;
     for (int r=0; r<rows; r++){
       for (int c=0; c<cols; c++){
         myData[r][c]=ca.getDataFromRC(r,c);
-      }
-    }
-  }
+  } } }
 
   public int countDifferences(My2DCellArray ca) {
     int rows = Math.min(ca.getRows(), this.rows);
@@ -151,17 +151,17 @@ import static java.lang.System.out;
     for (int r=0; r<rows; r++){
       for (int c=0; c<cols; c++){
         if(myData[r][c]!=ca.getDataFromRC(r,c)) count++;
-      }
-    }
+    } }
     return count;
   }
+  
   public int countState(int cs){
     int count=0;
     for (int r=0; r<rows; r++){
       for (int c=0;c<cols;c++){
         if (myData[r][c]==cs) count++;
-      }
-    }
+    } }
     return count;
   }
+  
 }

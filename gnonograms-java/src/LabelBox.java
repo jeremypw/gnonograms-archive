@@ -40,6 +40,7 @@ class LabelBox extends JPanel{
   private int maxClueLength=4;
   private GnonogramLabel[] labels;
   private int no_labels;
+  private int size, logoSize=48;
   private boolean isColumn;
 
   public LabelBox(int no_labels, boolean isColumn){
@@ -55,42 +56,59 @@ class LabelBox extends JPanel{
       if (isColumn){
         l.setAlignmentY(Component.BOTTOM_ALIGNMENT);
         l.setAlignmentX(Component.CENTER_ALIGNMENT);
-      }else{
+      }
+      else{
         l.setAlignmentX(Component.RIGHT_ALIGNMENT);
         l.setAlignmentY(Component.CENTER_ALIGNMENT);
       }
       this.add(l);
       labels[i]=l;
-    }
-  }
+  } }
 
   public void setFontAndSize(Font f, int size){
+    setLabelFont(f);
+    this.size=size;
+    setSize();
+  }
+  
+  private void setSize(){
     int labelWidth, labelHeight;
     //Trial and error functions giving reasonable appearance.
     if (isColumn){
       labelWidth=size*2+4;
       labelHeight=maxClueLength*size+6;
-    }else{
+      logoSize=labelHeight;
+    }
+    else{
       labelWidth=maxClueLength*size*7/10;
       labelHeight=size*2+4;
+      logoSize=labelWidth;
     }
-
     Dimension d = new Dimension(labelWidth,labelHeight);
-    
     for (GnonogramLabel l :labels){
-      l.setFont(f);
       l.setPreferredSize(d);
     }
+  }
+  
+  private void setLabelFont(Font f){
+    for (GnonogramLabel l :labels){
+      l.setFont(f);
+  } }
+  
+  public void highlightLabel(int label, boolean on){
+    (labels[label]).highlightLabel(on);
   }
 
   public void setClueText(int l, String text){
     if (l>=no_labels || l<0) return;
     if (text==null) text="?";
     labels[l].setText(text);
-    maxClueLength=Math.max(maxClueLength,text.length()+2);
-  }
+    if(text.length()+2>maxClueLength){
+      maxClueLength=text.length()+2;
+      setSize();
+  } }
 
-  public void resetMaximumClueLength(){maxClueLength=4;}
+  public void resetMaximumClueLength(){maxClueLength=10;}
   
   public void setLabelToolTip(int l, int freedom){
     labels[l].setToolTipText("Freedom="+freedom);
@@ -100,6 +118,8 @@ class LabelBox extends JPanel{
     if (l>=no_labels || l<0) return "";
     else return labels[l].getOriginalText();
   }
+  
+  public int getLogoSize(){return logoSize;}
 
   public String getClues(){
     StringBuilder sb=new StringBuilder("");
@@ -109,4 +129,5 @@ class LabelBox extends JPanel{
     }
     return sb.toString();
   }
+  
 }

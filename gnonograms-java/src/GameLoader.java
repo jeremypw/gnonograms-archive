@@ -178,7 +178,7 @@ public class GameLoader extends JFileChooser {
     for (int i=0; i<sa.length; i++){
       // ignore extraneous non-digits (allow one zero)
       try{b=new Integer(sa[i]);}
-      catch (NumberFormatException e){out.println("Not a number:"+sa[i]); continue;}
+      catch (NumberFormatException e){continue;}
       if (b<0||b>maxblock) throw new Exception("Invalid block size in clue");
       if (b==0 && zero_count>0) continue;
       else zero_count++;
@@ -197,9 +197,7 @@ public class GameLoader extends JFileChooser {
       if (is_solution){
         for (int c=0;c<cols;c++){
           if(arr[c]!=Resource.CELLSTATE_EMPTY && arr[c]!=Resource.CELLSTATE_FILLED) throw new Exception("Invalid cell state"+arr[c]);
-        }
-      }
-    }
+    } } }
     if (is_solution){ solution=s; hasSolution=true;}
     else{working=s;hasWorking=true;}
   }

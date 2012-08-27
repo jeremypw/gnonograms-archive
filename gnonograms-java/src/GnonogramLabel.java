@@ -21,6 +21,7 @@
  */
 import javax.swing.JLabel;
 import javax.swing.BorderFactory;
+import javax.swing.border.LineBorder;
 
 import java.awt.Color;
 
@@ -28,6 +29,7 @@ public class GnonogramLabel extends JLabel{
   private static final long serialVersionUID = 1;
   private boolean isColumn;
   private String text;
+  private LineBorder labelBorder;
 
   public GnonogramLabel(String text, boolean isColumn){
     this.isColumn=isColumn;
@@ -40,8 +42,14 @@ public class GnonogramLabel extends JLabel{
       this.setHorizontalAlignment(RIGHT);
       this.setVerticalAlignment(CENTER);
     }
-    //this.setBorder(BorderFactory.createLineBorder(Color.green));
+    labelBorder=(LineBorder)BorderFactory.createLineBorder(Resource.HIGHLIGHT_COLOR,2);
     setText(text);
+  }
+  
+  public void highlightLabel(boolean on){
+    if (on)this.setBorder(labelBorder);
+    else this.setBorder(null);
+    
   }
 
   public String getOriginalText(){ return text;}

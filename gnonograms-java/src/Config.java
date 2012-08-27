@@ -163,6 +163,7 @@ public class Config extends Properties {
             setGrade(dialog.getGrade());
             setPointSize(dialog.getPointSize());
             setStartState(dialog.getStartState());
+            saveProperties();
         }
         dialog.dispose();
         return !cancelled;
@@ -313,5 +314,4 @@ public class Config extends Properties {
             return ((Integer)o).intValue();
         }
     }
-
 }

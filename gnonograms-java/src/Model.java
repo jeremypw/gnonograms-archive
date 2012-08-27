@@ -104,6 +104,7 @@ public class Model {
       maximumColumnBlockSize=calculatemaximumBlockSize(rows2D,grade);
       maximumRowBlockSize=calculatemaximumBlockSize(cols2D,grade);
     }
+    
     protected void setMinimumFreedoms(double grade){
       minimumColumnFreedom = 1+(int)((rows*grade)/(Resource.MAXIMUM_GRADE*4));
       minimumRowFreedom = 1+(int)((cols*grade)/(Resource.MAXIMUM_GRADE*4));
@@ -124,8 +125,7 @@ public class Model {
         temp=solutionData.getRow(r);
         temp=fillRegion(cols, temp, (int)(Math.abs((r-middleOfColumn))), maximumRowBlockSize);
         solutionData.setRow(r, temp);
-      }
-    }
+    } }
 
     private int[] fillRegion (int sizeOfRegion, int[] region, int distanceFromCenter, int maximumBlockSize){
       int p=0, blockSize, max;
@@ -163,9 +163,7 @@ public class Model {
           temp=solutionData.getRow(r);
           temp=adjustRegion(cols, temp, minimumRowFreedom);
           solutionData.setRow(r, temp);
-        }
-      }
-    }
+    } } }
     
     private int[] adjustRegion(int sizeOfRegion, int [] region, int mindf)  {
       // mindf = minimum degrees of freedom
@@ -189,9 +187,7 @@ public class Model {
           if (region[i]==Resource.CELLSTATE_FILLED) {
             region[i]=Resource.CELLSTATE_EMPTY;
             degreesOfFreedom++;
-          }
-        }
-      }
+      } } }
       return region;
     }
   }

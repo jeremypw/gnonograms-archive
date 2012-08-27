@@ -326,7 +326,7 @@
 				if (start_capped && end_capped)
 				{	// assigned block must fit exactly
 					assign_and_cap_range(idx,length);
-					changed=true;
+					//changed=true;  //only changes tags
 				}
 				else
 				{	//find largest possible owner of this (partial) block
@@ -717,31 +717,25 @@
 		return changed;
 	}
 
-	private bool find_edge(ref int idx,ref int blocknum, int limit, int direction)
-	{
+	private bool find_edge(ref int idx,ref int blocknum, int limit, int direction)	{
 		// Edge is first FILLED or UNKNOWN cell from limit of region.
 		//stdout.printf(@"find edge index $idx blocknum $blocknum limit $limit\n");
 		bool dir=(direction==FORWARDS);
 		bool found=false;
-
-		for (int i=idx; (dir ? i<limit : i>limit); (dir ? i++ : i--))
-		{
+		for (int i=idx; (dir ? i<limit : i>limit); (dir ? i++ : i--)){
 			if (_status[i]==CellState.EMPTY) continue;
 			//now pointing at first cell of filled or unknown block after edge
-			if (_tags[i,_is_finished_ptr])
-			{	//skip to end of finished block
+			if (_tags[i,_is_finished_ptr]){	//skip to end of finished block
 				i = (dir ? i+_blocks[blocknum]-1 : i-_blocks[blocknum]+1);
 				//now pointing at last cell of filled block
 				if (dir) blocknum++;
 				else blocknum--;
-
-				continue;
 			}
-
-			idx=i;
-			found=true;
-			break;
-		}
+            else {
+                idx=i;
+                found=true;
+                break;
+		}   }
 		return found;
 	}
 

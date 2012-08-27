@@ -140,11 +140,19 @@ public class Utils
         sb.append("\n\n by Jeremy Wootten\n<jeremywootten@gmail.com>");
         sb.append("\n\nKEY CONTROLS (cursor in grid):");
         sb.append("\nArrows  : move cell selection cursor");
+        sb.append("\nCtrl+Arrows  : drag cell selection cursor");
         sb.append("\nF or f  : mark selected cell full");
         sb.append("\nE or e  : mark selected cell empty");
         sb.append("\nX or x  : mark selected cell unknown");
         sb.append("\n+ or =  : increase size of cells");
         sb.append("\n- or _  : decrease size of cells");
+        sb.append("\nCtrl S  : Save ");
+        sb.append("\nCtrl O  : Open ");
+        sb.append("\nCtrl N  : Design puzzle by drawing ");
+        sb.append("\nCtrl R  : Random puzzle ");
+        sb.append("\nCtrl U  : Undo Move ");
+        sb.append("\nCtrl Y  : Redo Move ");
+        sb.append("\nCtrl Q  : Quit ");
         Utils.showInfoDialog(sb.toString());
         return true;
   }

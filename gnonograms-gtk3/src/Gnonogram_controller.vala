@@ -624,10 +624,10 @@ public class Gnonogram_controller
 		if (_state!=GameState.SOLVING) return;
 		if (confirm && !Utils.show_confirm_dialog(_("Restart solving the puzzle?"))) return;
 		_model.blank_working();
-		_timer.reset();
 		start_solving();
 //		change_state(GameState.SOLVING);//resets view etc
 		redraw_all();
+		_timer.reset();
 	}
 
 	public void pause_game()
@@ -908,29 +908,25 @@ public class Gnonogram_controller
 	}
 
 
-	public void start_solving()
-	{
+	public void start_solving(){
 		//stdout.printf("Start solving\n");
 		change_state(GameState.SOLVING);
 		_time_penalty=0;
 		redraw_all();
 	}
 
-	public void reveal_solution()
-	{
+	public void reveal_solution(){
 		//stdout.printf("Reveal solution\n");
 		change_state(GameState.SETTING);
 		redraw_all();
 	}
 
-	public void check_errors()
-	{
+	public void check_errors(){
 		//stdout.printf("Check_errors\n");
 		if (_have_solution){
 			int count=_model.count_errors();
 			if (_penalty)	incur_penalty(count);
-			if (count==0)
-			{
+			if (count==0){
 				Utils.show_info_dialog(_("No errors\n\n")+get_time_taken());
 			}
 			else{
@@ -945,17 +941,13 @@ public class Gnonogram_controller
 		}
 	}
 
-	private void incur_penalty(int incorrect_cells)
-	{	//stdout.printf("incurred time penalty\n");
-		if (_penalty)
-		{
+	private void incur_penalty(int incorrect_cells){
+		if (_penalty){
 			_time_penalty+=Resource.FIXED_TIMEPENALTY+Resource.PER_CELL_TIMEPENALTY*incorrect_cells;
 		}
-		//stdout.printf(@"time penalty $_time_penalty\n");
 	}
 
-	private string get_time_taken()
-	{
+	private string get_time_taken(){
 		double seconds=_timer.elapsed() + _time_penalty;
 		int hours= ((int)seconds)/3600;
 		seconds-=((double)hours)*3600.000;
@@ -967,12 +959,10 @@ public class Gnonogram_controller
 	}
 
 
-	private void viewer_solve_game()
-	{
+	private void viewer_solve_game(){
 		//stdout.printf("Viewer_solve_game\n");
 		change_state(GameState.SOLVING);
-		if (_rows==1) //assume testing mode keep existing cell entries
-		{}
+		if (_rows==1); //assume testing mode keep existing cell entries
 		else restart_game(false); //clears any erroneous entries and also re-starts timer
 
 		int passes = solve_game(true, _advanced,_advanced);
@@ -1007,30 +997,21 @@ public class Gnonogram_controller
 		redraw_all();
 	}
 
-	private void show_solver_grid()
-	{
+	private void show_solver_grid(){
 		set_working_from_solver();
 		redraw_all();
 	}
-
-//	private int solve_clues(string[] row_clues, string[] col_clues, My2DCellArray? startgrid, bool use_advanced, bool use_ultimate)
-//	{
-
-//	}
-
-	private void prepare_to_solve(bool use_startgrid, bool use_advanced, bool use_ultimate)
-	{//stdout.printf("Controller.prepare_to_solve\n");
+	
+	private void prepare_to_solve(bool use_startgrid, bool use_advanced, bool use_ultimate){
+		//stdout.printf("Controller.prepare_to_solve\n");
 		_row_clues= new string[_rows];
 		_col_clues= new string[_cols];
-
-		if (use_startgrid) {
+		if (use_startgrid){
 			startgrid = new My2DCellArray(_rows,_cols,CellState.UNKNOWN);
 			for(int r=0; r<_rows; r++){
 				for(int c=0;c<_cols; c++){
 					startgrid.set_data_from_cell(_model.get_cell(r,c));
-				}
-			}
-		}
+		}	}	}
 		else startgrid=null;
 
 		for (int i =0; i<_rows; i++) _row_clues[i]=_rowbox.get_label_text(i);
@@ -1039,56 +1020,45 @@ public class Gnonogram_controller
 		_solver.initialize(_row_clues, _col_clues, startgrid);
 	}
 
-	private int solve_game(bool use_startgrid, bool use_advanced, bool use_ultimate)
-	{
+	private int solve_game(bool use_startgrid, bool use_advanced, bool use_ultimate){
 		prepare_to_solve(use_startgrid, use_advanced, use_ultimate);
-		int passes=0;
-		//assume debug mode for single row
+		int passes=0; //assume debug mode for single row
 		passes=_solver.solve_it(_rows==1, use_advanced, use_ultimate);
-		return passes;
-//		return solve_clues(_row_clues, _col_clues, startgrid, use_advanced, use_ultimate);
+		return passes; 
 	}
 
-	private void get_hint()
-	{//stdout.printf("Controller.get_hint\n");
+	private void get_hint(){//stdout.printf("Controller.get_hint\n");
 		prepare_to_solve(true, false, false);
 		if (_solver.get_hint())	incur_penalty(Resource.HINT_CELLPENALTY);
 	}
 
-	private void set_solution_from_solver()
-	{
-		if (_have_solution)
-		{
-		_model.use_solution();
-		set_model_from_solver();
-		}
-	}
+	private void set_solution_from_solver(){
+		if (_have_solution){
+			_model.use_solution();
+			set_model_from_solver();
+	}	}
 
-	private void set_working_from_solver()
-	{
+	private void set_working_from_solver(){
 		_model.use_working();
 		set_model_from_solver();
 	}
 
-	private void set_model_from_solver()
-	{
+	private void set_model_from_solver(){
+		Cell cell;
 		for (int r=0; r<_rows; r++) {
 			for(int c=0; c<=_cols; c++) {
-				_model.set_data_from_cell(_solver.get_cell(r,c));
+				cell=_solver.get_cell(r,c);
+				if (cell.state==CellState.COMPLETED) cell.state=CellState.FILLED;
+				_model.set_data_from_cell(cell);
 			}
 		}
 	}
 
-	public void set_difficulty(double d)
-	{
-		_grade=(int)d;
-	}
+	public void set_difficulty(double d){_grade=(int)d;}
 
-	public void random_game()
-	{
+	public void random_game(){
 		//stdout.printf("Random game\n");
-		if (_rows<5)
-		{
+		if (_rows<5){
 			Utils.show_warning_dialog(_("Requires at least 5 rows"));
 			return; //does not work properly with small number of rows
 		}
@@ -1126,9 +1096,7 @@ public class Gnonogram_controller
 				if(passes>Resource.MAXADVANCEDGRADE & grade>5)
 				{
 					grade--;
-				}
-			}
-		}
+		}	}	}
 		else{ //generate simple games
 			while (count<10) {
 				count++;

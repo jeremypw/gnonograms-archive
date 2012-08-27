@@ -1,4 +1,4 @@
-/* Region class for Gnonograms3
+/* Region class for Gnonograms
  * Represents one row or column of grid
  * Copyright (C) 2010-2011  Jeremy Wootten
  *
@@ -353,17 +353,15 @@
 
 						// For the adjacent cells (if not at edge) the minimum length
 						// of the owner is one higher.
-						if (start>0)
+						if (start>0) start--;
 						{
-							start--;
 							for (int bl=0;bl<_nblocks;bl++)
 							{
 								if (_tags[start,bl] && _blocks[bl]<length+1) _tags[start,bl]=false;
 							}
 						}
-						if (end<_ncells-1)
+						if (end<_ncells-1) end++;
 						{
-							end++;
 							for (int bl=0;bl<_nblocks;bl++)
 							{
 								if (_tags[end,bl] && _blocks[bl]<length+1) _tags[end,bl]=false;
@@ -640,10 +638,10 @@
 		return false;
 	}
 
-	private bool do_edge(int direction)	{
+	private bool do_edge(int direction)
+	{
 		// Scan forward (or backward) from an edge searching for filled cells
 		// that are nearer than length of first (or last) block.
-		//TODO extent to look at internal edges (not just first or last)
 		// FILL cells after that to length of first (or last) block.
 		// Look for FILLED cell just out of range - edge can be moved forward
 		//	direction: 1=FORWARDS, -1=BACKWARDS
@@ -653,115 +651,97 @@
 		bool changed=false; //tags changed?
 		bool dir=(direction==FORWARDS);
 
-		if (dir){
+		if (dir)
+		{
 			idx=0; blocknum=0; limit=_ncells;
 		}
-		else{
+		else
+		{
 			idx=_ncells-1; blocknum=_nblocks-1; limit=-1;
 		}
+
 		//Find an edge
-		//if (!find_edge(ref idx,ref blocknum,limit,direction))	return false;
-		int count=0;
-		while (find_edge(ref idx,ref blocknum,limit,direction)){
-			//idx points to cell on the edge (not EMPTY)
-			count++;
-			if (count>10) break; //guard against infinite loop;
+		if (!find_edge(ref idx,ref blocknum,limit,direction))	return false;
+		//idx points to cell on the edge
+		if (_status[idx]==CellState.FILLED)
+		{ //first cell is FILLED. Can complete whole block
+				set_block_complete_and_cap(blocknum,idx,direction);
+				changed=true;
+		}
+		else
+		{	// see if filled cell in range of first block and complete after that
 			int edge_start=idx;
 			int fill_start=-1;
-			int blength=0;
-			int blocklimit=idx;
-			if (count_owners(idx)==1){
-				blocknum=get_first_owner(idx);
-				blength = _blocks[blocknum];
-				blocklimit=(dir? idx+blength : idx-blength);
-				if (_status[idx]==CellState.FILLED)
-				{ //first cell is FILLED. Can complete whole block
-						set_block_complete_and_cap(blocknum,idx,direction);
-						return true;  //TEST
-				}
-				// see if filled cell in range of first block and complete after that
-				if (skip_while_not_status(CellState.FILLED,ref idx,blocklimit,direction)){
-					fill_start=idx;
-					while (idx!=blocklimit){
-						if (_status[idx]==CellState.UNKNOWN){
-							set_cell_owner(idx,blocknum,true,false);
-							changed=true;
-						}
-						if (dir) idx++;
-						else idx--;
-					}
-					// idx now points to cell after earliest possible end of block
-					// if this is a filled cell then first cell in range must be empty
-					// continue setting cells at beginning of range empty until
-					// an unfilled cell found. FILL cells beyond first FILLED cells.
-					// remove block from out of range of first filled cell.
-					while (idx!=blocklimit && _status[idx]==CellState.FILLED){
+			int blength = _blocks[blocknum];
+			int blocklimit=(dir? idx+blength : idx-blength);
+
+			if (skip_while_not_status(CellState.FILLED,ref idx,blocklimit,direction))
+			{
+				fill_start=idx;
+
+				while (idx!=blocklimit)
+				{
+					if (_status[idx]==CellState.UNKNOWN)
+					{
 						set_cell_owner(idx,blocknum,true,false);
-						set_cell_empty(edge_start);
 						changed=true;
-						if (dir) {idx++; edge_start++;}
-						else {idx--; edge_start--;}
 					}
-					//if a fillable cell was found then fill_start>0
-					if (fill_start>0)
-					{//delete block more than block length from where filling started
-						idx= dir ? fill_start+blength : fill_start-blength;
-						if (idx>=0 && idx<_ncells) remove_block_from_cell_to_end(blocknum,idx,direction);
-					}
+
+					if (dir) idx++;
+					else idx--;
+				}
+				// idx now points to cell after earliest possible end of block
+				// if this is a filled cell then first cell in range must be empty
+				// continue setting cells at beginning of range empty until
+				// an unfilled cell found. FILL cells beyond first FILLED cells.
+				// remove block from out of range of first filled cell.
+
+				while (idx!=blocklimit && _status[idx]==CellState.FILLED)
+				{
+					set_cell_owner(idx,blocknum,true,false);
+					set_cell_empty(edge_start);
+					changed=true;
+
+					if (dir) {idx++; edge_start++;}
+					else {idx--; edge_start--;}
+				}
+				//if a fillable cell was found then fill_start>0
+				if (fill_start>0)
+				{//delete block more than block length from where filling started
+					idx= dir ? fill_start+blength : fill_start-blength;
+
+					if (idx>=0 && idx<_ncells) remove_block_from_cell_to_end(blocknum,idx,direction);
 				}
 			}
-			else //more than one owner possible
-			{// if ambiguous blocks min length in range then may be able to fill some cells without assigning them
-				blength=find_smallest_possible_in_cell(edge_start);
-				if (blength>2){
-					stdout.printf("Ambiguous?\n");
-					stdout.printf(@"Blength $blength  edge_start $edge_start\n");
-					idx=edge_start; fill_start=-1;
-					blocklimit=(dir? idx+blength : idx-blength);
-					if (skip_while_not_status(CellState.FILLED,ref idx,blocklimit,direction)){
-						fill_start=idx;
-						while (idx!=blocklimit){
-							if (_status[idx]==CellState.UNKNOWN){
-								set_cell_owner(idx,blocknum,true,false);
-								changed=true;
-							}
-							if (dir) idx++;
-							else idx--;
-						}
-					}
-				}
-			}
-			idx=edge_start+edge_start;
 		}
 		return changed;
 	}
 
-	private bool find_edge(ref int idx, ref int blocknum, int limit, int direction){
-		// Edge is first UNASSIGNED FILLED or UNKNOWN cell from limit of region.
+	private bool find_edge(ref int idx,ref int blocknum, int limit, int direction)
+	{
+		// Edge is first FILLED or UNKNOWN cell from limit of region.
+		//stdout.printf(@"find edge index $idx blocknum $blocknum limit $limit\n");
 		bool dir=(direction==FORWARDS);
 		bool found=false;
 
 		for (int i=idx; (dir ? i<limit : i>limit); (dir ? i++ : i--))
 		{
-			if (_status[i]!=CellState.EMPTY && i!=0 && i!=_ncells-1) continue;
 			if (_status[i]==CellState.EMPTY) continue;
 			//now pointing at first cell of filled or unknown block after edge
 			if (_tags[i,_is_finished_ptr])
 			{	//skip to end of finished block
-				blocknum=get_first_owner(i);
 				i = (dir ? i+_blocks[blocknum]-1 : i-_blocks[blocknum]+1);
 				//now pointing at last cell of filled block
+				if (dir) blocknum++;
+				else blocknum--;
+
 				continue;
 			}
 
 			idx=i;
-			found=(dir ? i<limit : i>limit);
-			//found=(blocknum>=0 && blocknum<_nblocks);
+			found=true;
 			break;
 		}
-		
-		stdout.printf(@"find edge found $found region $_index is column $_is_column index $idx blocknum $blocknum limit $limit\n");
-
 		return found;
 	}
 
@@ -979,7 +959,6 @@
 				else {_ranges[range,1]=length; range++;}
 
 			//skip to beginning of next range
-			idx++;
 			while (idx<_ncells && _tags[idx,_is_finished_ptr]) idx++;
 		}
 		return range; //number of ranges - not last index!
@@ -1008,7 +987,7 @@
 	{
 		// determine location of capped ranges of filled cells (not marked complete) and store in _ranges[,]
 		int range=0, start=0, length=0, idx=0;
-		while (idx<_ncells && _status[idx]!=CellState.FILLED) idx++; //skip to beginning of first range
+		while (_status[idx]!=CellState.FILLED && idx<_ncells) idx++; //skip to beginning of first range
 		while (idx<_ncells)
 		{
 			length=0;
@@ -1017,7 +996,7 @@
 			_ranges[range,2]=0; //not used
 			_ranges[range,3]=0; //not used
 
-			while (idx<_ncells && _status[idx]==CellState.FILLED)
+			while (_status[idx]==CellState.FILLED && idx<_ncells)
 			{
 				idx++; length++;
 			}
@@ -1027,8 +1006,8 @@
 				_ranges[range,1]=length;
 				range++;
 			}
-			idx++;
-			while (idx<_ncells && _status[idx]!=CellState.FILLED) idx++; //skip to beginning of next range
+
+			while (_status[idx]!=CellState.FILLED && idx<_ncells) idx++; //skip to beginning of next range
 		}
 		return range;
 	}
@@ -1036,21 +1015,18 @@
 	private int count_owners_and_empty(int cell)
 	{
 		// how many possible owners?  Does include can be empty tag!
-		int count=count_owners(cell);
-		if (_tags[cell,_can_be_empty_ptr]) count++;
-		if (count==0){_in_error=true; message="count owners and empty - count is zero\n";}
-		return count;
-	}
-	private int count_owners(int cell)
-	{
-		// how many possible owners?  Does NOT include can be empty tag!
 		int count=0;
+
 		if (invalid_data(cell)) {_in_error=true;message="count_owners_and_empty invalid data\n";}
-		else{
+		else
+		{
 			for (int j=0;j<_nblocks; j++) {
 				if (_tags[cell,j]) count++;
 			}
+
+			if (_tags[cell,_can_be_empty_ptr]) count++;
 		}
+		if (count==0){_in_error=true; message="count owners and empty - count is zero\n";}
 		return count;
 	}
 
@@ -1118,16 +1094,6 @@
 		}
 		return count==1;
 	}
-	
-	private int get_first_owner(int cell){
-		// only use if known that one owner exists
-		for (int i=0; i<_nblocks; i++)
-		{
-			if (_tags[cell,i]) return i;
-		}
-		_in_error=true; message="get_first owner - no owner\n";
-		return -1;
-	}
 
 	private bool fix_block_in_range(int block, int start, int length)
 	{
@@ -1154,7 +1120,7 @@
 				if (freedom==0)
 				{
 					set_block_complete_and_cap(block,start);
-					//changed=true;
+					changed=true;
 				}
 				else set_range_owner(block,start+freedom,block_length-freedom,true,false);
 			}
@@ -1177,7 +1143,7 @@
 
 	private int find_smallest_possible_in_cell(int cell)
 	{
-		// find the smallest incomplete block possible for given cell
+		// find the largest incomplete block possible for given cell
 		int min_size=9999;
 		for (int i=0;i<_nblocks;i++)
 		{

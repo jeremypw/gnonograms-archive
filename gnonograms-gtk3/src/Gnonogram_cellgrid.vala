@@ -208,7 +208,7 @@ public class Gnonogram_CellGrid : DrawingArea
 
 		if (_cr==null) return;
 		Gdk.cairo_set_source_color(_cr, grid_color);
-		_cr.set_dash(Resource.MINORGRIDDASH,0.0);
+		//_cr.set_dash(Resource.MINORGRIDDASH,0.0);
 		_cr.set_line_width(1.0);
 
 		//Draw minor grid (dashed lines)
@@ -230,8 +230,8 @@ public class Gnonogram_CellGrid : DrawingArea
 		}
 		//Draw major grid (solid lines)
 
-		_cr.set_dash(null,0.0);
-		_cr.set_line_width(1.0);
+		//_cr.set_dash(null,0.0);
+		_cr.set_line_width(2.0);
 
 		x1=0;x2=_aw-1;
 		for (int r=0; r<=_rows; r+=5)

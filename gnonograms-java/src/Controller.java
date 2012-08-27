@@ -75,9 +75,7 @@ public class Controller {
     newGame();
   }
 
-  public void resize(int r, int c){
-    init(r,c);
-  }
+  public void resize(int r, int c){ init(r,c);}
   
   public void zoomFont(int change){
     view.zoomFont(change);
@@ -91,25 +89,26 @@ public class Controller {
     model.setDataFromCell(c);
     if(isSolving && model.countUnknownCells()==0 && model.countErrors()==0){
       endDate=new Date();
+      view.setTime(Utils.calculateTimeTaken(startDate, endDate));
       setSolving(false);
       view.redrawGrid();
-      Utils.showInfoDialog("Congratulations! Solved in "+Utils.calculateTimeTaken(startDate, endDate));
+    }
+    else{
+        updateLabelsFromModel(c.row,c.col);
     }
   }
   
-  public void quit(){
-      config.saveProperties();
-  }  
+  public void quit(){config.saveProperties();}  
   
   public void editPreferences(){
     if (config.editPreferences(view)){
       int r=config.getRows(),c=config.getCols();
       if (rows!=r || cols!=c){
+        setSolving(false); 
         rows=r;cols=c;
         resize(r,c);
-        randomGame();
         view.setClueFontAndSize(calculateCluePointSize(r,c));
-        view.setSolving(isSolving); //else cells turn red
+        newGame();
       }
       else view.setClueFontAndSize(config.getPointSize());
     }
@@ -132,9 +131,9 @@ public class Controller {
   public void restartGame(){
     model.blankWorking();
     setSolving(isSolving);
-    startDate=new Date();  //should this be reset?
     history.initialize();
     view.redrawGrid();
+    startDate=new Date();  //should this be reset?
   }
   
   public void checkGame(){
@@ -142,14 +141,11 @@ public class Controller {
     int numberOfErrors=model.countErrors()-model.countUnknownCells();
     if (numberOfErrors==0)Utils.showInfoDialog("There are no errors");
     else if (Utils.showConfirmDialog("There are "+numberOfErrors+" errors\n\nGo back to last correct position?")){
-        rewindGame();
-    }
-  }
+        if (validSolution)rewindGame();
+  } }
 
   private void rewindGame(){
-    while (model.countErrors()-model.countUnknownCells()>0){
-      undoMove();
-    }
+    while (model.countErrors()-model.countUnknownCells()>0){undoMove();}
     view.redrawGrid();
   }
 
@@ -201,7 +197,8 @@ public class Controller {
       for (int i=0; i<this.rows; i++) model.setRowDataFromString(i,gl.solution[i]);
       updateAllLabelsFromModel(); 
       this.validSolution=true;
-    }else {
+    }
+    else{
       //Valid games either have Solution or Clues (or both)
       for (int i=0; i<this.rows; i++) view.setClueText(i,gl.rowClues[i],false);
       for (int i=0; i<this.cols; i++) view.setClueText(i,gl.colClues[i],true);
@@ -210,14 +207,14 @@ public class Controller {
         gl.close();
         return;
       }
-    }
+    } 
     
     if (gl.hasWorking){
       model.useWorking();
       for (int i=0; i<this.rows; i++){
         model.setRowDataFromString(i,gl.working[i]);
-      }
-    }
+    } }
+    
     setSolving(true); //always start in solving mode to avoid displaying solution
     view.redrawGrid();
     gl.close();
@@ -264,47 +261,57 @@ public class Controller {
     model.setGrade(grade);
 
     //Try to generate a solvable pattern
-    int passes=-1, count=0, limit=(int)(20+10*grade);
+    int passes=-1, count=0, limit=(int)(20+20*grade);
     while (count<limit){
       count++;
       model.generateRandomPattern();
-      updateAllLabelText();
-      prepareToSolve(false,false,false);
-      passes=solver.solveIt(false,false,false); //only simple solver
-      if (passes>grade-2) break;
+      prepareToSolve(false,false,false); //get clues straight from model, no startgrid, no solutiongrid
+      passes=solver.solveIt(false,false,false,false); //only simple solver, not stepwise
+      if (passes>grade-2||passes<0) break;
+      
     }
-    
-    if (count<limit){ //solvable pattern found
-      updateSolutionGridFromSolver();
-      setSolving(true);
-      validSolution=true;
-      view.setScore(passes+" ");
-      view.setName("Random");
-      view.setAuthor("Computer");
-      view.setLicense("GPL");
-      view.setCreationDate("Today");
+    out.println("Passes "+passes+"\n");
+    if (count<limit){ //solvable pattern found or error
+      //updateSolutionGridFromSolver();
+      if (passes<0){
+        Utils.showWarningDialog("Failed to generate puzzle - error in solver");
+      }
+      else{
+        model.useSolution();
+        updateAllLabelText(); //from solution
+        setSolving(true);
+        validSolution=true;
+        view.setScore(passes+" ");
+        view.setName("Random");
+        view.setAuthor("Computer");
+        view.setLicense("GPL");
+        view.setCreationDate("Today");
+      }
     }
     else { //timed out searching for solvable pattern
       view.setScore("999999");
       validSolution=false;
       Utils.showWarningDialog("Failed to generate puzzle - try reducing grade or grid size");
-    }
-  }
+  } }
 
   public void userSolveGame(){
-    prepareToSolve(true,false,false); //uses existing working grid as start point
-    startDate=new Date();
-    int result=solveGame();
-    endDate=new Date();
-    if (result>0&&result<99999){
-      updateWorkingGridFromSolver();
-      Utils.showInfoDialog("Solved in "+Utils.calculateTimeTaken(startDate,endDate)) ;
+    boolean useSolution=false;
+    boolean useExistingGrid=true, useAdvanced=false, useUltimate=false, debug=false, stepwise=false;
+    if (isSolving==false){
+      setSolving(true);
+      restartGame();
     }
+    prepareToSolve(true,useExistingGrid, rows==1 ? false : useSolution); //clues from labels, use existing working grid as start point
+    startDate=new Date();
+    int result=solveGame(debug, useAdvanced, useUltimate, stepwise);
+    endDate=new Date();
+    updateWorkingGridFromSolver();
+    view.setTime(Utils.calculateTimeTaken(startDate,endDate));
     setSolving(true); //redisplay working grid
   }
   
-  public int solveGame(){
-    int passes=solver.solveIt(debug,false,false);
+  public int solveGame(boolean debug, boolean useAdvanced, boolean useUltimate, boolean stepwise){
+    int passes=solver.solveIt(debug,useAdvanced,useUltimate,stepwise); //debug, useAdvanced, useUltimate, stepwise
     view.setScore("999999");
     String message="";
     switch (passes) {
@@ -312,13 +319,10 @@ public class Controller {
       case 999999: //user cancelled
         break;
       case -1:  //invalid clues;
-        model.clear();
         validSolution=false;
         message="Invalid or inconsistent clues - no solution";
         break;
       case 0: //solver failed
-        message="Failed to solve or no unique solution";
-        updateWorkingGridFromSolver();
         break;
       default: //solver succeeded
         view.setScore(String.valueOf(passes));
@@ -332,20 +336,33 @@ public class Controller {
     return passes;
   }
 
-  private void prepareToSolve(boolean use_startgrid, boolean use_advanced, boolean use_ultimate){
-    String[] rowClues= new String[this.rows];
-    String[] columnClues= new String[this.cols];
-    My2DCellArray startgrid;
-    for (int i =0; i<this.rows; i++) rowClues[i]=view.getClueText(i,false);
-    for (int i =0; i<this.cols; i++) columnClues[i]=view.getClueText(i, true);
-    solver.initialize(rowClues, columnClues, use_startgrid ? model.getCellDataArray() : null);
-}
+  private void prepareToSolve(boolean useLabels, boolean useStartgrid, boolean useSolution){//, boolean useAdvanced, boolean useUltimate){
+    String[] rowClues= new String[this.rows], columnClues= new String[this.cols];
+    My2DCellArray solution=null;
+    if (useLabels){//get clues from labels
+      for (int i =0; i<this.rows; i++) rowClues[i]=view.getClueText(i,false);
+      for (int i =0; i<this.cols; i++) columnClues[i]=view.getClueText(i, true);
+    }
+    else{//get clues from model
+      for (int i =0; i<this.rows; i++) rowClues[i]=Utils.clueFromIntArray(model.getRow(i));
+      for (int i =0; i<this.cols; i++) columnClues[i]=Utils.clueFromIntArray(model.getColumn(i));
+    }
+    if (useSolution){
+      out.println("Solver using solution\n");
+      model.useSolution();
+      solution = model.getCellDataArray();
+      model.useWorking();
+    }
+    solver.initialize(rowClues, columnClues, useStartgrid ? model.getCellDataArray() : null, useSolution ? solution : null);
+  }
 
   public boolean checkCluesValid(){
       boolean valid;
-      prepareToSolve(false,false,false); //no start grid
-      valid=(solveGame()>=0);
-      setSolving(isSolving);
+      //false if solver returns an error
+     prepareToSolve(true,false,false);// clues from labels, no start grid
+     valid=(solveGame(false,false,false,false)>=0);
+     setSolving(isSolving);
+     out.println("Game is valid\n");
       return valid;
   }
   
@@ -361,42 +378,34 @@ public class Controller {
     for (int r=0; r<this.rows; r++) {
       for(int c=0; c<this.cols; c++) {
         model.setDataFromCell(solver.getCell(r,c));
-      }
-    }
-  }
+  } } }
 
+  public void highlightLabels(int row, int col, boolean on){
+      view.highlightLabels(row, col, on);
+  }
+  
   private void updateAllLabelText(){
-    String clue;
     view.resetMaximumClueLength(false);
-    for(int r=0;r<rows;r++){
-      clue=Utils.clueFromIntArray(model.getRow(r));
-      view.setClueText(r,clue,false);
-    }
-    view.resetMaximumClueLength(true);
-    for(int c=0;c<cols;c++){
-      clue=Utils.clueFromIntArray(model.getColumn(c));
-      view.setClueText(c,clue,true);
-    }
+    updateAllLabelsFromModel();
   }
    public void updateLabelsFromModel(int r, int c){
     if (isSolving) return;
     view.setClueText(r, Utils.clueFromIntArray(model.getRow(r)),false);
     view.setClueText(c, Utils.clueFromIntArray(model.getColumn(c)),true);
-    model.blankWorking();
   }
   public void updateAllLabelsFromModel(){
     if (isSolving) return;
     for (int r=0;r<rows;r++){
       for(int c=0;c<cols;c++){
         updateLabelsFromModel(r,c);
-      }
-    }
-  }
+  } } }
+  
   public void updateLabelFromString(int idx, String clue, boolean isColumn){
     view.setClueText(idx,clue,isColumn);
   }
  
   public void undoMove(){
+    if(!isSolving) return;
     Move lm=history.getLastMove();
     if (lm==null) return;
     model.setDataFromCell(new Cell(lm.row,lm.col,lm.previousState));

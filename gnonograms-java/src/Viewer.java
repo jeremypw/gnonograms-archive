@@ -48,6 +48,7 @@ import java.awt.GridBagConstraints;
 import java.awt.ComponentOrientation;
 import java.awt.Font;
 import java.awt.FontMetrics;
+import java.awt.Point;
 import java.awt.image.BufferedImage;
 
 import java.awt.event.ActionEvent;
@@ -65,7 +66,7 @@ public class Viewer extends JFrame {
   private CellGrid drawing;
   private LabelBox rowBox, columnBox;
   private Controller control;
-  private InfoLabel nameLabel,authorLabel,licenseLabel,scoreLabel,sizeLabel,dateLabel;
+  private InfoLabel nameLabel,authorLabel,licenseLabel,scoreLabel,sizeLabel,dateLabel,timeLabel;
   private JLabel [] rowlabels, collabels;
   private Container contentPane;
 
@@ -99,7 +100,6 @@ public class Viewer extends JFrame {
 
     puzzlePane=new JPanel();
     puzzlePane.setLayout(new GridBagLayout());
-    //puzzlePane.setBorder(BorderFactory.createLineBorder(Color.red));
     toolbarPane=new JPanel();
     toolbarPane.setLayout(new BorderLayout());
     contentPane=this.getContentPane();
@@ -109,7 +109,7 @@ public class Viewer extends JFrame {
 
     contentPane.setLayout(new BorderLayout());
     contentPane.add(toolbarPane,BorderLayout.PAGE_START);
-    contentPane.add(puzzlePane,BorderLayout.LINE_START);//Java bug in calculating window size - better to truncate left hand edge rather than right hand edge.
+    contentPane.add(puzzlePane,BorderLayout.LINE_START);
     contentPane.add(infoPane,BorderLayout.PAGE_END);
     this.pack();
     
@@ -119,11 +119,6 @@ public class Viewer extends JFrame {
             quit();
         }
     });
-  }
-
-  private void resizeLogoLabelImage(int width, int height){ 
-      scaledLogo=new ImageIcon(myLogo.getImage().getScaledInstance(width,height,BufferedImage.SCALE_SMOOTH));
-      logoLabel.setIcon(scaledLogo);
   }
   
   public String getClueText(int idx, boolean isColumn){
@@ -142,6 +137,8 @@ public class Viewer extends JFrame {
   public void setCreationDate(String date){dateLabel.setInfo(date);}
   public String getLicense() {return licenseLabel.getInfo();}
   public void setLicense(String license){licenseLabel.setInfo(license);}
+  public String getTime(){return timeLabel.getInfo();}
+  public void setTime(String time){timeLabel.setInfo(time);}
   
   public void clearInfoBar(){
     //out.println("Clear info bar");
@@ -150,6 +147,7 @@ public class Viewer extends JFrame {
     setCreationDate("");
     setLicense("");
     setScore("");
+    setTime("");
   }
 
   public void setSolving(boolean isSolving){
@@ -193,34 +191,27 @@ public class Viewer extends JFrame {
     c = new GridBagConstraints();
     
     c.gridx=1; c.gridy=0;   
-    //c.gridwidth=cols; c.gridheight=1;
     c.weightx=0;c.weighty=1;
-    c.fill=GridBagConstraints.CENTER;
-
+    c.fill=GridBagConstraints.BOTH;
+    c.anchor=GridBagConstraints.CENTER;
     puzzlePane.add(columnBox,c);
 
     c.gridx=0; c.gridy=1;    
-   // c.gridwidth=1; c.gridheight=rows;
     c.weightx=1;c.weighty=0;
-    c.fill=GridBagConstraints.BOTH;
+    c.fill=GridBagConstraints.VERTICAL;
     c.anchor=GridBagConstraints.CENTER;
-    
     puzzlePane.add(rowBox,c);
 
     c.gridx=0; c.gridy=0;
-    //c.gridwidth=1; c.gridheight=1;
     c.weightx=0;c.weighty=0;
     c.fill=GridBagConstraints.NONE;
     c.anchor=GridBagConstraints.LINE_END;
-    
     puzzlePane.add(logoLabel,c);
     
     c.gridx=1; c.gridy=1;
-    //c.gridwidth=cols; c.gridheight=rows;
     c.weightx=0;c.weighty=0;
     c.fill=GridBagConstraints.BOTH;
     c.anchor=GridBagConstraints.CENTER;
-    
     puzzlePane.add(drawing,c);
     this.pack();
   }
@@ -228,16 +219,16 @@ public class Viewer extends JFrame {
   public void setClueFontAndSize(int pointSize){
     cluePointSize=pointSize;
     if (this.getGraphics()==null) return;
+    Point location = this.getLocation();
     Font f=new Font("Arial",Font.BOLD,cluePointSize);
     FontMetrics fm= this.getGraphics().getFontMetrics(f);
     int fontWidth=fm.stringWidth("0");
     rowBox.setFontAndSize(f, fontWidth);
     columnBox.setFontAndSize(f, fontWidth);
-    logoLabel.setIcon(null);
     this.pack(); //size according to clues
-    resizeLogoLabelImage(rowBox.getWidth(),columnBox.getHeight()); //resize logo label accordingly
+    resizeLogoLabelImage(); //resize logo label accordingly
     this.pack();
-    setLocationRelativeTo(null); //centers on screen
+    this.setLocation(location);
   }
 
   public void zoomFont(int changeInPointSize){
@@ -252,6 +243,19 @@ public class Viewer extends JFrame {
     LabelBox lb= isColumn ? columnBox : rowBox;
     lb.setClueText(idx,text);
     setLabelToolTip(idx, Utils.freedomFromClue((isColumn ? rows : cols),text),isColumn);
+    this.pack(); //size according to clues
+    resizeLogoLabelImage(); //resize logo label accordingly
+    this.pack();
+  }
+
+  private void resizeLogoLabelImage(){ 
+      int width=rowBox.getLogoSize();
+      int height=columnBox.getLogoSize();
+      if (scaledLogo==null||scaledLogo.getIconHeight()!=height || scaledLogo.getIconWidth()!=width){
+        scaledLogo=new ImageIcon(myLogo.getImage().getScaledInstance(width,height,BufferedImage.SCALE_SMOOTH));
+        logoLabel.setIcon(scaledLogo);
+        this.pack();
+      }
   }
   
   public void resetMaximumClueLength(boolean isColumn){
@@ -267,6 +271,11 @@ public class Viewer extends JFrame {
   public void setLabelToolTip(int idx, int freedom, boolean isColumn){
     if (isColumn) columnBox.setLabelToolTip(idx, freedom);
     else rowBox.setLabelToolTip(idx, freedom);
+  }
+  
+  public void highlightLabels(int r, int c, boolean on){
+      rowBox.highlightLabel(r,on);
+      columnBox.highlightLabel(c,on);
   }
 
   public void redrawGrid(){
@@ -408,11 +417,13 @@ public class Viewer extends JFrame {
     dateLabel=new InfoLabel("Created");
     sizeLabel=new InfoLabel("Size");
     scoreLabel=new InfoLabel("Score");
+    timeLabel=new InfoLabel("Time");
     infoPane.add(nameLabel);
     infoPane.add(authorLabel);
     infoPane.add(licenseLabel);
     infoPane.add(dateLabel);
     infoPane.add(Box.createHorizontalGlue());
+    infoPane.add(timeLabel);
     infoPane.add(sizeLabel);
     infoPane.add(scoreLabel);
   }

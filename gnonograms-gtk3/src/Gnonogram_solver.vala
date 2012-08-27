@@ -47,13 +47,11 @@
 	private const int GUESSES_BEFORE_ASK=50000;
 
 
-	public Gnonogram_solver(bool testing=false, bool debug=false, bool test_column=false, int test_idx=-1)
-	{
+	public Gnonogram_solver(bool testing=false, bool debug=false, bool test_column=false, int test_idx=-1){
 		_grid=new My2DCellArray(Resource.MAXSIZE, Resource.MAXSIZE);
 		_regions=new Gnonogram_region[Resource.MAXSIZE+Resource.MAXSIZE];
 
 		for (int i=0;i<_regions.length;i++) _regions[i]=new Gnonogram_region(_grid);
-
 		//For development purposes only
 		_testing=testing;
 		_debug=debug;
@@ -62,23 +60,17 @@
 		//
 	}
 
-	public void set_dimensions(int r, int c)
-	{
-		_rows=r;
-		_cols=c;
+	public void set_dimensions(int r, int c){
+		_rows=r;_cols=c;
 	}
 
-	public bool initialize(string[] row_clues, string[] col_clues, My2DCellArray? start_grid)
-	{
-		if (row_clues.length!=_rows || col_clues.length!=_cols)
-		{
+	public bool initialize(string[] row_clues, string[] col_clues, My2DCellArray? start_grid){
+		if (row_clues.length!=_rows || col_clues.length!=_cols){
 			stdout.printf("row/col size mismatch\n");
 			return false;
 		}
-
 		if (start_grid==null) _grid.set_all(CellState.UNKNOWN);
 		else {_grid.copy(start_grid);}
-
 		//Create regions
 		//Dont create regions of length 1
 		_region_count=0;
@@ -92,137 +84,103 @@
 			for (int c=0; c<_cols; c++){
 				_regions[c+_rows].initialize(c,true,_rows,col_clues[c]);
 				_region_count++;
-			}
-		}
+		}}
 		_guesses=0; _counter=0;
 		return valid();
 	}
 
-	public bool valid()
-	{
-		foreach (Gnonogram_region r in _regions)
-			{ if (r._in_error) return false;}
-
+	public bool valid(){
+		foreach (Gnonogram_region r in _regions){
+			if (r._in_error) return false;
+		}
 		return true;
 	}
 
-	public string get_error()
-	{
-		for (int i=0; i<_region_count; i++)
-		{
+	public string get_error(){
+		for (int i=0; i<_region_count; i++){
 			if (_regions[i]._in_error) return _regions[i].message;
 		}
-
 		return "No error";
 	}
 
-	public int solve_it(bool debug, bool use_advanced=false, bool use_ultimate)
-	{
+	public int solve_it(bool debug, bool use_advanced=false, bool use_ultimate){
 		int simple_result=simple_solver(debug,true); //log errors
-		if (simple_result==0 && use_advanced)
-		{	if (!debug || Utils.show_confirm_dialog(_("Use advanced solver?")))
-			{
+		if (simple_result==0 && use_advanced){
+			if (!debug || Utils.show_confirm_dialog(_("Use advanced solver?"))){
 				CellState[] grid_store= new CellState[_rows*_cols];
 				int advanced_result=advanced_solver(grid_store, debug);
-				if (advanced_result>0)
-				{
-					if(advanced_result==999999 && use_ultimate)
-					{
+				if (advanced_result>0){
+					if(advanced_result==999999 && use_ultimate){
 						return ultimate_solver(grid_store, debug);
 					}
 					else 	return advanced_result;
-				}
-			}
-		}
-		else
-		{
+		}}}
+		else{
 			return simple_result;
 		}
-		return 0;
+		return -1; //should not reach here?
 	}
 
-	public bool get_hint()
-	{
+	public bool get_hint(){
 		//Solver must be initialised with current state of puzzle before calling.
 		int		pass=1;
-		while (pass<=30)
-		{
+		while (pass<=30){
 			//cycle through regions until one of them is changed then returns
 			//that region index.
-			for (int i=0; i<_region_count; i++)
-			{
+			for (int i=0; i<_region_count; i++)	{
 				if (_regions[i]._completed) continue;
-				if (_regions[i].solve(false,true)) //run solve algorithm in hint mode
-				{
-					//stdout.printf("Changed region %d\n",i);
-					showsolvergrid();
-					return true;
+				if (_regions[i].solve(false,true)){ //run solve algorithm in hint mode
+					showsolvergrid(); return true;
 				}
-				if (_regions[i]._in_error)
-				{
+				if (_regions[i]._in_error){
 					Utils.show_warning_dialog(_("A logical error has already been made - cannot hint"));
 					return false;
-				}
-			}
+			}	}
 			pass++;
 		}
-		if (pass>30)
-		{
-			if (solved())
-			{
-				Utils.show_info_dialog(_("Already solved"));
-			}
-			else
-			{
-				Utils.show_info_dialog(_("Simple solver could not find hint\n"));
-			}
+		if (pass>30){
+			if (solved())Utils.show_info_dialog(_("Already solved"));
+			else Utils.show_info_dialog(_("Simple solver could not find hint\n"));
 		}
 		return false;
 	}
 
-	private int simple_solver(bool debug, bool log_error=false)
-	{
+	private int simple_solver(bool debug, bool log_error=false){
 		//stdout.printf(@"Simple solver  debug $debug  region count $_region_count\n");
 		bool changed=true;
 		int pass=1;
-		while (changed && pass<30)
-		{
+		while (changed){
 			//keep cycling through regions while at least one of them is changing (up to 30 times)
 			changed=false;
-			for (int i=0; i<_region_count; i++)
-			{
+			for (int i=0; i<_region_count; i++)	{
 				if (_regions[i]._completed) continue;
 				if (_regions[i].solve(debug)) changed=true;
-				if (debug ||(log_error && _regions[i]._in_error))
-				{
-					if(_regions[i].message!="")stdout.printf("Region - %d: %s\n",i,_regions[i].message);
+				if (debug ||(log_error && _regions[i]._in_error))	{
+					if(_regions[i].message!="")stdout.printf(@"$(_regions[i].to_string()), $(_regions[i].message)\n");
 				}
 				if (_regions[i]._in_error) return -1;
 			}
-
 			pass++;
-			if (debug)
-			{
+			if (debug){
 				showsolvergrid();
 				if (!Utils.show_confirm_dialog(@"Simple solver pass $pass ... continue?")) return 0;
 			}
 		}
 		if (solved()) return pass;
-		if (pass>30) Utils.show_warning_dialog("Simple solver - too many passes\n");
+		//stdout.printf(@"Stopped changing after $pass passes\n");
+		//if (pass>30) Utils.show_warning_dialog("Simple solver - too many passes\n");
+		//stdout.printf("Simple solver returning 0\n");
 		return 0;
 	}
 
-	public bool solved()
-	{
-		for (int i=0; i<_region_count; i++)
-		{
+	public bool solved(){
+		for (int i=0; i<_region_count; i++)	{
 			if (!_regions[i]._completed) return false;
 		}
 		return true;
 	}
 
-	private int advanced_solver(CellState[] grid_store, bool debug)
-	{
+	private int advanced_solver(CellState[] grid_store, bool debug){
 		// stdout.printf("Advanced solver\n");
 		// single cell guesses, depth 1 (no recursion)
 		// make a guess in each unknown cell in _turn

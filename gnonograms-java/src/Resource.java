@@ -20,13 +20,14 @@
  *
  */
  import java.awt.event.KeyEvent;
+ import java.awt.Color;
 
 public class Resource
 {
   static final String BLOCKSEPARATOR=",";
-  static final String VERSION_STRING="0.6.3";
+  static final String VERSION_STRING="0.6.4";
   static final double MAXIMUM_GRADE=12;
-  static final int MAXIMUM_GRID_SIZE=50;
+  static final int MAXIMUM_GRID_SIZE=60;
   static final int MAXIMUM_CLUE_POINTSIZE=72;
   static final int MINIMUM_CLUE_POINTSIZE=4;
   static final int DEFAULT_ROWS=10;
@@ -51,5 +52,7 @@ public class Resource
   static final int KEY_FILLED=KeyEvent.VK_F;
   static final int KEY_EMPTY=KeyEvent.VK_E;
   static final int KEY_UNKNOWN=KeyEvent.VK_X;
+  
+  static final Color HIGHLIGHT_COLOR=Color.gray;
 
 }

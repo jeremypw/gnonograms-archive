@@ -99,7 +99,6 @@ public class CellGrid extends JPanel{
       int w=(int)(c*columnWidth);
       g.drawLine(w, 0, w, gridHeight);
     }
-
     // Draw major gridlines
     g.setColor(Color.black);
     for (int r=0;r<=rows;r+=5){
@@ -112,35 +111,42 @@ public class CellGrid extends JPanel{
       g.drawLine(w, 0, w, gridHeight);
       g.drawLine(w+1, 0, w+1, gridHeight);
     }
-
-    //draw current cell outline
+    //highlight current cell
     highlightCell(currentRow, currentCol);
-  }
-
-  public void moveHighlightRelative(int rowchange, int colchange){
-    moveHighlight(currentRow+rowchange,currentCol+colchange);
   }
   
   protected void moveHighlight(int r, int c){
-      if (r== currentRow && c== currentCol) return;
-      unhighlightCell(currentRow,currentCol);
+      if (r==currentRow && c==currentCol) return;
+      if (currentRow>=0 && currentCol>=0 && currentRow<rows && currentCol<cols){
+        unhighlightCell(currentRow,currentCol);
+        control.highlightLabels(currentRow,currentCol,false);
+      }
+      currentRow=r; currentCol=c;
       if (r<0||r>rows||c<0||c>=cols) return;
       highlightCell(r,c);
-      currentRow= r; currentCol= c;
+      control.highlightLabels(r,c,true);
   }
   protected void highlightCell(int r, int c){
     if (r<0||r>rows||c<0||c>=cols) return;
     myGraphics=this.getGraphics();
-    myGraphics.setColor(Color.red);
-    myGraphics.drawRect((int)(c*columnWidth+2),(int)(r*rowHeight+2),(int)(columnWidth-3),(int)(rowHeight-3));
-    myGraphics.drawRect((int)(c*columnWidth+3),(int)(r*rowHeight+3),(int)(columnWidth-5),(int)(rowHeight-5));
-  }
+    myGraphics.setColor(Resource.HIGHLIGHT_COLOR);
+    drawHighlight(r,c);
+   }
   protected void unhighlightCell(int r, int c){
     if (r<0||r>rows||c<0||c>=cols) return;
     myGraphics=this.getGraphics();
     myGraphics.setColor(displayColors[control.getDataFromRC(r,c)]);
-    myGraphics.drawRect((int)(c*columnWidth+2),(int)(r*rowHeight+2),(int)(columnWidth-3),(int)(rowHeight-3));
-    myGraphics.drawRect((int)(c*columnWidth+3),(int)(r*rowHeight+3),(int)(columnWidth-5),(int)(rowHeight-5));
+    drawHighlight(r,c);
+  }
+  
+  protected void drawHighlight(int r, int c){
+    int x=(int)(c*columnWidth+2.5);
+    int y=(int)(r*rowHeight+2.5);
+    int w=(int)(columnWidth-4.5);
+    int h=(int)(rowHeight-4.5);
+    
+    myGraphics.drawRect(x,y,w,h);
+    myGraphics.drawRect(x+1,y+1,w-2,h-2);
   }
 
   public void updateCurrentCell(int state){
@@ -150,8 +156,7 @@ public class CellGrid extends JPanel{
   protected void updateCell(int r,int c,int cs){
     if (cs==Resource.CELLSTATE_UNDEFINED) return;
     currentCell.set(r,c,cs);
-    control.setDataFromCell(currentCell);
-    control.updateLabelsFromModel(r,c);
+    control.setDataFromCell(currentCell);//takes care of updating labels if necessary
     repaint();
   }
 
@@ -188,9 +193,10 @@ public class CellGrid extends JPanel{
       updateCell(r,c,cs);
     }
     public void mouseExited(MouseEvent e) {
-      unhighlightCell(currentRow,currentCol);
-     currentCell.clear();
-     previousCell.clear();
+      moveHighlight(-1,-1);
+      currentRow=-1;currentCol=-1;
+      currentCell.clear();
+      previousCell.clear();
     }
     public void mouseEntered(MouseEvent e) {
      requestFocus();
@@ -204,13 +210,13 @@ public class CellGrid extends JPanel{
       int c= (int)((double)(e.getX())/columnWidth);
       if (r== currentRow && c== currentCol) return;
       if (r<0||r>rows||c<0||c>=cols) return;
-      currentRow= r;
-      currentCol= c;
       updateCell(r,c,currentCell.getState());
+      moveHighlight(r,c);
     }
     public void mouseMoved(MouseEvent e){
       int r= (int)((double)(e.getY())/rowHeight);
       int c= (int)((double)(e.getX())/columnWidth);
+      if(r==currentRow&&c==currentCol) return;
       moveHighlight(r,c);
     }
   }
@@ -218,6 +224,7 @@ public class CellGrid extends JPanel{
   private class GridKeyAdapter extends KeyAdapter{
     public void keyPressed(KeyEvent e){
       int keyCode =e.getKeyCode();
+      boolean controlDown=e.isControlDown();
       switch (keyCode){
         case KeyEvent.VK_MINUS:
               control.zoomFont(-1);
@@ -228,19 +235,39 @@ public class CellGrid extends JPanel{
               break;
         case KeyEvent.VK_KP_LEFT:
         case KeyEvent.VK_LEFT:
-              if (currentCol>0) moveHighlight(currentRow,currentCol-1);
+              if (currentCol>0) {
+                if (controlDown&&currentRow==currentCell.row&&currentCol==currentCell.col){
+                  updateCell(currentRow,currentCol-1,currentCell.getState());
+                }
+                moveHighlight(currentRow,currentCol-1);
+              }
               break;
         case KeyEvent.VK_KP_RIGHT:
         case KeyEvent.VK_RIGHT:
-              if (currentCol<cols-1) moveHighlight(currentRow,currentCol+1);
+              if (currentCol<cols-1) {
+                if (controlDown&&currentRow==currentCell.row&&currentCol==currentCell.col){
+                  updateCell(currentRow,currentCol+1,currentCell.getState());
+                }
+                moveHighlight(currentRow,currentCol+1);
+              }
               break;
         case KeyEvent.VK_KP_UP:
         case KeyEvent.VK_UP:
-              if (currentRow>0) moveHighlight(currentRow-1,currentCol);
+              if (currentRow>0){
+                if (controlDown&&currentRow==currentCell.row&&currentCol==currentCell.col){
+                  updateCell(currentRow-1,currentCol,currentCell.getState());
+                }
+                 moveHighlight(currentRow-1,currentCol);
+              }
               break;
         case KeyEvent.VK_KP_DOWN:
         case KeyEvent.VK_DOWN:
-              if (currentRow<rows-1) moveHighlight(currentRow+1,currentCol);
+              if (currentRow<rows-1) {
+                if (controlDown&&currentRow==currentCell.row&&currentCol==currentCell.col){
+                  updateCell(currentRow+1,currentCol,currentCell.getState());
+                }
+                moveHighlight(currentRow+1,currentCol);
+              }
               break;
         case Resource.KEY_FILLED:
               updateCell(currentRow,currentCol,Resource.CELLSTATE_FILLED);
@@ -254,9 +281,26 @@ public class CellGrid extends JPanel{
         case KeyEvent.VK_S:
               if (e.isControlDown()) control.saveGame();
               break;
+        case KeyEvent.VK_O:
+              if (e.isControlDown()) control.loadGame();
+              break;
+        case KeyEvent.VK_N:
+              if (e.isControlDown()) control.createGame();
+              break;
+        case KeyEvent.VK_R:
+              if (e.isControlDown()) control.randomGame();
+              break;
+        case KeyEvent.VK_U:
+              if (e.isControlDown()) control.undoMove();
+              break;
+        case KeyEvent.VK_Y:
+              if (e.isControlDown()) control.redoMove();
+              break;
+        case KeyEvent.VK_Q:
+              if (e.isControlDown()) {control.quit(); System.exit(0);}
+              break;
         default:
           break;
-      }
-    }
+    } }
   }
 }

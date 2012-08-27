@@ -167,39 +167,41 @@ public class GameEditor extends JDialog implements ActionListener{
   }
   
   private class ClueVerifier extends InputVerifier{
-        @Override
-        public boolean verify(JComponent input){
-          boolean valid=false;
-          JTextField tf=(JTextField)input;
-          String[] sa=(tf.getText()).split(",");
-          int count=0, tokens=sa.length;
-          int[] blocks=new int[tokens];
-          for (String s: sa){
-            try{
-            blocks[count]=Integer.valueOf(s);
-            }
-            catch(NumberFormatException e){break;}
-            if ((blocks[count]==0) && (count>0 || tokens>1)) {
-              break;
-            }
-            count++;
-          }
-          if (count==tokens){
-          StringBuilder sb= new StringBuilder("");
-          for(int i : blocks){
-            sb.append(String.valueOf(i)+",");
-          }
-          tf.setText(sb.substring(0,sb.length()-1));
-          tf.setForeground(UIManager.getColor("TextField.foreground"));
-          valid=true;
-          }
-          else{
-            tf.setForeground(Color.red);
-            tf.repaint();
-            valid=false;
-          }
-          okButton.setEnabled(valid);
-          return valid;
+    @Override
+    public boolean verify(JComponent input){
+      boolean valid=false;
+      JTextField tf=(JTextField)input;
+      String[] sa=(tf.getText()).split(",");
+      int count=0, tokens=sa.length;
+      int[] blocks=new int[tokens];
+      for (String s: sa){
+        try{
+        blocks[count]=Integer.valueOf(s);
         }
+        catch(NumberFormatException e){break;}
+        if ((blocks[count]==0) && (count>0 || tokens>1)) {
+          break;
+        }
+        count++;
       }
+      if (count==tokens){
+      StringBuilder sb= new StringBuilder("");
+      for(int i : blocks){
+        sb.append(String.valueOf(i)+",");
+      }
+      tf.setText(sb.substring(0,sb.length()-1));
+      tf.setForeground(UIManager.getColor("TextField.foreground"));
+      valid=true;
+      }
+      else{
+        tf.setForeground(Color.red);
+        tf.repaint();
+        valid=false;
+      }
+      okButton.setEnabled(valid);
+      return valid;
+    }
+    
+  }
+  
 }

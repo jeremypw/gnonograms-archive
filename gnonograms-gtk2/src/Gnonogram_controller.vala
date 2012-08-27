@@ -623,10 +623,10 @@ public class Gnonogram_controller
 		if (_state!=GameState.SOLVING) return;
 		if (confirm && !Utils.show_confirm_dialog(_("Restart solving the puzzle?"))) return;
 		_model.blank_working();
-		_timer.reset();
 		start_solving();
 //		change_state(GameState.SOLVING);//resets view etc
 		redraw_all();
+		_timer.reset();
 	}
 
 	public void pause_game()

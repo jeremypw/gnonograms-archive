@@ -59,9 +59,9 @@ SRC_FILES = Gnonogram_cellgrid.vala \
 	Gnonogram_labelbox.vala \
 	Gnonogram_model.vala \
 	Gnonogram_permutor.vala \
-	Gnonogram_region.vala \
+	Gnonogram_region_new.vala \
 	Gnonogram_solver.vala \
-	Gnonogram_viewer.vala \
+	Gnonogram_viewer_new.vala \
 	img2gno.vala \
 	main.vala \
 	My2DCellArray.vala \
