@@ -20,13 +20,17 @@
     * Go back to last correct position
     * Timer
     * Can choose whether program starts with randomly generated puzzle, or design mode, or load puzzle dialog
+    
+  * New features for version 0.7
+    * Advanced solver - can solve most puzzles
+    * Advanced puzzle generation with higher grade settings
+    * Get hint function (press Ctrl-H when solving)
+    * Larger maximum grid size - up to 100x100
 
   * More advanced features are currently only available in the GTK version:
-    * Advanced solver - can solve difficult/ambiguous puzzles
-    * Larger grid size
     * Import puzzle from image
     * Mark cell and rewind to marked cell
-    * Manual
+    * Built in Manual
     
   * Installation & Licensing
 

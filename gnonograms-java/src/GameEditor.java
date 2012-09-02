@@ -122,7 +122,6 @@ public class GameEditor extends JDialog implements ActionListener{
       CluePane.add(clues[offset+i]);
     }
     JScrollPane sp=new JScrollPane(CluePane);
-    //sp.setPreferredSize(new Dimension(0,450));
     return sp;
   }
 

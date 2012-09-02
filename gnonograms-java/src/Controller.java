@@ -64,7 +64,6 @@ public class Controller {
     }
     view.setClueFontAndSize(config.getPointSize());
     view.setVisible(true);
-
   }
 
   public void init(int r, int c){
@@ -93,9 +92,7 @@ public class Controller {
       setSolving(false);
       view.redrawGrid();
     }
-    else{
-        updateLabelsFromModel(c.row,c.col);
-    }
+    else updateLabelsFromModel(c.row,c.col);
   }
   
   public void quit(){config.saveProperties();}  
@@ -111,8 +108,7 @@ public class Controller {
         newGame();
       }
       else view.setClueFontAndSize(config.getPointSize());
-    }
-  }
+  } }
 
   public void newGame(){
     model.clear();
@@ -145,7 +141,9 @@ public class Controller {
   } }
 
   private void rewindGame(){
-    while (model.countErrors()-model.countUnknownCells()>0){undoMove();}
+    while (model.countErrors()-model.countUnknownCells()>0){
+      undoMove();
+    }
     view.redrawGrid();
   }
 
@@ -206,8 +204,7 @@ public class Controller {
         newGame();
         gl.close();
         return;
-      }
-    } 
+    } } 
     
     if (gl.hasWorking){
       model.useWorking();
@@ -232,7 +229,7 @@ public class Controller {
     config.setPuzzleDirectory((gs.getCurrentDirectory()).getPath());
 
     try {gs.openDataOutputStream();}
-    catch (IOException e){out.println("Error while opening game file: "+e.getMessage());return;}
+    catch (IOException e){out.println("Error while saving game file: "+e.getMessage());return;}
 
     try {
       gs.writeDescription(view.getName(), view.getAuthor(), view.getCreationDate(), view.getScore());
@@ -258,60 +255,63 @@ public class Controller {
     double grade=config.getGrade();
     setSolving(false); //avoid displaying trial clues while generating game
     newGame();
-    model.setGrade(grade);
+    int passes=generatePuzzle(grade);
+    if (passes<0) Utils.showWarningDialog("Failed to generate puzzle - error in solver");
+    else{
+      model.useSolution();
+      updateAllLabelText(); //from solution
+      setSolving(true);
+      validSolution=true;
+      view.setScore(passes+" ");
+      view.setName("Random");
+      view.setAuthor("Computer");
+      view.setLicense("GPL");
+      view.setCreationDate("Today");
+    }
+  }
 
-    //Try to generate a solvable pattern
-    int passes=-1, count=0, limit=(int)(20+20*grade);
-    while (count<limit){
-      count++;
-      model.generateRandomPattern();
-      prepareToSolve(false,false,false); //get clues straight from model, no startgrid, no solutiongrid
-      passes=solver.solveIt(false,false,false,false); //only simple solver, not stepwise
-      if (passes>grade-2||passes<0) break;
-      
-    }
-    out.println("Passes "+passes+"\n");
-    if (count<limit){ //solvable pattern found or error
-      //updateSolutionGridFromSolver();
-      if (passes<0){
-        Utils.showWarningDialog("Failed to generate puzzle - error in solver");
-      }
-      else{
-        model.useSolution();
-        updateAllLabelText(); //from solution
-        setSolving(true);
-        validSolution=true;
-        view.setScore(passes+" ");
-        view.setName("Random");
-        view.setAuthor("Computer");
-        view.setLicense("GPL");
-        view.setCreationDate("Today");
+  private int generatePuzzle(double startingGrade){
+    //Try to generate a solvable pattern, reducing grade if necessary
+    int passes=-1, count=0, limit;
+    double grade=startingGrade+1;
+    int maxGuesswork;
+    while (passes<=grade-3){
+      grade--;
+      count=0; limit=(int)(500+100*grade); 
+      //for higher grades generate puzzles requiring advanced logic
+      maxGuesswork=0;
+      if(grade>Resource.GRADE_FOR_ONE_GUESS)maxGuesswork=1;   
+      if(grade>Resource.GRADE_FOR_TWO_GUESSES)maxGuesswork=2;
+      model.setGrade(grade);
+      while (count<limit){
+        count++;
+        model.generateRandomPattern();
+        prepareToSolve(false,false,false); //get clues straight from model, no startgrid, no solutiongrid
+        passes=solver.solveIt(false,maxGuesswork,false); //not debug, not stepwise
+        if (passes>grade-3 && passes<99999) break;
       }
     }
-    else { //timed out searching for solvable pattern
-      view.setScore("999999");
-      validSolution=false;
-      Utils.showWarningDialog("Failed to generate puzzle - try reducing grade or grid size");
-  } }
+    return passes;
+  }
 
   public void userSolveGame(){
     boolean useSolution=false;
-    boolean useExistingGrid=true, useAdvanced=false, useUltimate=false, debug=false, stepwise=false;
+    boolean useExistingGrid=true, debug=false, stepwise=false;
     if (isSolving==false){
       setSolving(true);
       restartGame();
     }
     prepareToSolve(true,useExistingGrid, rows==1 ? false : useSolution); //clues from labels, use existing working grid as start point
     startDate=new Date();
-    int result=solveGame(debug, useAdvanced, useUltimate, stepwise);
+    int result=solveGame(debug, Resource.MAXGUESSWORK_FOR_SOLVER, stepwise);
     endDate=new Date();
     updateWorkingGridFromSolver();
     view.setTime(Utils.calculateTimeTaken(startDate,endDate));
     setSolving(true); //redisplay working grid
   }
   
-  public int solveGame(boolean debug, boolean useAdvanced, boolean useUltimate, boolean stepwise){
-    int passes=solver.solveIt(debug,useAdvanced,useUltimate,stepwise); //debug, useAdvanced, useUltimate, stepwise
+  public int solveGame(boolean debug, int maxGuesswork, boolean stepwise){
+    int passes=solver.solveIt(debug,maxGuesswork,stepwise); //debug, useAdvanced,  stepwise
     view.setScore("999999");
     String message="";
     switch (passes) {
@@ -326,17 +326,22 @@ public class Controller {
         break;
       default: //solver succeeded
         view.setScore(String.valueOf(passes));
-       if (!validSolution){
-          validSolution=true;
-        }
+        if (!validSolution) validSolution=false;
         updateSolutionGridFromSolver();
         break;
     }
     if (message.length()>0) Utils.showInfoDialog(message);
     return passes;
   }
+  
+  public void hint(){
+    if (!isSolving) return;
+    prepareToSolve(true,true,false);
+    solver.getHint();
+    view.redrawGrid();
+  } 
 
-  private void prepareToSolve(boolean useLabels, boolean useStartgrid, boolean useSolution){//, boolean useAdvanced, boolean useUltimate){
+  private void prepareToSolve(boolean useLabels, boolean useStartgrid, boolean useSolution){
     String[] rowClues= new String[this.rows], columnClues= new String[this.cols];
     My2DCellArray solution=null;
     if (useLabels){//get clues from labels
@@ -347,7 +352,7 @@ public class Controller {
       for (int i =0; i<this.rows; i++) rowClues[i]=Utils.clueFromIntArray(model.getRow(i));
       for (int i =0; i<this.cols; i++) columnClues[i]=Utils.clueFromIntArray(model.getColumn(i));
     }
-    if (useSolution){
+    if (useSolution){ //used during development to locate point at which solver fails
       out.println("Solver using solution\n");
       model.useSolution();
       solution = model.getCellDataArray();
@@ -357,13 +362,12 @@ public class Controller {
   }
 
   public boolean checkCluesValid(){
-      boolean valid;
-      //false if solver returns an error
-     prepareToSolve(true,false,false);// clues from labels, no start grid
-     valid=(solveGame(false,false,false,false)>=0);
-     setSolving(isSolving);
-     out.println("Game is valid\n");
-      return valid;
+    boolean valid;
+    //false if solver returns an error
+    prepareToSolve(true,false,false);// clues from labels, no start grid
+    valid=(solveGame(false,0,false)>=0); //no debug, no guessing
+    setSolving(isSolving);
+    return valid;
   }
   
   public void updateWorkingGridFromSolver(){
@@ -425,9 +429,8 @@ public class Controller {
       model.useWorking();
       history.initialize();
       startDate=new Date();
-    }else{
-      model.useSolution();
     }
+    else model.useSolution();
     view.setSolving(isSolving);
     view.redrawGrid();
     this.isSolving=isSolving;

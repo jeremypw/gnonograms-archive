@@ -1,3 +1,10 @@
+Gnonograms-java - version 0.7.0
+*****************************
+Sep 02, 2012  Version 0.7.0
+              Advanced solver implemented
+              Get hint implemented (Ctrl-H)
+              Advanced puzzles generated with higher grade settings
+
 Gnonograms-java - version 0.6
 *****************************
 July 14, 2012 Replaced some (most) text with icons.
@@ -12,6 +19,7 @@ Aug  27, 2012 Improved solver algorithms
               Highlight labels as well as current cell
               Improved keyboard controls
               Time taken shown in info bar instead of dialogue
+
 
 Gnonograms-java - version 0.5
 *****************************

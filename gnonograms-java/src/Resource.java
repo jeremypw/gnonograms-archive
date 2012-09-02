@@ -25,14 +25,17 @@
 public class Resource
 {
   static final String BLOCKSEPARATOR=",";
-  static final String VERSION_STRING="0.6.4";
-  static final double MAXIMUM_GRADE=12;
-  static final int MAXIMUM_GRID_SIZE=60;
+  static final String VERSION_STRING="0.7.0";
+  static final double MAXIMUM_GRADE=20;
+  static final double GRADE_FOR_ONE_GUESS=15;
+  static final double GRADE_FOR_TWO_GUESSES=18;
+  static final int MAXGUESSWORK_FOR_SOLVER=9999;
+  static final int MAXIMUM_GRID_SIZE=100;
   static final int MAXIMUM_CLUE_POINTSIZE=72;
   static final int MINIMUM_CLUE_POINTSIZE=4;
   static final int DEFAULT_ROWS=10;
   static final int DEFAULT_COLS=15;
-  static final int DEFAULT_GRADE=5;
+  static final int DEFAULT_GRADE=8;
 
   static final int CELLSTATE_UNKNOWN=0;
   static final int CELLSTATE_EMPTY=1;

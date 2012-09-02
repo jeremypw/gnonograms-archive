@@ -18,7 +18,7 @@
 # *  Author:
 # * 	Jeremy Wootten <jeremwootten@gmail.com>
 PROGRAM=gnonograms-java
-VERSION=0.6.4
+VERSION=0.7.0
 
 JAVAC=javac
 JAR=jar
@@ -38,7 +38,6 @@ SRC_FILES = \
 	Move.java \
 	MoveList.java \
 	My2DCellArray.java \
-	Permutor.java \
 	Region.java \
 	Resource.java \
 	Solver.java \

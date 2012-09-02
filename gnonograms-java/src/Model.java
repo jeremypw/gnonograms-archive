@@ -40,7 +40,8 @@ public class Model {
   }
 
   public void clear(){
-    blankSolution();  blankWorking();
+    blankSolution();  
+    blankWorking();
   }
 
   public void blankSolution() {solutionData.setAll(Resource.CELLSTATE_EMPTY);}
@@ -94,20 +95,23 @@ public class Model {
       middleOfRow = cols2D/2.0;
     }
 
-    private int calculatemaximumBlockSize(double lengthOfRegion, double grade){
-      double max=3+(int)((lengthOfRegion-1)*(1.0-(grade/Resource.MAXIMUM_GRADE)));
-      if (max>lengthOfRegion)max=lengthOfRegion;
-      return (int)max;
-    }
-
     protected void setMaximumBlockSizes(double grade){
+      //Empirical formula giving reasonable results
       maximumColumnBlockSize=calculatemaximumBlockSize(rows2D,grade);
       maximumRowBlockSize=calculatemaximumBlockSize(cols2D,grade);
     }
     
+    private int calculatemaximumBlockSize(double lengthOfRegion, double grade){
+      //Empirical formula giving reasonable results
+      double max=3+(int)((lengthOfRegion/2-3)*(1.0-(grade/(Resource.MAXIMUM_GRADE*4.0))));
+      if(max<3)max=3;
+      if (max>lengthOfRegion)max=lengthOfRegion;
+      return (int)max;
+    }
+    
     protected void setMinimumFreedoms(double grade){
-      minimumColumnFreedom = 1+(int)((rows*grade)/(Resource.MAXIMUM_GRADE*4));
-      minimumRowFreedom = 1+(int)((cols*grade)/(Resource.MAXIMUM_GRADE*4));
+      minimumColumnFreedom = (int)((rows*grade)/50.0);
+      minimumRowFreedom = (int)((cols*grade)/50.0);
     }
 
     protected void setGrade(double grade){
@@ -133,19 +137,17 @@ public class Model {
       boolean fill;
       assert sizeOfRegion<=region.length;
       while (p<sizeOfRegion-1){
-        fill=(rand.nextInt(100)>50);
-        // random length up to remaining space but not larger than
+        fill=(rand.nextInt(100)>50); //whether next block will be filled or not (50% chance)
+        //set max sixe of filled or unfilled block
         max=fill ? maximumBlockSize : (sizeOfRegion-maximumBlockSize);
+        // random length up to remaining space but not larger than max
         blockSize=Math.min(1+rand.nextInt(sizeOfRegion-p),max);
-        if (fill){
-          for (int i=0; i<blockSize; i++){
-            region[p]=Resource.CELLSTATE_FILLED;
-            p++;
-          }
-          //at least one space between blocks
-          if (p<sizeOfRegion) p++;
+        // fill in block (default is empty
+        for (int i=0; i<blockSize; i++){
+          if (fill)region[p]=Resource.CELLSTATE_FILLED;
+          p++;
         }
-        else p+=blockSize;
+        if (fill && p<sizeOfRegion-1) p++;
       }
       return region;
     }
@@ -172,8 +174,7 @@ public class Model {
         if (region[i]==Resource.CELLSTATE_FILLED) {
           filledCells++;
           if (i==0 || region[i-1]==Resource.CELLSTATE_EMPTY) filledBlocks++;
-        }
-      }
+      } }
       degreesOfFreedom=sizeOfRegion-filledCells-filledBlocks+1;
 
       if (degreesOfFreedom>sizeOfRegion){//completely empty - fill one cell

@@ -38,7 +38,6 @@ import static java.lang.System.out;
   private int clim;
   private int turn;
   private int maxTurns;
-  private int guesses=0;
   private int counter=0;
   private int maxvalue=999999;
   private boolean checksolution;
@@ -59,11 +58,11 @@ import static java.lang.System.out;
   }
 
   public void setDimensions(int r, int c) {
-    rows=r; cols=c;
+    rows=r; cols=c; regionCount=r+c;
     grid=new My2DCellArray(r, c);
     solution=new My2DCellArray(r,c);
-    regions=new Region[r+c];
-    for (int i=0;i<regions.length;i++) regions[i]=new Region(grid);
+    regions=new Region[regionCount];
+    for (int i=0;i<regionCount;i++) regions[i]=new Region(grid);
   }
 
   public boolean initialize(String[] rowclues, String[] colclues, My2DCellArray startgrid, My2DCellArray solutiongrid){
@@ -72,16 +71,15 @@ import static java.lang.System.out;
       return false;
     }
     checksolution=false;
-    if (solutiongrid!=null) {checksolution=true;solution.copyFrom(solutiongrid); out.println("Using solution\n");}
+    if (solutiongrid!=null) {
+      checksolution=true;
+      solution.copyFrom(solutiongrid); 
+      out.println("Using solution\n");
+    }
     if (startgrid!=null) grid.copyFrom(startgrid);
     else grid.setAll(Resource.CELLSTATE_UNKNOWN);
-      for (int r=0; r<rows; r++){
-        regions[r].initialize(r, false,cols,rowclues[r]);
-      }
-      for (int c=0; c<cols; c++){
-        regions[c+rows].initialize(c,true,rows,colclues[c]);
-      }
-    guesses=0; counter=0;
+    for (int r=0; r<rows; r++)regions[r].initialize(r, false,cols,rowclues[r]);
+    for (int c=0; c<cols; c++)regions[c+rows].initialize(c,true,rows,colclues[c]);
     return valid();
   }
 
@@ -95,25 +93,18 @@ import static java.lang.System.out;
     return rowTotal==colTotal;
   }
 
-  public int solveIt(boolean debug, boolean useAdvanced, boolean useUltimate, boolean stepwise){
+  public int solveIt(boolean debug, int maxGuesswork, boolean stepwise){
     int simpleresult=simplesolver(debug,true, checksolution, stepwise); //debug,log errors, check solution, step through solution one pass at a time
-    if (simpleresult==0 && useAdvanced){
-      if (Utils.showConfirmDialog(("Use advanced solver?"))){
+    if (simpleresult==0 && maxGuesswork>0){
         int[] gridstore= new int[rows*cols];
-        int advancedresult=advancedsolver(gridstore, debug);
-        if (advancedresult>0){
-          if(advancedresult==999999 && useUltimate){
-            return ultimatesolver(gridstore, debug);
-          } 
-          else  return advancedresult;
-    } } }
-    //if (rows==1) out.println(regions[0].toString());
+        return advancedsolver(gridstore, debug, maxGuesswork);
+    }
+    if (rows==1) out.println(regions[0].toString());  //used for debuggin
     return simpleresult;
-    //return 0;
   }
 
   public boolean getHint(){
-    //Not used in Java version
+    //Not used in Java version (yet)
     //Solver must be initialised with current state of puzzle before calling.
     int   pass=1;
     while (pass<=30){
@@ -122,7 +113,7 @@ import static java.lang.System.out;
       for (int i=0; i<regionCount; i++){
         if (regions[i].isCompleted) continue;
         if (regions[i].solve(false,true)) {//run solve algorithm in hint mode
-          //out.println("Changed region %d\n",i);
+          out.println("Changed region " +i+"\n");
           control.updateWorkingGridFromSolver();
           return true;
         }
@@ -133,6 +124,7 @@ import static java.lang.System.out;
       }
       pass++;
     }
+    out.println("Pass "+  pass+"\n");
     if (pass>30){
       if (solved()) Utils.showInfoDialog(("Already solved"));
       else Utils.showInfoDialog(("Simple solver could not find hint\n"));
@@ -150,7 +142,7 @@ import static java.lang.System.out;
         if (r.isCompleted) continue;
         if (r.solve(debug,false))changed=true; //no hinting
         if (r.inError) {
-          if (true) out.println("::"+r.message);
+          if (debug) out.println("::"+r.message);
           return -1;
         } 
         if(checksolution && differsFromSolution(r)) {out.println(r.toString()); return -1;}
@@ -172,6 +164,7 @@ import static java.lang.System.out;
   }
 
   private boolean differsFromSolution(Region r){
+    //use for debugging
     boolean isColumn=r.isColumn;
     int index=r.index;
     int nCells=r.nCells;
@@ -191,8 +184,7 @@ import static java.lang.System.out;
     }
     return false;
   }
-  private int advancedsolver(int[] gridstore, boolean debug){
-    // Not used in Java version
+  private int advancedsolver(int[] gridstore, boolean debug, int maxGuesswork){
     // single cell guesses, depth 1 (no recursion)
     // make a guess in each unknown cell in turn
     // if leads to contradiction mark opposite to guess,
@@ -200,34 +192,31 @@ import static java.lang.System.out;
     // if does not lead to solution leave unknown and choose another cell
     int simpleresult=0;
     int wraps=0;
+    int guesses=0;
     boolean changed=false;
+    int countChanged=0;
     int initialmaxTurns=3; //stay near edges until no more changes
     int initialcellstate=Resource.CELLSTATE_FILLED;
 
     rdir=0; cdir=1; rlim=rows; clim=cols;
-    turn=0; maxTurns=initialmaxTurns;
+    turn=0; maxTurns=initialmaxTurns; guesses=0;
     trialCell= new Cell(0,-1,initialcellstate);
 
     this.saveposition(gridstore);
-    while (true)
-    {
-      incrementcounter();
-      makeguess();
-
-      if (trialCell.col==-1) //run out of guesses
-      {
-        if (changed){}
-        else if (maxTurns==initialmaxTurns)
-        {
+    while (true){
+      trialCell=makeguess(trialCell); guesses++;
+      if (trialCell.col==-1){ //run out of guesses
+        if (changed){
+          if(countChanged>maxGuesswork) return 0;
+        }
+        else if (maxTurns==initialmaxTurns){
           maxTurns=(Math.min(rows,cols))/2+2; //ensure full coverage
         }
-        else if(trialCell.state==initialcellstate)
-        {
+        else if(trialCell.state==initialcellstate){
           trialCell=trialCell.invert(); //start making opposite guesses
           maxTurns=initialmaxTurns; wraps=0;
         }
         else break; //cant make progress
-
         rdir=0; cdir=1; rlim=rows; clim=cols; turn=0;
         changed=false;
         wraps++;
@@ -235,164 +224,65 @@ import static java.lang.System.out;
       }
       grid.setDataFromCell(trialCell);
       simpleresult=simplesolver(false,false,false,false); //only debug advanced part, ignore errors
-
-      if (simpleresult>0) break; //solution found
-
+      if (simpleresult>0) {countChanged++;break;}//solution found
       loadposition(gridstore); //back track
-      if (simpleresult<0) //contradiction -  try opposite guess
-      {
+      if (simpleresult<0){ //contradiction -  insert opposite guess
         grid.setDataFromCell(trialCell.invert()); //mark opposite to guess
-        changed=true; //worth trying another cycle
-        simpleresult=simplesolver(false,false, false,false);//can we solve now?
-        if (simpleresult==0)
-        {
+        changed=true; countChanged++;//worth trying another cycle
+        simpleresult=simplesolver(false,false,false,false);//can we solve now?
+        if (simpleresult==0){//no we cant
           this.saveposition(gridstore); //update grid store
           continue; //go back to start
         }
-        else  if (simpleresult>0) break; // solution found
+        else if (simpleresult>0)break; // solution found
         else return -1; //starting point was invalid
       }
       else  continue; //guess again
     }
     //return vague measure of difficulty
-    if (simpleresult>0) return simpleresult+guesses;
+    if (simpleresult>0) return simpleresult+countChanged*20;
     return 999999;
   }
 
   private void saveposition(int[] gs){
     //store grid in linearised form.
-    //Not used in Java version
-    for(int r=0; r<rows; r++)
-    { for(int c=0; c<cols; c++)
-      {
+    for(int r=0; r<rows; r++){
+     for(int c=0; c<cols; c++){
         gs[r*cols+c]=grid.getDataFromRC(r,c);
-      }
-    }
+    } }
     for (int i=0; i<regionCount; i++) regions[i].savestate();
   }
 
   private void loadposition(int[] gs){
-    //Not used in Java version
-    for(int r=0; r<rows; r++)
-    { for(int c=0; c<cols; c++)
-      {
+    for(int r=0; r<rows; r++){
+      for(int c=0; c<cols; c++){
         grid.setDataFromRC(r,c, gs[r*cols+c]);
-      }
-    }
+    } }
     for (int i=0; i<regionCount; i++) regions[i].restorestate();
   }
 
-  private void makeguess(){
-    //Not used in Java version
+  private Cell makeguess(Cell cell){
     //Scan in spiral pattern from edges.  Critical cells most likely in this region
-    int r=trialCell.row;
-    int c=trialCell.col;
-
+    int r=cell.row;
+    int c=cell.col;
     while (true){
       r+=rdir; c+=cdir; //only one changes at any one time
       if (cdir==1 && c>=clim) {c--;cdir=0;rdir=1;r++;} //across top - rh edge reached
       else if (rdir==1 && r>=rlim) {r--;rdir=0;cdir=-1;c--;} //down rh side - bottom reached
       else if (cdir==-1 && c<turn) {c++; cdir=0;rdir=-1;r--;} //back across bottom lh edge reached
       else if (rdir==-1 && r<=turn) {r++;turn++;rlim--;clim--;rdir=0;cdir=1;} //up lh side - top edge reached
-      if (turn>maxTurns) {trialCell.row=0;trialCell.col=-1;break;} //stay near edge until no more changes
-      if (grid.getDataFromRC(r,c)==Resource.CELLSTATE_UNKNOWN)
-      {
-        trialCell.row=r; trialCell.col=c;
-        return;
+      if (turn>maxTurns) {//stay near edge until no more changes
+        cell.row=0;
+        cell.col=-1;
+        break;
       }
-    }
-    return;
+      if (grid.getDataFromRC(r,c)==Resource.CELLSTATE_UNKNOWN){
+        cell.row=r; cell.col=c;
+        break;
+    } }
+    return cell;
   }
 
   public Cell getCell(int r, int c){return grid.getCell(r,c);}
 
-  private int ultimatesolver(int[] gridstore, boolean debug){
-    //Not used in Java version
-    int permreg=-1, maxvalue=999999, advancedresult=-99, simpleresult=-99;
-    int limit=GUESSESBEFOREASK;
-
-    loadposition(gridstore); //return to last valid state
-    for (int i=0; i<regionCount; i++) regions[i].initialstate();
-    simplesolver(false,true,false,false); //make sure region state correct
-
-    control.updateWorkingGridFromSolver();
-    if(!Utils.showConfirmDialog(("Start Ultimate solver?\n This can take a long time and may not work"))) return 999999;
-
-    int[] gridstore2 = new int[rows*cols];
-    int[] guess={};
-
-    while (true)
-    {
-      permreg=choosePermuteRegion(maxvalue);
-      if (permreg<0) {out.println("No perm region found\n");break;}
-
-      int start;
-      Permutor p=regions[permreg].getPermutor();
-
-      if (p==null|| p.valid==false){out.println("No valid permutator generated\n");break;}
-
-      start=p.start;
-
-      boolean iscolumn=regions[permreg].isColumn;
-      int idx=regions[permreg].index;
-
-      //try advanced solver with every possible pattern in this range.
-
-      for (int i=0; i<regionCount; i++) regions[i].initialstate();
-      saveposition(gridstore2);
-
-      p.initialise();
-      while (p.next())
-      {
-        incrementcounter();
-        if (guesses>limit)
-        {
-          if(Utils.showConfirmDialog(("This is taking a long time!")+"\n"+("Keep trying?"))) limit+=GUESSESBEFOREASK;
-          else return 999999;
-        }
-        guess=p.get();
-
-        grid.setArray(idx,iscolumn,guess,start);
-        simpleresult=simplesolver(false,false,false,false);
-
-        if(simpleresult==0)
-        {
-          advancedresult=advancedsolver(gridstore, debug);
-          if (advancedresult>0 && advancedresult<999999) return advancedresult; //solution found
-        }
-        else if (simpleresult>0) return simpleresult+guesses; //unlikely!
-
-        loadposition(gridstore2); //back track
-        for (int i=0; i<regionCount; i++) regions[i].initialstate();
-      }
-      loadposition(gridstore2); //back track
-
-      for (int i=0; i<regionCount; i++) regions[i].initialstate();
-      simplesolver(false,false,false,false);
-    }
-    return 0;
-  }
-
-  private int choosePermuteRegion(int maxvalue) {
-    int bestvalue=-1, currentvalue, permreg=-1,edg;
-    for (int r=0;r<regionCount;r++)
-    {
-      currentvalue=regions[r].valueaspermuteregion();
-      //weight towards edge regions
-      if (currentvalue==0)continue;
-      if (r<rows)edg=Math.min(r,rows-1-r);
-      else edg=Math.min(r-rows,rows+cols-r-1);
-      edg+=1;
-      currentvalue=currentvalue*100/edg;
-      if (currentvalue>bestvalue&&currentvalue<maxvalue)
-      {
-        bestvalue=currentvalue;
-        permreg=r;
-      }
-    }
-    maxvalue=bestvalue;
-    return permreg;
-  }
-
-  private void incrementcounter(){} //not used in Java version
 }
