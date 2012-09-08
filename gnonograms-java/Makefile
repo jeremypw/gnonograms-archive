@@ -17,11 +17,12 @@
 # *
 # *  Author:
 # * 	Jeremy Wootten <jeremwootten@gmail.com>
-PROGRAM=gnonograms-java
+PROGRAM=Gnonograms
 VERSION=0.7.0-jre6
 
 JAVAC=javac
 JAR=jar
+TAR=tar
 
 SRC_FILES = \
 	Cell.java \
@@ -44,12 +45,32 @@ SRC_FILES = \
 	Utils.java \
 	Viewer.java \
 
-
-ifndef BUILD_DIR
 BUILD_DIR=build
-endif
+IMAGE_DIR=build/images
+
+IMAGE_FILES = \
+	*.png \
+	*.gif \
+
+TEXT_FILES = \
+	Makefile \
+	AUTHORS \
+	COPYING \
+	INSTALL \
+	MAINTAINERS \
+	NEWS \
+	README \
+	THANKS
 
 EXPANDED_SRC_FILES = $(foreach src,$(SRC_FILES),src/$(src))
+EXPANDED_IMAGE_FILES= $(foreach img, $(IMAGE_FILES), $(IMAGE_DIR)/$(img))
+
+DIST_FILES = $(TEXT_FILES)
+DIST_FILES+= $(EXPANDED_SRC_FILES) 
+DIST_FILES+= $(EXPANDED_IMAGE_FILES)
+
+DIST_TAR_GZ = $(PROGRAM)-$(VERSION).tar.gz
+
 #-----------------------------------TARGETS----------------------------------------------
 all: $(PROGRAM)
 ###############
@@ -60,4 +81,12 @@ $(PROGRAM): $(EXPANDED_SRC_FILES) Makefile
 
 jar: $(PROGRAM)
 ###############
-	$(JAR) cfe Gnonograms-$(VERSION).jar Main  -C build .
+	$(JAR) cfe $(PROGRAM)-$(VERSION).jar Main  -C build .
+	
+dist: $(PROGRAM) $(DIST_FILES)
+###############################
+	mkdir -p $(PROGRAM)-$(VERSION)
+	cp --parents $(DIST_FILES) $(PROGRAM)-$(VERSION)
+	rm -f $(DIST_TAR_GZ)
+	$(TAR) --gzip -cvf $(DIST_TAR_GZ) $(PROGRAM)-$(VERSION)
+	rm -rf $(PROGRAM)-$(VERSION)

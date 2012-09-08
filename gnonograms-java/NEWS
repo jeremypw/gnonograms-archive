@@ -4,6 +4,7 @@ Sep 02, 2012  Version 0.7.0
               Advanced solver implemented
               Get hint implemented (Ctrl-H)
               Advanced puzzles generated with higher grade settings
+              Fixed bug - fails if no config file.
 
 Gnonograms-java - version 0.6
 *****************************

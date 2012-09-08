@@ -118,8 +118,8 @@ public class Config extends Properties {
     public double getGrade(){return (double)getInteger("model.grade");}
     public void setGrade(double value){setInteger("model.grade",(int)value);}
     
-    public int getPointSize(){return getInteger("model.pointsize");}
-    public void setPointSize(int value){setInteger("model.pointsize",value);}
+    public int getPointSize(){return getInteger("view.pointsize");}
+    public void setPointSize(int value){setInteger("view.pointsize",value);}
     
     public String getPuzzleDirectory(){return getString("system.puzzledirectory");}
     public void setPuzzleDirectory(String value){setString("system.puzzledirectory",value);}

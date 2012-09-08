@@ -33,6 +33,7 @@ public class Controller {
   private MoveList history;
   private Config config;
   private int rows, cols;
+  private Cell markedCell;
   public boolean isSolving;
   private boolean validSolution;
   private boolean debug;
