@@ -78,41 +78,41 @@ public class CellGrid extends JPanel{
 
 @Override
   public void paintComponent(Graphics g) {
-  int gridWidth=this.getWidth();
-  int gridHeight=this.getHeight();
-  rowHeight=((double)gridHeight)/((double)rows);
-  columnWidth=(double)(gridWidth)/((double)cols);
+    int gridWidth=this.getWidth();
+    int gridHeight=this.getHeight();
+    rowHeight=((double)gridHeight)/((double)rows);
+    columnWidth=(double)(gridWidth)/((double)cols);
 
-  //Draw cell bodies
-  for (int r=0;r<rows;r++){
-   for(int c=0;c<cols;c++){
-     g.setColor(displayColors[control.getDataFromRC(r,c)]);
-     g.fillRect((int)(c*columnWidth+1),(int)(r*rowHeight+1),(int)(columnWidth),(int)(rowHeight));
-   }
-  }
-  g.setColor(Color.gray);
-  for (int r=0;r<rows;r++){
-    int h=(int)(r*rowHeight);
-    g.drawLine(0,h,gridWidth,h);
-  }
-  for (int c=0;c<cols;c++){
-    int w=(int)(c*columnWidth);
-    g.drawLine(w, 0, w, gridHeight);
-  }
-  // Draw major gridlines
-  g.setColor(Color.black);
-  for (int r=0;r<=rows;r+=5){
-    int h=(int)(r*rowHeight);
-    g.drawLine(0,h,gridWidth,h);
-    g.drawLine(0,h+1,gridWidth,h+1);
-  }
-  for (int c=0;c<=cols;c+=5){
-    int w=(int)(c*columnWidth);
-    g.drawLine(w, 0, w, gridHeight);
-    g.drawLine(w+1, 0, w+1, gridHeight);
-  }
-  //highlight current cell
-  highlightCell(currentRow, currentCol);
+    //Draw cell bodies
+    for (int r=0;r<rows;r++){
+     for(int c=0;c<cols;c++){
+       g.setColor(displayColors[control.getDataFromRC(r,c)]);
+       g.fillRect((int)(c*columnWidth+1),(int)(r*rowHeight+1),(int)(columnWidth),(int)(rowHeight));
+     }
+    }
+    g.setColor(Color.gray);
+    for (int r=0;r<rows;r++){
+      int h=(int)(r*rowHeight);
+      g.drawLine(0,h,gridWidth,h);
+    }
+    for (int c=0;c<cols;c++){
+      int w=(int)(c*columnWidth);
+      g.drawLine(w, 0, w, gridHeight);
+    }
+    // Draw major gridlines
+    g.setColor(Color.black);
+    for (int r=0;r<=rows;r+=5){
+      int h=(int)(r*rowHeight);
+      g.drawLine(0,h,gridWidth,h);
+      g.drawLine(0,h+1,gridWidth,h+1);
+    }
+    for (int c=0;c<=cols;c+=5){
+      int w=(int)(c*columnWidth);
+      g.drawLine(w, 0, w, gridHeight);
+      g.drawLine(w+1, 0, w+1, gridHeight);
+    }
+    //highlight current cell
+    highlightCell(currentRow, currentCol);
   }
   
   protected void moveHighlight(int r, int c){
@@ -127,42 +127,41 @@ public class CellGrid extends JPanel{
     control.highlightLabels(r,c,true);
   }
   protected void highlightCell(int r, int c){
-  if (r<0||r>rows||c<0||c>=cols) return;
-  myGraphics=this.getGraphics();
-  myGraphics.setColor(Resource.HIGHLIGHT_COLOR);
-  drawHighlight(r,c);
+    if (r<0||r>rows||c<0||c>=cols) return;
+    myGraphics=this.getGraphics();
+    myGraphics.setColor(Resource.HIGHLIGHT_COLOR);
+    drawHighlight(r,c);
    }
   protected void unhighlightCell(int r, int c){
-  if (r<0||r>rows||c<0||c>=cols) return;
-  myGraphics=this.getGraphics();
-  myGraphics.setColor(displayColors[control.getDataFromRC(r,c)]);
-  drawHighlight(r,c);
+    if (r<0||r>rows||c<0||c>=cols) return;
+    myGraphics=this.getGraphics();
+    myGraphics.setColor(displayColors[control.getDataFromRC(r,c)]);
+    drawHighlight(r,c);
   }
   
   protected void drawHighlight(int r, int c){
-  int x=(int)(c*columnWidth+2.5);
-  int y=(int)(r*rowHeight+2.5);
-  int w=(int)(columnWidth-4.5);
-  int h=(int)(rowHeight-4.5);
-  
-  myGraphics.drawRect(x,y,w,h);
-  myGraphics.drawRect(x+1,y+1,w-2,h-2);
+    int x=(int)(c*columnWidth+2.5);
+    int y=(int)(r*rowHeight+2.5);
+    int w=(int)(columnWidth-4.5);
+    int h=(int)(rowHeight-4.5);
+    
+    myGraphics.drawRect(x,y,w,h);
+    myGraphics.drawRect(x+1,y+1,w-2,h-2);
   }
 
   public void updateCurrentCell(int state){
-  updateCell(currentRow,currentCol,state);
+    updateCell(currentRow,currentCol,state);
   }
   
   protected void updateCell(int r,int c,int cs){
-  if (cs==Resource.CELLSTATE_UNDEFINED) return;
-  currentCell.set(r,c,cs);
-  control.setDataFromCell(currentCell);//takes care of updating labels if necessary
-  repaint();
+    if (cs==Resource.CELLSTATE_UNDEFINED) return;
+    currentCell.set(r,c,cs);
+    control.setDataFromCell(currentCell);//takes care of updating labels and checking if solved if necessary
   }
 
   public void setSolving(boolean isSolving){
-  if(isSolving) displayColors=solvingColors;
-  else displayColors=settingColors;
+    if(isSolving) displayColors=solvingColors;
+    else displayColors=settingColors;
   }
 
   private class GridMouseAdapter extends MouseAdapter{

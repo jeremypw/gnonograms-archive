@@ -76,7 +76,6 @@ public class Viewer extends JFrame {
   private ImageIcon scaledLogo;
   protected ImageIcon hideIcon, revealIcon;
   private JLabel logoLabel;
-  private JToolBar commonToolBar;
   private JPanel puzzlePane, toolbarPane, infoPane;
   private JButton hiderevealButton;
 
@@ -88,7 +87,6 @@ public class Viewer extends JFrame {
     this.setDefaultCloseOperation(EXIT_ON_CLOSE);
     this.setTitle("Gnonograms for Java");
     this.setResizable(false);
-    //this.setResizable(true);
     myLogo=Utils.createImageIcon("images/gnonograms3-256.png","Logo");
     logoLabel=new JLabel();
     if (myLogo==null)logoLabel=new JLabel("MISSING ICON");
@@ -104,8 +102,7 @@ public class Viewer extends JFrame {
     toolbarPane.setLayout(new BorderLayout());
     contentPane=this.getContentPane();
     createInfoPane();
-    createCommonToolBar();
-    toolbarPane.add(commonToolBar,BorderLayout.LINE_START);
+    toolbarPane.add(createCommonToolBar(),BorderLayout.LINE_START);
 
     contentPane.setLayout(new BorderLayout());
     contentPane.add(toolbarPane,BorderLayout.PAGE_START);
@@ -141,7 +138,6 @@ public class Viewer extends JFrame {
   public void setTime(String time){timeLabel.setInfo(time);}
   
   public void clearInfoBar(){
-    //out.println("Clear info bar");
     setName("");
     setAuthor("");
     setCreationDate("");
@@ -233,7 +229,7 @@ public class Viewer extends JFrame {
 
   public void zoomFont(int changeInPointSize){
     if (changeInPointSize>0)cluePointSize++;
-    else cluePointSize--;
+    else if (changeInPointSize<0) cluePointSize--;
     if(cluePointSize<Resource.MINIMUM_CLUE_POINTSIZE) cluePointSize=Resource.MINIMUM_CLUE_POINTSIZE;
     if(cluePointSize>Resource.MAXIMUM_CLUE_POINTSIZE) cluePointSize=Resource.MAXIMUM_CLUE_POINTSIZE;
     setClueFontAndSize(cluePointSize);
@@ -251,6 +247,7 @@ public class Viewer extends JFrame {
   private void resizeLogoLabelImage(){ 
       int width=rowBox.getLogoSize();
       int height=columnBox.getLogoSize();
+      if (width==0||height==0) return;
       if (scaledLogo==null||scaledLogo.getIconHeight()!=height || scaledLogo.getIconWidth()!=width){
         scaledLogo=new ImageIcon(myLogo.getImage().getScaledInstance(width,height,BufferedImage.SCALE_SMOOTH));
         logoLabel.setIcon(scaledLogo);
@@ -278,12 +275,11 @@ public class Viewer extends JFrame {
       columnBox.highlightLabel(c,on);
   }
 
-  public void redrawGrid(){
-    drawing.repaint();
-  }
+  public void redrawGrid(){drawing.repaint();}
   
-  private void createCommonToolBar(){
+  private JToolBar createCommonToolBar(){
     JToolBar tb=new JToolBar();
+    //get odd effects if toolbar is added back to a resized puzzle
     tb.setFloatable(false);
 
     int position=0;
@@ -362,7 +358,7 @@ public class Viewer extends JFrame {
     ((JComponent)(tb.getComponentAtIndex(position))).setToolTipText("Edit the description and clues");
     position++;
     
-    commonToolBar=tb;
+    return tb;
   }
   
   private class MyAction extends AbstractAction{

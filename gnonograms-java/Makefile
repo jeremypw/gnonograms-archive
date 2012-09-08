@@ -18,7 +18,7 @@
 # *  Author:
 # * 	Jeremy Wootten <jeremwootten@gmail.com>
 PROGRAM=gnonograms-java
-VERSION=0.7.0
+VERSION=0.7.0-jre6
 
 JAVAC=javac
 JAR=jar
@@ -33,7 +33,7 @@ SRC_FILES = \
 	GameSaver.java \
 	GnonogramLabel.java \
 	LabelBox.java \
-	Gnonograms.java \
+	Main.java \
 	Model.java \
 	Move.java \
 	MoveList.java \
@@ -60,4 +60,4 @@ $(PROGRAM): $(EXPANDED_SRC_FILES) Makefile
 
 jar: $(PROGRAM)
 ###############
-	$(JAR) cfm Gnonograms-$(VERSION).jar Manifest.txt -C build .
+	$(JAR) cfe Gnonograms-$(VERSION).jar Main  -C build .

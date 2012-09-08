@@ -212,7 +212,7 @@ public class Region {
       tagsToStatus();
       if (totalsChanged()){
         madechanges=true;
-        if(inError||hint) break; 
+        if(inError) break; 
       }
       else break; // no further changes made
     }

@@ -104,7 +104,6 @@ import static java.lang.System.out;
   }
 
   public boolean getHint(){
-    //Not used in Java version (yet)
     //Solver must be initialised with current state of puzzle before calling.
     int   pass=1;
     while (pass<=30){
@@ -190,6 +189,7 @@ import static java.lang.System.out;
     // if leads to contradiction mark opposite to guess,
     // continue simple solve, if still no solution start again.
     // if does not lead to solution leave unknown and choose another cell
+    out.println("Using advanced solver");
     int simpleresult=0;
     int wraps=0;
     int guesses=0;

@@ -86,7 +86,8 @@ public class Controller {
   public void setDataFromCell(Cell c){
     history.recordMove(c,model.getDataFromRC(c.getRow(),c.getColumn()));
     model.setDataFromCell(c);
-    if(isSolving && model.countUnknownCells()==0 && model.countErrors()==0){
+    view.redrawGrid();
+    if(isSolving && model.countUnknownCells()==0 && checkSolved()){
       endDate=new Date();
       view.setTime(Utils.calculateTimeTaken(startDate, endDate));
       setSolving(false);
@@ -218,7 +219,9 @@ public class Controller {
   }
   
   private int calculateCluePointSize(int r, int c){
-    int pointSize=Resource.MINIMUM_CLUE_POINTSIZE+(3*Resource.MAXIMUM_CLUE_POINTSIZE)/(Math.max(r,c));
+    int pointSize=(5*Resource.MAXIMUM_CLUE_POINTSIZE)/(Math.max(r,c));
+    if(pointSize<Resource.MINIMUM_CLUE_POINTSIZE)pointSize=Resource.MINIMUM_CLUE_POINTSIZE;
+    if(pointSize>Resource.MAXIMUM_CLUE_POINTSIZE)pointSize=Resource.MAXIMUM_CLUE_POINTSIZE; 
     return pointSize;
   }
   
@@ -307,6 +310,7 @@ public class Controller {
     endDate=new Date();
     updateWorkingGridFromSolver();
     view.setTime(Utils.calculateTimeTaken(startDate,endDate));
+    view.zoomFont(0);//may need to resize window to show full info bar.
     setSolving(true); //redisplay working grid
   }
   
@@ -403,11 +407,38 @@ public class Controller {
       for(int c=0;c<cols;c++){
         updateLabelsFromModel(r,c);
   } } }
-  
   public void updateLabelFromString(int idx, String clue, boolean isColumn){
     view.setClueText(idx,clue,isColumn);
   }
  
+  private boolean checkSolved(){
+    if (checkRows() && checkColumns()){
+      if (model.countErrors()>0){
+        Utils.showInfoDialog("Congratulations - you have found an alternative solution");
+      }
+      else{
+        Utils.showInfoDialog("Congratulations - you solved the puzzle");
+      }
+      return true;
+    }
+    Utils.showInfoDialog("Sorry - you have made a mistake");
+    return false;
+  }
+  
+  private boolean checkRows(){
+    for (int r=0;r<rows;r++){
+      if (!((view.getClueText(r,false)).equals(Utils.clueFromIntArray(model.getRow(r))))) return false;
+    }
+    return true;
+  }
+  private boolean checkColumns(){
+    for (int c=0;c<cols;c++){
+      if (!((view.getClueText(c,true)).equals(Utils.clueFromIntArray(model.getColumn(c))))) return false;
+    }
+    return true;
+  }
+
+  
   public void undoMove(){
     if(!isSolving) return;
     Move lm=history.getLastMove();

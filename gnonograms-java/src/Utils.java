@@ -35,13 +35,11 @@ import java.util.Date;
 import java.util.ArrayList;
 import java.util.ListIterator;
 
-public class Utils
-{
+public class Utils{
   static public String clueFromIntArray(int[] cs){
      StringBuilder sb= new StringBuilder("");
     int count=0, blocks=0;
     boolean counting=false;
-
     for (int i=0; i<cs.length; i++){
       if (cs[i]==Resource.CELLSTATE_EMPTY){
         if (counting){
@@ -63,7 +61,6 @@ public class Utils
     }
     if (blocks==0) sb.append("0");
     else sb.setLength(sb.length() -1);
-
     return sb.toString();
   }
 
@@ -116,7 +113,6 @@ public class Utils
     for (int i=0;i<clues.length;i++) {
       blocks[i]=Integer.parseInt(clues[i]);
     }
-
     return blocks;
   }
 
@@ -152,6 +148,7 @@ public class Utils
         sb.append("\nCtrl R  : Random puzzle ");
         sb.append("\nCtrl U  : Undo Move ");
         sb.append("\nCtrl Y  : Redo Move ");
+        sb.append("\nCtrl H  : Get Hint (when solving)");
         sb.append("\nCtrl Q  : Quit ");
         Utils.showInfoDialog(sb.toString());
         return true;
