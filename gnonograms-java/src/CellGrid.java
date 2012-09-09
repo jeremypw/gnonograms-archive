@@ -45,7 +45,7 @@ public class CellGrid extends JPanel{
   private Color[] solvingColors;
   private Color[] settingColors;
   private Color[] displayColors;
-  private Graphics myGraphics;
+  //private Graphics myGraphics;
 
   public Controller control;
 
@@ -78,6 +78,7 @@ public class CellGrid extends JPanel{
 
 @Override
   public void paintComponent(Graphics g) {
+    Graphics myGraphics=g.create();
     int gridWidth=this.getWidth();
     int gridHeight=this.getHeight();
     rowHeight=((double)gridHeight)/((double)rows);
@@ -86,67 +87,78 @@ public class CellGrid extends JPanel{
     //Draw cell bodies
     for (int r=0;r<rows;r++){
      for(int c=0;c<cols;c++){
-       g.setColor(displayColors[control.getDataFromRC(r,c)]);
-       g.fillRect((int)(c*columnWidth+1),(int)(r*rowHeight+1),(int)(columnWidth),(int)(rowHeight));
+       myGraphics.setColor(displayColors[control.getDataFromRC(r,c)]);
+       myGraphics.fillRect((int)(c*columnWidth+1),(int)(r*rowHeight+1),(int)(columnWidth),(int)(rowHeight));
      }
     }
-    g.setColor(Color.gray);
+    // Draw minor gridlines
+    myGraphics.setColor(Color.gray);
     for (int r=0;r<rows;r++){
       int h=(int)(r*rowHeight);
-      g.drawLine(0,h,gridWidth,h);
+      myGraphics.drawLine(0,h,gridWidth,h);
     }
     for (int c=0;c<cols;c++){
       int w=(int)(c*columnWidth);
-      g.drawLine(w, 0, w, gridHeight);
+      myGraphics.drawLine(w, 0, w, gridHeight);
     }
     // Draw major gridlines
-    g.setColor(Color.black);
+    myGraphics.setColor(Color.black);
     for (int r=0;r<=rows;r+=5){
       int h=(int)(r*rowHeight);
-      g.drawLine(0,h,gridWidth,h);
-      g.drawLine(0,h+1,gridWidth,h+1);
+      myGraphics.drawLine(0,h,gridWidth,h);
+      myGraphics.drawLine(0,h+1,gridWidth,h+1);
     }
     for (int c=0;c<=cols;c+=5){
       int w=(int)(c*columnWidth);
-      g.drawLine(w, 0, w, gridHeight);
-      g.drawLine(w+1, 0, w+1, gridHeight);
+      myGraphics.drawLine(w, 0, w, gridHeight);
+      myGraphics.drawLine(w+1, 0, w+1, gridHeight);
     }
     //highlight current cell
-    highlightCell(currentRow, currentCol);
+    highlightCell(myGraphics, currentRow, currentCol,true);
+    markCell(myGraphics,control.markedCell);
   }
   
   protected void moveHighlight(int r, int c){
     if (r==currentRow && c==currentCol) return;
     if (currentRow>=0 && currentCol>=0 && currentRow<rows && currentCol<cols){
-    unhighlightCell(currentRow,currentCol);
+    highlightCell(this.getGraphics(), currentRow,currentCol,false);
     control.highlightLabels(currentRow,currentCol,false);
     }
     currentRow=r; currentCol=c;
     if (r<0||r>rows||c<0||c>=cols) return;
-    highlightCell(r,c);
+    highlightCell(this.getGraphics(),r,c,true);
     control.highlightLabels(r,c,true);
   }
-  protected void highlightCell(int r, int c){
+  protected void highlightCell(Graphics g, int r, int c, boolean on){
     if (r<0||r>rows||c<0||c>=cols) return;
-    myGraphics=this.getGraphics();
-    myGraphics.setColor(Resource.HIGHLIGHT_COLOR);
-    drawHighlight(r,c);
+    if (on) g.setColor(Resource.HIGHLIGHT_COLOR);
+    else g.setColor(displayColors[control.getDataFromRC(r,c)]);
+    drawHighlight(g,r,c);
    }
-  protected void unhighlightCell(int r, int c){
-    if (r<0||r>rows||c<0||c>=cols) return;
-    myGraphics=this.getGraphics();
-    myGraphics.setColor(displayColors[control.getDataFromRC(r,c)]);
-    drawHighlight(r,c);
+  
+  protected void markCell(Graphics g,Cell c){
+    if (c.row<0) return;
+    g.setColor(Resource.MARKED_CELL_COLOR);
+    drawMark(g,c.row,c.col);
+  }
+    
+  protected void drawMark(Graphics g, int r, int c){
+
+    int x=(int)(c*columnWidth+columnWidth/4);
+    int y=(int)(r*rowHeight+rowHeight/4);
+    int w=(int)(columnWidth/2);
+    int h=(int)(rowHeight/2);
+    g.fillRect(x,y,w,h);
   }
   
-  protected void drawHighlight(int r, int c){
+  protected void drawHighlight(Graphics g,int r, int c){
     int x=(int)(c*columnWidth+2.5);
     int y=(int)(r*rowHeight+2.5);
     int w=(int)(columnWidth-4.5);
     int h=(int)(rowHeight-4.5);
     
-    myGraphics.drawRect(x,y,w,h);
-    myGraphics.drawRect(x+1,y+1,w-2,h-2);
+    g.drawRect(x,y,w,h);
+    g.drawRect(x+1,y+1,w-2,h-2);
   }
 
   public void updateCurrentCell(int state){
@@ -300,6 +312,14 @@ public class CellGrid extends JPanel{
           break;
       case KeyEvent.VK_H:
           if (e.isControlDown()) {control.hint();}
+          break;
+      case KeyEvent.VK_M:
+          if (e.isControlDown()) {control.markCell(currentRow, currentCol);}
+          break;
+      case KeyEvent.VK_L:
+          if (e.isControlDown()) {
+            control.rewindToMarkedCell();
+          }
           break;
       default:
         break;

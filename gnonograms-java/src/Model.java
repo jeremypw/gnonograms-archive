@@ -104,14 +104,23 @@ public class Model {
     private int calculatemaximumBlockSize(double lengthOfRegion, double grade){
       //Empirical formula giving reasonable results
       double max=3+(int)((lengthOfRegion/2-3)*(1.0-(grade/(Resource.MAXIMUM_GRADE*4.0))));
-      if(max<3)max=3;
-      if (max>lengthOfRegion)max=lengthOfRegion;
+      if(max<lengthOfRegion/5)max=lengthOfRegion/5;
+      if (max>lengthOfRegion)max=lengthOfRegion-1;
       return (int)max;
     }
     
     protected void setMinimumFreedoms(double grade){
+
+      if (grade>=Resource.GRADE_FOR_ONE_GUESS) {
+        minimumColumnFreedom=1;minimumRowFreedom=4; //helps generate solvable advanced puzzles
+        return;
+      }
+      if (grade<Resource.MAXIMUM_GRADE/4) {
+        minimumColumnFreedom=0;minimumRowFreedom=1; //elementary levels
+        return;
+      }
       minimumColumnFreedom = (int)((rows*grade)/50.0);
-      minimumRowFreedom = (int)((cols*grade)/50.0);
+      minimumRowFreedom = (int)((cols*grade)/50.0);      
     }
 
     protected void setGrade(double grade){

@@ -18,7 +18,7 @@
 # *  Author:
 # * 	Jeremy Wootten <jeremwootten@gmail.com>
 PROGRAM=Gnonograms
-VERSION=0.7.0-jre6
+VERSION=0.8.0-jre6
 
 JAVAC=javac
 JAR=jar
@@ -42,6 +42,7 @@ SRC_FILES = \
 	Region.java \
 	Resource.java \
 	Solver.java \
+	Splash.java \
 	Utils.java \
 	Viewer.java \
 

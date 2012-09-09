@@ -25,7 +25,8 @@
 public class Resource
 {
   static final String BLOCKSEPARATOR=",";
-  static final String VERSION_STRING="0.7.0";
+  static final String VERSION_STRING="0.8.0";
+  static final String LOGO_PATH="images/gnonograms3-256.png";
   static final double MAXIMUM_GRADE=20;
   static final double GRADE_FOR_ONE_GUESS=15;
   static final double GRADE_FOR_TWO_GUESSES=18;
@@ -35,7 +36,7 @@ public class Resource
   static final int MINIMUM_CLUE_POINTSIZE=4;
   static final int DEFAULT_ROWS=10;
   static final int DEFAULT_COLS=15;
-  static final int DEFAULT_GRADE=8;
+  static final int DEFAULT_GRADE=10;
 
   static final int CELLSTATE_UNKNOWN=0;
   static final int CELLSTATE_EMPTY=1;
@@ -49,7 +50,7 @@ public class Resource
   static final int GAME_STATE_SETTING=0;
   static final int GAME_STATE_SOLVING=1;
   static final int GAME_STATE_LOADING=2;
-  static final int DEFAULT_STARTSTATE= GAME_STATE_SOLVING;
+  static final int DEFAULT_STARTSTATE= GAME_STATE_SETTING;
   
 
   static final int KEY_FILLED=KeyEvent.VK_F;
@@ -57,5 +58,6 @@ public class Resource
   static final int KEY_UNKNOWN=KeyEvent.VK_X;
   
   static final Color HIGHLIGHT_COLOR=Color.gray;
+  static final Color MARKED_CELL_COLOR=Color.white;
 
 }

@@ -93,11 +93,11 @@ import static java.lang.System.out;
     return rowTotal==colTotal;
   }
 
-  public int solveIt(boolean debug, int maxGuesswork, boolean stepwise){
+  public int solveIt(boolean debug, int maxGuesswork, boolean stepwise, boolean uniqueOnly){
     int simpleresult=simplesolver(debug,true, checksolution, stepwise); //debug,log errors, check solution, step through solution one pass at a time
     if (simpleresult==0 && maxGuesswork>0){
         int[] gridstore= new int[rows*cols];
-        return advancedsolver(gridstore, debug, maxGuesswork);
+        return advancedsolver(gridstore, debug, maxGuesswork, uniqueOnly);
     }
     if (rows==1) out.println(regions[0].toString());  //used for debuggin
     return simpleresult;
@@ -134,7 +134,7 @@ import static java.lang.System.out;
   private int simplesolver(boolean debug, boolean logerror, boolean checksolution, boolean stepwise){
     boolean changed=true;
     int pass=1, start=regionCount-1;
-    while (changed && pass<50){
+    while (changed && pass<1000){
       //keep cycling through regions while at least one of them is changing
       changed=false;
       for (Region r : regions){
@@ -151,7 +151,7 @@ import static java.lang.System.out;
       pass++;
     }
     if (solved()) return pass;
-    if (pass>30) Utils.showWarningDialog("Simple solver - too many passes\n");
+    if (pass>1000) {Utils.showWarningDialog("Simple solver - too many passes\n");return 999999;}
     return 0;
   }
 
@@ -183,7 +183,7 @@ import static java.lang.System.out;
     }
     return false;
   }
-  private int advancedsolver(int[] gridstore, boolean debug, int maxGuesswork){
+  private int advancedsolver(int[] gridstore, boolean debug, int maxGuesswork, boolean uniqueOnly){
     // single cell guesses, depth 1 (no recursion)
     // make a guess in each unknown cell in turn
     // if leads to contradiction mark opposite to guess,
@@ -224,7 +224,7 @@ import static java.lang.System.out;
       }
       grid.setDataFromCell(trialCell);
       simpleresult=simplesolver(false,false,false,false); //only debug advanced part, ignore errors
-      if (simpleresult>0) {countChanged++;break;}//solution found
+      if (simpleresult>0 && uniqueOnly) {countChanged++; simpleresult=0; break;}//solution found (but not necessarily unique so reject it)
       loadposition(gridstore); //back track
       if (simpleresult<0){ //contradiction -  insert opposite guess
         grid.setDataFromCell(trialCell.invert()); //mark opposite to guess
@@ -234,7 +234,7 @@ import static java.lang.System.out;
           this.saveposition(gridstore); //update grid store
           continue; //go back to start
         }
-        else if (simpleresult>0)break; // solution found
+        else if (simpleresult>0)break; // unique solution found
         else return -1; //starting point was invalid
       }
       else  continue; //guess again

@@ -22,7 +22,6 @@
 import javax.swing.JLabel;
 import javax.swing.BorderFactory;
 import javax.swing.border.LineBorder;
-
 import java.awt.Color;
 
 public class GnonogramLabel extends JLabel{

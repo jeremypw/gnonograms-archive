@@ -109,16 +109,32 @@ public class Config extends Properties {
         properties.setProperty(key,value);
     }
     
-    public int getRows(){return getInteger("model.rows");}
+    public int getRows(){
+        int rows = getInteger("model.rows");
+        if (rows<1||rows>Resource.MAXIMUM_GRID_SIZE) return 10;
+        else return rows;
+    }
     public void setRows(int value){setInteger("model.rows",value);}
         
-    public int getCols(){return getInteger("model.cols");}
+    public int getCols(){
+        int cols = getInteger("model.cols");
+        if (cols<1||cols>Resource.MAXIMUM_GRID_SIZE) return 10;
+        else return cols;
+    }
     public void setCols(int value){setInteger("model.cols",value);}
     
-    public double getGrade(){return (double)getInteger("model.grade");}
+    public double getGrade(){
+        double grade = getInteger("model.grade");
+        if (grade<1.0||grade>Resource.MAXIMUM_GRADE) return 10.0;
+        else return grade;
+    }
     public void setGrade(double value){setInteger("model.grade",(int)value);}
     
-    public int getPointSize(){return getInteger("view.pointsize");}
+    public int getPointSize(){
+        int ps = getInteger("view.pointsize");
+        if (ps<Resource.MINIMUM_CLUE_POINTSIZE||ps>Resource.MAXIMUM_CLUE_POINTSIZE) return 10;
+        else return ps;
+    }
     public void setPointSize(int value){setInteger("view.pointsize",value);}
     
     public String getPuzzleDirectory(){return getString("system.puzzledirectory");}

@@ -217,7 +217,7 @@ public class Region {
       else break; // no further changes made
     }
     if ((madechanges && !inError)||debug) {putStatus();}
-    if (count==MAXCYCLES) out.println("Excessive looping in region "+index);
+    if (count==MAXCYCLES){inError=true; out.println("Excessive looping in region "+index);}
     return madechanges;
   }
 

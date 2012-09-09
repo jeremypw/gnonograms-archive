@@ -33,7 +33,7 @@ public class Controller {
   private MoveList history;
   private Config config;
   private int rows, cols;
-  private Cell markedCell;
+  public Cell markedCell;
   public boolean isSolving;
   private boolean validSolution;
   private boolean debug;
@@ -43,10 +43,13 @@ public class Controller {
     model=new Model();
     debug=false;
     //debug=true;
+    Splash splash=new Splash();
+    splash.setVisible(true);
     solver=new Solver(false,debug,false,0,this);
     view=new Viewer(this);
     history=new MoveList();
     config=new Config();
+    markedCell=new Cell(-1,-1,Resource.CELLSTATE_UNKNOWN);
     init(config.getRows(),config.getCols());
     int startState=config.getStartState();
     switch (startState){
@@ -64,6 +67,7 @@ public class Controller {
             setSolving(false);
     }
     view.setClueFontAndSize(config.getPointSize());
+    splash.setVisible(false);
     view.setVisible(true);
   }
 
@@ -279,22 +283,24 @@ public class Controller {
     int passes=-1, count=0, limit;
     double grade=startingGrade+1;
     int maxGuesswork;
-    while (passes<=grade-3){
+    maxGuesswork=0;
+    if(startingGrade>Resource.GRADE_FOR_ONE_GUESS)maxGuesswork=1;   
+    if(startingGrade>Resource.GRADE_FOR_TWO_GUESSES)maxGuesswork=2;
+    while (passes<=grade-3||passes>9999){
       grade--;
-      count=0; limit=(int)(500+100*grade); 
+      out.println("Using grade "+grade+"\n");     
+      count=0; limit=(int)(500+20*grade); 
       //for higher grades generate puzzles requiring advanced logic
-      maxGuesswork=0;
-      if(grade>Resource.GRADE_FOR_ONE_GUESS)maxGuesswork=1;   
-      if(grade>Resource.GRADE_FOR_TWO_GUESSES)maxGuesswork=2;
       model.setGrade(grade);
       while (count<limit){
         count++;
         model.generateRandomPattern();
         prepareToSolve(false,false,false); //get clues straight from model, no startgrid, no solutiongrid
-        passes=solver.solveIt(false,maxGuesswork,false); //not debug, not stepwise
+        passes=solver.solveIt(false,maxGuesswork,false, true); //not debug, not stepwise, unique solutions only
         if (passes>grade-3 && passes<99999) break;
       }
     }
+    out.println("Count "+count+" Passes "+passes+"\n");
     return passes;
   }
 
@@ -316,7 +322,7 @@ public class Controller {
   }
   
   public int solveGame(boolean debug, int maxGuesswork, boolean stepwise){
-    int passes=solver.solveIt(debug,maxGuesswork,stepwise); //debug, useAdvanced,  stepwise
+    int passes=solver.solveIt(debug,maxGuesswork,stepwise, false); //debug, useAdvanced,  stepwise, ambiguous solutions allowed
     view.setScore("999999");
     String message="";
     switch (passes) {
@@ -345,7 +351,24 @@ public class Controller {
     solver.getHint();
     view.redrawGrid();
   } 
+  
+  public void markCell(int r, int c){
+    if (r<0||r>=rows||c<0||c>=cols) return;
+    int cs=model.getDataFromRC(r,c);
+    if(cs==Resource.CELLSTATE_UNKNOWN)return;
+    if(markedCell.row==r && markedCell.col==c)markedCell.clear();
+    else markedCell=new Cell(r,c,cs);
+    view.redrawGrid();
+  }  
 
+  public void rewindToMarkedCell(){
+    int r=markedCell.row, c=markedCell.col;
+    Move lm=undoMove();
+    markedCell.clear();
+    if (r<0||lm==null) {view.redrawGrid();return;}
+    while (!(lm.row==r && lm.col==c)){lm=undoMove();}
+  }
+  
   private void prepareToSolve(boolean useLabels, boolean useStartgrid, boolean useSolution){
     String[] rowClues= new String[this.rows], columnClues= new String[this.cols];
     My2DCellArray solution=null;
@@ -440,13 +463,15 @@ public class Controller {
   }
 
   
-  public void undoMove(){
-    if(!isSolving) return;
+  public Move undoMove(){
+    if(!isSolving) return null;
     Move lm=history.getLastMove();
-    if (lm==null) return;
-    model.setDataFromCell(new Cell(lm.row,lm.col,lm.previousState));
-    updateLabelsFromModel(lm.row,lm.col);
-    view.redrawGrid();
+    if (!(lm==null)){
+      model.setDataFromCell(new Cell(lm.row,lm.col,lm.previousState));
+      updateLabelsFromModel(lm.row,lm.col);
+      view.redrawGrid();
+    }
+    return lm;
   }
   public void redoMove(){
     Move lm=history.getNextMove();
@@ -461,10 +486,13 @@ public class Controller {
       model.useWorking();
       history.initialize();
       startDate=new Date();
+      markedCell.clear();
     }
     else model.useSolution();
     view.setSolving(isSolving);
     view.redrawGrid();
     this.isSolving=isSolving;
   }
+  
+
 }

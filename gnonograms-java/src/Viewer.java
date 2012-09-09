@@ -87,7 +87,7 @@ public class Viewer extends JFrame {
     this.setDefaultCloseOperation(EXIT_ON_CLOSE);
     this.setTitle("Gnonograms for Java");
     this.setResizable(false);
-    myLogo=Utils.createImageIcon("images/gnonograms3-256.png","Logo");
+    myLogo=Utils.createImageIcon(Resource.LOGO_PATH,"Logo");
     logoLabel=new JLabel();
     if (myLogo==null)logoLabel=new JLabel("MISSING ICON");
     if (myLogo==null)logoLabel.setText("MISSING ICON");
@@ -275,7 +275,9 @@ public class Viewer extends JFrame {
       columnBox.highlightLabel(c,on);
   }
 
-  public void redrawGrid(){drawing.repaint();}
+  public void redrawGrid(){
+    drawing.repaint();
+  }
   
   private JToolBar createCommonToolBar(){
     JToolBar tb=new JToolBar();

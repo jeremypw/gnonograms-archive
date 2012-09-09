@@ -1,5 +1,11 @@
+Gnonograms-java - version 0.8.0
+*******************************
+Sep 09, 2012  Version 0.8.0
+              Mark cell and return to marked cell implemented
+              Potential bug in drawing routines fixed 
+
 Gnonograms-java - version 0.7.0
-*****************************
+*******************************
 Sep 02, 2012  Version 0.7.0
               Advanced solver implemented
               Get hint implemented (Ctrl-H)
