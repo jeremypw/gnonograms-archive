@@ -149,6 +149,8 @@ public class Utils{
         sb.append("\nCtrl U  : Undo Move ");
         sb.append("\nCtrl Y  : Redo Move ");
         sb.append("\nCtrl H  : Get Hint (when solving)");
+        sb.append("\nCtrl M  : Mark cell under cursor");
+        sb.append("\nCtrl L  : Backtrack to Last marked cell");
         sb.append("\nCtrl Q  : Quit ");
         Utils.showInfoDialog(sb.toString());
         return true;

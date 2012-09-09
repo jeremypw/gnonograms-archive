@@ -2,7 +2,8 @@ Gnonograms-java - version 0.8.0
 *******************************
 Sep 09, 2012  Version 0.8.0
               Mark cell and return to marked cell implemented
-              Potential bug in drawing routines fixed 
+              Splash screen (rudimentary) implemented (Start up can be slow if set to generate difficult/large puzzle on startup)
+              Potential bug in drawing routines fixed causing failure on some non-Linux systems
 
 Gnonograms-java - version 0.7.0
 *******************************
