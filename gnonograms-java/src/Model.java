@@ -71,6 +71,7 @@ public class Model {
 
   public void setDataFromCell(Cell c){displayData.setDataFromCell(c);}
   public void setRowDataFromString(int r, String s){displayData.setRowDataFromString(r,s);}
+  public void setRowDataFromArray(int r, int[] cs){displayData.setRowDataFromArray(r,cs);}
   public void setGrade(double grade){generator.setGrade(grade);}
 
   public int countUnknownCells(){return displayData.countState(Resource.CELLSTATE_UNKNOWN);}

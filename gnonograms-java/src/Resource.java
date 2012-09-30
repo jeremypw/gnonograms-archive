@@ -25,7 +25,7 @@
 public class Resource
 {
   static final String BLOCKSEPARATOR=",";
-  static final String VERSION_STRING="0.8.0";
+  static final String VERSION_STRING="0.9.0";
   static final String LOGO_PATH="images/gnonograms3-256.png";
   static final double MAXIMUM_GRADE=20;
   static final double GRADE_FOR_ONE_GUESS=15;

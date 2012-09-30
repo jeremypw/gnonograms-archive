@@ -88,6 +88,7 @@ public class Config extends Properties {
         defaultProperties.setProperty("model.startstate",String.valueOf(Resource.DEFAULT_STARTSTATE));
         defaultProperties.setProperty("view.pointsize","20");
         defaultProperties.setProperty("system.puzzledirectory",System.getProperty("user.home"));
+        defaultProperties.setProperty("system.imagedirectory",System.getProperty("user.home"));
     }
     
     private int getInteger(String key){
@@ -139,6 +140,9 @@ public class Config extends Properties {
     
     public String getPuzzleDirectory(){return getString("system.puzzledirectory");}
     public void setPuzzleDirectory(String value){setString("system.puzzledirectory",value);}
+    
+    public String getImageDirectory(){return getString("system.imagedirectory");}
+    public void setImageDirectory(String value){setString("system.imagedirectory",value);}
     
     public int getStartState(){return getInteger("model.startstate");}
     public void setStartState(int state){setInteger("model.startstate",state);}

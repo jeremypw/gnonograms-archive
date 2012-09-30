@@ -18,7 +18,7 @@
 # *  Author:
 # * 	Jeremy Wootten <jeremwootten@gmail.com>
 PROGRAM=Gnonograms
-VERSION=0.8.0-jre6
+VERSION=0.9.0-jre6
 
 JAVAC=javac
 JAR=jar
@@ -33,6 +33,7 @@ SRC_FILES = \
 	GameLoader.java \
 	GameSaver.java \
 	GnonogramLabel.java \
+	ImageImporter.java \
 	LabelBox.java \
 	Main.java \
 	Model.java \

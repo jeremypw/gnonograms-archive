@@ -152,6 +152,38 @@ public class Controller {
     }
     view.redrawGrid();
   }
+  
+  public void importImage(){
+    ImageImporter ii=new ImageImporter(view,config.getImageDirectory(), this.rows, this.cols);
+    
+    if (ii.hasImage){
+      config.setImageDirectory(ii.getImagePath());
+      ii.setVisible(true);
+      if(!ii.wasCancelled){
+        setSolving(false); //ensure clues updated etc
+        this.rows=ii.getRows(); this.cols=ii.getCols();
+        out.println("Rows "+this.rows+" Cols "+this.cols+"\n");
+        this.resize(this.rows,this.cols);
+        
+        view.setClueFontAndSize(calculateCluePointSize(this.rows,this.cols));
+
+        view.setName(ii.getImageName());
+        view.setAuthor("Image");
+        view.setCreationDate("Today");
+        view.setScore("");
+        view.setLicense("");
+        
+        model.useSolution();
+        for (int i=0; i<this.rows; i++) model.setRowDataFromArray(i,ii.getRow(i));
+        updateAllLabelsFromModel(); 
+        this.validSolution=true;
+      }
+      //else{
+        //Utils.showInfoDialog("Image import cancelled");
+      //}
+    }
+    ii.dispose();
+  }
 
   public void loadGame(){
     GameLoader gl=new GameLoader(view, config.getPuzzleDirectory());

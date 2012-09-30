@@ -71,7 +71,7 @@ public class Viewer extends JFrame {
   private Container contentPane;
 
   private GridBagConstraints c;
-  private BufferedImage rawLogo;
+  //private BufferedImage rawLogo;
   private ImageIcon myLogo;
   private ImageIcon scaledLogo;
   protected ImageIcon hideIcon, revealIcon;
@@ -289,6 +289,10 @@ public class Viewer extends JFrame {
     tb.add(new MyAction("Create",Utils.createImageIcon("images/New24.gif","Create icon"),"CREATE_GAME"));
     ((JComponent)(tb.getComponentAtIndex(position))).setToolTipText("Draw your own puzzle grid");
     position++;
+    
+    tb.add(new MyAction("Import image",Utils.createImageIcon("images/Import24.gif","Import icon"),"IMPORT_IMAGE"));
+    ((JComponent)(tb.getComponentAtIndex(position))).setToolTipText("Convert a smple image to a puzzle");
+    position++;
 
 
     tb.add(new MyAction("Edit",Utils.createImageIcon("images/Edit24.gif","Edit icon"),"EDIT_GAME"));
@@ -373,6 +377,7 @@ public class Viewer extends JFrame {
     public void actionPerformed(ActionEvent a){
       String command=a.getActionCommand();
       if (command.equals("CREATE_GAME")) control.createGame();
+      if (command.equals("IMPORT_IMAGE")) control.importImage();
       if (command.equals("LOAD_GAME")) {
         control.loadGame();
         setClueFontAndSize(cluePointSize);//resize label boxes if necessary

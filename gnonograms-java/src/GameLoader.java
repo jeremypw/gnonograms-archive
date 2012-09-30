@@ -21,7 +21,6 @@
  */
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
-
 import java.awt.Component;
 
 import java.io.BufferedReader;
