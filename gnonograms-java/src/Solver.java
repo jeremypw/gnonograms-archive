@@ -189,7 +189,7 @@ import static java.lang.System.out;
     // if leads to contradiction mark opposite to guess,
     // continue simple solve, if still no solution start again.
     // if does not lead to solution leave unknown and choose another cell
-    out.println("Using advanced solver");
+    //out.println("Using advanced solver");
     int simpleresult=0;
     int wraps=0;
     int guesses=0;

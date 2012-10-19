@@ -97,14 +97,14 @@ public class Model {
     }
 
     protected void setMaximumBlockSizes(double grade){
-      //Empirical formula giving reasonable results
       maximumColumnBlockSize=calculatemaximumBlockSize(rows2D,grade);
       maximumRowBlockSize=calculatemaximumBlockSize(cols2D,grade);
     }
     
     private int calculatemaximumBlockSize(double lengthOfRegion, double grade){
       //Empirical formula giving reasonable results
-      double max=3+(int)((lengthOfRegion/2-3)*(1.0-(grade/(Resource.MAXIMUM_GRADE*4.0))));
+      //double max=3+(int)((lengthOfRegion/2-3)*(1.0-(grade/(Resource.MAXIMUM_GRADE*4.0))));
+      double max=1+(int)((lengthOfRegion/3)*(1.0-(grade/(Resource.MAXIMUM_GRADE*3.0))));
       if(max<lengthOfRegion/5)max=lengthOfRegion/5;
       if (max>lengthOfRegion)max=lengthOfRegion-1;
       return (int)max;
@@ -113,15 +113,15 @@ public class Model {
     protected void setMinimumFreedoms(double grade){
 
       if (grade>=Resource.GRADE_FOR_ONE_GUESS) {
-        minimumColumnFreedom=1;minimumRowFreedom=4; //helps generate solvable advanced puzzles
+        minimumColumnFreedom=4;minimumRowFreedom=4; //helps generate solvable advanced puzzles
         return;
       }
       if (grade<Resource.MAXIMUM_GRADE/4) {
         minimumColumnFreedom=0;minimumRowFreedom=1; //elementary levels
         return;
       }
-      minimumColumnFreedom = (int)((rows*grade)/50.0);
-      minimumRowFreedom = (int)((cols*grade)/50.0);      
+      minimumColumnFreedom = (int)((rows*grade)/30.0);
+      minimumRowFreedom = (int)((cols*grade)/30.0);      
     }
 
     protected void setGrade(double grade){
@@ -132,12 +132,12 @@ public class Model {
     protected void generateBasicPattern(){
       for (int c=0;c<cols;c++){
         temp =solutionData.getColumn(c);
-        temp=fillRegion(rows, temp, (int)(Math.abs((c-middleOfRow))), maximumColumnBlockSize);
+        temp=fillRegion(rows, temp, (int)(Math.abs((c-middleOfRow)/middleOfRow)), maximumColumnBlockSize);
         solutionData.setColumn (c, temp);
       }
       for (int r=0;r<rows;r++){
         temp=solutionData.getRow(r);
-        temp=fillRegion(cols, temp, (int)(Math.abs((r-middleOfColumn))), maximumRowBlockSize);
+        temp=fillRegion(cols, temp, (int)(Math.abs((r-middleOfColumn)/middleOfColumn)), maximumRowBlockSize);
         solutionData.setRow(r, temp);
     } }
 
@@ -147,7 +147,7 @@ public class Model {
       boolean fill;
       assert sizeOfRegion<=region.length;
       while (p<sizeOfRegion-1){
-        fill=(rand.nextInt(100)>50); //whether next block will be filled or not (50% chance)
+        fill=(rand.nextInt(100)>50+25*distanceFromCenter); //whether next block will be filled or not (50% chance)
         //set max sixe of filled or unfilled block
         max=fill ? maximumBlockSize : (sizeOfRegion-maximumBlockSize);
         // random length up to remaining space but not larger than max

@@ -43,7 +43,6 @@ SRC_FILES = \
 	Region.java \
 	Resource.java \
 	Solver.java \
-	Splash.java \
 	Utils.java \
 	Viewer.java \
 
@@ -83,8 +82,9 @@ $(PROGRAM): $(EXPANDED_SRC_FILES) Makefile
 
 jar: $(PROGRAM)
 ###############
-	$(JAR) cfe $(PROGRAM)-$(VERSION).jar Main  -C build .
-	
+#	$(JAR) cfe $(PROGRAM)-$(VERSION).jar Main  -C build .
+	$(JAR) cmf Manifest.txt $(PROGRAM)-$(VERSION).jar  -C build .
+
 dist: $(PROGRAM) $(DIST_FILES)
 ###############################
 	mkdir -p $(PROGRAM)-$(VERSION)

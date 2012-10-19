@@ -43,8 +43,8 @@ public class Controller {
     model=new Model();
     debug=false;
     //debug=true;
-    Splash splash=new Splash();
-    splash.setVisible(true);
+    //Splash splash=new Splash();
+    //splash.setVisible(true);
     solver=new Solver(false,debug,false,0,this);
     view=new Viewer(this);
     history=new MoveList();
@@ -67,7 +67,6 @@ public class Controller {
             setSolving(false);
     }
     view.setClueFontAndSize(config.getPointSize());
-    splash.setVisible(false);
     view.setVisible(true);
   }
 
@@ -162,7 +161,6 @@ public class Controller {
       if(!ii.wasCancelled){
         setSolving(false); //ensure clues updated etc
         this.rows=ii.getRows(); this.cols=ii.getCols();
-        out.println("Rows "+this.rows+" Cols "+this.cols+"\n");
         this.resize(this.rows,this.cols);
         
         view.setClueFontAndSize(calculateCluePointSize(this.rows,this.cols));
@@ -178,9 +176,6 @@ public class Controller {
         updateAllLabelsFromModel(); 
         this.validSolution=true;
       }
-      //else{
-        //Utils.showInfoDialog("Image import cancelled");
-      //}
     }
     ii.dispose();
   }
@@ -320,7 +315,7 @@ public class Controller {
     if(startingGrade>Resource.GRADE_FOR_TWO_GUESSES)maxGuesswork=2;
     while (passes<=grade-3||passes>9999){
       grade--;
-      out.println("Using grade "+grade+"\n");     
+      //out.println("Using grade "+grade+"\n");     
       count=0; limit=(int)(500+20*grade); 
       //for higher grades generate puzzles requiring advanced logic
       model.setGrade(grade);
@@ -332,7 +327,7 @@ public class Controller {
         if (passes>grade-3 && passes<99999) break;
       }
     }
-    out.println("Count "+count+" Passes "+passes+"\n");
+    //out.println("Count "+count+" Passes "+passes+"\n");
     return passes;
   }
 
@@ -525,6 +520,4 @@ public class Controller {
     view.redrawGrid();
     this.isSolving=isSolving;
   }
-  
-
 }

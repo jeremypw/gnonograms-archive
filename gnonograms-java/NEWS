@@ -4,6 +4,8 @@ Sep 30, 2012  Version 0.9.0
               ImageImporter implemented
               Lock aspect ratio feature in Image importer
               Draft New icons in image importer
+Oct 19, 2012  Splash screen specified in manifest
+              Improvements to image importer
 
 Gnonograms-java - version 0.8.0
 *******************************

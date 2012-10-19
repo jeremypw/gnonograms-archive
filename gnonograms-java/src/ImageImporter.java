@@ -114,13 +114,13 @@ enum MovePoint{
     protected boolean lockAspectRatio=true;
     protected double imageAspectRatio;
     
-    static final int IMAGE_DISPLAY_HEIGHT=300;
+    static final int IMAGE_DISPLAY_HEIGHT=380;
     static final int MINIMUM_SELECTABLE_PIXELS=5;
     
   public ImageImporter(JFrame parent, String imageDirectory, int rows, int cols){
     super(parent,"Edit Game", true);
     wasCancelled=true; hasImage=false;
-    while (!hasImage){
+    //while (!hasImage){
       ImageFileLoader ifl=new ImageFileLoader(parent, imageDirectory);
       if (ifl.result==0){
         imageFile=ifl.getSelectedFile();
@@ -133,7 +133,7 @@ enum MovePoint{
           setLocationRelativeTo((Component)parent);
         }
       }
-    }
+    //}
   }
   
   private boolean openImageFile(File imgFl){
@@ -152,8 +152,7 @@ enum MovePoint{
   
   private void createInterface(BufferedImage img){
     contentPane=new JPanel(new BorderLayout());
-    //controlPanel = new JPanel(new GridLayout(0,1));
-    originalImagePanel = new SelectableImagePane(img,IMAGE_DISPLAY_HEIGHT, this);
+    originalImagePanel = new SelectableImagePane(img, this);
     finalImagePanel=new JPanel(new BorderLayout());
     finalImageLabel= new JLabel();
     finalImagePanel.add(finalImageLabel,BorderLayout.PAGE_START);
@@ -183,10 +182,10 @@ enum MovePoint{
         updateFinalImage(-1,-1);
       }
     });
-    JLabel blackLabel = new JLabel(Utils.createImageIcon("images/BlackBorder.png","Black Border"));
+    JLabel blackLabel = new JLabel(Utils.createImageIcon("images/black_background36.png","Black Background"));
     JRadioButton whiteButton = new JRadioButton();
     whiteButton.setToolTipText("White Background");
-    JLabel whiteLabel = new JLabel(Utils.createImageIcon("images/WhiteBorder.png","White Border"));
+    JLabel whiteLabel = new JLabel(Utils.createImageIcon("images/white_background36.png","White Background"));
     backgroundColourButtons.add(blackButton);
     backgroundColourButtons.add(whiteButton);
     blackButton.setSelected(false);
@@ -202,10 +201,10 @@ enum MovePoint{
 
     JRadioButton noInvertRadioButton= new JRadioButton();
     noInvertRadioButton.setHorizontalAlignment(SwingConstants.CENTER);
-    JLabel noInvertLabel=new JLabel(Utils.createImageIcon("images/NoInvertion.png","No invertion"));
+    JLabel noInvertLabel=new JLabel(Utils.createImageIcon("images/NoInvertion36.png","No invertion"));
     JRadioButton invertRadioButton= new JRadioButton();
     invertRadioButton.setHorizontalAlignment(SwingConstants.CENTER);
-    JLabel invertLabel=new JLabel(Utils.createImageIcon("images/Invertion.png","Invert"));
+    JLabel invertLabel=new JLabel(Utils.createImageIcon("images/Invertion36.png","Invert"));
     ButtonGroup invertButtons= new ButtonGroup();
     invertButtons.add(noInvertRadioButton);
     invertButtons.add(invertRadioButton);
@@ -226,16 +225,8 @@ enum MovePoint{
     invertPanel.add(nip); invertPanel.add(ip);
     invertPanel.setBorder(BorderFactory.createEtchedBorder());
     
-    JPanel overallThresholdPanel=makeThresholdSliderAndLabel(
-      "images/overall_threshold.png",
-      new ChangeListener(){
-        public void stateChanged(ChangeEvent e){
-          overallThreshold=(int)(10.24*((JSlider)(e.getSource())).getValue());
-          updateFinalImage(-1,-1);
-        }
-      });
     JPanel redThresholdPanel=makeThresholdSliderAndLabel(
-      "images/red_threshold.png",
+      "images/red_threshold36.png",
       new ChangeListener(){
         public void stateChanged(ChangeEvent e){
           redThreshold=(int)(2.55*((JSlider)(e.getSource())).getValue());
@@ -243,7 +234,7 @@ enum MovePoint{
         }
       });
     JPanel blueThresholdPanel=makeThresholdSliderAndLabel(
-      "images/blue_threshold.png",
+      "images/blue_threshold36.png",
       new ChangeListener(){
         public void stateChanged(ChangeEvent e){
           blueThreshold=(int)(2.55*((JSlider)(e.getSource())).getValue());
@@ -251,7 +242,7 @@ enum MovePoint{
         }
       });
     JPanel greenThresholdPanel=makeThresholdSliderAndLabel(
-      "images/green_threshold.png",
+      "images/green_threshold36.png",
       new ChangeListener(){
         public void stateChanged(ChangeEvent e){
           greenThreshold=(int)(2.55*((JSlider)(e.getSource())).getValue());
@@ -259,7 +250,7 @@ enum MovePoint{
         }
       });
     JPanel alphaThresholdPanel=makeThresholdSliderAndLabel(
-      "images/alpha_threshold.png",
+      "images/alpha_threshold36.png",
       new ChangeListener(){
         public void stateChanged(ChangeEvent e){
           alphaThreshold=(int)(2.55*((JSlider)(e.getSource())).getValue());
@@ -270,8 +261,8 @@ enum MovePoint{
     
     rowsLabel = new JLabel();
     colsLabel = new JLabel();
-    rowsLabel.setIcon(Utils.createImageIcon("images/resize-rows48.png","Rows"));
-    colsLabel.setIcon(Utils.createImageIcon("images/resize-columns48.png","Rows"));
+    rowsLabel.setIcon(Utils.createImageIcon("images/resize-rows36.png","Rows"));
+    colsLabel.setIcon(Utils.createImageIcon("images/resize-columns36.png","Columns"));
     final JSpinner rowSpinner=new JSpinner(new SpinnerNumberModel(rows,MINIMUM_SELECTABLE_PIXELS,Resource.MAXIMUM_GRID_SIZE,1));
     final JSpinner columnSpinner=new JSpinner(new SpinnerNumberModel(cols,MINIMUM_SELECTABLE_PIXELS,Resource.MAXIMUM_GRID_SIZE,1));
     
@@ -312,16 +303,15 @@ enum MovePoint{
     thresholdPanel.add(greenThresholdPanel);
     thresholdPanel.add(blueThresholdPanel);
     thresholdPanel.add(alphaThresholdPanel);
-    thresholdPanel.add(overallThresholdPanel);
 
     JCheckBox lockCheckBox = new JCheckBox();
-    lockCheckBox.setIcon(Utils.createImageIcon("images/unlocked.png","Unlocked"));
-    lockCheckBox.setSelectedIcon(Utils.createImageIcon("images/locked.png","Locked"));
+    lockCheckBox.setIcon(Utils.createImageIcon("images/unlocked36.png","Unlocked"));
+    lockCheckBox.setSelectedIcon(Utils.createImageIcon("images/locked36.png","Locked"));
     lockCheckBox.setRolloverEnabled(false);
     lockCheckBox.setContentAreaFilled(false);
     lockCheckBox.setSelected(false);
     lockAspectRatio=false;
-    lockCheckBox.setHorizontalAlignment(SwingConstants.CENTER);
+    lockCheckBox.setHorizontalAlignment(SwingConstants.LEFT);
     lockCheckBox.setToolTipText("Lock Aspect Ratio");
     lockCheckBox.addChangeListener(new ChangeListener(){
         public void stateChanged(ChangeEvent e){
@@ -332,7 +322,7 @@ enum MovePoint{
       
     JPanel controlPanel=new JPanel(new BorderLayout());
     controlPanel.add(lockCheckBox, BorderLayout.PAGE_START);
-    controlPanel.add(upperPanel,BorderLayout.LINE_START);
+    controlPanel.add(upperPanel,BorderLayout.CENTER);
     controlPanel.add(thresholdPanel,BorderLayout.PAGE_END);
     return controlPanel;
    
@@ -359,9 +349,14 @@ enum MovePoint{
     if(originalImage==null) return;
     finalImage=toMono(selectAndScaleOriginal(originalImage,offsetX,offsetY,selectionWidth,selectionHeight,cols,rows));
     if(finalImageLabel==null) return;
-    finalImageLabel.setIcon(new ImageIcon(finalImage.getScaledInstance((int)(IMAGE_DISPLAY_HEIGHT*((double)cols/(double)rows)),IMAGE_DISPLAY_HEIGHT,BufferedImage.SCALE_SMOOTH)));
+    int finalWidth=(int)(IMAGE_DISPLAY_HEIGHT*((double)cols/(double)rows));
+    int finalHeight=IMAGE_DISPLAY_HEIGHT;
+    if (finalWidth>IMAGE_DISPLAY_HEIGHT){
+      finalWidth=IMAGE_DISPLAY_HEIGHT;
+      finalHeight=(int)(finalWidth*((double)rows/(double)cols));
+    }
+    finalImageLabel.setIcon(new ImageIcon(finalImage.getScaledInstance(finalWidth,finalHeight,BufferedImage.SCALE_SMOOTH)));
     this.pack();
-    //out.println("ImageAspectRation "+imageAspectRatio);
   }
   
   public void updateSelection(Rectangle2D selection){
@@ -375,7 +370,7 @@ enum MovePoint{
   private BufferedImage selectAndScaleOriginal(BufferedImage img,int offsetX, int offsetY, int width, int height, int cols, int rows){
     if (offsetX<0||offsetY<0||width<5||height<5||offsetX+width>img.getWidth()||offsetY+height>img.getHeight()) return null;
     BufferedImage selection=img.getSubimage(offsetX,offsetY,width,height);
-    Image scaledSelection=selection.getScaledInstance(cols,rows,BufferedImage.SCALE_SMOOTH);
+    Image scaledSelection=selection.getScaledInstance(cols,rows,BufferedImage.SCALE_FAST);
     BufferedImage scaledBufferedImage = new BufferedImage(cols, rows, BufferedImage.TYPE_INT_ARGB);
     Graphics g=scaledBufferedImage.createGraphics();
     g.drawImage(scaledSelection,0,0,null);
@@ -406,8 +401,9 @@ enum MovePoint{
     r=(r>redThreshold ? r : 0)*a;
     g=(g>greenThreshold ? g : 0)*a;
     b=(b>blueThreshold ? b : 0)*a;
-    if(invertColor) return (r+g+b+background*(1-a))>overallThreshold ? 0xFF000000 : 0xFFFFFFFF;
-    return (r+g+b+background*(1-a))>overallThreshold ? 0xFFFFFFFF : 0xFF000000;
+    int black=invertColor ? 0xFFFFFFFF : 0xFF000000;
+    int white=invertColor ? 0xFF000000 : 0xFFFFFFFF;
+    return (r>0||g>0||b>0||background*(1-a)>0) ? white : black;
   }
   public int getRows(){return rows;}
   public int getCols(){return cols;}
@@ -431,7 +427,8 @@ enum MovePoint{
     public ImageFileLoader(Component parent, String imageDirectoryPath){
     super(imageDirectoryPath);
     this.setFileSelectionMode(FILES_ONLY);
-    this.setFileFilter(new FileNameExtensionFilter("PNG Images","png"));
+    this.setFileFilter(new FileNameExtensionFilter("Images","png","gif","bmp","jpg"));
+    this.setAcceptAllFileFilterUsed(false);
     this.setDialogTitle("Choose a simple image to convert");
     result=this.showOpenDialog(parent);
     }
@@ -443,12 +440,18 @@ enum MovePoint{
     protected ImageImporter parent;
     int height;
     
-    public SelectableImagePane(BufferedImage img, int height, ImageImporter parent){
+    public SelectableImagePane(BufferedImage img, ImageImporter parent){
       super();
       this.height=height;
       this.parent=parent;
       originalImageLabel = new JLabel();
-      ImageIcon icon =new ImageIcon(img.getScaledInstance(-1,height,Image.SCALE_SMOOTH));
+      ImageIcon icon;
+      if (origHeight>=origWidth){
+        icon =new ImageIcon(img.getScaledInstance(-1,IMAGE_DISPLAY_HEIGHT,Image.SCALE_SMOOTH));
+      }
+      else{
+        icon =new ImageIcon(img.getScaledInstance(IMAGE_DISPLAY_HEIGHT,-1,Image.SCALE_SMOOTH));
+      }
       originalImageLabel.setIcon(icon);
       int h=icon.getIconHeight(), w=icon.getIconWidth();
       origBounds=new Rectangle(0,0,w,h);
@@ -457,7 +460,6 @@ enum MovePoint{
       
       drawingPane=new DrawingPanel();
       drawingPane.setBounds(origBounds);
-      //set minimum selection to 5 X 5 pixels of original image
       drawingPane.setMinSelectionWidth((int)((double)(w*MINIMUM_SELECTABLE_PIXELS)/(double)(img.getWidth())));
       drawingPane.setMinSelectionHeight((int)((double)(h*MINIMUM_SELECTABLE_PIXELS)/(double)(img.getHeight())));
       this.add(drawingPane,PALETTE_LAYER);
@@ -468,8 +470,7 @@ enum MovePoint{
         public void mouseExited(MouseEvent e) {
           drawingPane.setUnselected();
         }
-        public void mousePressed(MouseEvent e) {
-          //out.println("Mouse pressed");
+        public void mousePressed(MouseEvent e) {;
           if (e.getClickCount()>1) selectAll();
           else{
             int y= e.getY(), x= e.getX();
@@ -552,13 +553,11 @@ enum MovePoint{
         }
         selection=new Rectangle(0,0,maxWidth,maxHeight);
         repaint();
-        out.println("Max selection "+selection.x+" "+selection.y+" "+selection.width+" "+selection.height);
       }
       
       protected boolean selectionContains(int x, int y){return selection.contains(x,y);}
       
       protected void setSelected(int x, int y){
-        //out.println("set Selected");
         setMode(x,y); //whether to resize or move and which edge(s) to move
         if(!(selectionMode==SelectionMode.NONE)){
           selectionColor=activeColor;
@@ -602,7 +601,6 @@ enum MovePoint{
         else if(selection.contains(x,y)){selectionMode=SelectionMode.MOVE; movePoint=MovePoint.NONE;cursor=Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR);}
         else selectionMode=SelectionMode.NONE;
         setCursor(cursor);
-        //out.println("Selection Mode "+selectionMode+ " MovePoint "+movePoint);
       }
       
       protected void draggedTo(int x, int y){
@@ -616,46 +614,33 @@ enum MovePoint{
         selectionOrigX=x; selectionOrigY=y;
         if (selectionMode==SelectionMode.RESIZE) resizeSelection(deltaX,deltaY);
         else moveSelection(deltaX,deltaY);
-        //limitSelectionOrigin();
       }
       
       private void resizeSelection(int dx, int dy){
         Cursor cursor=getCursor();
         switch (cursor.getType()){
           case Cursor.E_RESIZE_CURSOR:
-            //if(!lockAspectRatio)updateSelectionWidth(dx,false);
             if(!lockAspectRatio)updateSelection(dx,false,0,false);
             break;
           case Cursor.W_RESIZE_CURSOR:
-            //if(!lockAspectRatio)updateSelectionWidth(dx,true);
             if(!lockAspectRatio)updateSelection(dx,true,0,false);
             break;
           case Cursor.N_RESIZE_CURSOR:
-            //if(!lockAspectRatio)updateSelectionHeight(dy,true);
             if(!lockAspectRatio)updateSelection(0,false,dy,true);
             break;
           case Cursor.S_RESIZE_CURSOR:
-            //if(!lockAspectRatio)updateSelectionHeight(dy,false);
             if(!lockAspectRatio)updateSelection(0,false,dy,false);
             break;
           case Cursor.NE_RESIZE_CURSOR:
-            //updateSelectionWidth(dx,false);
-            //updateSelectionHeight(dy,true);
             updateSelection(dx,false,dy,true);
             break;
           case Cursor.NW_RESIZE_CURSOR:
-            //updateSelectionWidth(dx,true);
-            //updateSelectionHeight(dy,true);
             updateSelection(dx,true,dy,true);
             break;
           case Cursor.SE_RESIZE_CURSOR:
-            //updateSelectionWidth(dx,false);
-            //updateSelectionHeight(dy,false);
             updateSelection(dx,false,dy,false);
             break;
           case Cursor.SW_RESIZE_CURSOR:
-            //updateSelectionWidth(dx,true);
-            //updateSelectionHeight(dy,false);
             updateSelection(dx,true,dy,false);
             break;
           default:
