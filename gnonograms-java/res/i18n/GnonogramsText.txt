@@ -1,0 +1,104 @@
+Gnonograms for Java
+Edit Game
+Name
+Source
+(C)
+Created
+Size
+Score
+Time
+Information
+Row Clues
+Column Clues
+Name of Puzzle
+Author or Source
+Date of Creation
+License or copyright
+Set number of rows
+Set number of columns
+Set size of font
+Set difficulty of puzzles
+Set state on startup
+Language=Language
+Start with random puzzle
+Start in design mode
+Start in file chooser
+Reveal the solution
+Freedom
+Draw your own puzzle grid
+Convert an image to a puzzle
+Edit the description and clues
+Load a puzzle from file
+Save the puzzle to file
+Undo move
+Redo move
+Start solving this puzzle again
+Let the computer try to solve the puzzle
+Check for mistakes
+Generate a random puzzle
+Hide the solution
+Hide the solution and start solving
+Edit preferences
+Make the font smaller
+Make the font larger
+Credits and keyboard shortcuts
+Convert Image
+Black Background
+White Background
+Do not invert Black and White
+Invert Black and White
+Lock Aspect Ratio
+Red Threshold
+Blue Threshold
+Green Threshold
+Alpha Threshold
+Changing the locale will start a new game - Continue?
+There are no errors
+Number of errors
+Go back to the last correct position?
+Exception
+Not a valid game file
+Failed to generate puzzle - error in solver
+Congratulations
+you have found an alternative solution
+you have solved the puzzle
+Sorry - you have made a mistake
+Go back to last correct position?
+Image File not found
+An error occurred opening the image file
+Version=Version
+KEY CONTROLS
+Arrows
+Ctrl+Arrows
+F or f
+E or e
+X or x
++ or =
+- or _
+Ctrl S
+Ctrl O
+Ctrl N
+Ctrl R
+Ctrl U
+Ctrl Y
+Ctrl H
+Ctrl M
+Ctrl L
+Ctrl Q
+move cell selection cursor
+drag cell selection cursor
+mark selected cell full
+mark selected cell empty
+mark selected cell unknown
+increase size of cells
+decrease size of cells
+Save the puzzle
+Open a puzzle
+Design a puzzle
+generate a Random puzzle
+Undo last move
+Redo undone move
+get Hint when solving
+Mark cell under cursor
+backtrack to Last marked cell
+Quit

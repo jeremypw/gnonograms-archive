@@ -18,41 +18,47 @@
 # *  Author:
 # * 	Jeremy Wootten <jeremwootten@gmail.com>
 PROGRAM=Gnonograms
-VERSION=0.9.0-jre6
+VERSION=0.9.1-jre6
 
 JAVAC=javac
 JAR=jar
 TAR=tar
 
-SRC_FILES = \
-	Cell.java \
-	CellGrid.java \
-	Config.java \
-	Controller.java \
-	GameEditor.java \
-	GameLoader.java \
-	GameSaver.java \
-	GnonogramLabel.java \
-	ImageImporter.java \
-	LabelBox.java \
-	Main.java \
-	Model.java \
-	Move.java \
-	MoveList.java \
-	My2DCellArray.java \
-	Region.java \
-	Resource.java \
-	Solver.java \
-	Utils.java \
-	Viewer.java \
-
 BUILD_DIR=build
-IMAGE_DIR=build/images
+SRC_DIR=gnonograms
+IMAGE_DIR=res/images
+LOCALE_DIR=res/i18n
+
+SRC_FILES = \
+	utils/Cell.java \
+	utils/Config.java \
+	utils/GameLoader.java \
+	utils/GameSaver.java \
+	utils/Model.java \
+	utils/Move.java \
+	utils/MoveList.java \
+	utils/My2DCellArray.java \
+	utils/Region.java \
+	utils/Solver.java \
+	utils/Utils.java \
+	app/gui/CellGrid.java \
+	app/gui/GameEditor.java \
+	app/gui/GnonogramLabel.java \
+	app/gui/ImageImporter.java \
+	app/gui/LabelBox.java \
+	app/Controller.java \
+	app/Resource.java \
+	app/Viewer.java \
+	Main.java \
 
 IMAGE_FILES = \
 	*.png \
 	*.gif \
 
+LOCALE_FILES = \
+	*.properties \
+	supported_languages.xml
+	
 TEXT_FILES = \
 	Makefile \
 	AUTHORS \
@@ -63,19 +69,22 @@ TEXT_FILES = \
 	README \
 	THANKS
 
-EXPANDED_SRC_FILES = $(foreach src,$(SRC_FILES),src/$(src))
+EXPANDED_SRC_FILES = $(foreach src,$(SRC_FILES),$(SRC_DIR)/$(src))
 EXPANDED_IMAGE_FILES= $(foreach img, $(IMAGE_FILES), $(IMAGE_DIR)/$(img))
+EXPANDED_LOCALE_FILES= $(foreach loc, $(LOCALE_FILES), $(LOCALE_DIR)/$(loc))
 
 DIST_FILES = $(TEXT_FILES)
 DIST_FILES+= $(EXPANDED_SRC_FILES) 
 DIST_FILES+= $(EXPANDED_IMAGE_FILES)
+DIST_FILES+=$(EXPANDED_LOCALE_FILES)
 
 DIST_TAR_GZ = $(PROGRAM)-$(VERSION).tar.gz
 
 #-----------------------------------TARGETS----------------------------------------------
 all: $(PROGRAM)
 ###############
-
+	cp --parents $(EXPANDED_LOCALE_FILES) $(BUILD_DIR)
+	
 $(PROGRAM): $(EXPANDED_SRC_FILES) Makefile
 ############################################################
 	$(JAVAC) -d  $(BUILD_DIR) $(EXPANDED_SRC_FILES)
