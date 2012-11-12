@@ -125,7 +125,7 @@ public class GameEditor extends JDialog implements ActionListener{
     int size=isColumn ? cols : rows;
     JPanel CluePane=new JPanel(new GridLayout(0,1));
     for (int i=0; i<size; i++) {
-      clues[offset+i]=new ClueEditor(i,isColumn);
+      clues[offset+i]=new ClueEditor(i,size);
       CluePane.add(clues[offset+i]);
     }
     JScrollPane sp=new JScrollPane(CluePane);
@@ -159,14 +159,13 @@ public class GameEditor extends JDialog implements ActionListener{
   private class ClueEditor extends Box{
     private JTextField clueText;
 
-    public ClueEditor(int idx, boolean isColumn){
+    public ClueEditor(int idx, int size){
       super(BoxLayout.X_AXIS);
       JLabel l=new JLabel((idx<9 ? "0" : "")+String.valueOf(idx+1)+"   ");
       l.setFont(new Font("",Font.BOLD,14));
       this.add(l);
-      //this.add(new JLabel((isColumn ? "      Column " : "         Row ")+(idx<9 ? "0" : "")+String.valueOf(idx+1)+"   "));;
       clueText=new JTextField(25);
-      clueText.setInputVerifier(new ClueVerifier());
+      clueText.setInputVerifier(new ClueVerifier(size));
       this.add(clueText);
     }
     
@@ -176,41 +175,51 @@ public class GameEditor extends JDialog implements ActionListener{
   }
   
   private class ClueVerifier extends InputVerifier{
+	private int size;
+	public ClueVerifier(int size){
+		this.size=size;		
+	}
     @Override
     public boolean verify(JComponent input){
-      boolean valid=false;
-      JTextField tf=(JTextField)input;
-      String[] sa=(tf.getText()).split(",");
-      int count=0, tokens=sa.length;
-      int[] blocks=new int[tokens];
-      for (String s: sa){
-        try{
-        blocks[count]=Integer.valueOf(s);
-        }
-        catch(NumberFormatException e){break;}
-        if ((blocks[count]==0) && (count>0 || tokens>1)) {
-          break;
-        }
-        count++;
-      }
-      if (count==tokens){
-      StringBuilder sb= new StringBuilder("");
-      for(int i : blocks){
-        sb.append(String.valueOf(i)+",");
-      }
-      tf.setText(sb.substring(0,sb.length()-1));
-      tf.setForeground(UIManager.getColor("TextField.foreground"));
-      valid=true;
-      }
-      else{
-        tf.setForeground(Color.red);
-        tf.repaint();
-        valid=false;
-      }
-      okButton.setEnabled(valid);
-      return valid;
+		boolean valid=false;
+		JTextField tf=(JTextField)input;
+		String[] sa=(tf.getText()).split(",");
+		int count=0, tokens=sa.length, sum=0;
+		int[] blocks=new int[tokens];
+		for (String s: sa){
+			//Check each token is a number
+			try{
+				blocks[count]=Integer.valueOf(s);
+			}
+			catch(NumberFormatException e){break;}
+			//Only first token can be zero
+			if ((blocks[count]==0) && (count>0 || tokens>1)) {
+			  break;
+			}
+			count++;
+		}
+		if (count==tokens){  
+			//All tokens are numbers
+			//Check freedom>=0
+			for (int i : blocks) sum+=i;
+			sum+=tokens-1;
+			if (sum<=size){
+				//Rebuild string in standard format
+				StringBuilder sb= new StringBuilder("");
+				for(int i : blocks){
+					sb.append(String.valueOf(i)+",");
+				}
+				tf.setText(sb.substring(0,sb.length()-1));
+				tf.setForeground(UIManager.getColor("TextField.foreground"));
+				valid=true;
+			}
+		}
+		if (!valid){
+			tf.setForeground(Color.red);
+			tf.repaint();
+		}
+		okButton.setEnabled(valid);
+		return valid;
     }
-    
   }
-  
 }

@@ -102,8 +102,7 @@ public class Config extends Properties {
     }
     
     private void makeResourceBundle(String locale){
-        out.println("Making rb for "+locale);
-        rb=ResourceBundle.getBundle("res.i18n.GnonogramsText",new Locale(locale),new ResourceBundle.Control() {
+         rb=ResourceBundle.getBundle("res.i18n.GnonogramsText",new Locale(locale),new ResourceBundle.Control() {
          public List<String> getFormats(String baseName) {
              if (baseName == null)
                  throw new NullPointerException();
@@ -168,8 +167,8 @@ public class Config extends Properties {
     
     private void createDefaultLanguages(){
         defaultLanguages=new Properties();
-        defaultLanguages.setProperty("en_US","American English");
-        defaultLanguages.setProperty("en_GB","British English");
+        defaultLanguages.setProperty("en_us","American English");
+        defaultLanguages.setProperty("en_gb","British English");
     }
     
     private int getInteger(String key){
@@ -456,8 +455,7 @@ public class Config extends Properties {
         }
         protected String getNewLocale(){
             int selectedIndex=locales.getSelectedIndex();
-            out.println("Selected index is "+selectedIndex+"Selected item is"+locales.getSelectedItem());
-            if (selectedIndex<0) return currentlocale;
+             if (selectedIndex<0) return currentlocale;
             return localeKeys[selectedIndex];
         }
         

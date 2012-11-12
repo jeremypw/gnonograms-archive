@@ -28,7 +28,7 @@ import java.awt.Color;
 public class Resource
 {
   public static final String BLOCKSEPARATOR=",";
-  public  static final String VERSION_STRING="0.9.1";
+  public  static final String VERSION_STRING="0.9.5";
   public static final String IMAGE_PATH="/res/images/";
   public static final String LOGO_PATH=IMAGE_PATH+"gnonograms3-256.png";
   public static final double MAXIMUM_GRADE=20;
@@ -63,7 +63,5 @@ public class Resource
   
   public static final Color HIGHLIGHT_COLOR=Color.gray;
   public static final Color MARKED_CELL_COLOR=Color.white;
-  
-  //static final String[] supported_locales={"en_US","en_GB","jp_JA"};
 
 }

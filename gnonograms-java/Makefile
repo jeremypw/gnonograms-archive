@@ -18,7 +18,7 @@
 # *  Author:
 # * 	Jeremy Wootten <jeremwootten@gmail.com>
 PROGRAM=Gnonograms
-VERSION=0.9.1-jre6
+VERSION=0.9.5-jre6
 
 JAVAC=javac
 JAR=jar
@@ -83,15 +83,15 @@ DIST_TAR_GZ = $(PROGRAM)-$(VERSION).tar.gz
 #-----------------------------------TARGETS----------------------------------------------
 all: $(PROGRAM)
 ###############
-	cp --parents $(EXPANDED_LOCALE_FILES) $(BUILD_DIR)
+
 	
 $(PROGRAM): $(EXPANDED_SRC_FILES) Makefile
 ############################################################
+	cp --parents $(EXPANDED_LOCALE_FILES) $(BUILD_DIR)
 	$(JAVAC) -d  $(BUILD_DIR) $(EXPANDED_SRC_FILES)
 
 jar: $(PROGRAM)
 ###############
-#	$(JAR) cfe $(PROGRAM)-$(VERSION).jar Main  -C build .
 	$(JAR) cmf Manifest.txt $(PROGRAM)-$(VERSION).jar  -C build .
 
 dist: $(PROGRAM) $(DIST_FILES)

@@ -27,6 +27,7 @@ import static java.lang.System.out;
 
 import gnonograms.app.Controller;
 import gnonograms.app.Resource;
+import java.util.ResourceBundle;
 
  public class Solver {
 
@@ -50,11 +51,19 @@ import gnonograms.app.Resource;
   private boolean debug;
   private boolean testColumn;
   private int testIdx;
+  private ResourceBundle rb;
+  
   static int GUESSESBEFOREASK=10000;
 
 
-  public Solver(boolean testing, boolean debug, boolean testColumn, int testIdx, Controller control){
+  public Solver(boolean testing, 
+				boolean debug, 
+				boolean testColumn, 
+				int testIdx, 
+				Controller control,
+				ResourceBundle rb){
     this.control=control;
+    this.rb=rb;
     //For development purposes only
     this.testing=testing;
     this.debug=debug;
@@ -79,7 +88,6 @@ import gnonograms.app.Resource;
     if (solutiongrid!=null) {
       checksolution=true;
       solution.copyFrom(solutiongrid); 
-      out.println("Using solution\n");
     }
     if (startgrid!=null) grid.copyFrom(startgrid);
     else grid.setAll(Resource.CELLSTATE_UNKNOWN);
@@ -110,6 +118,7 @@ import gnonograms.app.Resource;
 
   public boolean getHint(){
     //Solver must be initialised with current state of puzzle before calling.
+
     int   pass=1;
     while (pass<=30){
       //cycle through regions until one of them is changed then return
@@ -117,21 +126,19 @@ import gnonograms.app.Resource;
       for (int i=0; i<regionCount; i++){
         if (regions[i].isCompleted) continue;
         if (regions[i].solve(false,true)) {//run solve algorithm in hint mode
-          out.println("Changed region " +i+"\n");
           control.updateWorkingGridFromSolver();
           return true;
         }
         if (regions[i].inError){
-          Utils.showWarningDialog(("A logical error has already been made - cannot hint"));
+          Utils.showWarningDialog(rb.getString("A logical error has already been made - cannot hint"));
           return false;
         }
       }
       pass++;
     }
-    out.println("Pass "+  pass+"\n");
     if (pass>30){
-      if (solved()) Utils.showInfoDialog(("Already solved"));
-      else Utils.showInfoDialog(("Simple solver could not find hint\n"));
+      if (solved()) Utils.showInfoDialog(rb.getString("Already solved"));
+      else Utils.showInfoDialog(rb.getString("Cannot find hint"));
     }
     return false;
   }
@@ -183,7 +190,6 @@ import gnonograms.app.Resource;
       else {//solutionState is FILLED
         if (regionState!=Resource.CELLSTATE_EMPTY) continue; 
       }
-      out.println("Differs from solution in "+ (isColumn ? "Column " : "Row ") + index+ " Cell "+ i+"\nRegion State is "+regionState+ "Solution state is "+solutionState+" \n");
       return true;
     }
     return false;

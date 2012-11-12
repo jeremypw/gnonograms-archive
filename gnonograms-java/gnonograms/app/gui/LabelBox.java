@@ -115,7 +115,7 @@ public class LabelBox extends JPanel{
   public void resetMaximumClueLength(){maxClueLength=10;}
   
   public void setLabelToolTip(int l, int freedom){
-    labels[l].setToolTipText(freedomString+" - "+freedom);
+    labels[l].setToolTipText(freedomString+" "+freedom);
   }
 
   public String getClueText(int l){

@@ -54,9 +54,10 @@ public class Controller {
   public Controller() {
     debug=false;
     config=new Config();
+    myLocale=config.getLocale();
     setLocale();
     model=new Model();
-    solver=new Solver(false,debug,false,0,this);
+    solver=new Solver(false,debug,false,0,this,rb);
 
     history=new MoveList();
     markedCell=new Cell(-1,-1,Resource.CELLSTATE_UNKNOWN);
@@ -176,18 +177,23 @@ public class Controller {
   
   public void checkGame(){
     if(!isSolving) return;
-    int numberOfErrors=model.countErrors()-model.countUnknownCells();
+    int numberOfErrors=this.countErrors();
     if (numberOfErrors==0)
 		Utils.showInfoDialog(rb.getString("There are no errors"));
     else if (Utils.showConfirmDialog(rb.getString(
 				"Number of errors")+"  " +numberOfErrors+"\n\n"+
 				rb.getString("Go back to last correct position?"
 			))){
-		if (validSolution)rewindGame();
+		rewindGame();
 	} 
+  }
+  
+  public int countErrors(){
+	  return model.countErrors()-model.countUnknownCells();
   }
 
   private void rewindGame(){
+	if (!validSolution)return;
     while (model.countErrors()-model.countUnknownCells()>0){
       undoMove();
     }
@@ -208,8 +214,8 @@ public class Controller {
         view.setClueFontAndSize(calculateCluePointSize(this.rows,this.cols));
 
         view.setName(ii.getImageName());
-        view.setAuthor("Image");
-        view.setCreationDate("Today");
+        view.setAuthor(rb.getString("Image"));
+        view.setCreationDate(rb.getString("Today"));
         view.setScore("");
         view.setLicense("");
         
@@ -340,10 +346,10 @@ public class Controller {
       setSolving(true);
       validSolution=true;
       view.setScore(passes+" ");
-      view.setName("Random");
-      view.setAuthor("Computer");
-      view.setLicense("GPL");
-      view.setCreationDate("Today");
+      view.setName(rb.getString("Random"));
+      view.setAuthor(rb.getString("Computer"));
+      view.setLicense(rb.getString("GPL"));
+      view.setCreationDate(rb.getString("Today"));
     }
   }
 
@@ -416,6 +422,13 @@ public class Controller {
   
   public void hint(){
     if (!isSolving) return;
+    //Hint disabled when using marked cell
+    if (markedCell.getState()!=Resource.CELLSTATE_UNDEFINED) return;
+	//Only hint of no errors have been made
+    if (countErrors()>0){
+		checkGame();
+		return;
+	}
     prepareToSolve(true,true,false);
     solver.getHint();
     view.redrawGrid();

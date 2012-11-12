@@ -141,33 +141,6 @@ public class Utils{
     JOptionPane.showMessageDialog(null,s,"",JOptionPane.INFORMATION_MESSAGE);
     return true;
   }
-  //public static boolean showHelpDialog(ResourceBundle rb){
-        //StringBuilder sb = new StringBuilder(rb.getString("Gnonograms for Java"));
-        //sb.append(rb.getString("Version")+" - ");
-        //sb.append(Resource.VERSION_STRING);
-        //sb.append("\n\n"+rb.getString("Programmer")+" - Jeremy Wootten\n<jeremywootten@gmail.com>");
-        //sb.append("\n\n"+rb.getString("KEY CONTROLS"));
-        //sb.append("\n"+rb.getString("Arrows  : move cell selection cursor"));
-        //sb.append("\n"+rb.getString("Ctrl+Arrows  : drag cell selection cursor"));
-        //sb.append("\n"+rb.getString("F or f  : mark selected cell full"));
-        //sb.append("\n"+rb.getString("E or e  : mark selected cell empty"));
-        //sb.append("\n"+rb.getString("X or x  : mark selected cell unknown"));
-        //sb.append("\n"+rb.getString("+ or =  : increase size of cells"));
-        //sb.append("\n"+rb.getString("- or _  : decrease size of cells"));
-        //sb.append("\n"+rb.getString("Ctrl S  : Save "));
-        //sb.append("\n"+rb.getString("Ctrl O  : Open "));
-        //sb.append("\n"+rb.getString("Ctrl N  : Design puzzle by drawing "));
-        //sb.append("\n"+rb.getString("Ctrl R  : Random puzzle "));
-        //sb.append("\n"+rb.getString("Ctrl U  : Undo Move "));
-        //sb.append("\n"+rb.getString("Ctrl Y  : Redo Move "));
-        //sb.append("\n"+rb.getString("Ctrl H  : Get Hint (when solving)"));
-        //sb.append("\n"+rb.getString("Ctrl M  : Mark cell under cursor"));
-        //sb.append("\n"+rb.getString("Ctrl L  : Backtrack to Last marked cell"));
-        //sb.append("\n"+rb.getString("Ctrl Q  : Quit "));
-        //Utils.showInfoDialog(sb.toString());
-        //return true;
-        
-  //}
   public static boolean showHelpDialog(ResourceBundle rb){
       JPanel messagePane=new JPanel(new GridBagLayout());
       GridBagConstraints c=new GridBagConstraints();
@@ -220,31 +193,8 @@ public class Utils{
       messagePane.add(new JLabel(rb.getString("Mark cell under cursor")),c);
       messagePane.add(new JLabel(rb.getString("backtrack to Last marked cell")),c);
       messagePane.add(new JLabel(rb.getString("Quit")),c);
-      
-        //StringBuilder sb = new StringBuilder(rb.getString("Gnonograms for Java"));
-        //sb.append(rb.getString("Version")+" - ");
-        //sb.append(Resource.VERSION_STRING);
-        //sb.append("\n\n"+rb.getString("Programmer")+" - Jeremy Wootten\n<jeremywootten@gmail.com>");
-        //sb.append("\n\n"+rb.getString("KEY CONTROLS"));
-        //sb.append("\n"+rb.getString("Arrows  : move cell selection cursor"));
-        //sb.append("\n"+rb.getString("Ctrl+Arrows  : drag cell selection cursor"));
-        //sb.append("\n"+rb.getString("F or f  : mark selected cell full"));
-        //sb.append("\n"+rb.getString("E or e  : mark selected cell empty"));
-        //sb.append("\n"+rb.getString("X or x  : mark selected cell unknown"));
-        //sb.append("\n"+rb.getString("+ or =  : increase size of cells"));
-        //sb.append("\n"+rb.getString("- or _  : decrease size of cells"));
-        //sb.append("\n"+rb.getString("Ctrl S  : Save "));
-        //sb.append("\n"+rb.getString("Ctrl O  : Open "));
-        //sb.append("\n"+rb.getString("Ctrl N  : Design puzzle by drawing "));
-        //sb.append("\n"+rb.getString("Ctrl R  : Random puzzle "));
-        //sb.append("\n"+rb.getString("Ctrl U  : Undo Move "));
-        //sb.append("\n"+rb.getString("Ctrl Y  : Redo Move "));
-        //sb.append("\n"+rb.getString("Ctrl H  : Get Hint (when solving)"));
-        //sb.append("\n"+rb.getString("Ctrl M  : Mark cell under cursor"));
-        //sb.append("\n"+rb.getString("Ctrl L  : Backtrack to Last marked cell"));
-        //sb.append("\n"+rb.getString("Ctrl Q  : Quit "));
-        JOptionPane.showMessageDialog(null,messagePane,"",JOptionPane.INFORMATION_MESSAGE);
-        return true;
+      JOptionPane.showMessageDialog(null,messagePane,"",JOptionPane.INFORMATION_MESSAGE);
+      return true;
   }
   public static JPanel okCancelPanelFactory(ActionListener listener, String okCommand){
     JButton okButton = new JButton(createImageIcon("/res/images/dialog-ok-apply48.png","okButtonIcon"));
@@ -261,13 +211,12 @@ public class Utils{
   }
   
   public static String calculateTimeTaken(Date startDate, Date endDate){
-    //TODO localization
     long msec=endDate.getTime()-startDate.getTime();
     long seconds=msec/1000;
     msec=msec-seconds*1000;
     long minutes=seconds/60;
     seconds=seconds-minutes*60;
-    return minutes+" minutes "+seconds+((msec<100)? ".0":".")+msec+" seconds ";
+    return minutes+" : "+seconds+((msec<100)? ".0":".")+msec;
   }
   
   public static ImageIcon createImageIcon(String path,String description){

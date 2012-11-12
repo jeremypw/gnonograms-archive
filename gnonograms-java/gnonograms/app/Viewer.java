@@ -184,6 +184,7 @@ public class Viewer extends JFrame {
       setLicense(ge.getLicense());
       for (int r=0; r<rows; r++) rowBox.setClueText(r,ge.getClue(r,false));
       for (int c=0; c<cols; c++) columnBox.setClueText(c,ge.getClue(c,true));
+      setClueFontAndSize(cluePointSize);
       control.checkCluesValid(); 
     }
     ge.dispose();
@@ -407,11 +408,6 @@ public class Viewer extends JFrame {
       }
       if (command.equals("HIDE_REVEAL_GAME")) 
       {
-        //JButton b=(JButton)a.getSource();
-        //String tt=b.getToolTipText();
-        //if (tt!=null && tt.contains("Hide")){
-          //control.setSolving(true);
-        //}
         if (this.text.contains("Hide")){
           control.setSolving(true);
           this.text="Show game";
@@ -478,7 +474,7 @@ public class Viewer extends JFrame {
     protected void setInfo(String info){
       if (info.length()<1) this.info=".....";
       else this.info=info;
-      this.setText(this.heading+":"+this.info+" ");
+      this.setText(this.heading+": "+this.info+" ");
     }
   }
 }

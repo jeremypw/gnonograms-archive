@@ -1,3 +1,3 @@
 Manifest-Version: 1.0
 Main-Class: gnonograms.Main
-SplashScreen-Image: /res/images/gnonograms3-256.png
+SplashScreen-Image: res/images/gnonograms3-256.png

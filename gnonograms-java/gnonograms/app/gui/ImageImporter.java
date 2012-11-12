@@ -448,7 +448,7 @@ enum MovePoint{
     this.setFileSelectionMode(FILES_ONLY);
     this.setFileFilter(new FileNameExtensionFilter("Images","png","gif","bmp","jpg"));
     this.setAcceptAllFileFilterUsed(false);
-    this.setDialogTitle("Choose a simple image to convert");
+    this.setDialogTitle(rb.getString("Choose a simple image to convert"));
     result=this.showOpenDialog(parent);
     }
   }
