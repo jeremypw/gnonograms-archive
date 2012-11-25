@@ -38,7 +38,7 @@ public class GameSaver extends JFileChooser {
     int result;
     BufferedWriter dataStream;
 
-    private static final long serialVersionUID = 1;
+    //private static final long serialVersionUID = 1;
     public GameSaver(Component parent, String puzzleDirectoryPath){
     super(puzzleDirectoryPath);
     this.setFileSelectionMode(FILES_ONLY);

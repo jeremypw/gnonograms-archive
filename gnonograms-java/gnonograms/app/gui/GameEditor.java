@@ -58,7 +58,7 @@ import gnonograms.utils.Utils;
 import java.util.ResourceBundle;
 
 public class GameEditor extends JDialog implements ActionListener{
-  private static final long serialVersionUID = 1;
+  //private static final long serialVersionUID = 1;
   private JComponent infoPane,rowPane,columnPane;
   private JTextField nameField, authorField, dateField, licenseField;
   protected JButton okButton;

@@ -197,10 +197,10 @@ public class Utils{
       return true;
   }
   public static JPanel okCancelPanelFactory(ActionListener listener, String okCommand){
-    JButton okButton = new JButton(createImageIcon("/res/images/dialog-ok-apply48.png","okButtonIcon"));
+    JButton okButton = new JButton(createImageIcon("dialog-ok-apply48.png","okButtonIcon"));
     okButton.setActionCommand(okCommand);
     okButton.addActionListener(listener);
-    JButton cancelButton=new JButton(createImageIcon("/res/images/dialog-cancel48.png","cancelButtonIcon"));
+    JButton cancelButton=new JButton(createImageIcon("dialog-cancel48.png","cancelButtonIcon"));
     cancelButton.setActionCommand("");
     cancelButton.addActionListener(listener);
     JPanel buttonPanel=new JPanel();
@@ -219,11 +219,11 @@ public class Utils{
     return minutes+" : "+seconds+((msec<100)? ".0":".")+msec;
   }
   
-  public static ImageIcon createImageIcon(String path,String description){
-    java.net.URL imgURL = Utils.class.getResource(path);
+  public static ImageIcon createImageIcon(String name,String description){
+    java.net.URL imgURL = Utils.class.getResource(Resource.IMAGE_PATH+name);
     if (imgURL != null) return new ImageIcon(imgURL, description);
     else {
-        System.out.println("Couldn't find file: " + path);
+        System.out.println("Couldn't find file: " + Resource.IMAGE_PATH+name);
         return null;
     }
   }

@@ -71,6 +71,7 @@ import java.util.Arrays;
 import gnonograms.app.Resource;
 
 public class Config extends Properties {
+    //private static final long serialVersionUID = 1;
     private String configDirectoryPath=System.getProperty("user.home")+"/.jpw";
     private String languageFilePath="/res/i18n/supported_languages.xml";
     private String propertiesFilePath;
@@ -296,7 +297,7 @@ public class Config extends Properties {
     }
     
     private class ConfigDialog extends JDialog implements ActionListener {
-        private static final long serialVersionUID = 1;
+        //private static final long serialVersionUID = 1;
         private JSpinner rowSpinner,columnSpinner, pointsizeSpinner;
         private JSlider gradeSlider;
         private JRadioButton settingButton, solvingButton, loadingButton;
@@ -324,32 +325,32 @@ public class Config extends Properties {
             c.ipadx=48; c.ipady=24;
             c.fill=GridBagConstraints.NONE;
             c.anchor=GridBagConstraints.LINE_START;
-            JLabel tmpLabel=new JLabel(Utils.createImageIcon("/res/images/resize-rows48.png","resizeRowIcon"));
+            JLabel tmpLabel=new JLabel(Utils.createImageIcon("resize-rows48.png","resizeRowIcon"));
             tmpLabel.setToolTipText(rb.getString("Set number of rows"));
             infoPane.add(tmpLabel,c);
 
             c.gridy=1;
-            tmpLabel=new JLabel(Utils.createImageIcon("/res/images/resize-columns48.png","resizeColumnIcon"));
+            tmpLabel=new JLabel(Utils.createImageIcon("resize-columns48.png","resizeColumnIcon"));
             tmpLabel.setToolTipText(rb.getString("Set number of columns"));
             infoPane.add(tmpLabel,c);
 
             c.gridy=2;
-            tmpLabel=new JLabel(Utils.createImageIcon("/res/images/resize-font48.png","resizeFontIcon"));
+            tmpLabel=new JLabel(Utils.createImageIcon("resize-font48.png","resizeFontIcon"));
             tmpLabel.setToolTipText(rb.getString("Set size of font"));
             infoPane.add(tmpLabel,c);
 
             c.gridy=3;
-            tmpLabel=new JLabel(Utils.createImageIcon("/res/images/question48.png","difficultyIcon"));
+            tmpLabel=new JLabel(Utils.createImageIcon("question48.png","difficultyIcon"));
             tmpLabel.setToolTipText(rb.getString("Set difficulty of puzzles"));
             infoPane.add(tmpLabel,c);
             
             c.gridy=4;
-            tmpLabel=new JLabel(Utils.createImageIcon("/res/images/start48.png","startIcon"));
+            tmpLabel=new JLabel(Utils.createImageIcon("start48.png","startIcon"));
             tmpLabel.setToolTipText(rb.getString("Set state on startup"));
             infoPane.add(tmpLabel,c);
             
             c.gridy=5;
-            tmpLabel=new JLabel(Utils.createImageIcon("/res/images/international48.png","WorldIcon"));
+            tmpLabel=new JLabel(Utils.createImageIcon("international48.png","WorldIcon"));
             tmpLabel.setToolTipText(rb.getString("Language"));
             infoPane.add(tmpLabel,c);
             
@@ -360,9 +361,9 @@ public class Config extends Properties {
             int max=(int)Resource.MAXIMUM_GRADE;
             gradeSlider=new JSlider(1, max, grade );
             Hashtable<Integer , JLabel> gradeSliderLabels = new Hashtable<Integer , JLabel>();
-            gradeSliderLabels.put(1,new JLabel(Utils.createImageIcon("/res/images/face-smile-big.png","easyIcon")));
-            gradeSliderLabels.put(max/2,new JLabel(Utils.createImageIcon("/res/images/face-plain.png","mediumIcon")));
-            gradeSliderLabels.put(max,new JLabel(Utils.createImageIcon("/res/images/face-uncertain.png","hardIcon")));
+            gradeSliderLabels.put(1,new JLabel(Utils.createImageIcon("face-smile-big.png","easyIcon")));
+            gradeSliderLabels.put(max/2,new JLabel(Utils.createImageIcon("face-plain.png","mediumIcon")));
+            gradeSliderLabels.put(max,new JLabel(Utils.createImageIcon("face-uncertain.png","hardIcon")));
             
             gradeSlider.setLabelTable(gradeSliderLabels);
             gradeSlider.setPaintLabels(true);
@@ -372,13 +373,13 @@ public class Config extends Properties {
 
             ButtonGroup stateButtons= new ButtonGroup();
             solvingButton = new JRadioButton();
-            JLabel solvingLabel = new JLabel(Utils.createImageIcon("/res/images/dice.png","randomIcon"));
+            JLabel solvingLabel = new JLabel(Utils.createImageIcon("dice.png","randomIcon"));
             solvingLabel.setToolTipText(rb.getString("Start with random puzzle"));
             settingButton = new JRadioButton();
-            JLabel settingLabel = new JLabel(Utils.createImageIcon("/res/images/New24.gif","newIcon"));
+            JLabel settingLabel = new JLabel(Utils.createImageIcon("New24.gif","newIcon"));
             settingLabel.setToolTipText(rb.getString("Start in design mode"));
             loadingButton = new JRadioButton();
-            JLabel loadingLabel = new JLabel(Utils.createImageIcon("/res/images/Open24.gif","loadIcon"));
+            JLabel loadingLabel = new JLabel(Utils.createImageIcon("Open24.gif","loadIcon"));
             loadingLabel.setToolTipText(rb.getString("Start in file chooser"));
             stateButtons.add(solvingButton);
             stateButtons.add(settingButton);

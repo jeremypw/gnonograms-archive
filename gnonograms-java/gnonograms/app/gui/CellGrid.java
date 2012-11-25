@@ -45,7 +45,7 @@ import static java.lang.System.out;
 
 public class CellGrid extends JPanel{
 
-  private static final long serialVersionUID = 1;
+  //private static final long serialVersionUID = 1;
   private int rows, cols, currentRow, currentCol;
   private double rowHeight, columnWidth;
   private Cell currentCell, previousCell;

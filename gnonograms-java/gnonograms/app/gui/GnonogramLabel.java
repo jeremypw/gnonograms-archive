@@ -29,7 +29,7 @@ import java.awt.Color;
 import gnonograms.app.Resource;
 
 public class GnonogramLabel extends JLabel{
-  private static final long serialVersionUID = 1;
+  //private static final long serialVersionUID = 1;
   private boolean isColumn;
   private String text;
   private LineBorder labelBorder;

@@ -99,7 +99,7 @@ enum MovePoint{
 };
 
   public class ImageImporter extends JDialog implements ActionListener{
-  private static final long serialVersionUID = 1;
+	//private static final long serialVersionUID = 1;
     public boolean hasImage, wasCancelled;
     private int origWidth, origHeight, rows, cols, offsetX, offsetY, selectionWidth, selectionHeight;
     private File imageFile;
@@ -188,10 +188,10 @@ enum MovePoint{
         updateFinalImage(-1,-1);
       }
     });
-    JLabel blackLabel = new JLabel(Utils.createImageIcon("/res/images/black_background36.png","Black Background"));
+    JLabel blackLabel = new JLabel(Utils.createImageIcon("black_background36.png","Black Background"));
     blackLabel.setToolTipText(rb.getString("Black Background"));
     JRadioButton whiteButton = new JRadioButton();
-    JLabel whiteLabel = new JLabel(Utils.createImageIcon("/res/images/white_background36.png","White Background"));
+    JLabel whiteLabel = new JLabel(Utils.createImageIcon("white_background36.png","White Background"));
     whiteLabel.setToolTipText(rb.getString("White Background"));
     backgroundColourButtons.add(blackButton);
     backgroundColourButtons.add(whiteButton);
@@ -208,11 +208,11 @@ enum MovePoint{
 
     JRadioButton noInvertRadioButton= new JRadioButton();
     noInvertRadioButton.setHorizontalAlignment(SwingConstants.CENTER);
-    JLabel noInvertLabel=new JLabel(Utils.createImageIcon("/res/images/NoInvertion36.png","No invertion"));
+    JLabel noInvertLabel=new JLabel(Utils.createImageIcon("NoInvertion36.png","No invertion"));
     noInvertLabel.setToolTipText(rb.getString("Do not invert Black and White"));
     JRadioButton invertRadioButton= new JRadioButton();
     invertRadioButton.setHorizontalAlignment(SwingConstants.CENTER);
-    JLabel invertLabel=new JLabel(Utils.createImageIcon("/res/images/Invertion36.png","Invert"));
+    JLabel invertLabel=new JLabel(Utils.createImageIcon("Invertion36.png","Invert"));
     invertLabel.setToolTipText(rb.getString("Invert Black and White"));
     ButtonGroup invertButtons= new ButtonGroup();
     invertButtons.add(noInvertRadioButton);
@@ -234,7 +234,7 @@ enum MovePoint{
     invertPanel.setBorder(BorderFactory.createEtchedBorder());
     
     JPanel redThresholdPanel=makeThresholdSliderAndLabel(
-      "/res/images/red_threshold36.png",
+      "red_threshold36.png",
       new ChangeListener(){
         public void stateChanged(ChangeEvent e){
           redThreshold=(int)(2.55*((JSlider)(e.getSource())).getValue());
@@ -244,7 +244,7 @@ enum MovePoint{
       rb.getString("Red Threshold")
       );
     JPanel blueThresholdPanel=makeThresholdSliderAndLabel(
-      "/res/images/blue_threshold36.png",
+      "blue_threshold36.png",
       new ChangeListener(){
         public void stateChanged(ChangeEvent e){
           blueThreshold=(int)(2.55*((JSlider)(e.getSource())).getValue());
@@ -254,7 +254,7 @@ enum MovePoint{
        rb.getString("Blue Threshold")
       );
     JPanel greenThresholdPanel=makeThresholdSliderAndLabel(
-      "/res/images/green_threshold36.png",
+      "green_threshold36.png",
       new ChangeListener(){
         public void stateChanged(ChangeEvent e){
           greenThreshold=(int)(2.55*((JSlider)(e.getSource())).getValue());
@@ -264,7 +264,7 @@ enum MovePoint{
        rb.getString("Green Threshold")
       );
     JPanel alphaThresholdPanel=makeThresholdSliderAndLabel(
-      "/res/images/alpha_threshold36.png",
+      "alpha_threshold36.png",
       new ChangeListener(){
         public void stateChanged(ChangeEvent e){
           alphaThreshold=(int)(2.55*((JSlider)(e.getSource())).getValue());
@@ -279,8 +279,8 @@ enum MovePoint{
     rowsLabel.setToolTipText(rb.getString("Set number of rows"));
     colsLabel = new JLabel();
     colsLabel.setToolTipText(rb.getString("Set number of columns"));
-    rowsLabel.setIcon(Utils.createImageIcon("/res/images/resize-rows36.png","Rows"));
-    colsLabel.setIcon(Utils.createImageIcon("/res/images/resize-columns36.png","Columns"));
+    rowsLabel.setIcon(Utils.createImageIcon("resize-rows36.png","Rows"));
+    colsLabel.setIcon(Utils.createImageIcon("resize-columns36.png","Columns"));
     final JSpinner rowSpinner=new JSpinner(new SpinnerNumberModel(rows,MINIMUM_SELECTABLE_PIXELS,Resource.MAXIMUM_GRID_SIZE,1));
     final JSpinner columnSpinner=new JSpinner(new SpinnerNumberModel(cols,MINIMUM_SELECTABLE_PIXELS,Resource.MAXIMUM_GRID_SIZE,1));
     
@@ -323,8 +323,8 @@ enum MovePoint{
     thresholdPanel.add(alphaThresholdPanel);
 
     JCheckBox lockCheckBox = new JCheckBox();
-    lockCheckBox.setIcon(Utils.createImageIcon("/res/images/unlocked36.png","Unlocked"));
-    lockCheckBox.setSelectedIcon(Utils.createImageIcon("/res/images/locked36.png","Locked"));
+    lockCheckBox.setIcon(Utils.createImageIcon("unlocked36.png","Unlocked"));
+    lockCheckBox.setSelectedIcon(Utils.createImageIcon("locked36.png","Locked"));
     lockCheckBox.setRolloverEnabled(false);
     lockCheckBox.setContentAreaFilled(false);
     lockCheckBox.setSelected(false);

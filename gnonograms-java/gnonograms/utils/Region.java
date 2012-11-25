@@ -795,8 +795,8 @@ public class Region {
     //  boolean dir=(direction>0);
     boolean test1= idx>=limit;
     if (limit<-1 || limit>nCells) {inError=true; message="Invalid limit"; out.println(message); return 0;}
-    if ((direction==this.FORWARDS) && idx>=limit)  return limit;
-    else if ((direction==BACKWARDS) && (idx<=limit)) return limit;
+    if ((direction==Region.FORWARDS) && idx>=limit)  return limit;
+    else if ((direction==Region.BACKWARDS) && (idx<=limit)) return limit;
 
     for (int i=idx; i!=limit;i+=direction){
       if (status[i]==cs)  return i;

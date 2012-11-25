@@ -39,7 +39,7 @@ import static java.lang.System.out;
 import gnonograms.app.Resource;
 
 public class GameLoader extends JFileChooser {
-  private static final long serialVersionUID = 1;
+  //private static final long serialVersionUID = 1;
   public int rows=0;
   public int cols=0;
   public String[] rowClues;

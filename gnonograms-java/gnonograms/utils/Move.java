@@ -26,7 +26,7 @@ package gnonograms.utils;
 	public int replacementState;
 	public int row;
 	public int col;
-	private static final long serialVersionUID = 1;
+	//private static final long serialVersionUID = 1;
 	protected Move(Cell newCell, int previousState){
 		this.previousState=previousState;
 		this.replacementState=newCell.state;

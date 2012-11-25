@@ -23,9 +23,9 @@
 package gnonograms;
 
 import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
-import java.util.ResourceBundle;
-import java.util.Locale;
+//import javax.swing.UnsupportedLookAndFeelException;
+//import java.util.ResourceBundle;
+//import java.util.Locale;
 
 import static java.lang.System.out;
 

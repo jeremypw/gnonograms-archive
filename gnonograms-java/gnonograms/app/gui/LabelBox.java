@@ -38,7 +38,7 @@ import java.awt.Dimension;
 import static java.lang.System.out;
 
 public class LabelBox extends JPanel{
-  private static final long serialVersionUID = 1;
+  //private static final long serialVersionUID = 1;
   private int maxClueLength=4;
   private GnonogramLabel[] labels;
   private int no_labels;

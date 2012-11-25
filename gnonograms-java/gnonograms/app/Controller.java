@@ -83,7 +83,7 @@ public class Controller {
   
   private void setLocale(){
     rb=config.getResourceBundle();
-    view=new Viewer(this,rb, myLocale);
+    view=new Viewer(this,rb);
   }
 
   public void init(int r, int c){

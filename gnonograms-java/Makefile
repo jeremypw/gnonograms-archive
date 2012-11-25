@@ -20,12 +20,14 @@
 PROGRAM=Gnonograms
 VERSION=0.9.5-jre6
 
-JAVAC=javac
+#Java 1.6 or equivalent recommended.  Code will compile with Java 1.7 but with some warnings
+JAVAC=javac 
 JAR=jar
 TAR=tar
 
 BUILD_DIR=build
 SRC_DIR=gnonograms
+RESOURCE_DIR=res
 IMAGE_DIR=res/images
 LOCALE_DIR=res/i18n
 
@@ -83,12 +85,14 @@ DIST_TAR_GZ = $(PROGRAM)-$(VERSION).tar.gz
 #-----------------------------------TARGETS----------------------------------------------
 all: $(PROGRAM)
 ###############
-
 	
+
 $(PROGRAM): $(EXPANDED_SRC_FILES) Makefile
 ############################################################
+	mkdir -p $(BUILD_DIR)
 	cp --parents $(EXPANDED_LOCALE_FILES) $(BUILD_DIR)
-	$(JAVAC) -d  $(BUILD_DIR) $(EXPANDED_SRC_FILES)
+	cp --parents $(EXPANDED_IMAGE_FILES) $(BUILD_DIR)
+	$(JAVAC) -Xlint -Xlint:-serial -d  $(BUILD_DIR) $(EXPANDED_SRC_FILES)
 
 jar: $(PROGRAM)
 ###############

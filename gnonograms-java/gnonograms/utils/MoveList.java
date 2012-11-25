@@ -28,7 +28,7 @@ import static java.lang.System.out;
 public class MoveList extends LinkedList<Move> {
   int numberOfMoves;
   int currentMove;
-  private static final long serialVersionUID = 1; 
+  //private static final long serialVersionUID = 1; 
   public MoveList(){
     this.initialize();
   }

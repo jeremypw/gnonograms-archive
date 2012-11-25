@@ -30,7 +30,6 @@ public class Resource
   public static final String BLOCKSEPARATOR=",";
   public  static final String VERSION_STRING="0.9.5";
   public static final String IMAGE_PATH="/res/images/";
-  public static final String LOGO_PATH=IMAGE_PATH+"gnonograms3-256.png";
   public static final double MAXIMUM_GRADE=20;
   public static final double GRADE_FOR_ONE_GUESS=15;
   public static final double GRADE_FOR_TWO_GUESSES=18;

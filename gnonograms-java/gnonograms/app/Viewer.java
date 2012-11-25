@@ -52,6 +52,7 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
+import java.awt.Image;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -72,7 +73,7 @@ import gnonograms.app.gui.*;
 import static java.lang.System.out;
 
 public class Viewer extends JFrame {
-  private static final long serialVersionUID = 1;
+  //private static final long serialVersionUID = 1;
   private CellGrid drawing;
   private LabelBox rowBox, columnBox;
   private Controller control;
@@ -92,21 +93,20 @@ public class Viewer extends JFrame {
 
   private int rows, cols, cluePointSize=20;
   
-  public Viewer(Controller control, ResourceBundle rb, String locale){
+  //public Viewer(Controller control, ResourceBundle rb, String locale){
+  public Viewer(Controller control, ResourceBundle rb){
     //out.println("Starting to initialise viewer");
     this.rb=rb;
     this.control=control;
     this.setDefaultCloseOperation(EXIT_ON_CLOSE);
     this.setTitle(rb.getString("Gnonograms for Java"));
     this.setResizable(false);
-    myLogo=Utils.createImageIcon(Resource.LOGO_PATH,"Logo");
+    myLogo=Utils.createImageIcon("gnonograms3-256.png","Logo");
     logoLabel=new JLabel();
-    if (myLogo==null)logoLabel=new JLabel("MISSING ICON");
-    if (myLogo==null)logoLabel.setText("MISSING ICON");
-    this.setIconImage(myLogo.getImage().getScaledInstance(32,32,BufferedImage.SCALE_SMOOTH));
+    this.setIconImage(myLogo.getImage().getScaledInstance(32,32,Image.SCALE_SMOOTH));
     
-    hideIcon=Utils.createImageIcon("/res/images/eyes-closed.png","Hide icon");
-    revealIcon=Utils.createImageIcon("/res/images/eyes-open.png","Reveal icon");
+    hideIcon=Utils.createImageIcon("eyes-closed.png","Hide icon");
+    revealIcon=Utils.createImageIcon("eyes-open.png","Reveal icon");
 
     puzzlePane=new JPanel();
     puzzlePane.setLayout(new GridBagLayout());
@@ -174,7 +174,8 @@ public class Viewer extends JFrame {
     ge.setLicense(getLicense());
     for (int r=0; r<rows; r++) ge.setClue(r,rowBox.getClueText(r),false);
     for (int c=0; c<cols; c++) ge.setClue(c,columnBox.getClueText(c),true);
-    ge.setLocationRelativeTo((Component)this);
+    //ge.setLocationRelativeTo((Component)this);
+    ge.setLocationRelativeTo(this);
     ge.setVisible(true);
 
     if (!ge.wasCancelled){
@@ -263,7 +264,8 @@ public class Viewer extends JFrame {
       int height=columnBox.getLogoSize();
       if (width==0||height==0) return;
       if (scaledLogo==null||scaledLogo.getIconHeight()!=height || scaledLogo.getIconWidth()!=width){
-        scaledLogo=new ImageIcon(myLogo.getImage().getScaledInstance(width,height,BufferedImage.SCALE_SMOOTH));
+        //scaledLogo=new ImageIcon(myLogo.getImage().getScaledInstance(width,height,BufferedImage.SCALE_SMOOTH));
+        scaledLogo=new ImageIcon(myLogo.getImage().getScaledInstance(width,height,Image.SCALE_SMOOTH));
         logoLabel.setIcon(scaledLogo);
         this.pack();
       }
@@ -300,60 +302,60 @@ public class Viewer extends JFrame {
 
     int position=0;
 
-    tb.add(new MyAction("Create",Utils.createImageIcon("/res/images/New24.gif","Create icon"),"CREATE_GAME"));
+    tb.add(new MyAction("Create",Utils.createImageIcon("New24.gif","Create icon"),"CREATE_GAME"));
     ((JComponent)(tb.getComponentAtIndex(position))).setToolTipText(rb.getString("Draw your own puzzle grid"));
     position++;
     
-    tb.add(new MyAction("Import image",Utils.createImageIcon("/res/images/Import24.gif","Import icon"),"IMPORT_IMAGE"));
+    tb.add(new MyAction("Import image",Utils.createImageIcon("Import24.gif","Import icon"),"IMPORT_IMAGE"));
     ((JComponent)(tb.getComponentAtIndex(position))).setToolTipText(rb.getString("Convert an image to a puzzle"));
     position++;
 
 
-    tb.add(new MyAction("Edit",Utils.createImageIcon("/res/images/Edit24.gif","Edit icon"),"EDIT_GAME"));
+    tb.add(new MyAction("Edit",Utils.createImageIcon("Edit24.gif","Edit icon"),"EDIT_GAME"));
     ((JComponent)(tb.getComponentAtIndex(position))).setToolTipText(rb.getString("Edit the description and clues"));
     position++;
 
     tb.addSeparator();
     position++;
     
-    tb.add(new MyAction("Load game",Utils.createImageIcon("/res/images/Open24.gif","Load icon"),"LOAD_GAME"));
+    tb.add(new MyAction("Load game",Utils.createImageIcon("Open24.gif","Load icon"),"LOAD_GAME"));
     ((JComponent)(tb.getComponentAtIndex(position))).setToolTipText(rb.getString("Load a puzzle from file"));
     position++;
 
-    tb.add(new MyAction("Save game",Utils.createImageIcon("/res/images/Save24.gif","Save icon"),"SAVE_GAME"));
+    tb.add(new MyAction("Save game",Utils.createImageIcon("Save24.gif","Save icon"),"SAVE_GAME"));
     ((JComponent)(tb.getComponentAtIndex(position))).setToolTipText(rb.getString("Save the puzzle to file"));
     position++;
     
     tb.addSeparator();
     position++;
     
-    tb.add(new MyAction("Undo",Utils.createImageIcon("/res/images/Undo24.gif","Undo icon"),"UNDO_MOVE"));
+    tb.add(new MyAction("Undo",Utils.createImageIcon("Undo24.gif","Undo icon"),"UNDO_MOVE"));
     ((JComponent)(tb.getComponentAtIndex(position))).setToolTipText(rb.getString("Undo move"));
      position++;
      
-    tb.add(new MyAction("Redo",Utils.createImageIcon("/res/images/Redo24.gif","Redo icon"),"REDO_MOVE"));
+    tb.add(new MyAction("Redo",Utils.createImageIcon("Redo24.gif","Redo icon"),"REDO_MOVE"));
     ((JComponent)(tb.getComponentAtIndex(position))).setToolTipText(rb.getString("Redo move"));
      position++;
 
-    tb.add(new MyAction("Restart",Utils.createImageIcon("/res/images/Refresh24.gif","Restart icon"),"RESTART_GAME"));
+    tb.add(new MyAction("Restart",Utils.createImageIcon("Refresh24.gif","Restart icon"),"RESTART_GAME"));
     ((JComponent)(tb.getComponentAtIndex(position))).setToolTipText(rb.getString("Start solving this puzzle again"));
     position++;
      
     tb.addSeparator();
     position++;
 
-    tb.add(new MyAction("Solve game",Utils.createImageIcon("/res/images/computer.png","Solve icon"),"SOLVE_GAME"));
+    tb.add(new MyAction("Solve game",Utils.createImageIcon("computer.png","Solve icon"),"SOLVE_GAME"));
     ((JComponent)(tb.getComponentAtIndex(position))).setToolTipText(rb.getString("Let the computer try to solve the puzzle"));
      position++;
      
-    tb.add(new MyAction("Check",Utils.createImageIcon("/res/images/errorcheck.png","Check icon"),"CHECK_GAME"));
+    tb.add(new MyAction("Check",Utils.createImageIcon("errorcheck.png","Check icon"),"CHECK_GAME"));
     ((JComponent)(tb.getComponentAtIndex(position))).setToolTipText(rb.getString("Check for mistakes"));
     position++;
     
     tb.addSeparator();
     position++;
 
-    tb.add(new MyAction("Random game",Utils.createImageIcon("/res/images/dice.png","Random icon"),"RANDOM_GAME"));
+    tb.add(new MyAction("Random game",Utils.createImageIcon("dice.png","Random icon"),"RANDOM_GAME"));
     ((JComponent)(tb.getComponentAtIndex(position))).setToolTipText(rb.getString("Generate a random puzzle"));
     position++;
     
@@ -365,19 +367,19 @@ public class Viewer extends JFrame {
     tb.addSeparator();
     position++;
     
-    tb.add(new MyAction("Preferences",Utils.createImageIcon("/res/images/Preferences24.gif","Preferences icon"),"EDIT_PREFERENCES"));
+    tb.add(new MyAction("Preferences",Utils.createImageIcon("Preferences24.gif","Preferences icon"),"EDIT_PREFERENCES"));
     ((JComponent)(tb.getComponentAtIndex(position))).setToolTipText(rb.getString("Edit preferences"));
     position++;
 
-    tb.add(new MyAction("Smaller",Utils.createImageIcon("/res/images/ZoomOut24.gif","Soom Out icon"),"ZOOM_OUT"));
+    tb.add(new MyAction("Smaller",Utils.createImageIcon("ZoomOut24.gif","Soom Out icon"),"ZOOM_OUT"));
     ((JComponent)(tb.getComponentAtIndex(position))).setToolTipText(rb.getString("Make the font smaller"));
     position++;
 
-    tb.add(new MyAction("Larger",Utils.createImageIcon("/res/images/ZoomIn24.gif","Zoom In icon"),"ZOOM_IN"));
+    tb.add(new MyAction("Larger",Utils.createImageIcon("ZoomIn24.gif","Zoom In icon"),"ZOOM_IN"));
     ((JComponent)(tb.getComponentAtIndex(position))).setToolTipText(rb.getString("Make the font larger"));
     position++;
     
-    tb.add(new MyAction("About",Utils.createImageIcon("/res/images/About24.gif","About icon"),"ABOUT_GAME"));
+    tb.add(new MyAction("About",Utils.createImageIcon("About24.gif","About icon"),"ABOUT_GAME"));
     ((JComponent)(tb.getComponentAtIndex(position))).setToolTipText(rb.getString("Credits and keyboard shortcuts"));
     position++;
     
@@ -385,14 +387,14 @@ public class Viewer extends JFrame {
   }
   
   private class MyAction extends AbstractAction{
-    private static final long serialVersionUID = 1;
+    //private static final long serialVersionUID = 1;
     private String text;
     public MyAction(String text, ImageIcon icon, String command){
       super(text, icon);
       this.text=text;
       putValue(ACTION_COMMAND_KEY, command);
     }
-    @Override
+    //@Override
     public void actionPerformed(ActionEvent a){
       String command=a.getActionCommand();
       if (command.equals("CREATE_GAME")) control.createGame();
@@ -459,7 +461,7 @@ public class Viewer extends JFrame {
   private class InfoLabel extends JLabel {
     private String info;
     private String heading;
-    private static final long serialVersionUID = 1;
+    //private static final long serialVersionUID = 1;
 
     public InfoLabel(String heading){
       this.info=".....";
