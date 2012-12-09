@@ -69,7 +69,7 @@ public class Controller {
             break;
       case Resource.GAME_STATE_SOLVING:
             randomGame();
-            setSolving(true);
+            //setSolving(true);
             break;
       case Resource.GAME_STATE_LOADING:
             loadGame();
@@ -124,9 +124,9 @@ public class Controller {
       String locale = config.getLocale();
       if (!locale.equals(myLocale)){
         if (!isSolving || 
-			Utils.showConfirmDialog(rb.getString(
-				"Changing the locale will start a new game - Continue?"
-			))){
+          Utils.showConfirmDialog(rb.getString(
+            "Changing the locale will start a new game - Continue?"
+          ))){
           view.setVisible(false);
           setSolving(false);
           view.dispose();
@@ -140,9 +140,9 @@ public class Controller {
       }
       else if (rows!=r || cols!=c){
         if (!isSolving || 
-			Utils.showConfirmDialog(rb.getString(
-				"Changing the locale will start a new game - Continue?"
-			))){
+          Utils.showConfirmDialog(rb.getString(
+            "Changing the size will start a new game - Continue?"
+          ))){
           setSolving(false); 
           rows=r;cols=c;
           resize(r,c);
@@ -170,22 +170,18 @@ public class Controller {
   public void restartGame(){
     model.blankWorking();
     setSolving(isSolving);
-    history.initialize();
-    view.redrawGrid();
-    startDate=new Date();  //should this be reset?
+    if(isSolving)initialiseSolving();
   }
   
   public void checkGame(){
     if(!isSolving) return;
     int numberOfErrors=this.countErrors();
     if (numberOfErrors==0)
-		Utils.showInfoDialog(rb.getString("There are no errors"));
+      Utils.showInfoDialog(rb.getString("There are no errors"));
     else if (Utils.showConfirmDialog(rb.getString(
 				"Number of errors")+"  " +numberOfErrors+"\n\n"+
 				rb.getString("Go back to last correct position?"
-			))){
-		rewindGame();
-	} 
+			)))rewindGame();
   }
   
   public int countErrors(){
@@ -195,7 +191,7 @@ public class Controller {
   private void rewindGame(){
 	if (!validSolution)return;
     while (model.countErrors()-model.countUnknownCells()>0){
-      undoMove();
+      if(undoMove()==null) break;
     }
     view.redrawGrid();
   }
@@ -294,19 +290,19 @@ public class Controller {
     } }
     
     setSolving(true); //always start in solving mode to avoid displaying solution
-    view.redrawGrid();
+    initialiseSolving();
     gl.close();
   }
   
   private int calculateCluePointSize(int r, int c){
-    int pointSize=(5*Resource.MAXIMUM_CLUE_POINTSIZE)/(Math.max(r,c));
+    int pointSize=(4*Resource.MAXIMUM_CLUE_POINTSIZE)/(Math.max(r,c));
     if(pointSize<Resource.MINIMUM_CLUE_POINTSIZE)pointSize=Resource.MINIMUM_CLUE_POINTSIZE;
     if(pointSize>Resource.MAXIMUM_CLUE_POINTSIZE)pointSize=Resource.MAXIMUM_CLUE_POINTSIZE; 
     return pointSize;
   }
   
   public void saveGame(){
-    GameSaver gs=new GameSaver(view, config.getPuzzleDirectory());
+    GameSaver gs=new GameSaver(view, config.getPuzzleDirectory(), view.getName());
     if (gs.getResult()>0) return;
 
     config.setPuzzleDirectory((gs.getCurrentDirectory()).getPath());
@@ -344,6 +340,7 @@ public class Controller {
       model.useSolution();
       updateAllLabelText(); //from solution
       setSolving(true);
+      initialiseSolving();
       validSolution=true;
       view.setScore(passes+" ");
       view.setName(rb.getString("Random"));
@@ -375,11 +372,11 @@ public class Controller {
         if (passes>grade-3 && passes<99999) break;
       }
     }
-    //out.println("Count "+count+" Passes "+passes+"\n");
     return passes;
   }
 
   public void userSolveGame(){
+	//user asks computer to solve puzzle
     boolean useSolution=false;
     boolean useExistingGrid=true, debug=false, stepwise=false;
     if (isSolving==false){
@@ -499,7 +496,8 @@ public class Controller {
   }
   
   private void updateAllLabelText(){
-    view.resetMaximumClueLength(false);
+    //view.resetMaximumClueLength(false, cols/2+2);
+    //view.resetMaximumClueLength(true, rows/2+2);
     updateAllLabelsFromModel();
   }
    public void updateLabelsFromModel(int r, int c){
@@ -507,12 +505,13 @@ public class Controller {
     view.setClueText(r, Utils.clueFromIntArray(model.getRow(r)),false);
     view.setClueText(c, Utils.clueFromIntArray(model.getColumn(c)),true);
   }
+  
   public void updateAllLabelsFromModel(){
     if (isSolving) return;
-    for (int r=0;r<rows;r++){
-      for(int c=0;c<cols;c++){
-        updateLabelsFromModel(r,c);
-  } } }
+    for (int r=0;r<rows;r++) view.setClueText(r, Utils.clueFromIntArray(model.getRow(r)),false);
+    for(int c=0;c<cols;c++) view.setClueText(c, Utils.clueFromIntArray(model.getColumn(c)),true);
+  }
+  
   public void updateLabelFromString(int idx, String clue, boolean isColumn){
     view.setClueText(idx,clue,isColumn);
   }
@@ -563,14 +562,18 @@ public class Controller {
     view.redrawGrid();
   }
   
+  public void initialiseSolving(){
+      history.initialize();
+      startDate=new Date();
+      markedCell.clear();	  
+  }
+  
   public void setSolving(boolean isSolving){
     if (isSolving){
       model.useWorking();
-      history.initialize();
-      startDate=new Date();
-      markedCell.clear();
     }
     else model.useSolution();
+    
     view.setSolving(isSolving);
     view.redrawGrid();
     this.isSolving=isSolving;

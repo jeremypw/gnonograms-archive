@@ -1217,9 +1217,6 @@ public class Region {
     tempStatus=grid.getArray(index,isColumn);
     for (int i=0; i<nCells; i++){
       switch (tempStatus[i]){
-        //case Resource.CELLSTATE_UNKNOWN :
-          //status[i]=Resource.CELLSTATE_UNKNOWN;
-          //break;
         case Resource.CELLSTATE_EMPTY :
           if (!tags[i][canBeEmptyPointer])recordError("getstatus", "cell "+i+" cannot be empty");
           else  status[i]=Resource.CELLSTATE_EMPTY;

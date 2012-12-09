@@ -52,7 +52,6 @@ public class CellGrid extends JPanel{
   private Color[] solvingColors;
   private Color[] settingColors;
   private Color[] displayColors;
-  //private Graphics myGraphics;
 
   public Controller control;
 

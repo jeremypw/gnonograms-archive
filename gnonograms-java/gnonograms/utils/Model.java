@@ -107,8 +107,7 @@ public class Model {
     
     private int calculatemaximumBlockSize(double lengthOfRegion, double grade){
       //Empirical formula giving reasonable results
-      //double max=3+(int)((lengthOfRegion/2-3)*(1.0-(grade/(Resource.MAXIMUM_GRADE*4.0))));
-      double max=1+(int)((lengthOfRegion/3)*(1.0-(grade/(Resource.MAXIMUM_GRADE*3.0))));
+      double max=1+(int)((lengthOfRegion/2)*(1.0-(grade/(Resource.MAXIMUM_GRADE*3.0))));
       if(max<lengthOfRegion/5)max=lengthOfRegion/5;
       if (max>lengthOfRegion)max=lengthOfRegion-1;
       return (int)max;
@@ -141,11 +140,13 @@ public class Model {
       }
       for (int r=0;r<rows;r++){
         temp=solutionData.getRow(r);
-        temp=fillRegion(cols, temp, (int)(Math.abs((r-middleOfColumn)/middleOfColumn)), maximumRowBlockSize);
+        temp=fillRegion(cols, temp, Math.abs((r-middleOfColumn)/middleOfColumn), maximumRowBlockSize);
         solutionData.setRow(r, temp);
-    } }
+	  } 
+    }
 
-    private int[] fillRegion (int sizeOfRegion, int[] region, int distanceFromCenter, int maximumBlockSize){
+    private int[] fillRegion (int sizeOfRegion, int[] region, double distanceFromCenter, int maximumBlockSize){
+	//distanceFromCenter range 0 -> 1
       int p=0, blockSize, max;
       int cellState;
       boolean fill;
@@ -155,10 +156,10 @@ public class Model {
         //set max sixe of filled or unfilled block
         max=fill ? maximumBlockSize : (sizeOfRegion-maximumBlockSize);
         // random length up to remaining space but not larger than max
-        blockSize=Math.min(1+rand.nextInt(sizeOfRegion-p),max);
+        blockSize=Math.min(1+rand.nextInt(max),sizeOfRegion-p);
         // fill in block (default is empty
         for (int i=0; i<blockSize; i++){
-          if (fill)region[p]=Resource.CELLSTATE_FILLED;
+          if (fill) region[p]=Resource.CELLSTATE_FILLED;
           p++;
         }
         if (fill && p<sizeOfRegion-1) p++;

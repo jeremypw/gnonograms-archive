@@ -123,10 +123,7 @@ import gnonograms.app.Resource;
   }
 
   public boolean setRowDataFromArray(int r, int[] cs) {
-    if (cs.length>this.cols){
-      out.println("Error - too many columns");
-      return false;
-    }
+    if (cs.length>this.cols) return false;
     this.setRow(r, cs);
     return true;
   }

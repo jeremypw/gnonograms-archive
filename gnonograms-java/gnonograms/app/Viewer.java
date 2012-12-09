@@ -80,9 +80,8 @@ public class Viewer extends JFrame {
   private InfoLabel nameLabel,authorLabel,licenseLabel,scoreLabel,sizeLabel,dateLabel,timeLabel;
   private JLabel [] rowlabels, collabels;
   private Container contentPane;
-
   private GridBagConstraints c;
-  //private BufferedImage rawLogo;
+  
   private ImageIcon myLogo;
   private ImageIcon scaledLogo;
   protected ImageIcon hideIcon, revealIcon;
@@ -93,14 +92,13 @@ public class Viewer extends JFrame {
 
   private int rows, cols, cluePointSize=20;
   
-  //public Viewer(Controller control, ResourceBundle rb, String locale){
   public Viewer(Controller control, ResourceBundle rb){
-    //out.println("Starting to initialise viewer");
     this.rb=rb;
     this.control=control;
     this.setDefaultCloseOperation(EXIT_ON_CLOSE);
     this.setTitle(rb.getString("Gnonograms for Java"));
     this.setResizable(false);
+    this.setLocationByPlatform(true);
     myLogo=Utils.createImageIcon("gnonograms3-256.png","Logo");
     logoLabel=new JLabel();
     this.setIconImage(myLogo.getImage().getScaledInstance(32,32,Image.SCALE_SMOOTH));
@@ -174,7 +172,6 @@ public class Viewer extends JFrame {
     ge.setLicense(getLicense());
     for (int r=0; r<rows; r++) ge.setClue(r,rowBox.getClueText(r),false);
     for (int c=0; c<cols; c++) ge.setClue(c,columnBox.getClueText(c),true);
-    //ge.setLocationRelativeTo((Component)this);
     ge.setLocationRelativeTo(this);
     ge.setVisible(true);
 
@@ -224,6 +221,9 @@ public class Viewer extends JFrame {
     c.fill=GridBagConstraints.BOTH;
     c.anchor=GridBagConstraints.CENTER;
     puzzlePane.add(drawing,c);
+    
+    resetMaximumClueLength(false, cols/2+2);
+    resetMaximumClueLength(true, rows/2+2);
     this.pack();
   }
 
@@ -236,10 +236,7 @@ public class Viewer extends JFrame {
     int fontWidth=fm.stringWidth("0");
     rowBox.setFontAndSize(f, fontWidth);
     columnBox.setFontAndSize(f, fontWidth);
-    this.pack(); //size according to clues
-    resizeLogoLabelImage(); //resize logo label accordingly
-    this.pack();
-    this.setLocation(location);
+    repack();
   }
 
   public void zoomFont(int changeInPointSize){
@@ -251,10 +248,15 @@ public class Viewer extends JFrame {
   }
 
   public void setClueText(int idx, String text, boolean isColumn){
+    Point location = this.getLocation();
     LabelBox lb= isColumn ? columnBox : rowBox;
     lb.setClueText(idx,text);
     setLabelToolTip(idx, Utils.freedomFromClue((isColumn ? rows : cols),text),isColumn);
-    this.pack(); //size according to clues
+    repack();
+
+  }
+  
+  private void repack(){
     resizeLogoLabelImage(); //resize logo label accordingly
     this.pack();
   }
@@ -264,16 +266,15 @@ public class Viewer extends JFrame {
       int height=columnBox.getLogoSize();
       if (width==0||height==0) return;
       if (scaledLogo==null||scaledLogo.getIconHeight()!=height || scaledLogo.getIconWidth()!=width){
-        //scaledLogo=new ImageIcon(myLogo.getImage().getScaledInstance(width,height,BufferedImage.SCALE_SMOOTH));
         scaledLogo=new ImageIcon(myLogo.getImage().getScaledInstance(width,height,Image.SCALE_SMOOTH));
         logoLabel.setIcon(scaledLogo);
-        this.pack();
+        //this.pack();
       }
   }
   
-  public void resetMaximumClueLength(boolean isColumn){
-    if (isColumn)  columnBox.resetMaximumClueLength();
-    else  rowBox.resetMaximumClueLength();
+  public void resetMaximumClueLength(boolean isColumn, int maxLength){
+    if (isColumn)  columnBox.resetMaximumClueLength(maxLength);
+    else  rowBox.resetMaximumClueLength(maxLength);
   }
   
   public String getClues(boolean isColumn){
@@ -388,10 +389,9 @@ public class Viewer extends JFrame {
   
   private class MyAction extends AbstractAction{
     //private static final long serialVersionUID = 1;
-    private String text;
+    //private String text;
     public MyAction(String text, ImageIcon icon, String command){
       super(text, icon);
-      this.text=text;
       putValue(ACTION_COMMAND_KEY, command);
     }
     //@Override
@@ -408,16 +408,11 @@ public class Viewer extends JFrame {
         control.randomGame();
         setClueFontAndSize(cluePointSize);//resize label boxes if necessary
       }
-      if (command.equals("HIDE_REVEAL_GAME")) 
-      {
-        if (this.text.contains("Hide")){
-          control.setSolving(true);
-          this.text="Show game";
-        }
-        else{
-          control.setSolving(false);
-          this.text="Hide game";
-        }
+      if (command.equals("HIDE_REVEAL_GAME")) {
+        JButton source=(JButton)(a.getSource());
+        String description=((ImageIcon)(source.getIcon())).getDescription();
+        if (description.contains("Hide")) control.setSolving(true);
+        else control.setSolving(false);
       }
       if (command.equals("SOLVE_GAME")) control.userSolveGame();
       if (command.equals("RESTART_GAME")) control.restartGame();

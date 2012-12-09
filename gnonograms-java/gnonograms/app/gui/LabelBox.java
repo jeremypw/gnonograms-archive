@@ -39,7 +39,7 @@ import static java.lang.System.out;
 
 public class LabelBox extends JPanel{
   //private static final long serialVersionUID = 1;
-  private int maxClueLength=4;
+  private int maxClueLength=10;
   private GnonogramLabel[] labels;
   private int no_labels;
   private int size, logoSize=48;
@@ -80,11 +80,11 @@ public class LabelBox extends JPanel{
     //Trial and error functions giving reasonable appearance.
     if (isColumn){
       labelWidth=size*2+4;
-      labelHeight=maxClueLength*size+6;
+      labelHeight=maxClueLength*size+2;
       logoSize=labelHeight;
     }
     else{
-      labelWidth=maxClueLength*size*7/10;
+      labelWidth=maxClueLength*size+2;
       labelHeight=size*2+4;
       logoSize=labelWidth;
     }
@@ -107,12 +107,12 @@ public class LabelBox extends JPanel{
     if (l>=no_labels || l<0) return;
     if (text==null) text="?";
     labels[l].setText(text);
-    if(text.length()+2>maxClueLength){
-      maxClueLength=text.length()+2;
+    if(text.length()>maxClueLength){
+      maxClueLength=text.length();
       setSize();
   } }
 
-  public void resetMaximumClueLength(){maxClueLength=10;}
+  public void resetMaximumClueLength(int maxLength){maxClueLength=maxLength;}
   
   public void setLabelToolTip(int l, int freedom){
     labels[l].setToolTipText(freedomString+" "+freedom);

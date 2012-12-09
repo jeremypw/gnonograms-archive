@@ -112,7 +112,7 @@ import java.util.ResourceBundle;
         int[] gridstore= new int[rows*cols];
         return advancedsolver(gridstore, debug, maxGuesswork, uniqueOnly);
     }
-    if (rows==1) out.println(regions[0].toString());  //used for debuggin
+    if (rows==1) out.println(regions[0].toString());  //used for debugging
     return simpleresult;
   }
 

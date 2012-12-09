@@ -39,8 +39,9 @@ public class GameSaver extends JFileChooser {
     BufferedWriter dataStream;
 
     //private static final long serialVersionUID = 1;
-    public GameSaver(Component parent, String puzzleDirectoryPath){
+    public GameSaver(Component parent, String puzzleDirectoryPath, String filename){
     super(puzzleDirectoryPath);
+	if (filename!=null)	this.setSelectedFile(new File(puzzleDirectoryPath,filename));
     this.setFileSelectionMode(FILES_ONLY);
     this.setFileFilter(new FileNameExtensionFilter("Gnonogram Puzzles","gno"));
     this.setDialogTitle("Save the puzzle");
