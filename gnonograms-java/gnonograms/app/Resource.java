@@ -28,7 +28,7 @@ import java.awt.Color;
 public class Resource
 {
   public static final String BLOCKSEPARATOR=",";
-  public  static final String VERSION_STRING="0.9.5";
+  public  static final String VERSION_STRING="0.9.6";
   public static final String IMAGE_PATH="/res/images/";
   public static final double MAXIMUM_GRADE=20;
   public static final double GRADE_FOR_ONE_GUESS=15;
@@ -36,6 +36,13 @@ public class Resource
   public static final int MAXGUESSWORK_FOR_SOLVER=9999;
   public static final int MAXIMUM_GRID_SIZE=100;
   public static final int MAXIMUM_CLUE_POINTSIZE=72;
+  public static final int MAXIMUM_CLUE_WIDTH_MARGIN=30;
+  public static final int MAXIMUM_CLUE_LENGTH_MARGIN=50;
+  public static final double MAXIMUM_COL_FREEDOM_FACTOR=60.0;
+  public static final double MAXIMUM_ROW_FREEDOM_FACTOR=60.0;
+  public static final double MAXIMUM_BLOCKSIZEFACTOR1=4.0;
+  public static final double MAXIMUM_BLOCKSIZEFACTOR2=6.0;
+  
   public static final int MINIMUM_CLUE_POINTSIZE=4;
   public static final int DEFAULT_ROWS=10;
   public static final int DEFAULT_COLS=15;

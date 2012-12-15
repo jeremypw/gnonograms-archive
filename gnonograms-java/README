@@ -25,11 +25,12 @@
     * Advanced solver - can solve most puzzles
     * Advanced puzzle generation with higher grade settings
     * Get hint function (press Ctrl-H when solving)
-
+    * Mark cell and rewind to marked cell
+    
   * (from version 0.9):
     * Import puzzle from image
     * Localization. Translations into Japanese, German and Spanish.
-    * Mark cell and rewind to marked cell
+
     
   * Installation & Licensing
 

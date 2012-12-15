@@ -84,10 +84,10 @@ public class Viewer extends JFrame {
   
   private ImageIcon myLogo;
   private ImageIcon scaledLogo;
-  protected ImageIcon hideIcon, revealIcon;
+  protected ImageIcon hiddenIcon, revealedIcon;
   private JLabel logoLabel;
   private JPanel puzzlePane, toolbarPane, infoPane;
-  private JButton hiderevealButton;
+  private JButton hiderevealButton, undoButton, redoButton, checkButton, restartButton;
   private ResourceBundle rb;
 
   private int rows, cols, cluePointSize=20;
@@ -103,8 +103,8 @@ public class Viewer extends JFrame {
     logoLabel=new JLabel();
     this.setIconImage(myLogo.getImage().getScaledInstance(32,32,Image.SCALE_SMOOTH));
     
-    hideIcon=Utils.createImageIcon("eyes-closed.png","Hide icon");
-    revealIcon=Utils.createImageIcon("eyes-open.png","Reveal icon");
+    hiddenIcon=Utils.createImageIcon("eyes-closed.png","Hidden icon");
+    revealedIcon=Utils.createImageIcon("eyes-open.png","Reveal icon");
 
     puzzlePane=new JPanel();
     puzzlePane.setLayout(new GridBagLayout());
@@ -158,8 +158,13 @@ public class Viewer extends JFrame {
 
   public void setSolving(boolean isSolving){
     drawing.setSolving(isSolving);
-    hiderevealButton.setIcon(isSolving ? revealIcon : hideIcon);
+    hiderevealButton.setIcon(isSolving ? hiddenIcon : revealedIcon);
     hiderevealButton.setToolTipText(isSolving ? rb.getString("Reveal the solution") : rb.getString("Hide the solution"));
+	restartButton.setEnabled(isSolving);
+	undoButton.setEnabled(isSolving);
+	redoButton.setEnabled(isSolving);
+	checkButton.setEnabled(isSolving);
+  
   }
 
   protected void quit(){control.quit();}
@@ -180,10 +185,26 @@ public class Viewer extends JFrame {
       setCreationDate(ge.getCreationDate());
       setAuthor(ge.getAuthor());
       setLicense(ge.getLicense());
-      for (int r=0; r<rows; r++) rowBox.setClueText(r,ge.getClue(r,false));
-      for (int c=0; c<cols; c++) columnBox.setClueText(c,ge.getClue(c,true));
+      boolean clueChanged=false;
+      String originalText, currentText;
+      for (int r=0; r<rows; r++) {
+		  currentText=ge.getClue(r,false);
+		  originalText=rowBox.getClueText(r);
+		  if (!originalText.equals(currentText)) clueChanged=true;
+		  rowBox.setClueText(r,currentText);
+	  }
+		  //rowBox.setClueText(r,ge.getClue(r,false));
+      for (int c=0; c<cols; c++) {
+		  currentText=ge.getClue(c,true);
+		  originalText=columnBox.getClueText(c);
+		  if (!originalText.equals(currentText)) clueChanged=true;
+		  columnBox.setClueText(c,currentText);		  
+		  //columnBox.setClueText(c,ge.getClue(c,true));
+	  }
       setClueFontAndSize(cluePointSize);
-      control.checkCluesValid(); 
+      if (clueChanged){
+		  control.checkCluesValid(); 
+	  }
     }
     ge.dispose();
   }
@@ -238,6 +259,11 @@ public class Viewer extends JFrame {
     columnBox.setFontAndSize(f, fontWidth);
     repack();
   }
+  
+  public void setMargins(int cwm, int clm){
+	  rowBox.setMargins(cwm,clm);
+	  columnBox.setMargins(cwm,clm);
+  }
 
   public void zoomFont(int changeInPointSize){
     if (changeInPointSize>0)cluePointSize++;
@@ -268,7 +294,6 @@ public class Viewer extends JFrame {
       if (scaledLogo==null||scaledLogo.getIconHeight()!=height || scaledLogo.getIconWidth()!=width){
         scaledLogo=new ImageIcon(myLogo.getImage().getScaledInstance(width,height,Image.SCALE_SMOOTH));
         logoLabel.setIcon(scaledLogo);
-        //this.pack();
       }
   }
   
@@ -330,16 +355,16 @@ public class Viewer extends JFrame {
     tb.addSeparator();
     position++;
     
-    tb.add(new MyAction("Undo",Utils.createImageIcon("Undo24.gif","Undo icon"),"UNDO_MOVE"));
-    ((JComponent)(tb.getComponentAtIndex(position))).setToolTipText(rb.getString("Undo move"));
+    undoButton=tb.add(new MyAction("Undo",Utils.createImageIcon("Undo24.gif","Undo icon"),"UNDO_MOVE"));
+    undoButton.setToolTipText(rb.getString("Undo move"));
      position++;
      
-    tb.add(new MyAction("Redo",Utils.createImageIcon("Redo24.gif","Redo icon"),"REDO_MOVE"));
-    ((JComponent)(tb.getComponentAtIndex(position))).setToolTipText(rb.getString("Redo move"));
+    redoButton=tb.add(new MyAction("Redo",Utils.createImageIcon("Redo24.gif","Redo icon"),"REDO_MOVE"));
+    redoButton.setToolTipText(rb.getString("Redo move"));
      position++;
 
-    tb.add(new MyAction("Restart",Utils.createImageIcon("Refresh24.gif","Restart icon"),"RESTART_GAME"));
-    ((JComponent)(tb.getComponentAtIndex(position))).setToolTipText(rb.getString("Start solving this puzzle again"));
+    restartButton=tb.add(new MyAction("Restart",Utils.createImageIcon("Refresh24.gif","Restart icon"),"RESTART_GAME"));
+    restartButton.setToolTipText(rb.getString("Start solving this puzzle again"));
     position++;
      
     tb.addSeparator();
@@ -349,8 +374,8 @@ public class Viewer extends JFrame {
     ((JComponent)(tb.getComponentAtIndex(position))).setToolTipText(rb.getString("Let the computer try to solve the puzzle"));
      position++;
      
-    tb.add(new MyAction("Check",Utils.createImageIcon("errorcheck.png","Check icon"),"CHECK_GAME"));
-    ((JComponent)(tb.getComponentAtIndex(position))).setToolTipText(rb.getString("Check for mistakes"));
+    checkButton=tb.add(new MyAction("Check",Utils.createImageIcon("errorcheck.png","Check icon"),"CHECK_GAME"));
+    checkButton.setToolTipText(rb.getString("Check for mistakes"));
     position++;
     
     tb.addSeparator();
@@ -360,7 +385,7 @@ public class Viewer extends JFrame {
     ((JComponent)(tb.getComponentAtIndex(position))).setToolTipText(rb.getString("Generate a random puzzle"));
     position++;
     
-    tb.add(new MyAction("Hide game",hideIcon,"HIDE_REVEAL_GAME"));
+    tb.add(new MyAction("Hide game",revealedIcon,"HIDE_REVEAL_GAME"));
     hiderevealButton=((JButton)(tb.getComponentAtIndex(position)));
     hiderevealButton.setToolTipText(rb.getString("Hide the solution"));
     position++;
@@ -389,7 +414,6 @@ public class Viewer extends JFrame {
   
   private class MyAction extends AbstractAction{
     //private static final long serialVersionUID = 1;
-    //private String text;
     public MyAction(String text, ImageIcon icon, String command){
       super(text, icon);
       putValue(ACTION_COMMAND_KEY, command);
@@ -411,8 +435,8 @@ public class Viewer extends JFrame {
       if (command.equals("HIDE_REVEAL_GAME")) {
         JButton source=(JButton)(a.getSource());
         String description=((ImageIcon)(source.getIcon())).getDescription();
-        if (description.contains("Hide")) control.setSolving(true);
-        else control.setSolving(false);
+        if (description.contains("Hidden")) control.setSolving(false);
+        else control.setSolving(true);
       }
       if (command.equals("SOLVE_GAME")) control.userSolveGame();
       if (command.equals("RESTART_GAME")) control.restartGame();

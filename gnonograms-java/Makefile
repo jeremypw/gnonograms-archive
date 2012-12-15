@@ -18,7 +18,7 @@
 # *  Author:
 # * 	Jeremy Wootten <jeremwootten@gmail.com>
 PROGRAM=Gnonograms
-VERSION=0.9.5-jre6
+VERSION=0.9.6-jre6
 
 #Java 1.6 or equivalent recommended.  Code will compile with Java 1.7 but with some warnings
 JAVAC=javac 

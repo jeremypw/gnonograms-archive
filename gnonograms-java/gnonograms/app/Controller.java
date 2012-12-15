@@ -77,6 +77,7 @@ public class Controller {
       default :
             setSolving(false);
     }
+    this.setMarginsAndFactors();
     view.setClueFontAndSize(config.getPointSize());
     view.setVisible(true);
   }
@@ -121,6 +122,7 @@ public class Controller {
   public void editPreferences(){
     if (config.editPreferences(view)){
       int r=config.getRows(),c=config.getCols();
+      this.setMarginsAndFactors();
       String locale = config.getLocale();
       if (!locale.equals(myLocale)){
         if (!isSolving || 
@@ -153,6 +155,19 @@ public class Controller {
       else view.setClueFontAndSize(config.getPointSize());
   } }
 
+  private void setMarginsAndFactors(){
+      view.setMargins(
+                      config.getClueWidthMargin(),
+                      config.getClueLengthMargin()
+                      );
+      model.setFactors(
+                      config.getMinRowFreedomFactor(),
+                      config.getMinColumnFreedomFactor(),
+                      config.getMaxBlockSizeFactor1(),
+                      config.getMaxBlockSizeFactor2()
+                      );
+  }
+
   public void newGame(){
     model.clear();
     history.initialize();
@@ -179,17 +194,17 @@ public class Controller {
     if (numberOfErrors==0)
       Utils.showInfoDialog(rb.getString("There are no errors"));
     else if (Utils.showConfirmDialog(rb.getString(
-				"Number of errors")+"  " +numberOfErrors+"\n\n"+
-				rb.getString("Go back to last correct position?"
-			)))rewindGame();
+                "Number of errors")+"  " +numberOfErrors+"\n\n"+
+                rb.getString("Go back to last correct position?"
+            )))rewindGame();
   }
   
   public int countErrors(){
-	  return model.countErrors()-model.countUnknownCells();
+      return model.countErrors()-model.countUnknownCells();
   }
 
   private void rewindGame(){
-	if (!validSolution)return;
+    if (!validSolution)return;
     while (model.countErrors()-model.countUnknownCells()>0){
       if(undoMove()==null) break;
     }
@@ -278,7 +293,7 @@ public class Controller {
       for (int i=0; i<this.rows; i++) view.setClueText(i,gl.rowClues[i],false);
       for (int i=0; i<this.cols; i++) view.setClueText(i,gl.colClues[i],true);
       if (!checkCluesValid()) {
-        newGame();
+        setSolving(false);
         gl.close();
         return;
     } } 
@@ -317,8 +332,10 @@ public class Controller {
       gs.writeClues(view.getClues(false),false);
       gs.writeClues(view.getClues(true),true);
 
-      model.useSolution();
-      gs.writeSolution(model.displayDataToString());
+      if(validSolution){
+        model.useSolution();
+        gs.writeSolution(model.displayDataToString());
+      }
 
       model.useWorking();
       gs.writeWorking(model.displayDataToString());
@@ -376,7 +393,7 @@ public class Controller {
   }
 
   public void userSolveGame(){
-	//user asks computer to solve puzzle
+    //user asks computer to solve puzzle
     boolean useSolution=false;
     boolean useExistingGrid=true, debug=false, stepwise=false;
     if (isSolving==false){
@@ -409,8 +426,8 @@ public class Controller {
         break;
       default: //solver succeeded
         view.setScore(String.valueOf(passes));
-        if (!validSolution) validSolution=false;
         updateSolutionGridFromSolver();
+        //validSolution=true;
         break;
     }
     if (message.length()>0) Utils.showInfoDialog(message);
@@ -421,11 +438,11 @@ public class Controller {
     if (!isSolving) return;
     //Hint disabled when using marked cell
     if (markedCell.getState()!=Resource.CELLSTATE_UNDEFINED) return;
-	//Only hint of no errors have been made
+    //Only hint of no errors have been made
     if (countErrors()>0){
-		checkGame();
-		return;
-	}
+        checkGame();
+        return;
+    }
     prepareToSolve(true,true,false);
     solver.getHint();
     view.redrawGrid();
@@ -469,12 +486,14 @@ public class Controller {
   }
 
   public boolean checkCluesValid(){
-    boolean valid;
     //false if solver returns an error
+    out.println("Check valid");
+    model.blankWorking();
     prepareToSolve(true,false,false);// clues from labels, no start grid
-    valid=(solveGame(false,0,false)>=0); //no debug, no guessing
+    validSolution=(solveGame(false,0,false)>=0); //no debug, no guessing
+    if (!validSolution) model.blankSolution();
     setSolving(isSolving);
-    return valid;
+    return validSolution;
   }
   
   public void updateWorkingGridFromSolver(){
@@ -496,8 +515,6 @@ public class Controller {
   }
   
   private void updateAllLabelText(){
-    //view.resetMaximumClueLength(false, cols/2+2);
-    //view.resetMaximumClueLength(true, rows/2+2);
     updateAllLabelsFromModel();
   }
    public void updateLabelsFromModel(int r, int c){
@@ -565,7 +582,7 @@ public class Controller {
   public void initialiseSolving(){
       history.initialize();
       startDate=new Date();
-      markedCell.clear();	  
+      markedCell.clear();     
   }
   
   public void setSolving(boolean isSolving){

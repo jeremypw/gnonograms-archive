@@ -43,6 +43,8 @@ public class LabelBox extends JPanel{
   private GnonogramLabel[] labels;
   private int no_labels;
   private int size, logoSize=48;
+  private int clueWidthMargin=4;
+  private int clueLengthMargin=12;
   private boolean isColumn;
   private String freedomString;
 
@@ -79,13 +81,13 @@ public class LabelBox extends JPanel{
     int labelWidth, labelHeight;
     //Trial and error functions giving reasonable appearance.
     if (isColumn){
-      labelWidth=size*2+4;
-      labelHeight=maxClueLength*size+2;
+      labelWidth=size*2+clueWidthMargin;
+      labelHeight=maxClueLength*size+clueLengthMargin;
       logoSize=labelHeight;
     }
     else{
-      labelWidth=maxClueLength*size+2;
-      labelHeight=size*2+4;
+      labelWidth=maxClueLength*size+clueLengthMargin;
+      labelHeight=size*2+clueWidthMargin;
       logoSize=labelWidth;
     }
     Dimension d = new Dimension(labelWidth,labelHeight);
@@ -93,6 +95,8 @@ public class LabelBox extends JPanel{
       l.setPreferredSize(d);
     }
   }
+  
+  public void setMargins(int cwm, int clm){clueWidthMargin=cwm; clueLengthMargin=clm;}
   
   private void setLabelFont(Font f){
     for (GnonogramLabel l :labels){

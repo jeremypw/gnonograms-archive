@@ -35,6 +35,11 @@ public class Model {
   private RandomPatternGenerator generator;
   private int[] temp;
   private static Random rand = new Random(System.nanoTime());
+  private double minRowFreedomFactor=30.0;
+  private double minColumnFreedomFactor=30.0;
+  private double maxBlockSizeFactor1=2.0;
+  private double maxBlockSizeFactor2=3.0;
+  
 
   public Model(){
     rows = 10; cols = 10; //Must call set dimensions before use
@@ -56,6 +61,17 @@ public class Model {
     solutionData.resize(r,c); workingData.resize(r,c);
     generator=new RandomPatternGenerator(r,c);
   }
+	public void setFactors(
+										double mrff,
+										double mcff,
+										double mblf1,
+										double mblf2
+										){
+		minRowFreedomFactor=mrff;
+		minColumnFreedomFactor=mcff;
+		maxBlockSizeFactor1=mblf1;
+		maxBlockSizeFactor2=mblf2;
+	}
 
   public void useWorking(){displayData=workingData;}
   public void useSolution() {displayData=solutionData;}
@@ -107,7 +123,7 @@ public class Model {
     
     private int calculatemaximumBlockSize(double lengthOfRegion, double grade){
       //Empirical formula giving reasonable results
-      double max=1+(int)((lengthOfRegion/2)*(1.0-(grade/(Resource.MAXIMUM_GRADE*3.0))));
+      double max=1+(int)((lengthOfRegion/maxBlockSizeFactor1)*(1.0-(grade/(Resource.MAXIMUM_GRADE*maxBlockSizeFactor2))));
       if(max<lengthOfRegion/5)max=lengthOfRegion/5;
       if (max>lengthOfRegion)max=lengthOfRegion-1;
       return (int)max;
@@ -123,8 +139,8 @@ public class Model {
         minimumColumnFreedom=0;minimumRowFreedom=1; //elementary levels
         return;
       }
-      minimumColumnFreedom = (int)((rows*grade)/30.0);
-      minimumRowFreedom = (int)((cols*grade)/30.0);      
+      minimumColumnFreedom = (int)((rows*grade)/minColumnFreedomFactor);
+      minimumRowFreedom = (int)((cols*grade)/minRowFreedomFactor);      
     }
 
     protected void setGrade(double grade){
