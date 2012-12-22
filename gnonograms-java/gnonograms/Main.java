@@ -39,6 +39,9 @@ public class Main {
        out.println("Problem getting system look and feel - using default Java look and feel");
     }
     out.println("System encoding is "+System.getProperty("file.encoding"));
+    out.println("OS architecture is "+System.getProperty("os.arch"));
+    out.println("OS name is "+System.getProperty("os.name"));
+    out.println("OS version is "+System.getProperty("os.version"));
     new Controller(); 
   }
 }

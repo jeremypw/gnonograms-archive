@@ -114,7 +114,7 @@ public class Controller {
       setSolving(false);
       view.redrawGrid();
     }
-    else updateLabelsFromModel(c.row,c.col);
+    else updateLabelsFromModel(c.row,c.col,true);
   }
   
   public void quit(){config.saveProperties();}  
@@ -135,7 +135,6 @@ public class Controller {
           myLocale=locale;
           setLocale();
           init(r,c);
-          view.setClueFontAndSize(config.getPointSize());
           view.setVisible(true);
           newGame();
         }
@@ -148,12 +147,13 @@ public class Controller {
           setSolving(false); 
           rows=r;cols=c;
           resize(r,c);
-          view.setClueFontAndSize(calculateCluePointSize(r,c));
+          config.setPointSize(calculateCluePointSize(r,c));
           newGame();
         }
       }
-      else view.setClueFontAndSize(config.getPointSize());
-  } }
+      view.setClueFontAndSize(config.getPointSize());
+		} 
+  }
 
   private void setMarginsAndFactors(){
       view.setMargins(
@@ -290,8 +290,9 @@ public class Controller {
     }
     else{
       //Valid games either have Solution or Clues (or both)
-      for (int i=0; i<this.rows; i++) view.setClueText(i,gl.rowClues[i],false);
-      for (int i=0; i<this.cols; i++) view.setClueText(i,gl.colClues[i],true);
+      for (int i=0; i<this.rows; i++) view.setClueText(i,gl.rowClues[i],false,false);
+      for (int i=0; i<this.cols; i++) view.setClueText(i,gl.colClues[i],true,false);
+      view.repack();
       if (!checkCluesValid()) {
         setSolving(false);
         gl.close();
@@ -416,7 +417,7 @@ public class Controller {
     String message="";
     switch (passes) {
       case -2://debug mode
-      case 999999: //user cancelled
+	  case 999999: //user cancelled
         break;
       case -1:  //invalid clues;
         validSolution=false;
@@ -427,7 +428,7 @@ public class Controller {
       default: //solver succeeded
         view.setScore(String.valueOf(passes));
         updateSolutionGridFromSolver();
-        //validSolution=true;
+        validSolution=true;
         break;
     }
     if (message.length()>0) Utils.showInfoDialog(message);
@@ -465,7 +466,7 @@ public class Controller {
     while (!(lm.row==r && lm.col==c)){lm=undoMove();}
   }
   
-  private void prepareToSolve(boolean useLabels, boolean useStartgrid, boolean useSolution){
+  private boolean prepareToSolve(boolean useLabels, boolean useStartgrid, boolean useSolution){
     String[] rowClues= new String[this.rows], columnClues= new String[this.cols];
     My2DCellArray solution=null;
     if (useLabels){//get clues from labels
@@ -483,18 +484,25 @@ public class Controller {
       model.useWorking();
     }
     solver.initialize(rowClues, columnClues, useStartgrid ? model.getCellDataArray() : null, useSolution ? solution : null);
+	return solver.valid();
   }
 
   public boolean checkCluesValid(){
-    //false if solver returns an error
-    out.println("Check valid");
-    model.blankWorking();
-    prepareToSolve(true,false,false);// clues from labels, no start grid
-    validSolution=(solveGame(false,0,false)>=0); //no debug, no guessing
-    if (!validSolution) model.blankSolution();
-    setSolving(isSolving);
-    return validSolution;
-  }
+		//false if solver returns an error
+		out.print("Check valid");
+		validSolution=false;
+		model.blankWorking();
+		if(prepareToSolve(true,false,false)){// clues from labels, no start grid, do not use solution
+			validSolution=(solveGame(false,0,false)>=0); //no debug, no guessing
+		}
+		else validSolution=false;
+		if (!validSolution) {
+			model.errorSolution();
+			Utils.showErrorDialog("Clues are not valid");
+		}
+		setSolving(isSolving);
+		return validSolution;
+	}
   
   public void updateWorkingGridFromSolver(){
     model.useWorking();
@@ -517,20 +525,17 @@ public class Controller {
   private void updateAllLabelText(){
     updateAllLabelsFromModel();
   }
-   public void updateLabelsFromModel(int r, int c){
+   public void updateLabelsFromModel(int r, int c, boolean repackAfter){
     if (isSolving) return;
-    view.setClueText(r, Utils.clueFromIntArray(model.getRow(r)),false);
-    view.setClueText(c, Utils.clueFromIntArray(model.getColumn(c)),true);
+    view.setClueText(r, Utils.clueFromIntArray(model.getRow(r)),false,true);
+    view.setClueText(c, Utils.clueFromIntArray(model.getColumn(c)),true,true);
   }
   
   public void updateAllLabelsFromModel(){
     if (isSolving) return;
-    for (int r=0;r<rows;r++) view.setClueText(r, Utils.clueFromIntArray(model.getRow(r)),false);
-    for(int c=0;c<cols;c++) view.setClueText(c, Utils.clueFromIntArray(model.getColumn(c)),true);
-  }
-  
-  public void updateLabelFromString(int idx, String clue, boolean isColumn){
-    view.setClueText(idx,clue,isColumn);
+    for (int r=0;r<rows;r++) view.setClueText(r, Utils.clueFromIntArray(model.getRow(r)),false,false);
+    for(int c=0;c<cols;c++) view.setClueText(c, Utils.clueFromIntArray(model.getColumn(c)),true,false);
+    view.repack();
   }
  
   private boolean checkSolved(){
@@ -566,7 +571,7 @@ public class Controller {
     Move lm=history.getLastMove();
     if (!(lm==null)){
       model.setDataFromCell(new Cell(lm.row,lm.col,lm.previousState));
-      updateLabelsFromModel(lm.row,lm.col);
+      updateLabelsFromModel(lm.row,lm.col,false);
       view.redrawGrid();
     }
     return lm;
@@ -575,7 +580,7 @@ public class Controller {
     Move lm=history.getNextMove();
     if (lm==null) return;
     model.setDataFromCell(new Cell(lm.row,lm.col,lm.replacementState));
-    updateLabelsFromModel(lm.row,lm.col);
+    updateLabelsFromModel(lm.row,lm.col,false);
     view.redrawGrid();
   }
   

@@ -1,7 +1,7 @@
 Gnonograms-java - version 0.9.6
 *********************************
-Dec 15, 2012  Implemented advanced settings, giving finer control over some layout and game generator properties without recompiling
-
+Dec 15, 2012  Implemented advanced settings.
+Dec 20, 2012  Improved fix of clue layout truncation bug under Windows.
 Gnonograms-java - version 0.9.5.1
 *********************************
 Dec 12, 2012  Bug-fix - clues truncated under Windows.

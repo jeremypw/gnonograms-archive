@@ -70,12 +70,16 @@ public class CellGrid extends JPanel{
   currentCol=-1;
   
   solvingColors=new Color[8];
-  for(Color c : solvingColors) c=Color.orange;
+  settingColors=new Color[8];
+  
+  for(int i=0;i<8;i++) {
+	  solvingColors[i]=Color.orange;
+	  settingColors[i]=Color.red;
+  }
   solvingColors[Resource.CELLSTATE_FILLED]=Color.blue;
   solvingColors[Resource.CELLSTATE_EMPTY]=Color.yellow;
   solvingColors[Resource.CELLSTATE_UNKNOWN]=(new Color(240,240,240,255));
-  settingColors=new Color[8];
-  for(Color c : settingColors)c=Color.orange;
+
   settingColors[Resource.CELLSTATE_FILLED]=Color.black;
   settingColors[Resource.CELLSTATE_EMPTY]=Color.white;
   settingColors[Resource.CELLSTATE_UNKNOWN]=Color.red;

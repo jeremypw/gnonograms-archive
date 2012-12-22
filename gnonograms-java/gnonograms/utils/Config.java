@@ -167,7 +167,10 @@ public class Config extends Properties {
         defaultProperties.setProperty("model.maxblocksizefactor2","3.0");
         defaultProperties.setProperty("view.pointsize","20");
         defaultProperties.setProperty("view.cluewidthmargin","4");
-        defaultProperties.setProperty("view.cluelengthmargin","12");    
+        if (((System.getProperty("os.name")).toUpperCase()).contains("LINUX")){
+			defaultProperties.setProperty("view.cluelengthmargin","20");
+		}
+		else defaultProperties.setProperty("view.cluelengthmargin","40");	    
         defaultProperties.setProperty("system.puzzledirectory",System.getProperty("user.home"));
         defaultProperties.setProperty("system.imagedirectory",System.getProperty("user.home"));
         out.println("Default locale:"+(Locale.getDefault()).toString()+":");

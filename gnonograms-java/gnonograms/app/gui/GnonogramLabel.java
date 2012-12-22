@@ -64,7 +64,7 @@ public class GnonogramLabel extends JLabel{
   }
   
   private String verticalString (String s){
-    String[] sa=s.split(Resource.BLOCKSEPARATOR);;
+    String[] sa=s.split(Resource.BLOCKSEPARATOR);
     StringBuilder sb=new StringBuilder("<html><P align=right><b>");
     for (String ss : sa){
       sb.append(ss); sb.append("<br>");

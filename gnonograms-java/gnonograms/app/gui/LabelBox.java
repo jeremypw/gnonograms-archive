@@ -39,13 +39,15 @@ import static java.lang.System.out;
 
 public class LabelBox extends JPanel{
   //private static final long serialVersionUID = 1;
-  private int maxClueLength=10;
+  private int maxClueLength=3;
   private GnonogramLabel[] labels;
   private int no_labels;
-  private int size, logoSize=48;
+  private int logoSize=48;
   private int clueWidthMargin=4;
   private int clueLengthMargin=12;
+  private int fontHeight, fontWidth;
   private boolean isColumn;
+  private boolean sizeOutOfDate=true;
   private String freedomString;
 
   public LabelBox(int no_labels, boolean isColumn, String freedomString){
@@ -58,7 +60,7 @@ public class LabelBox extends JPanel{
 
     labels=new GnonogramLabel[no_labels];
     for (int i=0; i<no_labels; i++) {
-      GnonogramLabel l=new GnonogramLabel("0", isColumn);
+      GnonogramLabel l=new GnonogramLabel("0",isColumn);
       if (isColumn){
         l.setAlignmentY(Component.BOTTOM_ALIGNMENT);
         l.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -69,31 +71,38 @@ public class LabelBox extends JPanel{
       }
       this.add(l);
       labels[i]=l;
+      
   } }
 
-  public void setFontAndSize(Font f, int size){
+  public void setFontAndSize(Font f, int fontWidth, int fontHeight){
     setLabelFont(f);
-    this.size=size;
-    setSize();
+    this.fontWidth=fontWidth;
+    this.fontHeight=fontHeight;
+    out.println("FontWidth: "+fontWidth+" Font height: "+fontHeight);
+    sizeOutOfDate=true;
   }
   
-  private void setSize(){
+  public boolean setLabelSize(){
     int labelWidth, labelHeight;
     //Trial and error functions giving reasonable appearance.
+    if (!sizeOutOfDate) return false;
     if (isColumn){
-      labelWidth=size*2+clueWidthMargin;
-      labelHeight=maxClueLength*size+clueLengthMargin;
+      labelWidth=this.fontWidth*2+clueWidthMargin;
+      labelHeight=(maxClueLength*fontHeight)/2+clueLengthMargin; //maxClueLength inludes commas
       logoSize=labelHeight;
     }
     else{
-      labelWidth=maxClueLength*size+clueLengthMargin;
-      labelHeight=size*2+clueWidthMargin;
+      labelWidth=maxClueLength*fontWidth;
+      labelHeight=fontWidth*2+clueWidthMargin;
       logoSize=labelWidth;
     }
     Dimension d = new Dimension(labelWidth,labelHeight);
     for (GnonogramLabel l :labels){
       l.setPreferredSize(d);
     }
+    sizeOutOfDate=false;
+		out.println((isColumn ? "ColumnBox" : "RowBox")+" Label Width: "+labelWidth+" Label Height: "+labelHeight);
+		return true;
   }
   
   public void setMargins(int cwm, int clm){clueWidthMargin=cwm; clueLengthMargin=clm;}
@@ -110,13 +119,19 @@ public class LabelBox extends JPanel{
   public void setClueText(int l, String text){
     if (l>=no_labels || l<0) return;
     if (text==null) text="?";
-    labels[l].setText(text);
     if(text.length()>maxClueLength){
-      maxClueLength=text.length();
-      setSize();
-  } }
+      resetMaximumClueLength(text.length());
+      out.println("New longest clue: "+text);
+		}
+		labels[l].setText(text);
+  }
+  
 
-  public void resetMaximumClueLength(int maxLength){maxClueLength=maxLength;}
+  public void resetMaximumClueLength(int maxLength){
+	  maxClueLength=maxLength;
+	  out.println((isColumn ? "ColumnBox" : "RowBox")+"Max clue length: "+maxLength);
+	  sizeOutOfDate=true;
+	}
   
   public void setLabelToolTip(int l, int freedom){
     labels[l].setToolTipText(freedomString+" "+freedom);

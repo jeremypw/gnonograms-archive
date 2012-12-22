@@ -189,22 +189,24 @@ public class Viewer extends JFrame {
       String originalText, currentText;
       for (int r=0; r<rows; r++) {
 		  currentText=ge.getClue(r,false);
-		  originalText=rowBox.getClueText(r);
-		  if (!originalText.equals(currentText)) clueChanged=true;
-		  rowBox.setClueText(r,currentText);
-	  }
-		  //rowBox.setClueText(r,ge.getClue(r,false));
+				originalText=rowBox.getClueText(r);
+				if (!originalText.equals(currentText)) {
+					clueChanged=true;
+					rowBox.setClueText(r,currentText);
+				}
+			}
       for (int c=0; c<cols; c++) {
-		  currentText=ge.getClue(c,true);
-		  originalText=columnBox.getClueText(c);
-		  if (!originalText.equals(currentText)) clueChanged=true;
-		  columnBox.setClueText(c,currentText);		  
-		  //columnBox.setClueText(c,ge.getClue(c,true));
-	  }
+				currentText=ge.getClue(c,true);
+				originalText=columnBox.getClueText(c);
+				if (!originalText.equals(currentText)) {
+					clueChanged=true;
+					columnBox.setClueText(c,currentText);	
+				}	  
+			}
       setClueFontAndSize(cluePointSize);
       if (clueChanged){
-		  control.checkCluesValid(); 
-	  }
+				control.checkCluesValid(); 
+			}
     }
     ge.dispose();
   }
@@ -243,9 +245,8 @@ public class Viewer extends JFrame {
     c.anchor=GridBagConstraints.CENTER;
     puzzlePane.add(drawing,c);
     
-    resetMaximumClueLength(false, cols/2+2);
-    resetMaximumClueLength(true, rows/2+2);
-    this.pack();
+    resetMaximumClueLength(false, cols/2+1);
+    resetMaximumClueLength(true, rows/2+1);
   }
 
   public void setClueFontAndSize(int pointSize){
@@ -255,8 +256,9 @@ public class Viewer extends JFrame {
     Font f=new Font("",Font.BOLD,cluePointSize);
     FontMetrics fm= this.getGraphics().getFontMetrics(f);
     int fontWidth=fm.stringWidth("0");
-    rowBox.setFontAndSize(f, fontWidth);
-    columnBox.setFontAndSize(f, fontWidth);
+    int fontHeight=fm.getHeight();
+    rowBox.setFontAndSize(f, fontWidth, fontHeight);
+    columnBox.setFontAndSize(f, fontWidth, fontHeight);
     repack();
   }
   
@@ -273,18 +275,23 @@ public class Viewer extends JFrame {
     setClueFontAndSize(cluePointSize);
   }
 
-  public void setClueText(int idx, String text, boolean isColumn){
+  public void setClueText(int idx, String text, boolean isColumn, boolean repackAfter){
     Point location = this.getLocation();
     LabelBox lb= isColumn ? columnBox : rowBox;
     lb.setClueText(idx,text);
     setLabelToolTip(idx, Utils.freedomFromClue((isColumn ? rows : cols),text),isColumn);
-    repack();
-
+    if (repackAfter) repack();
   }
   
-  private void repack(){
-    resizeLogoLabelImage(); //resize logo label accordingly
-    this.pack();
+  public void repack(){  
+		//if row or column boxes change size, repack. 
+		boolean b1=rowBox.setLabelSize();
+		boolean b2=columnBox.setLabelSize(); 
+    if (b1 || b2){
+			out.println("Repack");
+			resizeLogoLabelImage(); //resize logo label accordingly;
+			this.pack();
+		}
   }
 
   private void resizeLogoLabelImage(){ 

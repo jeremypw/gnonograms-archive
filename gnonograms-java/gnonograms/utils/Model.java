@@ -55,6 +55,7 @@ public class Model {
 
   public void blankSolution() {solutionData.setAll(Resource.CELLSTATE_EMPTY);}
   public void blankWorking(){workingData.setAll(Resource.CELLSTATE_UNKNOWN);}
+  public void errorSolution(){solutionData.setAll(Resource.CELLSTATE_ERROR);}
   
   public void setDimensions(int r, int c){
     this.rows=r;this.cols=c;
