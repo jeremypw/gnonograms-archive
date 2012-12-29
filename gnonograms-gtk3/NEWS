@@ -1,11 +1,8 @@
-Gnonograms3 - version 0.9.10
-****************************
-04/June/2012 Bugfix: possible array bound error in solver (count_capped_ranges)
-             Reduced maximum size to 60 X 60;
-05/Aug/2012  Column clue numbers right way up.
-
 Gnonograms3 - version 0.9.9
 ***************************
+24/Dec/2012  Remove deprecated code.  Change to Vala version 0.16
+             Change to new solver (based on Java version).
+05/Aug/2012  Column clue numbers right way up.
 21/Apr/2012  Corrections/improvements to install and uninstall to ensure
              all files removed on uninstall (except user config).
              Use different mime-type file & icon to gnonograms gtk2 version

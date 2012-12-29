@@ -18,14 +18,15 @@
 # *
 # *  Author:
 # * 	Jeremy Wootten <jeremwootten@gmail.com>
+
 PROGRAM=gnonograms3
 
-VERSION=0.9.10
+VERSION=0.9.9
 GETTEXT_PACKAGE=$(PROGRAM)
 BUILD_ROOT=1
 
 VALAC=valac
-MIN_VALAC_VERSION = 0.12.0
+MIN_VALAC_VERSION = 0.16.0
 INSTALL_PROGRAM = install
 INSTALL_DATA = install -m 644
 
@@ -58,13 +59,14 @@ SRC_FILES = Gnonogram_cellgrid.vala \
 	Gnonogram_label.vala \
 	Gnonogram_labelbox.vala \
 	Gnonogram_model.vala \
-	Gnonogram_permutor.vala \
-	Gnonogram_region_new.vala \
+	Gnonogram_region.vala \
 	Gnonogram_solver.vala \
-	Gnonogram_viewer_new.vala \
+	Gnonogram_permutor.vala \
+	Gnonogram_viewer.vala \
 	img2gno.vala \
 	main.vala \
 	My2DCellArray.vala \
+	Range.vala \
 	Resource.vala \
 	utils.vala
 
@@ -145,7 +147,7 @@ VALA_CFLAGS = `pkg-config --cflags $(EXT_PKGS)` $(foreach hdir,$(HEADER_DIRS),-I
 
 VALA_LDFLAGS = `pkg-config --libs $(EXT_PKGS)`
 
-# setting CFLAGS in configure.mk overrides build type
+#setting CFLAGS in configure.mk overrides build type
 ifndef CFLAGS
 ifdef BUILD_DEBUG
 CFLAGS = -O0 -g -pipe -Wall
@@ -153,8 +155,8 @@ else
 CFLAGS = -O2 -pipe -Wl,--as-needed
 endif
 endif
-CFLAGS+="-DGTK_DISABLE_SINGLE_INCLUDES"
-CFLAGS+="-DGDK_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED"
+#CFLAGS+="-DGTK_DISABLE_SINGLE_INCLUDES"
+#CFLAGS+="-DGDK_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED"
 
 #-----------------------------------TARGETS----------------------------------------------
 all: $(PROGRAM)

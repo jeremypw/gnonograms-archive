@@ -20,7 +20,7 @@
  *  Author:
  *  Jeremy Wootten <jeremwootten@gmail.com>
  */
- 
+
 package gnonograms.utils;
 
 import java.lang.Math;
@@ -58,7 +58,7 @@ public class Region {
   private boolean debug;
   public int index;
   public String message;
-  
+
   public boolean isCompleted=false;
   private boolean isCompletedStore;
   private boolean[] completedBlocks;
@@ -72,10 +72,10 @@ public class Region {
   private int completedStore;
   public int[] status;
   private int[] statusStore;
-  
+
   private int[][] ranges; //format: start,length,unfilled?,complete?
   private int[][] rangesStore;
-  
+
   private int unchangedCount=0;
   public int nCells;
   private String clue;
@@ -96,7 +96,7 @@ public class Region {
 
   public Region (My2DCellArray grid){
     this.grid=grid;
-    this.index=index;   this.isColumn=isColumn;  this.nCells=nCells; 
+    //this.index=index;   this.isColumn=isColumn;  this.nCells=nCells;
     int maxlen=Math.max(grid.getRows(), grid.getCols());
     status=new int[maxlen]; statusStore=new int[maxlen];
     int maxblks=maxlen/2+2;
@@ -113,7 +113,7 @@ public class Region {
   public void initialize(int index, boolean isColumn, int nCells, String clue){
     this.index=index;   this.isColumn=isColumn;  this.nCells=nCells; this.clue=clue;
     if (nCells==1) {this.isCompleted=true; return;}
-    tempStatus=new int[nCells]; 
+    tempStatus=new int[nCells];
     tempStatus2=new int[nCells];
     int[] tmpblcks=Utils.blockArrayFromClue(clue);
     nBlocks=tmpblcks.length;
@@ -166,7 +166,7 @@ public class Region {
     tagsToStatus(); putStatus();
   }
 
-  private void initialfix(){ 
+  private void initialfix(){
     //finds cells that can be identified as FILLED from the start.
     //out.println("initialfix\n");
     int freedom=nCells-blockExtent;
@@ -193,7 +193,7 @@ public class Region {
      * with this region.
      *
       Ignores single cell regions for testing purposes ...
-      * 
+      *
       * In hint mode, return minimal change
     * */
 
@@ -217,7 +217,7 @@ public class Region {
       tagsToStatus();
       if (totalsChanged()){
         madechanges=true;
-        if(inError) break; 
+        if(inError) break;
       }
       else break; // no further changes made
     }
@@ -311,7 +311,7 @@ public class Region {
             }
             tagsToStatus();changed=true;
           }
-        } 
+        }
       }
       currentIdx+=length;//move past block - if reaches here no operations have been performed on block
     }
@@ -583,7 +583,7 @@ public class Region {
     return false;
   }
 
-	
+
   private boolean findEdge(int limit, int direction){
     // Edge is first FILLED or UNKNOWN cell from limit of region.
     //starting point is set in currentIdx and currentBlockNum before calling.
@@ -704,7 +704,7 @@ public class Region {
     } } }
     return false;
   }
-  
+
   private boolean availableFilledSubRegionAudit(){
     //test whether there is an unambiguous distribution of available blocks amongs available filled subregions.
     //out.println("Available subregion audit\n");
@@ -747,7 +747,7 @@ public class Region {
     }
     if (countBlocks!=countRegions) return false;
     int[] candidates= new int[countBlocks];
-    int countCandidates=0; 
+    int countCandidates=0;
     int combinedLength=0;
     for (int i=0;i<nAvailableBlocks;i++){
       if (availableBlocks[i]<0)continue;
@@ -835,7 +835,7 @@ public class Region {
 
     return count;
   }
-  
+
   private int countAvailableRanges(boolean notempty){
     // determine location of ranges of unknown or unfinished filled cells
     // and store in ranges[][]
@@ -1349,7 +1349,7 @@ public class Region {
     }
     return sb.toString();
   }
-  
+
   private class Range {  //can use for filled subregions or ranges of filled and unknown cells
     public int start,end,filled,unknown;
     public Range(int start, int end, int filled, int unknown){
