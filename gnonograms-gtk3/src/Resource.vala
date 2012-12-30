@@ -338,13 +338,17 @@ namespace Resource
     {
         font_desc=config_instance.get_font();;
     }
-    public static void set_custom_game_dir()
+    public static void set_custom_game_dir(string game_dir="")
     {
-        string new_dir=Utils.get_file_path(FileChooserAction.SELECT_FOLDER,_("Choose folder for saving and loading puzzles"),null,null,Resource.save_game_dir);
-        if (new_dir!="")
+        string path=game_dir;
+        //stdout.printf(@"game_dir is $game_dir\n");
+        if (path=="" || !FileUtils.test(path,FileTest.IS_DIR)){
+            path=Utils.get_file_path(FileChooserAction.SELECT_FOLDER,_("Choose folder for saving and loading puzzles"),null,null,Resource.save_game_dir);
+        }
+        if (path!="")
         {
-            Resource.save_game_dir=new_dir;
-            Resource.load_game_dir=new_dir;
+            Resource.save_game_dir=path;
+            Resource.load_game_dir=path;
         }
     }
     public static void set_default_game_dir()

@@ -1,4 +1,4 @@
-/* Solver class for Gnonograms3
+/* Range class for Gnonograms3
  * Finds solution for a set of clues
  * Copyright (C) 2010-2011  Jeremy Wootten
  *

@@ -562,7 +562,7 @@ public class Gnonogram_region {
         while (currentIdx!=blocklimit && status[currentIdx]==CellState.FILLED){
           setcellowner(currentIdx,currentBlockNum,true,false);
           setcellempty(edgestart);
-          stdout.printf("Set cell " + edgestart.to_string()+" empty \n");
+          //stdout.printf("Set cell " + edgestart.to_string()+" empty \n");
           changed=true;
           if (dir) {currentIdx++; edgestart++;}
           else {currentIdx--; edgestart--;}

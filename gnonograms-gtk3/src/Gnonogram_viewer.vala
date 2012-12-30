@@ -52,7 +52,7 @@ public class Gnonogram_view : Gtk.Window
     public signal void penaltymode(bool penalty);
     public signal void resetall();
     public signal void undoredo(bool direction);
-    public signal void undoerrors();
+    //public signal void undoerrors();
     public signal void editgame();
     public signal void trimgame();
     public signal void gethint();
@@ -75,7 +75,7 @@ public class Gnonogram_view : Gtk.Window
     private Gtk.MenuItem _showworkingmenuitem;
     private Gtk.MenuItem _undomenuitem;
     private Gtk.MenuItem _redomenuitem;
-    private Gtk.MenuItem _undoerrorsmenuitem;
+    //private Gtk.MenuItem _undoerrorsmenuitem;
     private Gtk.MenuItem _restartmenuitem;
     private Gtk.MenuItem _hintmenuitem;
 
@@ -236,9 +236,9 @@ public class Gnonogram_view : Gtk.Window
             _redomenuitem=new ImageMenuItem.from_stock(Gtk.Stock.REDO,accel_group);
             _redomenuitem.sensitive=false;
             gamesubmenu.add(_redomenuitem);
-            _undoerrorsmenuitem=new Gtk.MenuItem.with_mnemonic(_("Undo all errors"));
-            _undoerrorsmenuitem.sensitive=false;
-            gamesubmenu.add(_undoerrorsmenuitem);
+            //_undoerrorsmenuitem=new Gtk.MenuItem.with_mnemonic(_("Undo all errors"));
+            //_undoerrorsmenuitem.sensitive=false;
+            //gamesubmenu.add(_undoerrorsmenuitem);
             _showsolutionmenuitem=new Gtk.MenuItem.with_mnemonic(_("_Show solution"));
             gamesubmenu.add(_showsolutionmenuitem);
             _showworkingmenuitem=new Gtk.MenuItem.with_mnemonic(_("Show _Working"));
@@ -349,7 +349,7 @@ public class Gnonogram_view : Gtk.Window
         _undomenuitem.add_accelerator("activate",accel_group,keyval_from_name("z"),Gdk.ModifierType.CONTROL_MASK, Gtk.AccelFlags.VISIBLE);
         _redomenuitem.activate.connect(()=>{undoredo(false);});
         _redomenuitem.add_accelerator("activate",accel_group,keyval_from_name("y"),Gdk.ModifierType.CONTROL_MASK, Gtk.AccelFlags.VISIBLE);
-        _undoerrorsmenuitem.activate.connect(()=>{undoerrors();});
+        //_undoerrorsmenuitem.activate.connect(()=>{undoerrors();});
         _showsolutionmenuitem.activate.connect(()=>{revealgame();});
         _showsolutionmenuitem.add_accelerator("activate",accel_group,keyval_from_name("s"),Gdk.ModifierType.SHIFT_MASK, Gtk.AccelFlags.VISIBLE);
         _showworkingmenuitem.activate.connect(()=>{hidegame();});
@@ -372,8 +372,8 @@ public class Gnonogram_view : Gtk.Window
         fontmenuitem.activate.connect(()=>{setfont();});
         _resizemenuitem.activate.connect(()=>{resizegame();});
         _grademenuitem.activate.connect(set_difficulty);
-        customgamedirmenuitem.activate.connect(Resource.set_custom_game_dir);
-        defaultgamedirmenuitem.activate.connect(Resource.set_default_game_dir);
+        customgamedirmenuitem.activate.connect(()=>{Resource.set_custom_game_dir();});
+        defaultgamedirmenuitem.activate.connect(()=>{Resource.set_default_game_dir();});
 
         plainpatternmenuitem.activate.connect(()=>{setpattern(CellPatternType.NONE);});
         radialpatternmenuitem.activate.connect(()=>{setpattern(CellPatternType.RADIAL);});
@@ -569,7 +569,7 @@ public class Gnonogram_view : Gtk.Window
         string manual_uri;
         if (Resource.installed && Resource.use_gnome_help)
         {
-            manual_uri="ghelp:Gnonograms3";
+            manual_uri="ghelp:gnonograms3";
         }
         else
         {
@@ -688,7 +688,7 @@ public class Gnonogram_view : Gtk.Window
     {
         _undomenuitem.sensitive=sensitive;
         _undo_tool.sensitive=sensitive;
-        _undoerrorsmenuitem.sensitive=sensitive;
+        //_undoerrorsmenuitem.sensitive=sensitive;
     }
     public void set_redo_sensitive(bool sensitive)
     {

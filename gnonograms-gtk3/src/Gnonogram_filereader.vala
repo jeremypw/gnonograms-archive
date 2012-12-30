@@ -61,7 +61,7 @@ public class Gnonogram_filereader {
         else is_picto_game=false;
 
         is_game=true;
-        stdout.printf(@"reader gamepath is $game_path\n");
+        //stdout.printf(@"reader gamepath is $game_path\n");
     }
 
     public void ask_game_path()

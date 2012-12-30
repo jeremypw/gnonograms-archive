@@ -1,5 +1,8 @@
 Gnonograms version 0.9.9
 **************************
+29/Dec/2012  Backported improvements from Java version including new solver
+             Check errors now rewinds to last position without errors.
+             Column clue numerals now upright
 21/Apr/2012  Corrections/improvements to install and uninstall to ensure
              all files removed on uninstall (except user config).
 

@@ -1,7 +1,7 @@
 [Desktop Entry]
 Version=1.0
 Type=Application
-Name=Gnonograms
+Name=Gnonograms2
 GenericName=Logic game
 Comment=Design and solve Nonogram puzzles
 Exec=gnonograms %f

@@ -96,11 +96,16 @@
     return rowTotal==colTotal;
   }
 
-  public int solve_it(bool debug, bool use_advanced, bool stepwise=false, bool uniqueOnly=false){
+  public int solve_it(bool debug,
+                      bool use_advanced,
+                      bool use_ultimate=true,
+                      bool uniqueOnly=false,
+                      bool stepwise=false
+                      ){
     int simpleresult=simplesolver(debug,true, checksolution, stepwise); //debug,log errors, check solution, step through solution one pass at a time
     if (simpleresult==0 && use_advanced){
         CellState[] gridstore= new CellState[rows*cols];
-        return advancedsolver(gridstore, debug, 9999, uniqueOnly);
+        return advancedsolver(gridstore, debug, 9999, uniqueOnly, use_ultimate);
     }
     if (rows==1) stdout.printf(regions[0].to_string());  //used for debugging
     return simpleresult;
@@ -134,7 +139,10 @@
     return false;
   }
 
-  private int simplesolver(bool debug, bool logerror, bool checksolution, bool stepwise){
+  private int simplesolver( bool debug,
+                            bool logerror,
+                            bool checksolution,
+                            bool stepwise){
     bool changed=true;
     int pass=1;
     //int start=regionCount-1;
@@ -186,7 +194,11 @@
     }
     return false;
   }
-  private int advancedsolver(CellState[] gridstore, bool debug, int maxGuesswork, bool uniqueOnly,bool useUltimate=true){
+  private int advancedsolver( CellState[] gridstore,
+                              bool debug,
+                              int maxGuesswork,
+                              bool uniqueOnly,
+                              bool useUltimate=true){
     // single cell guesses, depth 1 (no recursion)
     // make a guess in each unknown cell in turn
     // if leads to contradiction mark opposite to guess,
@@ -207,10 +219,11 @@
 
     this.saveposition(gridstore);
     while (true){
+      Utils.process_events();
       trialCell=makeguess(trialCell); guesses++;
       if (trialCell.col==-1){ //run out of guesses
         if (changed){
-            stdout.printf(@"Changed $changed wraps: $wraps maxturns: $maxTurns\n");
+            //stdout.printf(@"Changed $changed wraps: $wraps maxturns: $maxTurns\n");
           if(countChanged>maxGuesswork) return 0;
         }
         else if (maxTurns==initialmaxTurns){
@@ -228,7 +241,13 @@
       }
       grid.set_data_from_cell(trialCell);
       simpleresult=simplesolver(false,false,false,false); //only debug advanced part, ignore errors
-      if (simpleresult>0 && uniqueOnly) {countChanged++; simpleresult=0; break;}//solution found (but not necessarily unique so reject it)
+      if (simpleresult>0) {
+        if (uniqueOnly){
+          countChanged++;
+          simpleresult=0;
+        }
+        break;
+      }
       loadposition(gridstore); //back track
       if (simpleresult<0){ //contradiction -  insert opposite guess
         grid.set_data_from_cell(trialCell.invert()); //mark opposite to guess
@@ -303,7 +322,7 @@
 
         showsolvergrid();
         if(!Utils.show_confirm_dialog(_("Start Ultimate solver?\n This can take a long time and may not work"))) return 999999;
-
+        Utils.process_events();
         CellState[] grid_store2 = new CellState[rows*cols];
         CellState[] guess={};
 
@@ -328,11 +347,13 @@
             p.initialise();
             while (p.next())
             {
+                Utils.process_events(); //keep display from freezing
                 guesses++;
                 if (guesses>limit)
                 {
                     if(Utils.show_confirm_dialog(_("This is taking a long time!")+"\n"+_("Keep trying?"))) limit+=GUESSESBEFOREASK;
                     else return 999999;
+                    Utils.process_events();
                 }
                 guess=p.get();
 

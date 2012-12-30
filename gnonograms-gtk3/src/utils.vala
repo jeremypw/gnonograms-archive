@@ -31,6 +31,13 @@ namespace Utils
                 bn=bn[0:-ext.length];
             return bn;
     }
+    public static string get_directory(string path)
+    {
+            string bn=Path.get_basename(path);
+            return path[0:-bn.length];
+    }
+
+
 
     public static string get_string_response(string prompt)
     {

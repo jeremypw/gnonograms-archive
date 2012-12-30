@@ -20,12 +20,12 @@
 # * 	Jeremy Wootten <jeremwootten@gmail.com>
 PROGRAM=gnonograms
 
-VERSION=0.9.8
+VERSION=0.9.9.1
 GETTEXT_PACKAGE=$(PROGRAM)
 BUILD_ROOT=1
 
 VALAC=valac
-MIN_VALAC_VERSION = 0.12.0
+MIN_VALAC_VERSION = 0.16.0
 INSTALL_PROGRAM = install
 INSTALL_DATA = install -m 644
 
@@ -65,6 +65,7 @@ SRC_FILES = Gnonogram_cellgrid.vala \
 	img2gno.vala \
 	main.vala \
 	My2DCellArray.vala \
+	Range.vala \
 	Resource.vala \
 	utils.vala
 
