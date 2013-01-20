@@ -208,7 +208,7 @@ public class Region {
       if (unchangedCount>1) return false; //allow an unchanged visit to ensure all possible changes are made.
     }
     else unchangedCount=0;
-    if(isCompleted) return false;
+    if(isCompleted) {return false;}
     int count=0;  boolean madechanges=false;
     while (!isCompleted && count<MAXCYCLES){
       count++;
@@ -1231,7 +1231,7 @@ public class Region {
       statusToTags();
   } }
 
-  private void putStatus(){
+  public void putStatus(){
     //use tempStatus2 to ovoid overwriting original input - needed for debugging
     for (int i=0;i<nCells; i++){
       tempStatus2[i]=(status[i]==Resource.CELLSTATE_COMPLETED ? Resource.CELLSTATE_FILLED : status[i]);

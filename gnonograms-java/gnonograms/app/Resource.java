@@ -28,7 +28,7 @@ import java.awt.Color;
 public class Resource
 {
   public static final String BLOCKSEPARATOR=",";
-  public  static final String VERSION_STRING="0.9.6";
+  public  static final String VERSION_STRING="0.9.7";
   public static final String IMAGE_PATH="/res/images/";
   public static final double MAXIMUM_GRADE=20;
   public static final double GRADE_FOR_ONE_GUESS=15;

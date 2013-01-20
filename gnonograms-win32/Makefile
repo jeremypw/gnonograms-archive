@@ -26,17 +26,19 @@
 
 
 PROGRAM=gnonograms-win32
-CC=i686-pc-mingw32-gcc
-LD=i686-pc-mingw32-ld
-AR=i686-pc-mingw32-ar
-PKG_CONFIG=i686-pc-mingw32-pkg-config
+CC=i686-w64-mingw32-gcc
+LD=i686-w64-mingw32-ld
+AR=i686-w64-mingw32-ar
+PKG_CONFIG_PATH=/usr/i686-pc-mingw32/lib/pkgconfig
+LD_LIBRARY_PATH=/usr/i686-pc-mingw32/lib
 
-VERSION=0.9.8-beta
+
+VERSION=0.9.9-beta
 GETTEXT_PACKAGE=$(PROGRAM)
 BUILD_ROOT=1
 
 VALAC=valac
-MIN_VALAC_VERSION = 0.12.0
+MIN_VALAC_VERSION = 0.16.0
 INSTALL_PROGRAM = install
 INSTALL_DATA = install -m 644
 
@@ -66,6 +68,7 @@ SRC_FILES = Gnonogram_cellgrid.vala \
 	img2gno.vala \
 	main.vala \
 	My2DCellArray.vala \
+	Range.vala \
 	Resource.vala \
 	utils.vala
 
@@ -90,7 +93,7 @@ TEXT_FILES = \
 	THANKS
 
 EXT_PKGS = gtk+-2.0
-EXT_PKG_VERSIONS = gtk+-2.0 >= 2.12.0
+EXT_PKG_VERSIONS = gtk+-2.0 >= 2.24.0
 
 PKGS = $(EXT_PKGS) $(LOCAL_PKGS)
 
@@ -118,18 +121,30 @@ DIST_ZIP = $(PROGRAM)-$(VERSION).zip
 # VALAFLAGS = -g --enable-checking $(USER_VALAFLAGS)
 VALAFLAGS =  $(USER_VALAFLAGS)
 
-INCLUDE_ROOT=/media/Shared/shared_data/mingw/usr/i686-pc-mingw32/
+#INCLUDE_ROOT=/usr/i686-pc-mingw32/
+INCLUDE_ROOT=/usr/
+
+#	$(INCLUDE_ROOT)lib/i386-linux-gnu/gtk-2.0/include \
+#	$(INCLUDE_ROOT)lib/i386-linux-gnu/glib-2.0/include \
+#	$(INCLUDE_ROOT)lib/i386-linux-gnu/bits \
+#	$(INCLUDE_ROOT)lib/i386-linux-gnu \
+
 
 HEADER_DIRS = \
-	$(INCLUDE_ROOT)include \
+	$(INCLUDE_ROOT)lib/i386-linux-gnu/glib-2.0/include \
+	$(INCLUDE_ROOT)include/i386-linux-gnu \
 	$(INCLUDE_ROOT)include/gtk-2.0 \
-	$(INCLUDE_ROOT)include/glib-2.0 \
-	$(INCLUDE_ROOT)include/cairo \
-	$(INCLUDE_ROOT)include/pango-1.0 \
-	$(INCLUDE_ROOT)include/gdk-pixbuf-2.0 \
+	$(INCLUDE_ROOT)include/gtk-2.0/gdk \
 	$(INCLUDE_ROOT)include/atk-1.0 \
-	$(INCLUDE_ROOT)lib/glib-2.0/include \
-	$(INCLUDE_ROOT)lib/gtk-2.0/include
+	$(INCLUDE_ROOT)include/cairo \
+	$(INCLUDE_ROOT)include/gdk-pixbuf-2.0 \
+	$(INCLUDE_ROOT)include/pango-1.0 \
+	$(INCLUDE_ROOT)include/gio-unix-2.0/ \
+	$(INCLUDE_ROOT)include/glib-2.0 \
+	$(INCLUDE_ROOT)include/pixman-1 \
+	$(INCLUDE_ROOT)include/freetype2 \
+	$(INCLUDE_ROOT)include/libpng12 \
+	$(INCLUDE_ROOT)include \
 
 DEFINES= \
 	_PREFIX='"$(PREFIX)"' \
@@ -140,14 +155,15 @@ DEFINES= \
 #	_LANG_SUPPORT_DIR='"$(SYSTEM_LANG_DIR)"' \
 
 VALA_CFLAGS = \
-		`$(PKG_CONFIG) --cflags $(EXT_PKGS)` \
 		$(foreach hdir,$(HEADER_DIRS),-I$(hdir)) \
 		$(foreach def,$(DEFINES),-D$(def))
+#		`$(PKG_CONFIG) --cflags $(EXT_PKGS)` \
 
 VALA_LDFLAGS = `$(PKG_CONFIG) --libs $(EXT_PKGS)`
 
 # setting CFLAGS in configure.mk overrides build type
 CFLAGS = -mms-bitfields -O0 -g -pipe -Wall
+#CFLAGS = -lpthread -O2 -Wall
 
 #-----------------------------------TARGETS----------------------------------------------
 all: $(PROGRAM)
@@ -156,7 +172,7 @@ all: $(PROGRAM)
 $(PROGRAM): $(EXPANDED_OBJ_FILES) $(RESOURCES)
 #$(LANG_STAMP)
 ############################################################
-	$(CC) $(EXPANDED_OBJ_FILES) $(CFLAGS) $(RESOURCES) $(VALA_LDFLAGS) -o $@.exe
+	#$(CC) $(EXPANDED_OBJ_FILES) $(CFLAGS) $(RESOURCES) $(VALA_LDFLAGS) -o $@.exe
 
 $(EXPANDED_OBJ_FILES): %.o: %.c $(CONFIG_IN) Makefile
 #####################################################

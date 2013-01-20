@@ -162,17 +162,18 @@ import java.util.ResourceBundle;
       if(stepwise) break; 
       pass++;
     }
-    if (solved()) return pass;
-    if (pass>1000) return 999999;
+    if (solved())return pass;
     return 0;
   }
 
   public boolean solved(){
     for (Region r : regions){
+		//out.println("Region "+r.index+" completed is "+r.isCompleted);
       if (!r.isCompleted) return false;
     }
     return true;
   }
+  
 
   private boolean differsFromSolution(Region r){
     //use for debugging
@@ -235,7 +236,8 @@ import java.util.ResourceBundle;
       }
       grid.setDataFromCell(trialCell);
       simpleresult=simplesolver(false,false,false,false); //only debug advanced part, ignore errors
-      if (simpleresult>0 && uniqueOnly) {countChanged++; simpleresult=0; break;}//solution found (but not necessarily unique so reject it)
+      if (simpleresult>0)break; // solution found
+      //if (simpleresult>0 && uniqueOnly) {countChanged++; simpleresult=0; break;}//solution found (but not necessarily unique so reject it)
       loadposition(gridstore); //back track
       if (simpleresult<0){ //contradiction -  insert opposite guess
         grid.setDataFromCell(trialCell.invert()); //mark opposite to guess
@@ -245,7 +247,7 @@ import java.util.ResourceBundle;
           this.saveposition(gridstore); //update grid store
           continue; //go back to start
         }
-        else if (simpleresult>0)break; // unique solution found
+        else if (simpleresult>0)break; // solution found
         else return -1; //starting point was invalid
       }
       else  continue; //guess again
@@ -294,6 +296,8 @@ import java.util.ResourceBundle;
     return cell;
   }
 
-  public Cell getCell(int r, int c){return grid.getCell(r,c);}
+  public Cell getCell(int r, int c){
+		return grid.getCell(r,c); 
+	}
 
 }

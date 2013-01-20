@@ -1,4 +1,4 @@
-/* Main function for Gnonograms
+/* Main function for Gnonograms3
  * Initialises environment and launches game
  * Copyright (C) 2010-2011  Jeremy Wootten
  *
@@ -20,6 +20,7 @@
  * 	Jeremy Wootten <jeremwootten@gmail.com>
  */
 
+using Gtk;
 public enum GameState
 {
 	SETTING,
@@ -134,7 +135,7 @@ Gnonogram_controller controller;
 public static int main(string[] args)
 {
 	string game_filename="";
-//	string package_name=Resource.APP_GETTEXT_PACKAGE;
+	string package_name=Resource.APP_GETTEXT_PACKAGE;
 
 	if (args.length>=2) //a filename has been provided
 	{
@@ -145,9 +146,9 @@ public static int main(string[] args)
 
 	Gtk.init(ref args);
 	Resource.init(args[0]);
-//	Intl.bindtextdomain(package_name, Resource.locale_dir);
-//	Intl.bind_textdomain_codeset(package_name, "UTF-8");
-//	Intl.textdomain(package_name);
+	Intl.bindtextdomain(package_name, Resource.locale_dir);
+	Intl.bind_textdomain_codeset(package_name, "UTF-8");
+	Intl.textdomain(package_name);
 
 	controller=new Gnonogram_controller(game_filename);
 

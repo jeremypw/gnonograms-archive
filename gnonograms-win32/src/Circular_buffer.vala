@@ -1,4 +1,4 @@
-/* Controller class for Gnonograms
+/* Controller class for Gnonograms3
  * Copyright (C) 2010-2011  Jeremy Wootten
  *
 	This program is free software; you can redistribute it and/or modify

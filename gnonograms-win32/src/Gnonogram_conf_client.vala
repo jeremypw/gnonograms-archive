@@ -1,4 +1,4 @@
-/* Configuration client for Gnonograms
+/* Configuration client for Gnonograms3
  * Copyright (C) 2010-2011  Jeremy Wootten
  *
 	This program is free software; you can redistribute it and/or modify
@@ -19,9 +19,6 @@
  * 	Jeremy Wootten <jeremwootten@gmail.com>
  */
 
-//This class stands in for GConf client, using conventional text file in user config directory instead.
-//Provides same interface so rest of program unchanged
-//ONly implements parts of GConf needed for Gnonograms
 using GLib;
 
 	public class Gnonogram_conf_client {
@@ -39,27 +36,26 @@ using GLib;
 		valid=false;
 		try
 		{
-			string conf_dir_filename=Path.build_filename(Environment.get_user_config_dir(),"gnonograms",null);
-			var conf_dir=File.new_for_path(conf_dir_filename);
+			var conf_dir=File.new_for_path(Environment.get_user_config_dir()+"/Gnonograms3");
 			if (!conf_dir.query_exists(null)||!(conf_dir.query_file_type(FileQueryInfoFlags.NONE,null)==FileType.DIRECTORY))
 			{
 				conf_dir.make_directory(null);
 				if (conf_dir.query_exists(null))
-				{stdout.printf("Created gnonograms directory %s\n", conf_dir_filename);
+				{//stdout.printf("Created Gnonograms3 directory\n");
 				}
 				else
 				{
-					stdout.printf("Failed to create gnonograms directory\n");
+					stdout.printf("Failed to create Gnonograms3 directory\n");
 					return;
 				}
 			}
-			conf_file=conf_dir.get_child("gnonograms.conf");
+			conf_file=conf_dir.get_child("Gnonograms3.conf");
 			if (!conf_file.query_exists(null))
 			{
 				conf_file.create(FileCreateFlags.NONE, null);
 				if (!conf_file.query_exists(null))
 				{
-					stdout.printf("Failed to create gnonograms config file\n");
+					stdout.printf("Failed to create Gnonograms3 config file\n");
 					return;
 				}
 			}

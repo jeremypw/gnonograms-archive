@@ -78,7 +78,7 @@ public class LabelBox extends JPanel{
     setLabelFont(f);
     this.fontWidth=fontWidth;
     this.fontHeight=fontHeight;
-    out.println("FontWidth: "+fontWidth+" Font height: "+fontHeight);
+    //out.println("FontWidth: "+fontWidth+" Font height: "+fontHeight);
     sizeOutOfDate=true;
   }
   
@@ -101,7 +101,7 @@ public class LabelBox extends JPanel{
       l.setPreferredSize(d);
     }
     sizeOutOfDate=false;
-		out.println((isColumn ? "ColumnBox" : "RowBox")+" Label Width: "+labelWidth+" Label Height: "+labelHeight);
+		//out.println((isColumn ? "ColumnBox" : "RowBox")+" Label Width: "+labelWidth+" Label Height: "+labelHeight);
 		return true;
   }
   
@@ -121,7 +121,7 @@ public class LabelBox extends JPanel{
     if (text==null) text="?";
     if(text.length()>maxClueLength){
       resetMaximumClueLength(text.length());
-      out.println("New longest clue: "+text);
+      //out.println("New longest clue: "+text);
 		}
 		labels[l].setText(text);
   }
@@ -129,7 +129,7 @@ public class LabelBox extends JPanel{
 
   public void resetMaximumClueLength(int maxLength){
 	  maxClueLength=maxLength;
-	  out.println((isColumn ? "ColumnBox" : "RowBox")+"Max clue length: "+maxLength);
+	  //out.println((isColumn ? "ColumnBox" : "RowBox")+"Max clue length: "+maxLength);
 	  sizeOutOfDate=true;
 	}
   

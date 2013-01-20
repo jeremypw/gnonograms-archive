@@ -333,8 +333,11 @@ enum MovePoint{
     lockCheckBox.setToolTipText(rb.getString("Lock Aspect Ratio"));
     lockCheckBox.addChangeListener(new ChangeListener(){
         public void stateChanged(ChangeEvent e){
-          lockAspectRatio=((JCheckBox)(e.getSource())).isSelected();
+					//ignore irrelevant events
+          if(lockAspectRatio=((JCheckBox)(e.getSource())).isSelected())return;
+          lockAspectRatio=!lockAspectRatio;
           columnSpinner.setEnabled(!lockAspectRatio);
+          if(lockAspectRatio)originalImagePanel.selectAll();
         }
       });
       
@@ -349,7 +352,7 @@ enum MovePoint{
   private JPanel makeThresholdSliderAndLabel(String iconPath, ChangeListener cl, String tooltip){
     JSlider ts=new JSlider(5, 95, 50 );
     ts.setOrientation(SwingConstants.HORIZONTAL);
-    ts.setPaintTrack(false);
+    ts.setPaintTrack(true);
     ts.setPaintLabels(false);
     ts.setBorder(BorderFactory.createEtchedBorder());
     JLabel tsl=new JLabel(Utils.createImageIcon(iconPath,""));
@@ -368,14 +371,14 @@ enum MovePoint{
     if(originalImage==null) return;
     finalImage=toMono(selectAndScaleOriginal(originalImage,offsetX,offsetY,selectionWidth,selectionHeight,cols,rows));
     if(finalImageLabel==null) return;
-    int finalWidth=(int)(IMAGE_DISPLAY_HEIGHT*((double)cols/(double)rows));
-    int finalHeight=IMAGE_DISPLAY_HEIGHT;
-    if (finalWidth>IMAGE_DISPLAY_HEIGHT){
-      finalWidth=IMAGE_DISPLAY_HEIGHT;
-      finalHeight=(int)(finalWidth*((double)rows/(double)cols));
-    }
-    finalImageLabel.setIcon(new ImageIcon(finalImage.getScaledInstance(finalWidth,finalHeight,BufferedImage.SCALE_SMOOTH)));
-    this.pack();
+		int finalWidth=(int)(IMAGE_DISPLAY_HEIGHT*((double)cols/(double)rows));
+		int finalHeight=IMAGE_DISPLAY_HEIGHT;
+		if (finalWidth>IMAGE_DISPLAY_HEIGHT){
+			finalWidth=IMAGE_DISPLAY_HEIGHT;
+			finalHeight=(int)(finalWidth*((double)rows/(double)cols));
+		}
+		finalImageLabel.setIcon(new ImageIcon(finalImage.getScaledInstance(finalWidth,finalHeight,BufferedImage.SCALE_SMOOTH)));
+		this.pack();
   }
   
   public void updateSelection(Rectangle2D selection){
@@ -555,6 +558,7 @@ enum MovePoint{
         minSelectionHeight=SMALLEST_VISIBLE_SELECTION;
         minSelectionWidth=SMALLEST_VISIBLE_SELECTION;
       }
+      
       @Override
       public void paintComponent(Graphics g){
         Graphics2D myGraphics =(Graphics2D)(g.create());
@@ -569,15 +573,19 @@ enum MovePoint{
       public void setMaxSelection(Rectangle r){
         maxWidth=r.width;
         maxHeight=r.height;
-        if (lockAspectRatio && imageAspectRatio!=1){
-          if (imageAspectRatio>1)maxWidth=(int)((double)maxHeight/imageAspectRatio);
+        double maxratio=maxHeight/maxWidth;
+        out.println("maxratio "+maxratio+"imageAspectRatio "+imageAspectRatio);
+        if (lockAspectRatio && imageAspectRatio!=maxratio){
+          if (imageAspectRatio>maxratio)maxWidth=(int)((double)maxHeight/imageAspectRatio);
           else maxHeight=(int)((double)maxWidth*imageAspectRatio);
         }
         selection=new Rectangle(0,0,maxWidth,maxHeight);
         repaint();
       }
-      
-      protected boolean selectionContains(int x, int y){return selection.contains(x,y);}
+			
+      protected boolean selectionContains(int x, int y){
+				return selection.contains(x,y);
+			}
       
       protected void setSelected(int x, int y){
         setMode(x,y); //whether to resize or move and which edge(s) to move

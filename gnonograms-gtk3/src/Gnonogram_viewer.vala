@@ -650,6 +650,12 @@ public class Gnonogram_view : Gtk.Window
         return _toolbar.visible;
     }
 
+    public void enable_check_grid(bool b){
+        _check_tool.set_sensitive(b);
+        _checkerrorsmenuitem.set_sensitive(b);
+
+    }
+
     public void state_has_changed(GameState gs)
     {
         //stdout.printf(@"Viewer state changed $gs\n");

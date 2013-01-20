@@ -1,4 +1,4 @@
-/* 2D array of Cells class for Gnonograms
+/* 2D array of Cells class for Gnonograms3
  * Represents the state of a cell grid
  * Copyright (C) 2010-2011  Jeremy Wootten
  *

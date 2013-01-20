@@ -443,12 +443,14 @@ public class Gnonogram_controller
         if (_current_cell.state==CellState.UNKNOWN) return;
         Cell lastguess=_guess_cell;
         set_guess_cell(_current_cell);
+        _gnonogram_view.enable_check_grid(false);
         if (lastguess.row>=0) redraw_cell(lastguess,false);
         redraw_cell(_guess_cell,true);
     }
     private void return_to_mark()
     {
         if(_guess_cell.row<0) return;
+        _gnonogram_view.enable_check_grid(true);
         Cell? c;
         while (true)
         {

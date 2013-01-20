@@ -412,7 +412,10 @@ public class Controller {
   }
   
   public int solveGame(boolean debug, int maxGuesswork, boolean stepwise){
-    int passes=solver.solveIt(debug,maxGuesswork,stepwise, false); //debug, useAdvanced,  stepwise, ambiguous solutions allowed
+    int passes=solver.solveIt(	debug, //debug
+								maxGuesswork, //max number of critical guesses to solve
+								stepwise, //single step mode
+								false); //only unique solutions (not currently used)
     view.setScore("999999");
     String message="";
     switch (passes) {
@@ -427,8 +430,10 @@ public class Controller {
         break;
       default: //solver succeeded
         view.setScore(String.valueOf(passes));
-        updateSolutionGridFromSolver();
-        validSolution=true;
+        if(!validSolution){ //don't overwrite existing solution
+			updateSolutionGridFromSolver();
+			validSolution=true;
+		}
         break;
     }
     if (message.length()>0) Utils.showInfoDialog(message);
@@ -455,6 +460,7 @@ public class Controller {
     if(cs==Resource.CELLSTATE_UNKNOWN)return;
     if(markedCell.row==r && markedCell.col==c)markedCell.clear();
     else markedCell=new Cell(r,c,cs);
+    view.enableCheckButton(false);
     view.redrawGrid();
   }  
 
@@ -462,6 +468,7 @@ public class Controller {
     int r=markedCell.row, c=markedCell.col;
     Move lm=undoMove();
     markedCell.clear();
+    view.enableCheckButton(true);
     if (r<0||lm==null) {view.redrawGrid();return;}
     while (!(lm.row==r && lm.col==c)){lm=undoMove();}
   }
@@ -509,6 +516,7 @@ public class Controller {
     setDisplayGridFromSolver();
     }
   public void updateSolutionGridFromSolver(){
+	  out.println("Update solution from solver");
     model.useSolution();
     setDisplayGridFromSolver();
     }
@@ -594,7 +602,10 @@ public class Controller {
     if (isSolving){
       model.useWorking();
     }
-    else model.useSolution();
+    else {
+			rewindToMarkedCell();
+			model.useSolution();
+		}
     
     view.setSolving(isSolving);
     view.redrawGrid();

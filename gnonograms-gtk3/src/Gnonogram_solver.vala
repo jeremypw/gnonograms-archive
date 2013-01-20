@@ -242,7 +242,7 @@
       grid.set_data_from_cell(trialCell);
       simpleresult=simplesolver(false,false,false,false); //only debug advanced part, ignore errors
       if (simpleresult>0) {
-        if (uniqueOnly){
+        if (uniqueOnly){//unique solutions must be solved by contradiction.
           countChanged++;
           simpleresult=0;
         }

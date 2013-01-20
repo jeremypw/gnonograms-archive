@@ -288,7 +288,7 @@ public class Viewer extends JFrame {
 		boolean b1=rowBox.setLabelSize();
 		boolean b2=columnBox.setLabelSize(); 
     if (b1 || b2){
-			out.println("Repack");
+			//out.println("Repack");
 			resizeLogoLabelImage(); //resize logo label accordingly;
 			this.pack();
 		}
@@ -326,6 +326,10 @@ public class Viewer extends JFrame {
 
   public void redrawGrid(){
     drawing.repaint();
+  }
+  
+  public void enableCheckButton(boolean b){
+	  checkButton.setEnabled(b);
   }
   
   private JToolBar createCommonToolBar(){

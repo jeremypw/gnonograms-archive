@@ -1,4 +1,4 @@
-/* Gnonogram permutor class for Gnonograms
+/* Gnonogram permutor class for Gnonograms3
  * generates all possible solutions for a given clue.
  * Copyright (C) 2010-2011  Jeremy Wootten
  *

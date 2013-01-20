@@ -165,4 +165,12 @@ import gnonograms.app.Resource;
     return count;
   }
   
+  public String toString(){
+	  StringBuilder sb=new StringBuilder("");
+	  for (int r=0; r<rows; r++){
+		  sb.append(Utils.stringFromIntArray(myData[r]));
+		  sb.append("\n");
+		}
+		return sb.toString();
+	}
 }
