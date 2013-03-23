@@ -1,3 +1,7 @@
+Gnonograms3 - version 0.9.9.3
+*****************************
+23/Mar/2013  Fixed regression in image importer and bug in "trim edges".
+
 Gnonograms3 - version 0.9.9.2
 *****************************
 19/Jan/2013  Inhibit check grid tool when a cell is marked

@@ -580,7 +580,7 @@ public class Gnonogram_controller
 
     private void redraw_all()
     {
-        //stdout.printf("Redraw all\n");
+        //stdout.printf(@"Redraw all state $_state\n");
         _cellgrid.prepare_to_redraw_cells(_state,_gridlinesvisible,_patterntype);
         for (int r=0; r<_rows; r++){
             for (int c=0; c<_cols; c++){
@@ -1049,7 +1049,9 @@ public class Gnonogram_controller
         if (_have_solution){
             _model.use_solution();
             set_model_from_solver();
-    }   }
+        }
+        else stdout.printf("Set solution from solver called with no solution set");
+    }
 
     public void set_working_from_solver(){
         _model.use_working();
@@ -1226,15 +1228,22 @@ public class Gnonogram_controller
     private void validate_game()
     {
         _have_solution=false;
-        int passes=solve_game(false, true, false,false,false);
+        int passes=solve_game(  false, //use startgrid
+                                true,  //use labels
+                                true, // use advanced
+                                false, // use ultimate
+                                false // unique only
+                                );
         if (passes==-1) {
             invalid_clues();
+            stdout.printf("Invalid clues\n");
         }
         else if (passes>0)  {
             _have_solution=true;
             set_solution_from_solver();
             _gnonogram_view.set_score(passes.to_string());
         }
+        else stdout.printf("Puzzle not solved\n");
     }
 
     private void invalid_clues()
@@ -1296,23 +1305,20 @@ public class Gnonogram_controller
                 Utils.show_warning_dialog(_("Puzzle not solved yet - only use on a computer soluble puzzle"));
                 return;
             }
-            if (Utils.show_confirm_dialog(_("Trim blank edges?")))
+            _model.clear();
+            resize(_rows-blank_top_edge-blank_bottom_edge,_cols-blank_left_edge-blank_right_edge);
+            //_rows and _cols now new values
+            for(int r=0;r<_rows;r++)
             {
-                _model.clear();
-                resize(_rows-blank_top_edge-blank_bottom_edge,_cols-blank_left_edge-blank_right_edge);
-                //_rows and _cols now new values
-                for(int r=0;r<_rows;r++)
-                {
-                    _rowbox.update_label(r,row_clues[r+blank_top_edge]);
-                }
-                for(int c=0;c<_cols;c++)
-                {
-                    _colbox.update_label(c,col_clues[c+blank_left_edge]);
-                }
-                validate_game();
-                initialize_view();
-                change_state(GameState.SETTING);
+                _rowbox.update_label(r,row_clues[r+blank_top_edge]);
             }
+            for(int c=0;c<_cols;c++)
+            {
+                _colbox.update_label(c,col_clues[c+blank_left_edge]);
+            }
+            validate_game();
+            initialize_view();
+            change_state(GameState.SETTING);
         }
     }
 
@@ -1384,7 +1390,7 @@ public class Gnonogram_controller
 
     private void change_state(GameState gs)
     {
-        //stdout.printf("Change state\n");
+        //stdout.printf(@"Change state $gs\n");
         //ensure view is all in correct state (e.g. undo redo buttons)
         _gnonogram_view.state_has_changed(gs);
         _history.initialise_pointers();

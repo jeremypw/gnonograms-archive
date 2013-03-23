@@ -54,7 +54,7 @@ class Img2gno : Gtk.Dialog
         //var hb=new Gtk.HBox(false,2);
         var hb=new Gtk.Box(Gtk.Orientation.HORIZONTAL,2); hb.set_homogeneous(false);
         //var vb=new Gtk.VBox(false,2);
-        var vb=new Gtk.Box(Gtk.Orientation.HORIZONTAL,2); vb.set_homogeneous(false);
+        var vb=new Gtk.Box(Gtk.Orientation.VERTICAL,2); vb.set_homogeneous(false);
         _img=new Gtk.Image();
         _scrwin=new Gtk.ScrolledWindow(null, null);
         _scrwin.set_policy(Gtk.PolicyType.AUTOMATIC,Gtk.PolicyType.AUTOMATIC);
@@ -286,10 +286,10 @@ class Img2gno : Gtk.Dialog
         uint8 black=255-white;
 
         _pbm=_pbo.copy();
-//      Pixdata pixdata=Gdk.Pixdata();
 
+//      Pixdata pixdata=Gdk.Pixdata();
 //      pixdata.from_pixbuf(_pbm,false);
-        //unowned uint8[] pix=pixdata.pixel_data;
+//      unowned uint8[] pix=pixdata.pixel_data;
         unowned uint8[] pix=_pbm.get_pixels();
 
         int idx=0;
@@ -343,9 +343,9 @@ class Img2gno : Gtk.Dialog
 
         CellState[] cs=new CellState[_pbs.width];
 
-//        Pixdata pixdata=Gdk.Pixdata();
-//        pixdata.from_pixbuf(_pbs,false);
-//        unowned uint8[] pix=pixdata.pixel_data;
+//      Pixdata pixdata=Gdk.Pixdata();
+//      pixdata.from_pixbuf(_pbs,false);
+//      unowned uint8[] pix=pixdata.pixel_data;
         unowned uint8[] pix=_pbs.get_pixels();
 
         for (int i=0;i<_pbs.width;i++)
