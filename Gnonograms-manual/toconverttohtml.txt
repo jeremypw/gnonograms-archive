@@ -1,0 +1,6 @@
+To convert to HTML, open terminal in root directory and type "yelp-build html *.page"
+Copy all the created html, [javascript] and css files together with figures directory into gnonograms/html folder.
+
+For Gnonograms/debian dont copy the javascript files and remove the script clauses from the html (which should not contain any script anyway)
+
+Also copy all the Mallard files and figures into the gnonograms/help/C folder if installing on a Gnome system.

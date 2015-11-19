@@ -1,0 +1,344 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>06. Gnonograms Menus and Toolbar</title>
+<link rel="stylesheet" type="text/css" href="C.css">
+</head>
+<body>
+<div class="header"><div class="trails"><div class="trail">
+<a class="trail" href="index.html" title="Gnonogram v 0.9.5 Manual"> <span class="media media-image"><img src="figures/gnonograms48.png" alt=""></span> Gnonogram v 0.9.5 Manual
+</a> » </div></div></div>
+<div class="body">
+<div class="links nextlinks">
+<a class="nextlinks-prev" href="controls.html" title="05. Gnonogram Mouse/Keyboard Controls">Previous</a>  |  <a class="nextlinks-next" href="config.html" title="07. Configuration and preferences">Next</a>
+</div>
+<div class="hgroup"><h1 class="title"><span class="title">06. Gnonograms Menus and Toolbar</span></h1></div>
+<div class="region">
+<div class="contents">
+<p class="p"><span class="media media-image"><img src="figures/Menu-Toolbar.png" alt=""></span></p>
+<div class="links sectionlinks"><div class="inner">
+<div class="title title-links"><h2><span class="title">Index</span></h2></div>
+<div class="region"><ul>
+<li class="links"><a href="menus.html#filemenu" title="File Menu and Toolbar icons">File Menu and Toolbar icons</a></li>
+<li class="links"><a href="menus.html#puzzlemenu" title="puzzle Menu and Toolbar icons">puzzle Menu and Toolbar icons</a></li>
+<li class="links"><a href="menus.html#settingsmenu" title="Settings Menu and Toolbar icons">Settings Menu and Toolbar icons</a></li>
+<li class="links"><a href="menus.html#viewmenu" title="View menu">View menu </a></li>
+<li class="links"><a href="menus.html#helpmenu" title="Help Menu">Help Menu</a></li>
+</ul></div>
+</div></div>
+</div>
+<div id="filemenu" class="sect"><div class="inner">
+<div class="hgroup"><h2 class="title"><span class="title">File Menu and Toolbar icons</span></h2></div>
+<div class="region"><div class="contents">
+<p class="p"><span class="media media-image"><img src="figures/Filemenu.png" alt=""></span></p>
+<p class="p"><span class="media media-image"><img src="figures/Filetoolbar.png" alt=""></span></p>
+<div class="synopsis"><div class="inner">
+<div class="title title-synopsis"><h3><span class="title">Summary</span></h3></div>
+<div class="region">
+<div class="desc">The file menu provides the following functions</div>
+<div class="contents">
+<div class="code"><pre class="contents ">Create a new puzzle design*
+Load puzzle designs from storage media (including unfinished working if present)*
+Save puzzle designs to storage media in .gno format (including unfinished working if present)*
+Save puzzle designs to storage media in "Picto" .pattern format (does not include any unfinished working)
+Convert a PNG, BMP or SVG image into a nonogram puzzle.
+Quit the program.</pre></div>
+<div class="note" title="Note"><div class="inner"><div class="region"><div class="contents"><p class="p">Functions marked * are also provided by the tool bar</p></div></div></div></div>
+</div>
+</div>
+</div></div>
+<div class="list"><div class="inner"><div class="region"><ul class="list">
+<li class="list">
+<div class="title title-item"><h3><span class="title">New (Ctrl N)<span class="media media-image"><img src="figures/New.png" height="24" width="24" alt=""></span></span></h3></div>
+<p class="p">Empty the current design grid and enter "design" mode</p>
+</li>
+<li class="list">
+<div class="title title-item"><h3><span class="title">Open(Ctrl O)<span class="media media-image"><img src="figures/Load.png" height="24" width="24" alt=""></span></span></h3></div>
+<p class="p">Shows a file selection dialogue with the puzzles in the current puzzle directory.  By default gnonogram puzzle files are shown but the filter can be changed to Picto puzzles.
+						</p>
+<p class="p">The puzzle will be displayed in "solving" mode.  If the puzzle was partially solved when saved then the partial solution will be displayed.
+						</p>
+<div class="note note-tip" title="Tip"><div class="inner"><div class="region"><div class="contents"><p class="p">If the directory is changed then that becomes the default puzzle directory.
+							</p></div></div></div></div>
+</li>
+<li class="list">
+<div class="title title-item"><h3><span class="title">Save (Ctrl S)<span class="media media-image"><img src="figures/Save.png" height="24" width="24" alt=""></span></span></h3></div>
+<p class="p">Shows a file <span class=" gui">Save As</span> dialogue in the current puzzle directory.  The puzzle is saved in Gnonogram format, which includes the state of the working grid if the puzzle is saved while the solution is incomplete.  Use the separate menu option to save in Picto format. If the directory is changed then that becomes the default puzzle directory.
+						</p>
+<div class="note note-tip" title="Tip"><div class="inner"><div class="region"><div class="contents"><p class="p">If the directory is changed then that becomes the default puzzle directory.
+							</p></div></div></div></div>
+</li>
+<li class="list">
+<div class="title title-item"><h3><span class="title">Save as Picto puzzle.</span></h3></div>
+<p class="p">Shows a file <span class=" gui"><span class=" em">Save As</span></span> dialogue in the current puzzle directory.  The puzzle is saved in Picto format.  If the directory is changed then that becomes the default puzzle directory.</p>
+</li>
+<li class="list">
+<div class="title title-item"><h3><span class="title">Import from image</span></h3></div>
+<p class="p">Opens a tool for converting an image to monochrome (black and white) and scaling it to the desired size.  When satisfactory, the image is converted into a nonogram puzzle and imported into the main program.  See <span class=" link"><a href="imageconverter.html" title="08. Import from image">08. Import from image</a></span>
+				</p>
+</li>
+<li class="list">
+<div class="title title-item"><h3><span class="title">Quit (Ctrl Q).</span></h3></div>
+<p class="p">Saves the current configuration settings (difficulty, dimensions, colours) and closes the program.  Closing the window has the same effect.
+				</p>
+</li>
+</ul></div></div></div>
+</div></div>
+</div></div>
+<div id="puzzlemenu" class="sect"><div class="inner">
+<div class="hgroup"><h2 class="title"><span class="title">puzzle Menu and Toolbar icons</span></h2></div>
+<div class="region"><div class="contents">
+<div class="media media-image"><div class="inner"><img src="figures/puzzlemenu.png" alt=""></div></div>
+<div class="media media-image"><div class="inner"><img src="figures/puzzletoolbar.png" alt=""></div></div>
+<div class="synopsis"><div class="inner">
+<div class="title title-synopsis"><h3><span class="title">Summary</span></h3></div>
+<div class="region">
+<div class="desc">The puzzle menu provides the following functions
+			</div>
+<div class="contents">
+<div class="code"><pre class="contents ">Undo the last move*
+Redo the last undone move*
+Switch between design and solving mode*
+Check the working grid for errors*
+
+Pause the timer
+Clear the solving grid and restart solving*
+
+Get hint
+Let the computer solve the puzzle (if it can)*
+Let the computer generate a random pattern puzzle*
+
+Edit the puzzle description and clues
+Trim any blank columns or rows from the edge of a puzzle.</pre></div>
+<div class="note" title="Note"><div class="inner"><div class="region"><div class="contents"><p class="p">Functions marked * are also provided by the tool bar</p></div></div></div></div>
+</div>
+</div>
+</div></div>
+<div class="list"><div class="inner"><div class="region"><ul class="list">
+<li class="list">
+<p class="p"><span class=" gui"><span class=" em">Undo(Ctrl-Z)...</span><span class="media media-image"><img src="figures/Undo.png" height="24" width="24" alt=""></span></span></p>
+<p class="p">Undo the last move.  Sets the last cell changed to its previous state.  A history of up to 100 previous moves is stored.</p>
+</li>
+<li class="list">
+<p class="p"><span class=" gui"><span class=" em">Redo(Ctrl-Y)...</span><span class="media media-image"><img src="figures/Redo.png" height="24" width="24" alt=""></span>
+				</span></p>
+<p class="p">Redo the last undone move.
+				</p>
+</li>
+<li class="list">
+<p class="p"><span class=" gui"><span class=" em">Switch design/solving mode (Shift-S||Shift-W)...</span><span class="media media-image"><img src="figures/Design-Solve-inactive.png" height="24" width="24" alt=""></span>||<span class="media media-image"><img src="figures/Design-Solve-active.png" height="24" width="24" alt=""></span>
+				</span></p>
+<p class="p">Switch between showing the design grid and the working grid. A timer starts as soon as the program switches to solving mode.
+				</p>
+</li>
+<li class="list">
+<p class="p"><span class=" gui"><span class=" em">Show incorrect cells(Shift-I)...</span><span class="media media-image"><img src="figures/Check.png" height="24" width="24" alt=""></span>
+				</span></p>
+<p class="p">Compare the working grid with the solution and outline incorrectly completed cells in red. Also shows time taken so far.
+				</p>
+</li>
+<li class="list">
+<p class="p"><span class=" gui"><span class=" em">Pause the timer(Shift-P)...</span>
+				</span></p>
+<p class="p">Pause the timer. Selecting this option again or pressing Shift-P restarts the timer.
+				</p>
+</li>
+<li class="list">
+<p class="p"><span class=" gui"><span class=" em">Restart(Shift-R)...</span><span class="media media-image"><img src="figures/Restart.png" height="24" width="24" alt=""></span>
+				</span></p>
+<p class="p">Set all the cells in the "working" grid to unknown and stay in "working" mode. Resets the timer to zero.
+				</p>
+</li>
+<li class="list">
+<p class="p"><span class=" gui"><span class=" em">Get hint(Shift-H)...</span>
+				</span></p>
+<p class="p">The computer will complete one or more cell that can inferred directly from the current position. If you have already made a logical error or are doing a 'difficult' puzzle then no hint may be available.
+				</p>
+</li>
+<li class="list">
+<p class="p"><span class=" gui"><span class=" em">Computer generated puzzle (Shift-G)...</span><span class="media media-image"><img src="figures/Random-puzzle.png" height="24" width="24" alt=""></span>
+				</span></p>
+<p class="p">Generate a random pattern in the design grid and enter "working" mode. By default, the pattern generated is guaranteed to have a unique solution that can be found by simple logic looking at one row or column at a time.  Higher <span class=" var">difficulty</span> settings give patterns with fewer filled cells and shorter blocks that are harder to solve.  If the <span class=" gui"><span class=" em">Generate difficult puzzles</span></span> item on the Settings menu is checked then the patterns generated may be ambiguous or require more advanced logic involving two or more rows or columns at a time. These may take some time to generate for larger grids.
+				</p>
+<p class="p"> An approximate measure of difficulty ("Score:") is given in the puzzle information panel. Puzzles that can be solved with straightforward logic have score ranging from about 4 (elementary) to 20 (tricky).  Advanced puzzles could have scores ranging up to 50,000 or more depending on how long it takes the computer to solve them.
+				</p>
+</li>
+<li class="list">
+<p class="p"><span class=" gui"><span class=" em">Let the computer solve it(Shift-C)...</span><span class="media media-image"><img src="figures/Computer-solve.png" height="24" width="24" alt=""></span>
+				</span></p>
+<p class="p">Run the computer solver on the clues and display the solution (or partial solution) in the "working grid". You can choose on the Settings menu whether the computer should restrict itself to single row/column logic or use more advanced (essentially trial and error) techniques.
+				</p>
+</li>
+<li class="list">
+<p class="p"><span class=" gui"><span class=" em">Edit the puzzle(Shift-E)...</span>
+				</span></p>
+<p class="p">Opens a puzzle editor tool. You can enter descriptive information about the puzzle and/or enter clues directly. This enables you to enter a puzzle for which only the clues are available.
+				</p>
+</li>
+<li class="list">
+<p class="p"><span class=" gui"><span class=" em">Trim blank edges...</span>
+				</span></p>
+<p class="p">Removes empty rows and columns at edge of grid. This is mainly useful for trimming puzzles generated from image files.
+				</p>
+</li>
+</ul></div></div></div>
+</div></div>
+</div></div>
+<div id="settingsmenu" class="sect"><div class="inner">
+<div class="hgroup"><h2 class="title"><span class="title">Settings Menu and Toolbar icons</span></h2></div>
+<div class="region"><div class="contents">
+<p class="p"><span class="media media-image"><img src="figures/Settingsmenu.png" alt=""></span></p>
+<p class="p"><span class="media media-image"><img src="figures/Settingstoolbar.png" alt=""></span></p>
+<div class="synopsis"><div class="inner">
+<div class="title title-synopsis"><h3><span class="title">Summary</span></h3></div>
+<div class="region">
+<div class="desc">The settings menu controls the appearance and behavious of the program. You can change the following features:</div>
+<div class="contents">
+<div class="code"><pre class="contents ">The colour of the cells
+The font used for the clues
+The number of cells in each row and column*
+How difficult the computer generated puzzles are to solve*
+The location on the where puzzles are stored
+The pattern used to fill in the cells
+Whether or not the "advanced" computer solver is used
+Whether or not the the computer generates "advanced" puzzles
+Reset all options to their default setting.</pre></div>
+<div class="note" title="Note"><div class="inner"><div class="region"><div class="contents"><p class="p">*These functions are also provided by the tool bar</p></div></div></div></div>
+</div>
+</div>
+</div></div>
+<div class="list"><div class="inner"><div class="region"><ul class="list">
+<li class="list">
+<p class="p"><span class=" gui"><span class=" em">Colors ...</span>
+				</span></p>
+<p class="p"> The colors of the filled and empty cells in setting and solving mode can each be chosen.  By default the colors are black/white when setting, blue/yellow when solving.  An unknown cell is always grey
+				</p>
+</li>
+<li class="list">
+<p class="p"><span class=" gui"><span class=" em">Font ...</span><span class="media media-image"><img src="figures/Larger.png" height="24" width="24" alt=""></span>||<span class="media media-image"><img src="figures/Smaller.png" height="24" width="24" alt=""></span>
+				</span></p>
+<p class="p">The font used for the clues can be chosen.  The size of the font affects the overall size of the puzzle window on the screen and can also be changed using the "Zoom in" and "Zoom out" functions (see View menu).
+				</p>
+<p class="p">The default font is Ariel
+				</p>
+</li>
+<li class="list">
+<p class="p"><span class=" gui"><span class=" em">Resize ...</span><span class="media media-image"><img src="figures/Resize.png" height="24" width="24" alt=""></span>
+				</span></p>
+<p class="p"> The number of rows and column in the grid can be chosen.  By default the number is a multiple of five but any number can be entered (up to 100 x 100).  The maximum practical size will depend on the size of your screen.  The font size is automatically adjusted to try to fit the grid onto the screen but the "Zoom in" and "Zoom out" may also have to be used.
+				</p>
+</li>
+<li class="list">
+<p class="p"><span class=" gui"><span class=" em">Difficulty ...</span><span class="media media-image"><img src="figures/Difficulty-spin.png" height="24" width="24" alt=""></span>
+			</span></p>
+<p class="p"> The difficulty of the puzzles generated automatically by the computer can be adjusted. A higher number makes the puzzles more difficult by producing a larger number of smaller blocks.   Unless <span class=" gui">Generate advanced puzzles</span> (see below) is ticked, the puzzles produced are guaranteed to be soluble with only one solution and can be solved by applying logic to one row or column at a time.
+					</p>
+</li>
+<li class="list">
+<p class="p"><span class=" gui"><span class=" em">Puzzle folder ...</span>
+				</span></p>
+<p class="p"> The puzzles supplied with the program are stored in "[installation directory]/gnonograms/puzzles" and the is the default. However, this directory is not writable once the program is installed on the system (in "/usr/share")
+					</p>
+</li>
+<li class="list">
+<p class="p"><span class=" gui"><span class=" em">Cell Patterns</span>
+				</span></p>
+<p class="p"> The cells may be filled in using either a plain pattern or a circular pattern
+					</p>
+</li>
+<li class="list">
+<p class="p"><span class=" em">Use advance solver
+				</span></p>
+<p class="p"> This is selected by default.  The computer will attempt to solve the current puzzle using trial and error if necessary.  If this is unselected, then only pure logic applied to one row or column at a time will be used.
+					</p>
+<p class="p"> This feature is useful when testing puzzles of your own design to judge whether they have a unique simple solution or not.  If they can be fully solved without the advanced solver then they do have a unique simple solution.   The advanced solver will solve ambiguous puzzles but will only find one of the solutions.
+					</p>
+</li>
+<li class="list">
+<p class="p"><span class=" em">Generate advanced puzzle
+				</span></p>
+<p class="p"> Unselected by default.  Normally when generating puzzles, only the simple solver is used to check whether the random pattern is soluble. If "Generate advanced puzzle" is selected, the advanced solver is used instead so the pattern produced may be ambiguous and/or hard to solve. It may take a significant amount of time to produce a large puzzle with this option.
+					</p>
+</li>
+<li class="list">
+<p class="p"><span class=" em">Reset all to default
+				</span></p>
+<p class="p"> Selecting this sets all the configurable options to their default values
+					</p>
+</li>
+</ul></div></div></div>
+</div></div>
+</div></div>
+<div id="viewmenu" class="sect"><div class="inner">
+<div class="hgroup"><h2 class="title"><span class="title">View menu </span></h2></div>
+<div class="region"><div class="contents">
+<div class="media media-image"><div class="inner"><img src="figures/Viewmenu.png" alt=""></div></div>
+<div class="synopsis"><div class="inner">
+<div class="title title-synopsis"><h3><span class="title">Summary</span></h3></div>
+<div class="region">
+<div class="desc">These options affect how the puzzle is displayed.  You can change the following features:</div>
+<div class="contents">
+<div class="code"><pre class="contents ">Show or hide the toolbar
+Show or hide the guide grid
+increase and decrease the fontsize of the clues and, indirectly, the size of the window.</pre></div>
+<div class="note" title="Note"><div class="inner"><div class="region"><div class="contents"><p class="p">These functions are not available on the tool bar</p></div></div></div></div>
+</div>
+</div>
+</div></div>
+<div class="list"><div class="inner"><div class="region"><ul class="list">
+<li class="list">
+<p class="p"><span class=" em">Toolbar (Alt+T)</span></p>
+<p class="p">Selected by default.  Determines whether the toolbar is displayed.  Removing the toolbar creates a little more space for larger puzzles.</p>
+</li>
+<li class="list">
+<p class="p"><span class=" em">Grid (Alt+G)
+				</span></p>
+<p class="p">When selected, the individual cells are outlined with dotted lines and every fifth line is solid
+				</p>
+</li>
+<li class="list">
+<p class="p"><span class=" em">Zoom in (Ctrl++)
+				</span></p>
+<p class="p">Increase the font size, making the window bigger
+				</p>
+</li>
+<li class="list">
+<p class="p"><span class=" em">Zoom out (Ctrl+-)
+				</span></p>
+<p class="p">Decreases the font size, making the window smaller
+				</p>
+</li>
+</ul></div></div></div>
+</div></div>
+</div></div>
+<div id="helpmenu" class="sect"><div class="inner">
+<div class="hgroup"><h2 class="title"><span class="title">Help Menu</span></h2></div>
+<div class="region"><div class="contents">
+<div class="media media-image"><div class="inner"><img src="figures/Helpmenu.png" alt=""></div></div>
+<div class="list"><div class="inner"><div class="region"><ul class="list">
+<li class="list">
+<p class="p"><span class=" em">Contents (F1)</span></p>
+<p class="p">Shows this manual.  This may take up to approx 30 seconds to load if it is the first time the help viewer is used.</p>
+</li>
+<li class="list">
+<p class="p"><span class=" em">About
+				</span></p>
+<p class="p">Shows the progamme's Version, Credits and License information</p>
+</li>
+</ul></div></div></div>
+</div></div>
+</div></div>
+<div class="sect sect-links">
+<div class="hgroup"><h2><span class="title">Further Reading</span></h2></div>
+<div class="contents"><div class="links guidelinks"><div class="inner">
+<div class="title"><h3><span class="title">More About</span></h3></div>
+<div class="region"><ul><li class="links"><a href="index.html" title="Gnonogram v 0.9.5 Manual"> <span class="media media-image"><img src="figures/gnonograms48.png" alt=""></span> Gnonogram v 0.9.5 Manual
+</a></li></ul></div>
+</div></div></div>
+</div>
+</div>
+<div class="clear"></div>
+</div>
+<div class="footer"><div class="copyrights"></div></div>
+</body>
+</html>

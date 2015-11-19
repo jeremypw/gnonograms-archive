@@ -1,0 +1,22 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>  Gnonogram v 0.9.4 Manual
+</title>
+<link rel="stylesheet" type="text/css" href="C.css">
+<script type="text/javascript" src="jquery.js"></script><script type="text/javascript" src="jquery.syntax.js"></script><script type="text/javascript" src="yelp.js"></script>
+</head>
+<body>
+<div class="header"></div>
+<div class="body">
+<div class="links nextlinks"><a class="nextlinks-next" href="howtoplay.html" title="01. How to Play Gnonograms">Next</a></div>
+<div class="hgroup"><h1 class="title"><span class="title"> <span class="media media-image"><img src="figures/gnonograms48.png" alt=""></span> Gnonogram v 0.9.4 Manual
+</span></h1></div>
+<div class="region"><div class="contents"><div class="links topiclinks"><div class="inner"><div class="region">
+<a class=" linkdiv" href="howtoplay.html" title="01. How to Play Gnonograms"><span class="title">01. How to Play Gnonograms</span></a><a class=" linkdiv" href="designmode.html" title="02. Design mode"><span class="title">02. Design mode</span></a><a class=" linkdiv" href="solvingmode.html" title="03. Solving mode"><span class="title">03. Solving mode</span></a><a class=" linkdiv" href="strategy.html" title="04. Strategies for solving Gnonograms"><span class="title">04. Strategies for solving Gnonograms</span></a><a class=" linkdiv" href="controls.html" title="05. Gnonogram Mouse/Keyboard Controls"><span class="title">05. Gnonogram Mouse/Keyboard Controls</span></a><a class=" linkdiv" href="menus.html" title="06. Gnonograms Menus and Toolbar"><span class="title">06. Gnonograms Menus and Toolbar</span></a><a class=" linkdiv" href="config.html" title="07. Configuration and preferences"><span class="title">07. Configuration and preferences</span></a><a class=" linkdiv" href="imageconverter.html" title="08. Import from image"><span class="title">08. Import from image</span></a><a class=" linkdiv" href="gameeditor.html" title="09. Game editor"><span class="title">09. Game editor</span></a><a class=" linkdiv" href="glossary.html" title="A1. Word Meanings"><span class="title">A1. Word Meanings</span></a><a class=" linkdiv" href="fileformat.html" title="A2. Gnonogram file format"><span class="title">A2. Gnonogram file format</span></a>
+</div></div></div></div></div>
+<div class="clear"></div>
+</div>
+<div class="footer"><div class="copyrights"></div></div>
+</body>
+</html>
