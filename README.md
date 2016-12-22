@@ -18,6 +18,9 @@ The object of the game is to discover the pattern in the grid which is encoded b
 * Save puzzles and partially completed puzzles
 * Handles puzzle grids up to 100x100 (practical limit depends on screen size)  
 
+Software to convert gnonogram puzzle files (.gno files) to SVG for printing can be found here:
+https://github.com/jandechent/gnonogram2svg
+
 #####Contact
 Please send your bug reports, feature requests, bouquets or brickbats to jeremywootten@gmail.com
 
